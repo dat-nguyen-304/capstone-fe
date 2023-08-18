@@ -1,8 +1,12 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form } from 'antd';
 import styles from '@/app/auth/page.module.css';
 import { Subject } from '@/types';
 import { motion } from 'framer-motion';
+import { InputPassword, InputText } from '@/components/form-input';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { registrationSchema } from '@/yup_schema';
 
 interface RegisterFormProps {
     role: string;
@@ -12,6 +16,16 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, setIsFillForm }) => {
+    const { control, handleSubmit } = useForm({
+        defaultValues: {
+            username: '',
+            name: '',
+            password: '',
+            confirmPassword: ''
+        },
+        resolver: yupResolver(registrationSchema)
+    });
+
     const animations = {
         div: {
             initial: {
@@ -23,6 +37,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, se
         }
     };
 
+    const handleRegisterSubmit = (values: any) => {
+        console.log(values);
+    };
+
     return (
         <Form
             labelCol={{ span: 10 }}
@@ -32,6 +50,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, se
             layout="horizontal"
             size="middle"
             className={`${styles.signUpForm} !block !overflow-visible`}
+            onFinish={handleSubmit(handleRegisterSubmit)}
         >
             <motion.div
                 {...animations.div}
@@ -39,18 +58,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, se
             >
                 <h2 className={`${styles.title} !text-center sm:!mb-8`}>Hoàn tất đăng ký</h2>
 
-                <Form.Item label="Tên đăng nhập" name="username" rules={[{ required: true }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item label="Họ và tên" name="name" rules={[{ required: true }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item label="Mật khẩu" name="password" rules={[{ required: true }]}>
-                    <Input.Password />
-                </Form.Item>
-                <Form.Item label="Nhập lại mật khẩu" name="confirmPassword" rules={[{ required: true }]}>
-                    <Input.Password />
-                </Form.Item>
+                <InputText label="Tên đăng nhập" name="username" control={control} />
+                <InputText label="Họ và tên" name="name" control={control} />
+                <InputPassword label="Mật khẩu" name="password" control={control} />
+                <InputPassword label="Mật khẩu" name="confirmPassword" control={control} />
+
                 <Form.Item className="flex justify-center !mb-0">
                     <Button htmlType="submit" className={`${styles.btn} ${styles.solid}`}>
                         Đăng ký
