@@ -72,6 +72,7 @@ form.signInForm {
     font-size: 2.2rem;
     color: #444;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .inputField {
@@ -257,7 +258,7 @@ form.signInForm {
 }
 
 .container.signUpMode form.signUpForm,
-div.signUpForm {
+.container.signUpMode div.signUpForm {
     opacity: 1;
     z-index: 2;
 }
@@ -282,7 +283,9 @@ div.signUpForm {
 
 @media (min-width: 871px) and (max-width: 1024px) {
     form.signUpForm,
-    div.signInForm {
+    form.signInForm,
+    div.signUpForm,
+    div.signInForm  {
         padding: 0 2rem;
     }
 

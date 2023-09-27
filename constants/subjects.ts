@@ -1,4 +1,4 @@
-import { Subject } from '../types';
+import { Combination, Subject } from '../types';
 
 export const allSubjects: Subject[] = [
     {
@@ -43,4 +43,116 @@ export const allSubjects: Subject[] = [
         img: `https://cdn3d.iconscout.com/3d/premium/thumb/geography-9246385-7520482.png?f=webp`,
         value: 'geography'
     }
+];
+
+export const allCombinations: Combination[] = [
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    },
+    {
+        id: '1',
+        label: 'A00',
+        subjects: ['Toán', 'Vật lí', 'Hóa học'],
+        value: 'A00'
+    },
+    {
+        id: '2',
+        label: 'A01',
+        subjects: ['Toán', 'Vật lí', 'Tiếng anh'],
+        value: 'A01'
+    }
+
 ];

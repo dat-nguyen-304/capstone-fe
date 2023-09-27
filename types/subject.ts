@@ -4,3 +4,10 @@ export type Subject = {
     value: string;
     img: string;
 };
+
+export type Combination = {
+    id: string;
+    label: string;
+    subjects: string[];
+    value: string;
+}
