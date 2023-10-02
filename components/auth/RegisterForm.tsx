@@ -13,13 +13,14 @@ interface RegisterFormProps {
     role: string;
     setRole: Dispatch<SetStateAction<string>>;
     subjects: Subject[];
+    nextStep: () => void;
     backStep: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, backStep }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, backStep, nextStep }) => {
     const { control, handleSubmit } = useForm({
         defaultValues: {
-            username: '',
+            email: '',
             name: '',
             password: '',
             confirmPassword: ''
@@ -42,6 +43,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, ba
 
     const handleRegisterSubmit = (values: any) => {
         console.log(values);
+        nextStep();
     };
 
     return (
@@ -61,7 +63,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, ba
             >
                 <h2 className={`${styles.title} !text-center sm:!mb-8`}>Hoàn tất đăng ký</h2>
 
-                <InputText label="Tên đăng nhập" name="username" control={control} />
+                <InputText label="Email" name="email" control={control} />
                 <InputText label="Họ và tên" name="name" control={control} />
                 <InputPassword label="Mật khẩu" name="password" control={control} />
                 <InputPassword label="Mật khẩu" name="confirmPassword" control={control} />

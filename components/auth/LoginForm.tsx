@@ -13,7 +13,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                 <i>
                     <AiOutlineUser />
                 </i>
-                <input type="text" placeholder="Tên đăng nhập" />
+                <input type="text" placeholder="Email" />
             </div>
             <div className={styles.inputField}>
                 <i>

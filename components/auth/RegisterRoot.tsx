@@ -6,13 +6,15 @@ import RegisterChooseSubject from './RegisterChooseSubject';
 import RegisterForm from './RegisterForm';
 import { Subject, Combination } from '@/types';
 import RegisterChooseCombination from './RegisterChooseCombination';
+import RegisterCheckEmail from './RegisterCheckEmail';
 
 interface RegisterRootProps {}
 
 enum STEPS {
     ROLE = 1,
     SUBJECT_COMBINATION = 2,
-    FORM = 3
+    FORM = 3,
+    CHECK_EMAIL = 4
 }
 
 const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
@@ -57,7 +59,13 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
     }
 
     if (step === STEPS.FORM) {
-        body = <RegisterForm role={role} setRole={setRole} subjects={subjects} backStep={backStep} />;
+        body = (
+            <RegisterForm role={role} setRole={setRole} subjects={subjects} nextStep={nextStep} backStep={backStep} />
+        );
+    }
+
+    if (step === STEPS.CHECK_EMAIL) {
+        body = <RegisterCheckEmail />;
     }
 
     return body;

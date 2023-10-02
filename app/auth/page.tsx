@@ -26,8 +26,8 @@ const AuthPage: React.FC<AuthPageProps> = ({}) => {
             <div className={styles.panelsContainer}>
                 <div className={`${styles.panel} ${styles.leftPanel}`}>
                     <div className={styles.content}>
-                        <h3>New here ?</h3>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis, ex ratione. Aliquid!</p>
+                        <h3>Bạn là người mới?</h3>
+                        <p>Hãy đăng ký trở thành thành viên mới của đại gia đình CEPA nhé</p>
                         <button className={`${styles.btn} ${styles.transparent}`} id="sign-up-btn" onClick={changeForm}>
                             Đăng ký
                         </button>
@@ -36,8 +36,8 @@ const AuthPage: React.FC<AuthPageProps> = ({}) => {
                 </div>
                 <div className={`${styles.panel} ${styles.rightPanel}`}>
                     <div className={styles.content}>
-                        <h3>One of us ?</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum laboriosam ad deleniti.</p>
+                        <h3>Bạn đã có tài khoản?</h3>
+                        <p>Hãy đăng nhập ngay để bắt đầu cuộc hành trình chinh phục ước mơ nào</p>
                         <button className={`${styles.btn} ${styles.transparent}`} id="sign-in-btn" onClick={changeForm}>
                             Đăng nhập
                         </button>
