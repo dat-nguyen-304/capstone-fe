@@ -1,23 +1,25 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Form } from 'antd';
 import styles from '@/app/auth/page.module.css';
-import { Subject } from '@/types';
+import { Combination, Subject } from '@/types';
 import { motion } from 'framer-motion';
 import { InputPassword, InputText } from '@/components/form-input';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { registrationSchema } from '@/yup_schema';
 import { BsArrowLeft } from 'react-icons/bs';
+import { authApi } from '@/api-client/auth-api';
 
 interface RegisterFormProps {
     role: string;
     setRole: Dispatch<SetStateAction<string>>;
     subjects: Subject[];
+    combinations: Combination[];
     nextStep: () => void;
     backStep: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, backStep, nextStep }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, combinations, backStep, nextStep }) => {
     const { control, handleSubmit } = useForm({
         defaultValues: {
             email: '',
@@ -41,9 +43,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, ba
         }
     };
 
-    const handleRegisterSubmit = (values: any) => {
+    const handleRegisterSubmit = async (values: any) => {
         console.log(values);
-        nextStep();
+        if (role === 'teacher') {
+            const subjectIds = subjects.map(subject => subject.id);
+            const res = await authApi.teacherRegister({
+                userRegister: values,
+                subjectIds
+            });
+            console.log(res);
+        }
     };
 
     return (

@@ -60,7 +60,14 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
 
     if (step === STEPS.FORM) {
         body = (
-            <RegisterForm role={role} setRole={setRole} subjects={subjects} nextStep={nextStep} backStep={backStep} />
+            <RegisterForm
+                role={role}
+                setRole={setRole}
+                combinations={combinations}
+                subjects={subjects}
+                nextStep={nextStep}
+                backStep={backStep}
+            />
         );
     }
 
