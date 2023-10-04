@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Combination } from '@/types';
 import { combinationApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Skeleton, Tooltip } from '@nextui-org/react';
+import { Card, Skeleton, Tooltip } from '@nextui-org/react';
 
 interface RegisterChooseCombinationProps {
     combinationIds: number[];
@@ -64,9 +64,10 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                             {data?.map((combination: Combination) => (
                                 <Tooltip key={combination.id} color="primary" content={combination.description}>
                                     <li>
-                                        <Button
-                                            onClick={() => addCombination(combination.id)}
-                                            className={`w-[80px] sm:w-[120px] h-[48px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
+                                        <Card
+                                            isPressable
+                                            onPress={() => addCombination(combination.id)}
+                                            className={`w-[80px] sm:w-[120px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                                     ${
                                         combinationIds.includes(combination.id)
                                             ? 'border-blue-500 bg-blue-100'
@@ -76,7 +77,7 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                                             <div className="sm:font-semibold text-sm sm:text-md">
                                                 {combination.name}
                                             </div>
-                                        </Button>
+                                        </Card>
                                     </li>
                                 </Tooltip>
                             ))}

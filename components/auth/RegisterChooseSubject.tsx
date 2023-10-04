@@ -4,7 +4,7 @@ import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Subject } from '@/types';
-import { Skeleton } from '@nextui-org/react';
+import { Card, Skeleton } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 
@@ -63,18 +63,20 @@ const RegisterChooseSubject: React.FC<RegisterChooseSubjectProps> = ({
                     {!isLoading ? (
                         <>
                             {data?.map((subject: Subject) => (
-                                <li
-                                    key={subject.id}
-                                    className={`w-[100px] sm:w-[120px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
+                                <li key={subject.id}>
+                                    <Card
+                                        isPressable
+                                        className={`w-[100px] sm:w-[120px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                                     ${
                                         subjectIds.includes(subject.id)
                                             ? 'border-blue-500 bg-blue-100'
                                             : 'border-neutral-200'
                                     }`}
-                                    onClick={() => addSubject(subject.id)}
-                                >
-                                    <Image alt="" width={30} height={30} src={subject.url} />
-                                    <div className="sm:font-semibold text-sm sm:text-md">{subject.name}</div>
+                                        onPress={() => addSubject(subject.id)}
+                                    >
+                                        <Image alt="" width={30} height={30} src={subject.url} />
+                                        <div className="sm:font-semibold text-sm sm:text-md">{subject.name}</div>
+                                    </Card>
                                 </li>
                             ))}
                         </>

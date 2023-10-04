@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { BsArrowRight } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import { ROLES } from './RegisterRoot';
+import { Card } from '@nextui-org/react';
 
 interface RegisterChooseRoleProps {
     role: ROLES;
@@ -34,10 +35,11 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
             <motion.div {...animations.div}>
                 <h2 className={styles.title}>Bạn là</h2>
                 <div className="flex flex-col sm:flex-row gap-6 my-2 sm:my-8">
-                    <div
+                    <Card
+                        isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
-                        onClick={() => setRole(ROLES.STUDENT)}
+                        onPress={() => setRole(ROLES.STUDENT)}
                     >
                         <Image
                             alt=""
@@ -46,9 +48,10 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                             src="https://cdn3d.iconscout.com/3d/premium/thumb/illustration-students-are-using-laptops-5589412-4652813.png"
                         />
                         <div className="font-semibold mt-4">Học sinh</div>
-                    </div>
+                    </Card>
 
-                    <div
+                    <Card
+                        isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
                         onClick={() => setRole(ROLES.TEACHER)}
@@ -60,7 +63,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                             src="https://cdn3d.iconscout.com/3d/premium/thumb/female-teacher-7640039-6186490.png"
                         />
                         <div className="font-semibold mt-4">Giáo viên</div>
-                    </div>
+                    </Card>
                 </div>
                 <div className="flex justify-center">
                     <button
