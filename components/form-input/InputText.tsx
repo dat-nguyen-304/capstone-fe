@@ -1,7 +1,7 @@
-import { Form, FormItemProps, Input } from 'antd';
 import { useController, Control, FieldValue } from 'react-hook-form';
+import { Input, InputProps } from '@nextui-org/react';
 
-export type InputTextProps = FormItemProps & {
+export type InputTextProps = InputProps & {
     name: string;
     control: Control<any>;
 };
@@ -16,8 +16,17 @@ export function InputText({ name, label, control }: InputTextProps) {
     });
 
     return (
-        <Form.Item label={label} validateStatus={error ? 'error' : ''} help={error?.message}>
-            <Input name={name} onChange={onChange} onBlur={onBlur} value={value} ref={ref} />
-        </Form.Item>
+        <Input
+            size="sm"
+            label={label}
+            isInvalid={error ? true : false}
+            errorMessage={error?.message}
+            name={name}
+            onChange={onChange}
+            onBlur={onBlur}
+            value={value}
+            ref={ref}
+            className="my-4"
+        />
     );
 }
