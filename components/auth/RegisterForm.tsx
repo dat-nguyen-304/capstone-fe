@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Form } from 'antd';
 import styles from '@/app/auth/page.module.css';
-import { Combination, Subject } from '@/types';
 import { motion } from 'framer-motion';
 import { InputPassword, InputText } from '@/components/form-input';
 import { useForm } from 'react-hook-form';
@@ -9,10 +8,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { registrationSchema } from '@/yup_schema';
 import { BsArrowLeft } from 'react-icons/bs';
 import { authApi } from '@/api-client/auth-api';
+import { ROLES } from './RegisterRoot';
 
 interface RegisterFormProps {
-    role: string;
-    setRole: Dispatch<SetStateAction<string>>;
+    role: ROLES;
+    setRole: Dispatch<SetStateAction<ROLES>>;
     subjectIds: number[];
     combinationIds: number[];
     nextStep: () => void;
@@ -30,12 +30,31 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     const { control, handleSubmit } = useForm({
         defaultValues: {
             email: '',
-            name: '',
+            fullName: '',
             password: '',
             confirmPassword: ''
         },
         resolver: yupResolver(registrationSchema)
     });
+
+    const handleRegisterSubmit = async (values: any) => {
+        try {
+            if (role === ROLES.STUDENT) {
+                await authApi.studentRegister({
+                    userRegister: values,
+                    combinationIds
+                });
+            } else if (role === ROLES.TEACHER) {
+                await authApi.teacherRegister({
+                    userRegister: values,
+                    subjectIds
+                });
+            }
+            nextStep();
+        } catch (error: any) {
+            console.log(error.message);
+        }
+    };
 
     const animations = {
         div: {
@@ -47,17 +66,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 x: 0,
                 opacity: 1
             }
-        }
-    };
-
-    const handleRegisterSubmit = async (values: any) => {
-        console.log(values);
-        if (role === 'teacher') {
-            const res = await authApi.teacherRegister({
-                userRegister: values,
-                subjectIds
-            });
-            console.log(res);
         }
     };
 
@@ -79,7 +87,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 <h2 className={`${styles.title} !text-center sm:!mb-8`}>Hoàn tất đăng ký</h2>
 
                 <InputText label="Email" name="email" control={control} />
-                <InputText label="Họ và tên" name="name" control={control} />
+                <InputText label="Họ và tên" name="fullName" control={control} />
                 <InputPassword label="Mật khẩu" name="password" control={control} />
                 <InputPassword label="Nhập lại mật khẩu" name="confirmPassword" control={control} />
 

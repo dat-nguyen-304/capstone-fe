@@ -3,10 +3,11 @@ import { Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
 import { BsArrowRight } from 'react-icons/bs';
 import { motion } from 'framer-motion';
+import { ROLES } from './RegisterRoot';
 
 interface RegisterChooseRoleProps {
-    role: string;
-    setRole: Dispatch<SetStateAction<string>>;
+    role: ROLES;
+    setRole: Dispatch<SetStateAction<ROLES>>;
     nextStep: () => void;
 }
 
@@ -35,8 +36,8 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                 <div className="flex flex-col sm:flex-row gap-6 my-2 sm:my-8">
                     <div
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
-                    ${role === 'student' ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
-                        onClick={() => setRole('student')}
+                    ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
+                        onClick={() => setRole(ROLES.STUDENT)}
                     >
                         <Image
                             alt=""
@@ -49,8 +50,8 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
 
                     <div
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
-                    ${role === 'teacher' ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
-                        onClick={() => setRole('teacher')}
+                    ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
+                        onClick={() => setRole(ROLES.TEACHER)}
                     >
                         <Image
                             alt=""

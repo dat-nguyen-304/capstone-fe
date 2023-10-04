@@ -16,8 +16,14 @@ enum STEPS {
     CHECK_EMAIL = 4
 }
 
+export enum ROLES {
+    NONE = 1,
+    TEACHER = 2,
+    STUDENT = 3
+}
+
 const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
-    const [role, setRole] = useState<string>('');
+    const [role, setRole] = useState<ROLES>(ROLES.NONE);
     const [subjectIds, setSubjectIds] = useState<number[]>([]);
     const [combinationIds, setCombinationIds] = useState<number[]>([]);
     const [step, setStep] = useState<number>(STEPS.ROLE);
@@ -37,7 +43,7 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
     }
 
     if (step === STEPS.SUBJECT_COMBINATION) {
-        if (role === 'teacher') {
+        if (role === ROLES.TEACHER) {
             body = (
                 <RegisterChooseSubject
                     subjectIds={subjectIds}
@@ -46,7 +52,7 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
                     backStep={backStep}
                 />
             );
-        } else
+        } else if (role === ROLES.STUDENT)
             body = (
                 <RegisterChooseCombination
                     combinationIds={combinationIds}
