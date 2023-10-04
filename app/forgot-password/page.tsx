@@ -34,7 +34,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
             <div className={styles.panelsContainer}>
                 <div className={`${styles.panel} ${styles.leftPanel}`}>
                     <div className={styles.content}>
-                        <h3>Bạn đã có tài khoản??</h3>
+                        <h3>Bạn đã có tài khoản?</h3>
                         <p>Hãy đăng nhập ngay để bắt đầu cuộc hành trình chinh phục ước mơ nào</p>
                         <button
                             className={`${styles.btn} ${styles.transparent}`}
