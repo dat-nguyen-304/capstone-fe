@@ -1,23 +1,31 @@
 import styles from '@/app/auth/page.module.css';
 import { Dispatch, SetStateAction } from 'react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
-import { allCombinations } from '@/constants';
 import { motion } from 'framer-motion';
 import { Combination } from '@/types';
+import { combinationApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import { Button, Skeleton, Tooltip } from '@nextui-org/react';
 
 interface RegisterChooseCombinationProps {
-    combinations: Combination[];
-    setCombinations: Dispatch<SetStateAction<Combination[]>>;
+    combinationIds: number[];
+    setCombinationIds: Dispatch<SetStateAction<number[]>>;
     backStep: () => void;
     nextStep: () => void;
 }
 
 const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
-    combinations,
-    setCombinations,
+    combinationIds,
+    setCombinationIds,
     backStep,
     nextStep
 }) => {
+    const { data, isLoading } = useQuery({
+        queryKey: ['combinationIds'],
+        queryFn: combinationApi.getAll
+    });
+
+    const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
     const animations = {
         div: {
             initial: {
@@ -32,17 +40,17 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
     };
 
     const handleNextStep = () => {
-        if (combinations.length) nextStep();
+        if (combinationIds.length) nextStep();
     };
 
-    const addCombination = (combination: Combination) => {
-        let newCombinations = [...combinations];
-        if (combinations.includes(combination)) {
-            newCombinations = combinations.filter(s => s !== combination);
+    const addCombination = (combinationId: number) => {
+        let newCombinationIds = [...combinationIds];
+        if (combinationIds.includes(combinationId)) {
+            newCombinationIds = combinationIds.filter(s => s !== combinationId);
         } else {
-            newCombinations = [...newCombinations, combination];
+            newCombinationIds = [...newCombinationIds, combinationId];
         }
-        setCombinations(newCombinations);
+        setCombinationIds(newCombinationIds);
     };
 
     return (
@@ -51,16 +59,37 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                 <h2 className={styles.title}>Bạn muốn thi tổ hợp</h2>
 
                 <ul className="flex gap-3 mt-8 flex-wrap justify-center">
-                    {allCombinations.map(combination => (
-                        <li
-                            key={combination.value}
-                            onClick={() => addCombination(combination)}
-                            className={`w-[80px] sm:w-[120px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
-                        ${combinations.includes(combination) ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
-                        >
-                            <div className="sm:font-semibold text-sm sm:text-md">{combination.label}</div>
-                        </li>
-                    ))}
+                    {!isLoading ? (
+                        <>
+                            {data?.map((combination: Combination) => (
+                                <Tooltip key={combination.id} color="primary" content={combination.description}>
+                                    <li>
+                                        <Button
+                                            onClick={() => addCombination(combination.id)}
+                                            className={`w-[80px] sm:w-[120px] h-[48px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
+                                    ${
+                                        combinationIds.includes(combination.id)
+                                            ? 'border-blue-500 bg-blue-100'
+                                            : 'border-neutral-200'
+                                    }`}
+                                        >
+                                            <div className="sm:font-semibold text-sm sm:text-md">
+                                                {combination.name}
+                                            </div>
+                                        </Button>
+                                    </li>
+                                </Tooltip>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            {skeletonArray.map((i: number) => (
+                                <Skeleton key={i} isLoaded={false} className="rounded-xl">
+                                    <li className="w-[80px] sm:w-[120px] h-[48px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
+                                </Skeleton>
+                            ))}
+                        </>
+                    )}
                 </ul>
 
                 <div className="flex justify-center items-center gap-2 sm:gap-4 mt-8">
@@ -74,12 +103,12 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                     <button
                         onClick={handleNextStep}
                         className={`flex justify-center items-center w-[120px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full uppercase sm:font-semibold my-[10px] cursor-pointer 
-                    ${combinations.length ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
+                    ${combinationIds.length ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
                     >
                         <span className="mr-2">Tiếp theo</span>
                         <BsArrowRight
                             size={20}
-                            color={combinations.length > 0 ? '#fff' : '#000'}
+                            color={combinationIds.length > 0 ? '#fff' : '#000'}
                             className="w-[16px] sm:w-[20px]"
                         />
                     </button>

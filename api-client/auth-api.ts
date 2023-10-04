@@ -1,4 +1,4 @@
-import { LoginPayload, TeacherRegisterPayload } from '@/models';
+import { TeacherRegisterPayload, LoginPayload } from '@/types';
 import axiosClient from './axios-client';
 
 export const authApi = {

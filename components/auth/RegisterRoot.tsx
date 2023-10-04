@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RegisterChooseRole from './RegisterChooseRole';
 import RegisterChooseSubject from './RegisterChooseSubject';
 import RegisterForm from './RegisterForm';
-import { Subject, Combination } from '@/types';
 import RegisterChooseCombination from './RegisterChooseCombination';
 import RegisterCheckEmail from './RegisterCheckEmail';
 
@@ -19,8 +18,8 @@ enum STEPS {
 
 const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
     const [role, setRole] = useState<string>('');
-    const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [combinations, setCombinations] = useState<Combination[]>([]);
+    const [subjectIds, setSubjectIds] = useState<number[]>([]);
+    const [combinationIds, setCombinationIds] = useState<number[]>([]);
     const [step, setStep] = useState<number>(STEPS.ROLE);
 
     let body;
@@ -41,8 +40,8 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
         if (role === 'teacher') {
             body = (
                 <RegisterChooseSubject
-                    subjects={subjects}
-                    setSubjects={setSubjects}
+                    subjectIds={subjectIds}
+                    setSubjectIds={setSubjectIds}
                     nextStep={nextStep}
                     backStep={backStep}
                 />
@@ -50,8 +49,8 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
         } else
             body = (
                 <RegisterChooseCombination
-                    combinations={combinations}
-                    setCombinations={setCombinations}
+                    combinationIds={combinationIds}
+                    setCombinationIds={setCombinationIds}
                     nextStep={nextStep}
                     backStep={backStep}
                 />
@@ -63,8 +62,8 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
             <RegisterForm
                 role={role}
                 setRole={setRole}
-                combinations={combinations}
-                subjects={subjects}
+                combinationIds={combinationIds}
+                subjectIds={subjectIds}
                 nextStep={nextStep}
                 backStep={backStep}
             />

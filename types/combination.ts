@@ -1,6 +1,5 @@
-export type Subject = {
+export type Combination = {
     id: number;
     name: string;
-    url: string;
     description: string;
 };

@@ -1,7 +1,9 @@
+import { Subject } from '@/types';
 import axiosClient from './axios-client';
 
 export const subjectApi = {
-    getAll() {
-        return axiosClient.get('/subjects');
+    getAll: async () => {
+        const { data } = await axiosClient.get('/subjects');
+        return data as Subject[];
     }
 };

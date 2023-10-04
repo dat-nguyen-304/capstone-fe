@@ -13,13 +13,20 @@ import { authApi } from '@/api-client/auth-api';
 interface RegisterFormProps {
     role: string;
     setRole: Dispatch<SetStateAction<string>>;
-    subjects: Subject[];
-    combinations: Combination[];
+    subjectIds: number[];
+    combinationIds: number[];
     nextStep: () => void;
     backStep: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, combinations, backStep, nextStep }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({
+    role,
+    setRole,
+    subjectIds,
+    combinationIds,
+    backStep,
+    nextStep
+}) => {
     const { control, handleSubmit } = useForm({
         defaultValues: {
             email: '',
@@ -46,7 +53,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, co
     const handleRegisterSubmit = async (values: any) => {
         console.log(values);
         if (role === 'teacher') {
-            const subjectIds = subjects.map(subject => subject.id);
             const res = await authApi.teacherRegister({
                 userRegister: values,
                 subjectIds
@@ -75,7 +81,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, setRole, subjects, co
                 <InputText label="Email" name="email" control={control} />
                 <InputText label="Họ và tên" name="name" control={control} />
                 <InputPassword label="Mật khẩu" name="password" control={control} />
-                <InputPassword label="Mật khẩu" name="confirmPassword" control={control} />
+                <InputPassword label="Nhập lại mật khẩu" name="confirmPassword" control={control} />
 
                 <div className="flex justify-center items-center gap-4">
                     <button
