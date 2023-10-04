@@ -32,7 +32,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
         <div className={styles.signUpForm}>
             <motion.div {...animations.div}>
                 <h2 className={styles.title}>Bạn là</h2>
-                <div className="flex flex-col sm:flex-row gap-6 mt-8">
+                <div className="flex flex-col sm:flex-row gap-6 my-2 sm:my-8">
                     <div
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === 'student' ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
@@ -64,7 +64,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                 <div className="flex justify-center">
                     <button
                         onClick={handleNextStep}
-                        className={`mt-8 flex justify-center items-center w-[120px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full uppercase sm:font-semibold my-[10px] cursor-pointer 
+                        className={`flex justify-center items-center w-[120px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full uppercase sm:font-semibold my-[10px] cursor-pointer 
                     ${role ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
                     >
                         <span className="mr-2">Tiếp theo</span>
