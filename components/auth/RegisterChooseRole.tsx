@@ -38,7 +38,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                     <Card
                         isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
-                    ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
+                    ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
                         onPress={() => setRole(ROLES.STUDENT)}
                     >
                         <Image
@@ -47,14 +47,14 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                             height={100}
                             src="https://cdn3d.iconscout.com/3d/premium/thumb/illustration-students-are-using-laptops-5589412-4652813.png"
                         />
-                        <div className="font-semibold mt-4">Học sinh</div>
+                        <div className="font-semibold mt-4 ">Học sinh</div>
                     </Card>
 
                     <Card
                         isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
-                    ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100' : 'border-neutral-200'}`}
-                        onClick={() => setRole(ROLES.TEACHER)}
+                    ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
+                        onPress={() => setRole(ROLES.TEACHER)}
                     >
                         <Image
                             alt=""

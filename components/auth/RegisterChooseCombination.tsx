@@ -70,7 +70,7 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                                             className={`w-[80px] sm:w-[120px] rounded-xl border-2 px-2 py-2 sm:py-4 sm:px-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                                     ${
                                         combinationIds.includes(combination.id)
-                                            ? 'border-blue-500 bg-blue-100'
+                                            ? 'border-blue-500 bg-blue-100 text-blue-500'
                                             : 'border-neutral-200'
                                     }`}
                                         >
@@ -86,7 +86,7 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
                         <>
                             {skeletonArray.map((i: number) => (
                                 <Skeleton key={i} isLoaded={false} className="rounded-xl">
-                                    <li className="w-[80px] sm:w-[120px] h-[48px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
+                                    <li className="w-[80px] sm:w-[120px] h-[52px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
                                 </Skeleton>
                             ))}
                         </>

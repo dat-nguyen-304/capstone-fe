@@ -4,6 +4,7 @@ import './globals.css';
 import ReactQueryProvider from '@/components/provider/ReactQueryProvider';
 import AntdProvider from '@/components/provider/AntdProvider';
 import NextUiProvider from '@/components/provider/NextUiProvider';
+import Header from '@/components/header/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,7 +18,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
         <body className={inter.className}>
             <ReactQueryProvider>
                 <AntdProvider>
-                    <NextUiProvider>{children}</NextUiProvider>
+                    <NextUiProvider>
+                        <Header currentUser={{ email: 'a@gmail.com' }} />
+                        <div className="pb-20 pt-28">{children}</div>
+                    </NextUiProvider>
                 </AntdProvider>
             </ReactQueryProvider>
         </body>

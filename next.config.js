@@ -5,7 +5,8 @@ const nextConfig = {
     },
     images: {
         domains: [
-            "cdn3d.iconscout.com"
+            "cdn3d.iconscout.com",
+            "intaadvising.gatech.edu"
         ]
     }
 }
