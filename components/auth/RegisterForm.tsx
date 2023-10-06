@@ -12,21 +12,13 @@ import { ROLES } from './RegisterRoot';
 
 interface RegisterFormProps {
     role: ROLES;
-    setRole: Dispatch<SetStateAction<ROLES>>;
     subjectIds: number[];
     combinationIds: number[];
     nextStep: () => void;
     backStep: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({
-    role,
-    setRole,
-    subjectIds,
-    combinationIds,
-    backStep,
-    nextStep
-}) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinationIds, backStep, nextStep }) => {
     const { control, handleSubmit } = useForm({
         defaultValues: {
             email: '',

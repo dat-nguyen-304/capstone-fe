@@ -3,7 +3,8 @@ const nextConfig = {
     images: {
         domains: [
             "cdn3d.iconscout.com",
-            "intaadvising.gatech.edu"
+            "intaadvising.gatech.edu",
+            "dienmaycongthanh.vn"
         ]
     }
 }

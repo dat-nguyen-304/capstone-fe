@@ -67,7 +67,6 @@ const RegisterRoot: React.FC<RegisterRootProps> = ({}) => {
         body = (
             <RegisterForm
                 role={role}
-                setRole={setRole}
                 combinationIds={combinationIds}
                 subjectIds={subjectIds}
                 nextStep={nextStep}
