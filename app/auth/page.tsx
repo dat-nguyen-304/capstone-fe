@@ -28,7 +28,11 @@ const AuthPage: React.FC<AuthPageProps> = ({}) => {
                     <div className={styles.content}>
                         <h3>Bạn là người mới?</h3>
                         <p>Hãy đăng ký trở thành thành viên mới của đại gia đình CEPA nhé</p>
-                        <button className={`${styles.btn} ${styles.transparent}`} id="sign-up-btn" onClick={changeForm}>
+                        <button
+                            className="w-[110px] sm:w-[130px] bg-none border-solid border-[2px] border-white outline-none h-[35px] sm:h-[40px] rounded-full text-white uppercase font-medium text-xs sm:text-sm m-0 cursor-pointer"
+                            id="sign-up-btn"
+                            onClick={changeForm}
+                        >
                             Đăng ký
                         </button>
                     </div>
@@ -38,7 +42,11 @@ const AuthPage: React.FC<AuthPageProps> = ({}) => {
                     <div className={styles.content}>
                         <h3>Bạn đã có tài khoản?</h3>
                         <p>Hãy đăng nhập ngay để bắt đầu cuộc hành trình chinh phục ước mơ nào</p>
-                        <button className={`${styles.btn} ${styles.transparent}`} id="sign-in-btn" onClick={changeForm}>
+                        <button
+                            className="w-[110px] sm:w-[130px] bg-none border-solid border-[2px] border-white outline-none h-[35px] sm:h-[40px] rounded-full text-white uppercase font-medium text-xs sm:text-sm m-0 cursor-pointer"
+                            id="sign-in-btn"
+                            onClick={changeForm}
+                        >
                             Đăng nhập
                         </button>
                     </div>

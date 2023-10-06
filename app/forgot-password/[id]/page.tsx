@@ -43,7 +43,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
                         <h3>Bạn đã có tài khoản?</h3>
                         <p>Hãy đăng nhập ngay để bắt đầu cuộc hành trình chinh phục ước mơ nào</p>
                         <button
-                            className={`${styles.btn} ${styles.transparent}`}
+                            className="w-[110px] sm:w-[130px] bg-none border-solid border-[2px] border-white outline-none h-[35px] sm:h-[40px] rounded-full text-white uppercase font-medium text-xs sm:text-sm m-0 cursor-pointer"
                             id="sign-up-btn"
                             onClick={() => router.push('/auth', { scroll: false })}
                         >
