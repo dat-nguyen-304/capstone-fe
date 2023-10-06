@@ -4,7 +4,9 @@ const nextConfig = {
         domains: [
             "cdn3d.iconscout.com",
             "intaadvising.gatech.edu",
-            "dienmaycongthanh.vn"
+            "dienmaycongthanh.vn",
+            "motiongility.com",
+            "www.ninjatropic.com"
         ]
     }
 }

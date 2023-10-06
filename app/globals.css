@@ -16,3 +16,23 @@ input {
 nav header {
     max-width: 1296px !important;
 }
+
+.slick-dots.slick-dots-bottom {
+    gap: 4px !important;
+}
+
+.slick-dots-bottom li button {
+    border-radius: 10px !important;
+    height: 10px !important;
+    width: 10px !important;
+    background-color: #60a5fa !important;
+}
+
+.slick-dots-bottom li.slick-active button {
+    background-color: #1f4ccc !important;
+    width: 28px !important;
+}
+
+.slick-dots-bottom li.slick-active {
+    margin-right: 10px !important;
+}
