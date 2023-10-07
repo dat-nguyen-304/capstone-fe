@@ -34,7 +34,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
         }
     ];
     return (
-        <NavbarContent className="hidden sm:flex gap-8" justify="center">
+        <NavbarContent className="hidden md:flex gap-8" justify="center">
             {menuItems.map(item => (
                 <NavbarItem key={item.link} isActive={item.isActive} className="font-medium text-sm">
                     <Link color="foreground" href="#">

@@ -10,11 +10,11 @@ const Title: React.FC<TitleProps> = () => {
             <div>
                 <div className="text-center sm:text-left">
                     <h1 className="flex flex-col">
-                        <b className="text-black text-3xl sm:text-5xl font-bold mb-4 mt-16 sm:mt-0">
+                        <b className="text-black text-3xl lg:text-5xl font-bold mb-4 mt-16 sm:mt-0">
                             Lộ Trình Luyện Thi
                         </b>
-                        <b className="font-bold text-3xl sm:text-5xl mb-4 sm:mt-0 text-[#0071f9]">THPTQG</b>
-                        <b className="text-3xl sm:text-5xl text-black font-bold mb-4 sm:mt-0">Toàn diện!</b>
+                        <b className="font-bold text-3xl lg:text-5xl mb-4 sm:mt-0 text-[#0071f9]">THPTQG</b>
+                        <b className="text-3xl lg:text-5xl text-black font-bold mb-4 sm:mt-0">Toàn diện!</b>
                     </h1>
                     <div className="text-black font-semibold text-[15px]">
                         <p>Học ngay đỗ ngay đại học</p>

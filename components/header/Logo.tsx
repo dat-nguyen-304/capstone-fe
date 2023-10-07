@@ -13,7 +13,7 @@ const Logo: React.FC<LogoProps> = ({ isMenuOpen }) => {
 
     return (
         <NavbarContent justify="center">
-            <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="sm:hidden" />
+            <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="md:hidden" />
             <NavbarBrand>
                 <Image
                     onClick={() => router.push('/')}
