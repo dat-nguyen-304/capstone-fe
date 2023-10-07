@@ -27,7 +27,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
     };
 
     const handleNextStep = () => {
-        if (role) nextStep();
+        if (role !== ROLES.NONE) nextStep();
     };
 
     return (
@@ -37,7 +37,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                 <div className="flex flex-col sm:flex-row gap-6 my-2 sm:my-8">
                     <Card
                         isPressable
-                        className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
+                        className={`w-[240px] h-[180px] md:w-[200px] md:h-[158px] lg:w-[240px] lg:h-[180px] xl:w-[280px] xl:h-[200px] rounded-xl border-2 p-4 md:p-0 lg:p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
                         onPress={() => setRole(ROLES.STUDENT)}
                     >
@@ -47,12 +47,12 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                             height={100}
                             src="https://cdn3d.iconscout.com/3d/premium/thumb/illustration-students-are-using-laptops-5589412-4652813.png"
                         />
-                        <div className="font-semibold mt-4 ">Học sinh</div>
+                        <div className="font-semibold mt-4 md:mt-2 lg:mt-4">Học sinh</div>
                     </Card>
 
                     <Card
                         isPressable
-                        className={`w-[240px] h-[180px] md:w-[200px] md:h-[140px] lg:w-[280px] lg:h-[200px] rounded-xl border-2 p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
+                        className={`w-[240px] h-[180px] md:w-[200px] md:h-[158px] lg:w-[240px] lg:h-[180px] xl:w-[280px] xl:h-[200px] rounded-xl border-2 p-4 md:p-0 lg:p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
                         onPress={() => setRole(ROLES.TEACHER)}
                     >
@@ -62,17 +62,21 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                             height={100}
                             src="https://cdn3d.iconscout.com/3d/premium/thumb/female-teacher-7640039-6186490.png"
                         />
-                        <div className="font-semibold mt-4">Giáo viên</div>
+                        <div className="font-semibold mt-4 md:mt-2 lg:mt-4">Giáo viên</div>
                     </Card>
                 </div>
                 <div className="flex justify-center">
                     <button
                         onClick={handleNextStep}
                         className={`flex justify-center items-center w-[120px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full uppercase sm:font-semibold my-[10px] cursor-pointer 
-                    ${role ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
+                    ${role !== ROLES.NONE ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
                     >
                         <span className="mr-2">Tiếp theo</span>
-                        <BsArrowRight size={20} color={role ? '#fff' : '#000'} className="w-[16px] sm:w-[20px]" />
+                        <BsArrowRight
+                            size={20}
+                            color={role !== ROLES.NONE ? '#fff' : '#000'}
+                            className="w-[16px] sm:w-[20px]"
+                        />
                     </button>
                 </div>
             </motion.div>

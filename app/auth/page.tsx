@@ -41,7 +41,7 @@ const AuthPage: React.FC<AuthPageProps> = ({}) => {
                 <div className={`${styles.panel} ${styles.rightPanel}`}>
                     <div className={styles.content}>
                         <h3>Bạn đã có tài khoản?</h3>
-                        <p>Hãy đăng nhập ngay để bắt đầu cuộc hành trình chinh phục ước mơ nào</p>
+                        <p>Đăng nhập ngay và bắt đầu hành trình chinh phục ước mơ nào!</p>
                         <button
                             className="w-[110px] sm:w-[130px] bg-none border-solid border-[2px] border-white outline-none h-[35px] sm:h-[40px] rounded-full text-white uppercase font-medium text-xs sm:text-sm m-0 cursor-pointer"
                             id="sign-in-btn"
