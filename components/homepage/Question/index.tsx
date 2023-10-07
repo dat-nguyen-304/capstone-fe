@@ -9,8 +9,8 @@ const Question: React.FC<QuestionProps> = () => {
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
     return (
-        <div className="w-[96%] sm:w-[90%] lg:w-[80%] mx-auto bg-blue-100 rounded-3xl">
-            <div className="w-[90%] sm:w-[80%] lg:w-[70%] mx-auto py-16">
+        <div className="w-[96%] sm:w-[90%] lg:w-[80%] mx-auto bg-blue-100 rounded-3xl my-[100px]">
+            <div className="w-[90%] sm:w-[80%] lg:w-[70%] mx-auto pt-16 pb-24">
                 <div className="text-center mb-8">
                     <div className="mb-2">
                         <span className="text-xl md:text-2xl font-semibold text-blue-600">Câu hỏi </span>

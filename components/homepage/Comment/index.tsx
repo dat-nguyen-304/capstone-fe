@@ -23,7 +23,8 @@ const Comment: React.FC<CommentProps> = () => {
                 hasTrack
                 options={{
                     type: 'loop',
-                    padding: '5rem'
+                    padding: '5rem',
+                    autoplay: true
                 }}
             >
                 <SplideSlide className="md:!w-[500px] rounded-xl h-[240px] sm:border-1 !mx-0 sm:!mx-2">

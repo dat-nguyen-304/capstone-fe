@@ -4,6 +4,7 @@ import Banner from '@/components/homepage/Banner';
 import Question from '@/components/homepage/Question';
 import AboutMe from '@/components/homepage/AboutMe';
 import Comment from '@/components/homepage/Comment';
+import Steps from '@/components/homepage/Steps';
 
 export default function Home() {
     return (
@@ -11,6 +12,7 @@ export default function Home() {
             <Header currentUser={{ email: 'a@gmail.com' }} />
             <Banner />
             <AboutMe />
+            <Steps />
             <Comment />
             <Question />
             <Footer />
