@@ -1,11 +1,11 @@
 import React from 'react';
-import { Inter } from 'next/font/google';
+import { Mulish } from 'next/font/google';
 import './globals.css';
 import ReactQueryProvider from '@/components/provider/ReactQueryProvider';
 import AntdProvider from '@/components/provider/AntdProvider';
 import NextUiProvider from '@/components/provider/NextUiProvider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Mulish({ subsets: ['latin'] });
 
 export const metadata = {
     title: 'CEPA',

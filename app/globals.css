@@ -36,3 +36,33 @@ nav header {
 .slick-dots-bottom li.slick-active {
     margin-right: 10px !important;
 }
+
+.splide__arrow svg {
+    fill: #1479f4 !important;
+}
+
+.splide__pagination {
+    gap: 6px;
+    bottom: -2em !important;
+}
+
+@media (max-width: 640px) {
+    .splide__track {
+        padding: 0 !important;
+    }
+}
+
+
+.splide__pagination__page {
+    background-color: #f5dbb7 !important;
+    width: 20px !important;
+    height: 4px !important;
+    border-radius: 2.5px !important;
+}
+
+.splide__pagination__page.is-active {
+    background-color: #1479f4 !important;
+    width: 23px !important;
+    height: 5px !important;
+    border-radius: 2.5px !important;
+}

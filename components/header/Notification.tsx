@@ -26,7 +26,7 @@ const Notification: React.FC<NotificationProps> = () => {
                 }}
             >
                 <DropdownTrigger>
-                    <Button className="bg-white">
+                    <Button className="bg-transparent">
                         <Badge color="danger" content={5} shape="circle">
                             <svg
                                 fill="none"
