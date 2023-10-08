@@ -1,18 +1,20 @@
 'use client';
 
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { vertical } from '@/animations';
 
 interface StepsProps {}
 
 const Steps: React.FC<StepsProps> = () => {
     return (
-        <div className="my-16 md:px-16 px-0 container mx-auto relative">
+        <motion.div {...vertical(100, 0.5, 0)} className="my-16 md:px-16 px-0 container mx-auto relative">
             <h2 className="text-center font-bold md:text-3xl text-2xl md:leading-normal mb-10">
                 Bắt đầu
                 <span className="text-primary"> dễ dàng</span> với 3 bước
             </h2>
             <div className="flex justify-center md:flex-row flex-col">
-                <div className="flex flex-col items-center">
+                <motion.div {...vertical(100, 0.5, 0.1)} className="flex flex-col items-center">
                     <div className="bg-blue-600 inline-block p-4 rounded-md">
                         <Image src="/steps/choose.png" alt="" width={40} height={40} />
                     </div>
@@ -22,11 +24,11 @@ const Steps: React.FC<StepsProps> = () => {
                         </p>
                         <span className="font-bold block text-9xl relative z-0 -mt-14 text-gray-200">1</span>
                     </div>
-                </div>
-                <div className="md:flex flex-col items-center pt-10 hidden">
+                </motion.div>
+                <motion.div {...vertical(100, 0.5, 0.25)} className="md:flex flex-col items-center pt-10 hidden">
                     <Image src="/steps/arrow-1.avif" alt="" width={200} height={80} />
-                </div>
-                <div className="flex flex-col items-center pt-16">
+                </motion.div>
+                <motion.div {...vertical(100, 0.5, 0.4)} className="flex flex-col items-center pt-16">
                     <div className="bg-blue-600 inline-block p-4 rounded-md">
                         <Image src="/steps/pay.png" alt="" width={40} height={40} />
                     </div>
@@ -36,11 +38,11 @@ const Steps: React.FC<StepsProps> = () => {
                         </p>
                         <span className="font-bold block text-9xl relative z-0 -mt-14 text-gray-200">2</span>
                     </div>
-                </div>
-                <div className="md:flex flex-col items-center pt-16 hidden">
+                </motion.div>
+                <motion.div {...vertical(100, 0.5, 0.55)} className="md:flex flex-col items-center pt-16 hidden">
                     <Image src="/steps/arrow-2.avif" alt="" width={200} height={80} />
-                </div>
-                <div className="flex flex-col items-center md:pt-40 pt-16">
+                </motion.div>
+                <motion.div {...vertical(100, 0.5, 0.7)} className="flex flex-col items-center md:pt-40 pt-16">
                     <div className="bg-blue-600 inline-block p-4 rounded-md">
                         <Image src="/steps/screen.png" alt="" width={40} height={40} />
                     </div>
@@ -51,9 +53,9 @@ const Steps: React.FC<StepsProps> = () => {
                         </p>
                         <span className="font-bold block text-9xl relative z-0 -mt-14 text-gray-200">3</span>
                     </div>
-                </div>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

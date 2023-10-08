@@ -6,6 +6,7 @@ import { Combination } from '@/types';
 import { combinationApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Skeleton, Tooltip } from '@nextui-org/react';
+import { horizontal } from '@/animations';
 
 interface RegisterChooseCombinationProps {
     combinationIds: number[];
@@ -26,18 +27,6 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
     });
 
     const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-    const animations = {
-        div: {
-            initial: {
-                x: '-100%',
-                opacity: 0
-            },
-            whileInView: {
-                x: 0,
-                opacity: 1
-            }
-        }
-    };
 
     const handleNextStep = () => {
         if (combinationIds.length) nextStep();
@@ -55,7 +44,7 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
 
     return (
         <div className={styles.signUpForm}>
-            <motion.div {...animations.div}>
+            <motion.div {...horizontal(50, 0.3, 0)}>
                 <h2 className={styles.title}>Bạn muốn thi tổ hợp</h2>
 
                 <ul className="flex gap-3 mt-8 flex-wrap justify-center">

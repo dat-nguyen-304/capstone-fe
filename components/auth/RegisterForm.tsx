@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { Form } from 'antd';
 import styles from '@/app/auth/page.module.css';
 import { motion } from 'framer-motion';
@@ -10,6 +10,7 @@ import { BsArrowLeft } from 'react-icons/bs';
 import { authApi } from '@/api-client/auth-api';
 import { ROLES } from './RegisterRoot';
 import { Button } from '@nextui-org/react';
+import { horizontal } from '@/animations';
 
 interface RegisterFormProps {
     role: ROLES;
@@ -53,19 +54,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
         }
     };
 
-    const animations = {
-        div: {
-            initial: {
-                x: '-100%',
-                opacity: 0
-            },
-            whileInView: {
-                x: 0,
-                opacity: 1
-            }
-        }
-    };
-
     return (
         <Form
             labelCol={{ span: 10 }}
@@ -78,7 +66,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
             onFinish={handleSubmit(handleRegisterSubmit)}
         >
             <motion.div
-                {...animations.div}
+                {...horizontal(50, 0.3, 0)}
                 className="border-gray-100 border-[2px] p-4 sm:p-8 rounded-3xl shadow-2xl shadow-gray-400"
             >
                 <h2 className={`${styles.title} !text-center sm:!mb-8`}>Hoàn tất đăng ký</h2>

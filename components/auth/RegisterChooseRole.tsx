@@ -5,6 +5,7 @@ import { BsArrowRight } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import { ROLES } from './RegisterRoot';
 import { Card } from '@nextui-org/react';
+import { horizontal } from '@/animations';
 
 interface RegisterChooseRoleProps {
     role: ROLES;
@@ -13,26 +14,13 @@ interface RegisterChooseRoleProps {
 }
 
 const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, nextStep }) => {
-    const animations = {
-        div: {
-            initial: {
-                x: '-100%',
-                opacity: 0
-            },
-            whileInView: {
-                x: 0,
-                opacity: 1
-            }
-        }
-    };
-
     const handleNextStep = () => {
         if (role !== ROLES.NONE) nextStep();
     };
 
     return (
         <div className={styles.signUpForm}>
-            <motion.div {...animations.div}>
+            <motion.div {...horizontal(50, 0.3, 0)}>
                 <h2 className={styles.title}>Bạn là</h2>
                 <div className="flex flex-col sm:flex-row gap-6 my-2 sm:my-8">
                     <Card

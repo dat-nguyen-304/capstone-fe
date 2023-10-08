@@ -1,10 +1,11 @@
 'use client';
 
-import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { Avatar } from '@nextui-org/react';
 import { Rate } from 'antd';
+import { vertical } from '@/animations';
 
 interface CommentProps {}
 
@@ -12,7 +13,7 @@ const Comment: React.FC<CommentProps> = () => {
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     return (
-        <div className="w-[80%] my-[120px] mx-auto">
+        <motion.div {...vertical(50, 0.5, 0)} className="w-[80%] py-[40px] mx-auto">
             <div className="text-center mb-8">
                 <div className="mb-2">
                     <span className="font-bold md:text-3xl text-2xl md:leading-normal text-black">
@@ -114,7 +115,7 @@ const Comment: React.FC<CommentProps> = () => {
                     </div>
                 </SplideSlide>
             </Splide>
-        </div>
+        </motion.div>
     );
 };
 

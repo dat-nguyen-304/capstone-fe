@@ -7,6 +7,7 @@ import { Subject } from '@/types';
 import { Card, Skeleton } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
+import { horizontal } from '@/animations';
 
 interface RegisterChooseSubjectProps {
     subjectIds: number[];
@@ -42,22 +43,9 @@ const RegisterChooseSubject: React.FC<RegisterChooseSubjectProps> = ({
         setSubjectIds(newSubjectIds);
     };
 
-    const animations = {
-        div: {
-            initial: {
-                x: '-100%',
-                opacity: 0
-            },
-            whileInView: {
-                x: 0,
-                opacity: 1
-            }
-        }
-    };
-
     return (
         <div className={styles.signUpForm}>
-            <motion.div {...animations.div}>
+            <motion.div {...horizontal(50, 0.3, 0)}>
                 <h2 className={styles.title}>Bạn là giáo viên môn</h2>
                 <ul className="flex gap-3 mt-8 flex-wrap justify-center">
                     {!isLoading ? (
