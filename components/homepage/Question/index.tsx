@@ -13,8 +13,10 @@ const Question: React.FC<QuestionProps> = () => {
             <div className="w-[90%] sm:w-[80%] lg:w-[70%] mx-auto pt-16 pb-24">
                 <div className="text-center mb-8">
                     <div className="mb-2">
-                        <span className="text-xl md:text-2xl font-semibold text-blue-600">Câu hỏi </span>
-                        <span className="text-xl md:text-2xl font-semibold text-gray-600">thường gặp</span>
+                        <span className="font-bold md:text-3xl text-2xl md:leading-normal text-black">Câu hỏi </span>
+                        <span className="font-bold md:text-3xl text-2xl md:leading-normal text-primary">
+                            thường gặp
+                        </span>
                     </div>
                     <div>
                         <span className="text-sm">Cùng CEPA giải đáp những thắc mắc của bạn nhé !</span>

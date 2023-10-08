@@ -15,8 +15,10 @@ const Comment: React.FC<CommentProps> = () => {
         <div className="w-[80%] my-[120px] mx-auto">
             <div className="text-center mb-8">
                 <div className="mb-2">
-                    <span className="text-xl md:text-2xl font-semibold text-blue-600">Học sinh nói gì về </span>
-                    <span className="text-xl md:text-2xl font-semibold text-gray-600">Cepa.com</span>
+                    <span className="font-bold md:text-3xl text-2xl md:leading-normal text-black">
+                        Học sinh nói gì về
+                    </span>
+                    <span className="font-bold md:text-3xl text-2xl md:leading-normal text-primary"> Cepa.com</span>
                 </div>
             </div>
             <Splide

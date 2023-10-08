@@ -11,7 +11,7 @@ export const authApi = {
     },
 
     confirmRegister: async (id: string) => {
-        return await axiosClient.get(`/authentication/confirm?token=${id}`);
+        return await axiosClient.get(`/authentication/confirm?token=${id}&from=register`);
     },
 
     login: async (payload: LoginPayload) => {

@@ -7,7 +7,9 @@ interface AboutMeProps {}
 const AboutMe: React.FC<AboutMeProps> = () => {
     return (
         <div className="mx-auto w-full sm:w-[80%] my-16">
-            <h1 className="my-4 text-xl text-center md:text-2xl text-blue-500 font-semibold">Về Cepa</h1>
+            <h1 className="my-4 font-bold md:text-3xl text-2xl md:leading-normal text-center text-black">
+                Về <span className="text-primary">Cepa</span>
+            </h1>
             <div className="flex">
                 <div className="hidden md:w-1/3 xl:w-1/2 md:flex justify-center items-center">
                     <Image src="/about-me/about-me.webp" alt="" width={200} height={500} />
