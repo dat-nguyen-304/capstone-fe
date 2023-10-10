@@ -18,8 +18,8 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
             isActive: false
         },
         {
-            name: 'Kiểm tra đầu vào',
-            link: '/test',
+            name: 'Kiểm tra năng lực',
+            link: '/check-level',
             isActive: false
         },
         {
@@ -28,8 +28,8 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
             isActive: false
         },
         {
-            name: 'Diễn đàn',
-            link: '/forum',
+            name: 'Thảo luận',
+            link: '/discuss',
             isActive: false
         }
     ];
@@ -37,7 +37,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
         <NavbarContent className="hidden md:flex gap-8" justify="center">
             {menuItems.map(item => (
                 <NavbarItem key={item.link} isActive={item.isActive} className="font-medium text-sm">
-                    <Link color="foreground" href="#">
+                    <Link color="foreground" href={item.link}>
                         {item.name}
                     </Link>
                 </NavbarItem>
