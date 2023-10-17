@@ -46,7 +46,7 @@ const Active: React.FC<ActiveProps> = ({ params }) => {
     if (isLoading) currentPage = <Loader />;
     else if (isActivated) {
         currentPage = (
-            <div className="flex items-center justify-center flex-col bg-cyan-50 h-[100vh]">
+            <div className="flex items-center justify-center flex-col h-[100vh]">
                 <div>
                     <h2 className="text-center text-xl sm:text-3xl">Kích hoạt tài khoản thành công</h2>
                     <p className="mt-2 text-center text-xs">Đang chuyển trang đăng nhập. Vui lòng chờ ({count}) s</p>

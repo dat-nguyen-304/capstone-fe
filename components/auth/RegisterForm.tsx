@@ -22,7 +22,7 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinationIds, backStep, nextStep }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const { control, handleSubmit } = useForm({
+    const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             email: '',
             fullName: '',
@@ -35,19 +35,27 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
     const handleRegisterSubmit = async (values: any) => {
         setIsLoading(true);
         try {
+            let res;
             if (role === ROLES.STUDENT) {
-                await authApi.studentRegister({
+                res = await authApi.studentRegister({
                     userRegister: values,
                     combinationIds
                 });
-            } else if (role === ROLES.TEACHER) {
-                await authApi.teacherRegister({
+            } else {
+                res = await authApi.teacherRegister({
                     userRegister: values,
                     subjectIds
                 });
             }
             setIsLoading(false);
-            nextStep();
+            if (res.status === 201) {
+                nextStep();
+            } else if (res.data?.message === '1') {
+                setError('email', {
+                    type: 'manual',
+                    message: 'Email đã tồn tại'
+                });
+            }
         } catch (error: any) {
             setIsLoading(false);
             console.log(error.message);

@@ -1,14 +1,10 @@
 'use client';
-import { Accordion, AccordionItem, Button, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@nextui-org/react';
-import { Drawer, Rate, Slider, Tooltip } from 'antd';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { Accordion, AccordionItem, Button } from '@nextui-org/react';
+import { Drawer } from 'antd';
+import { AiFillStar } from 'react-icons/ai';
 import { BsBookFill } from 'react-icons/bs';
 import { SiLevelsdotfyi } from 'react-icons/si';
 import { FaCoins } from 'react-icons/fa';
-import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
-import { Subject } from '@/types';
-import { PuffLoader } from 'react-spinners';
 import RatingFilter from './FilterItem/RatingFilter';
 import SubjectFilter from './FilterItem/SubjectFilter';
 import LevelFilter from './FilterItem/LevelFilter';

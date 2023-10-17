@@ -3,7 +3,9 @@ import axiosClient from './axios-client';
 
 export const combinationApi = {
     getAll: async () => {
-        const { data } = await axiosClient.get('/combinations');
-        return data as Combination[];
+        const {
+            data: { data: combinations }
+        } = await axiosClient.get('/combinations');
+        return combinations as Combination[];
     }
 };

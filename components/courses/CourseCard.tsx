@@ -1,8 +1,7 @@
-import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { Rate } from 'antd';
 import Image from 'next/image';
 import styles from '@/app/courses/page.module.css';
-import Link from 'next/link';
 
 interface CourseCardProps {}
 
