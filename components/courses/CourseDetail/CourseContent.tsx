@@ -12,7 +12,7 @@ interface CourseContentProps {}
 const CourseContent: React.FC<CourseContentProps> = ({}) => {
     return (
         <>
-            <p className="mt-4 font-semibold">Nội dung khóa học</p>
+            <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>
             <div className="px-8 mt-4 text-sm">
                 <span className="inline-flex items-center">
                     <span className="font-bold mr-1">20</span>
