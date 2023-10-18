@@ -25,7 +25,7 @@ const CourseContent: React.FC<CourseContentProps> = ({}) => {
                     </span>
                 </span>
             </div>
-            <ul className="">
+            <ul className="max-h-[500px] overflow-y-scroll mt-8">
                 <VideoItem />
                 <VideoItem />
                 <VideoItem />
