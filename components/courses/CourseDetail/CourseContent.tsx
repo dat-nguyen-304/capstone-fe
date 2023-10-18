@@ -1,10 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { BiSolidLike } from 'react-icons/bi';
-import { FaComments } from 'react-icons/fa';
-import { BsBook } from 'react-icons/bs';
-import { RxVideo } from 'react-icons/rx';
 import VideoItem from './VideoItem';
 
 interface CourseContentProps {}

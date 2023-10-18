@@ -1,4 +1,4 @@
-import { useController, Control, FieldValue } from 'react-hook-form';
+import { useController, Control } from 'react-hook-form';
 import { Input, InputProps } from '@nextui-org/react';
 
 export type InputTextProps = InputProps & {
@@ -6,7 +6,7 @@ export type InputTextProps = InputProps & {
     control: Control<any>;
 };
 
-export function InputText({ name, label, control, size }: InputTextProps) {
+export function InputText({ name, label, control, ...rest }: InputTextProps) {
     const {
         field: { onChange, onBlur, value, ref },
         fieldState: { error }
@@ -17,7 +17,7 @@ export function InputText({ name, label, control, size }: InputTextProps) {
 
     return (
         <Input
-            size={size}
+            {...rest}
             label={label}
             isInvalid={error ? true : false}
             errorMessage={error?.message}
