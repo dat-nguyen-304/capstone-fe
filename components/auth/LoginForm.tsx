@@ -9,12 +9,16 @@ import { useEffect, useState } from 'react';
 import { authApi } from '@/api-client';
 import { loginSchema } from '@/yup_schema';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/navigation';
+import useUser from '@/hooks/useUser';
 
 interface LoginFormProps {}
 
 const LoginForm: React.FC<LoginFormProps> = ({}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const router = useRouter();
+    const currentUser = useUser();
     const {
         register,
         handleSubmit,
@@ -42,6 +46,15 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             const res = await authApi.login({ email, password });
             if (res.status === 200 && !res.data.errCode) {
                 setMessage('');
+                const { role } = res.data.userSession;
+                currentUser.onChangeUser(res.data.userSession);
+                if (role === 'STUDENT') {
+                    setIsLoading(false);
+                    return router.push('/');
+                } else if (role === 'TEACHER') {
+                    setIsLoading(false);
+                    return router.push('/teacher');
+                }
             } else {
                 setMessage('Tên đăng nhập hoặc mật khẩu không chính xác');
             }

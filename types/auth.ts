@@ -12,3 +12,12 @@ export type StudentRegisterPayload = {
     userRegister: { email: string; fullName: string; password: string; confirmPassword: string };
     combinationIds: number[];
 };
+
+export type SafeUser = {
+    sub: string;
+    role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+    avatar: null | string;
+    exp: number;
+    iat: number;
+    email: string;
+};

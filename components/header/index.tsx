@@ -1,14 +1,12 @@
 'use client';
 
 import { Student } from '@/types';
-import { Badge, Navbar } from '@nextui-org/react';
+import { Navbar } from '@nextui-org/react';
 import { useState } from 'react';
 import Logo from './Logo';
 import MenuItems from './MenuItems';
 import SignInSignUp from './SignInSignUp';
-import UserMenu from './UserMenu';
 import MenuMobile from './MenuMobile';
-import Notification from './Notification';
 import UserItems from './UserItems';
 interface HeaderProps {
     currentUser: null | Student;

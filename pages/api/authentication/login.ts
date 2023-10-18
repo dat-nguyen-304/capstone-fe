@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy, { ProxyResCallback } from 'http-proxy';
 import Cookies from 'cookies';
 import jwt_decode from 'jwt-decode';
+import { SafeUser } from '@/types';
 
 type Data = {
     message: string;
@@ -38,20 +39,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                         return resolve(true);
                     }
 
-                    const { accessToken, expiredAt } = JSON.parse(body);
+                    const { accessToken, refreshToken } = JSON.parse(body);
                     if (!accessToken) {
                         return (res as NextApiResponse).status(200).json({ errCode: 1 });
                     }
-                    const user = jwt_decode(accessToken);
+
+                    const userSession: SafeUser = jwt_decode(accessToken);
+                    const refresh_token: SafeUser = jwt_decode(refreshToken);
 
                     // convert token to cookies
                     const cookies = new Cookies(req, res, { secure: process.env.NODE_ENV !== 'development' });
                     cookies.set('access_token', accessToken, {
                         httpOnly: true,
                         sameSite: 'lax',
-                        expires: new Date(expiredAt)
+                        expires: new Date(userSession.exp)
                     });
-                    return (res as NextApiResponse).status(200).json({ user, errCode: 0 });
+                    cookies.set('refresh_token', refreshToken, {
+                        httpOnly: true,
+                        sameSite: 'lax',
+                        expires: new Date(refresh_token.exp)
+                    });
+                    return (res as NextApiResponse).status(200).json({ userSession, errCode: 0 });
                 } catch (error) {
                     (res as NextApiResponse).status(500);
                 }
