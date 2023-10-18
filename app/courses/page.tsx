@@ -3,9 +3,9 @@
 import CourseCard from '@/components/courses/CourseCard';
 import CourseFilter from '@/components/courses/CourseFilter';
 
-interface ForgotPasswordProps {}
+interface CourseListProps {}
 
-const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
+const CourseList: React.FC<CourseListProps> = ({}) => {
     return (
         <div className="w-[90%] mx-auto mt-8">
             <CourseFilter />
@@ -21,4 +21,4 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
     );
 };
 
-export default ForgotPassword;
+export default CourseList;
