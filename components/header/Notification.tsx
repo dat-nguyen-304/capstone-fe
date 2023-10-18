@@ -17,7 +17,7 @@ interface NotificationProps {}
 
 const Notification: React.FC<NotificationProps> = () => {
     return (
-        <div className="cursor-pointer mt-2">
+        <div className="cursor-pointer h-[40px]">
             <Dropdown
                 showArrow
                 classNames={{
@@ -30,9 +30,9 @@ const Notification: React.FC<NotificationProps> = () => {
                         <Badge color="danger" content={5} shape="circle">
                             <svg
                                 fill="none"
-                                height={28}
+                                height={24}
                                 viewBox="0 0 24 24"
-                                width={28}
+                                width={24}
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path

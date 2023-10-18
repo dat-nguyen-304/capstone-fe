@@ -6,7 +6,8 @@ const nextConfig = {
             "intaadvising.gatech.edu",
             "dienmaycongthanh.vn",
             "motiongility.com",
-            "www.ninjatropic.com"
+            "www.ninjatropic.com",
+            "dienbientv.vn"
         ]
     }
 }

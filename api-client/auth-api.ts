@@ -15,6 +15,6 @@ export const authApi = {
     },
 
     login: async (payload: LoginPayload) => {
-        return axiosClient.post('/authentication/login', payload);
+        return await axiosClient.post('/authentication/login', payload);
     }
 };

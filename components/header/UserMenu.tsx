@@ -1,7 +1,7 @@
 'use client';
 
 import { Student } from '@/types';
-import { NavbarContent, Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
 

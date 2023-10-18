@@ -63,7 +63,7 @@ const EyeFilledIcon = (props: any) => (
     </svg>
 );
 
-export function InputPassword({ name, label, control }: InputPasswordProps) {
+export function InputPassword({ name, label, control, size }: InputPasswordProps) {
     const {
         field: { onChange, onBlur, value, ref },
         fieldState: { error }
@@ -78,7 +78,7 @@ export function InputPassword({ name, label, control }: InputPasswordProps) {
 
     return (
         <Input
-            size="sm"
+            size={size}
             label={label}
             isInvalid={error ? true : false}
             errorMessage={error?.message}

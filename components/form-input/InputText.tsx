@@ -6,7 +6,7 @@ export type InputTextProps = InputProps & {
     control: Control<any>;
 };
 
-export function InputText({ name, label, control }: InputTextProps) {
+export function InputText({ name, label, control, size }: InputTextProps) {
     const {
         field: { onChange, onBlur, value, ref },
         fieldState: { error }
@@ -17,7 +17,7 @@ export function InputText({ name, label, control }: InputTextProps) {
 
     return (
         <Input
-            size="sm"
+            size={size}
             label={label}
             isInvalid={error ? true : false}
             errorMessage={error?.message}

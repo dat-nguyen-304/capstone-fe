@@ -4,27 +4,72 @@ import { FcGoogle } from 'react-icons/fc';
 import styles from '@/app/auth/page.module.css';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
+import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { authApi } from '@/api-client';
+import { loginSchema } from '@/yup_schema';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface LoginFormProps {}
 
 const LoginForm: React.FC<LoginFormProps> = ({}) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState('');
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+        resolver: yupResolver(loginSchema)
+    });
+
+    useEffect(() => {
+        if (errors.email?.message) {
+            setMessage(errors.email?.message as string);
+        } else if (errors.password?.message) {
+            setMessage(errors.password?.message as string);
+        }
+    }, [errors]);
+
+    const handleLoginSubmit = async (values: { email: string; password: string }) => {
+        setIsLoading(true);
+        try {
+            const { email, password } = values;
+            const res = await authApi.login({ email, password });
+            if (res.status === 200 && !res.data.errCode) {
+                setMessage('');
+            } else {
+                setMessage('Tên đăng nhập hoặc mật khẩu không chính xác');
+            }
+            setIsLoading(false);
+        } catch (error) {
+            setIsLoading(false);
+            setMessage('Vui lòng thử lại sau');
+        }
+    };
     return (
-        <Form action="#" className={styles.signInForm}>
+        <Form action="#" className={styles.signInForm} onFinish={handleSubmit(handleLoginSubmit)}>
             <h2 className={styles.title}>Đăng nhập</h2>
             <div className={styles.inputField}>
                 <i>
                     <AiOutlineUser />
                 </i>
-                <input type="text" placeholder="Email" />
+                <input type="text" placeholder="Email" {...register('email')} />
             </div>
             <div className={styles.inputField}>
                 <i>
                     <AiOutlineLock />
                 </i>
-                <input type="password" placeholder="Mật khẩu" />
+                <input type="password" placeholder="Mật khẩu" {...register('password')} />
             </div>
+            <p className="text-[#f31260]">{message}</p>
             <Form.Item className="!mb-0">
                 <Button
+                    isLoading={isLoading}
                     type="submit"
                     className="w-[150px] sm:w-[200px] bg-blue-500 border-none outline-none h-[50px] rounded-full text-white uppercase font-semibold my-[10px] cursor-pointer transition duration-500 hover:bg-[#4d84e2]"
                 >

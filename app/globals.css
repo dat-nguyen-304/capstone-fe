@@ -65,3 +65,7 @@ nav header {
     height: 5px !important;
     border-radius: 2.5px !important;
 }
+
+.ant-drawer .drawer-dashboard-mobile .ant-drawer-body {
+    padding: 0px !important;
+}
