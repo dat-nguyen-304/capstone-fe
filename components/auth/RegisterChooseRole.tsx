@@ -27,6 +27,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                         isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[158px] lg:w-[240px] lg:h-[180px] xl:w-[280px] xl:h-[200px] rounded-xl border-2 p-4 md:p-0 lg:p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.STUDENT ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
+                        id="student"
                         onPress={() => setRole(ROLES.STUDENT)}
                     >
                         <Image
@@ -42,6 +43,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                         isPressable
                         className={`w-[240px] h-[180px] md:w-[200px] md:h-[158px] lg:w-[240px] lg:h-[180px] xl:w-[280px] xl:h-[200px] rounded-xl border-2 p-4 md:p-0 lg:p-4 items-center flex flex-col gap-3 hover:border-blue-500 transition cursor-pointer
                     ${role === ROLES.TEACHER ? 'border-blue-500 bg-blue-100 text-blue-500' : 'border-neutral-200'}`}
+                        id="teacher"
                         onPress={() => setRole(ROLES.TEACHER)}
                     >
                         <Image
@@ -58,6 +60,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                         onClick={handleNextStep}
                         className={`flex justify-center items-center w-[120px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full uppercase sm:font-semibold my-[10px] cursor-pointer 
                     ${role !== ROLES.NONE ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
+                        id="next-page"
                     >
                         <span className="mr-2">Tiếp theo</span>
                         <BsArrowRight

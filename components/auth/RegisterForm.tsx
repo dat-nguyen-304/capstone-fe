@@ -87,6 +87,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
                 <div className="flex justify-center items-center gap-4">
                     <Button
                         onClick={!isLoading ? backStep : () => {}}
+                        id="go-back"
                         className="flex justify-center items-center bg-white w-[108px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm border-2 border-gray-300 rounded-full uppercase font-semibold my-[10px] cursor-pointer"
                     >
                         <BsArrowLeft size={20} color="#333" className="w-[16px] sm:w-[20px]" />
@@ -96,6 +97,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
                         type="submit"
                         isLoading={isLoading}
                         className="w-[108px] h-[40px] sm:w-[200px] sm:h-[48px] text-xs sm:text-sm bg-blue-500 border-none outline-none rounded-full text-white uppercase font-semibold my-[10px] cursor-pointer"
+                        id="register"
                     >
                         Đăng ký
                     </Button>

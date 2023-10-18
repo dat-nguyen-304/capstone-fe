@@ -71,13 +71,13 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                 <i>
                     <AiOutlineUser />
                 </i>
-                <input type="text" placeholder="Email" {...register('email')} />
+                <input type="text" placeholder="Email" id="email" {...register('email')} />
             </div>
             <div className={styles.inputField}>
                 <i>
                     <AiOutlineLock />
                 </i>
-                <input type="password" placeholder="Mật khẩu" {...register('password')} />
+                <input type="password" placeholder="Mật khẩu" id="current-password" {...register('password')} />
             </div>
             <p className="text-[#f31260]">{message}</p>
             <Form.Item className="!mb-0">
@@ -85,16 +85,18 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                     isLoading={isLoading}
                     type="submit"
                     className="w-[150px] sm:w-[200px] bg-blue-500 border-none outline-none h-[50px] rounded-full text-white uppercase font-semibold my-[10px] cursor-pointer transition duration-500 hover:bg-[#4d84e2]"
+                    id="login"
                 >
                     Đăng nhập
                 </Button>
             </Form.Item>
-            <Link href="/forgot-password" className="">
+            <Link href="/forgot-password" className="" id="forgot-password">
                 Quên mật khẩu
             </Link>
             <div className="border-t-2 mt-6 border-t-[#ccc] w-[300px] sm:w-[360px] flex justify-center">
                 <Button
                     className="mt-6 bg-white border-[2px] border-black flex w-[280px] sm:w-[320px] text-base px-8 py-6 font-semibold text-[#333]"
+                    id="google-login"
                     startContent={<FcGoogle size={24} />}
                 >
                     <p className="flex-1">Đăng nhập với google</p>
