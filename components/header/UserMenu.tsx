@@ -6,10 +6,10 @@ import Link from 'next/link';
 import React from 'react';
 
 interface UserMenuProps {
-    currentUser: Student;
+    currentStudent: Student;
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
     return (
         <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -20,13 +20,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                     color="secondary"
                     name="Jason Hughes"
                     size="sm"
-                    src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                    src={currentStudent.avatar}
                 />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">Xin chào</p>
-                    <p className="font-semibold">{currentUser.email}</p>
+                    <p className="font-semibold">{currentStudent.fullname}</p>
                 </DropdownItem>
                 <DropdownItem as={Link} href="/profile" key="profile">
                     Hồ sơ

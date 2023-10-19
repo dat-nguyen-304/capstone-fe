@@ -3,9 +3,11 @@
 import React from 'react';
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout } from 'antd';
 import Link from 'next/link';
 import Sidebar from './Sidebar';
+import useUser from '@/hooks/useUser';
+import { Teacher } from '@/types';
+import NotFound from '@/app/not-found';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -44,7 +46,13 @@ const items: MenuItem[] = [
 ];
 
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
-    return <Sidebar items={items}>{children}</Sidebar>;
+    const { user } = useUser();
+    if (!user) return <NotFound />;
+    return (
+        <Sidebar teacher={user as Teacher} items={items}>
+            {children}
+        </Sidebar>
+    );
 };
 
 export default TeacherLayout;

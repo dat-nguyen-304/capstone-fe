@@ -9,7 +9,7 @@ import Steps from '@/components/homepage/Steps';
 export default function Home() {
     return (
         <>
-            <Header currentUser={{ email: 'a@gmail.com' }} />
+            <Header />
             <Banner />
             <AboutMe />
             <Steps />

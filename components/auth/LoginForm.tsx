@@ -11,6 +11,7 @@ import { loginSchema } from '@/yup_schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import useUser from '@/hooks/useUser';
+import { SafeUser } from '@/types';
 
 interface LoginFormProps {}
 
@@ -46,12 +47,16 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             const res = await authApi.login({ email, password });
             if (res.status === 200 && !res.data.errCode) {
                 setMessage('');
-                const { role } = res.data.userSession;
-                currentUser.onChangeUser(res.data.userSession);
-                if (role === 'STUDENT') {
+
+                const userSession: SafeUser = res.data.userSession;
+                currentUser.onChangeUser(userSession);
+
+                if (userSession.role === 'STUDENT') {
+                    if (!userSession.avatar) userSession.avatar = '/student.png';
                     setIsLoading(false);
                     return router.push('/');
-                } else if (role === 'TEACHER') {
+                } else if (userSession.role === 'TEACHER') {
+                    if (!userSession.avatar) userSession.avatar = '/teacher.png';
                     setIsLoading(false);
                     return router.push('/teacher');
                 }

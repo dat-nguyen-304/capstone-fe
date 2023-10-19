@@ -1,6 +1,6 @@
 'use client';
 
-import { Student } from '@/types';
+import { SafeUser, Student } from '@/types';
 import { Navbar } from '@nextui-org/react';
 import { useState } from 'react';
 import Logo from './Logo';
@@ -8,12 +8,13 @@ import MenuItems from './MenuItems';
 import SignInSignUp from './SignInSignUp';
 import MenuMobile from './MenuMobile';
 import UserItems from './UserItems';
-interface HeaderProps {
-    currentUser: null | Student;
-}
+import useUser from '@/hooks/useUser';
 
-const Header: React.FC<HeaderProps> = ({ currentUser }) => {
+interface HeaderProps {}
+
+const Header: React.FC<HeaderProps> = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user } = useUser();
 
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -21,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser }) => {
 
             <MenuItems />
 
-            {currentUser ? <UserItems currentUser={currentUser} /> : <SignInSignUp />}
+            {user ? <UserItems currentStudent={user as Student} /> : <SignInSignUp />}
 
             <MenuMobile />
         </Navbar>

@@ -7,14 +7,14 @@ import Notification from './Notification';
 import UserMenu from './UserMenu';
 
 interface UserItemsProps {
-    currentUser: Student;
+    currentStudent: Student;
 }
 
-const UserItems: React.FC<UserItemsProps> = ({ currentUser }) => {
+const UserItems: React.FC<UserItemsProps> = ({ currentStudent }) => {
     return (
         <NavbarContent as="div" justify="center" className="flex gap-[48px] items-center">
             <Notification />
-            <UserMenu currentUser={currentUser} />
+            <UserMenu currentStudent={currentStudent} />
         </NavbarContent>
     );
 };

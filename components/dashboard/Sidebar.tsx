@@ -1,27 +1,19 @@
 'use client';
 import React, { useState } from 'react';
-import {
-    DesktopOutlined,
-    FileOutlined,
-    PieChartOutlined,
-    TeamOutlined,
-    UserOutlined,
-    MenuUnfoldOutlined,
-    MenuFoldOutlined
-} from '@ant-design/icons';
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Drawer, Layout, Menu, theme } from 'antd';
 import Image from 'next/image';
 import Notification from '../header/Notification';
 import { Button } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
-import Link from 'next/link';
+import { Teacher } from '@/types';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const Sidebar = ({ children, items }: { children: React.ReactNode; items: MenuItem[] }) => {
+const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; items: MenuItem[]; teacher: Teacher }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
     const {
@@ -38,13 +30,13 @@ const Sidebar = ({ children, items }: { children: React.ReactNode; items: MenuIt
             >
                 <div className="flex flex-col items-center gap-4 my-4">
                     <Image
-                        src="https://dienbientv.vn/dataimages/202203/original/images3128706_anh_chup_man_hinh_20220314_luc_182614_1647257194660_16472799737181193498662.png"
+                        src={teacher.avatar}
                         width={60}
                         height={60}
                         alt=""
                         className="cursor-pointer !rounded-full"
                     />
-                    {!collapsed && <p className="text-white">Nguyễn Văn A</p>}
+                    {!collapsed && <p className="text-white">{teacher.fullname}</p>}
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>

@@ -30,12 +30,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                         id="student"
                         onPress={() => setRole(ROLES.STUDENT)}
                     >
-                        <Image
-                            alt=""
-                            width={100}
-                            height={100}
-                            src="https://cdn3d.iconscout.com/3d/premium/thumb/illustration-students-are-using-laptops-5589412-4652813.png"
-                        />
+                        <Image alt="" width={100} height={100} src="/student.png" />
                         <div className="font-semibold mt-4 md:mt-2 lg:mt-4">Học sinh</div>
                     </Card>
 
@@ -46,12 +41,7 @@ const RegisterChooseRole: React.FC<RegisterChooseRoleProps> = ({ role, setRole, 
                         id="teacher"
                         onPress={() => setRole(ROLES.TEACHER)}
                     >
-                        <Image
-                            alt=""
-                            width={100}
-                            height={100}
-                            src="https://cdn3d.iconscout.com/3d/premium/thumb/female-teacher-7640039-6186490.png"
-                        />
+                        <Image alt="" width={100} height={100} src="/teacher.png" />
                         <div className="font-semibold mt-4 md:mt-2 lg:mt-4">Giáo viên</div>
                     </Card>
                 </div>
