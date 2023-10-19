@@ -19,7 +19,7 @@ const CourseContent: React.FC<CourseContentProps> = ({}) => {
                     <span className="inline-flex items-center">
                         <span className="font-bold mr-1">5</span>
                         <span>Bài tập</span>
-                        <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
+                        <Image src="/video-number/red.svg" width={30} height={30} alt="" />
                     </span>
                 </span>
             </div>
