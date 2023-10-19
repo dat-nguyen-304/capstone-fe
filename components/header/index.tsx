@@ -8,7 +8,7 @@ import MenuItems from './MenuItems';
 import SignInSignUp from './SignInSignUp';
 import MenuMobile from './MenuMobile';
 import UserItems from './UserItems';
-import useUser from '@/hooks/useUser';
+import { useUser } from '@/hooks';
 
 interface HeaderProps {}
 

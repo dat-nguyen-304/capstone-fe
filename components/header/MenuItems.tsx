@@ -1,12 +1,15 @@
 'use client';
 
+import { useUser } from '@/hooks';
 import { NavbarContent, NavbarItem } from '@nextui-org/react';
 import Link from 'next/link';
 
 interface MenuItemsProps {}
 
 const MenuItems: React.FC<MenuItemsProps> = () => {
-    const menuItems = [
+    const { user } = useUser();
+    let menuItems;
+    menuItems = [
         {
             name: 'Trang chủ',
             link: '/',
@@ -23,16 +26,40 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
             isActive: false
         },
         {
-            name: 'Khóa học của tôi',
-            link: '/my-course',
-            isActive: false
-        },
-        {
             name: 'Thảo luận',
             link: '/discuss',
             isActive: false
         }
     ];
+    if (user) {
+        menuItems = [
+            {
+                name: 'Trang chủ',
+                link: '/',
+                isActive: true
+            },
+            {
+                name: 'Khóa học',
+                link: '/courses',
+                isActive: false
+            },
+            {
+                name: 'Kiểm tra năng lực',
+                link: '/check-level',
+                isActive: false
+            },
+            {
+                name: 'Khóa học của tôi',
+                link: '/my-course',
+                isActive: false
+            },
+            {
+                name: 'Thảo luận',
+                link: '/discuss',
+                isActive: false
+            }
+        ];
+    }
     return (
         <NavbarContent className="hidden md:flex gap-8" justify="center">
             {menuItems.map(item => (

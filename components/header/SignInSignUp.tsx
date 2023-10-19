@@ -7,13 +7,10 @@ interface SignInSignUpProps {}
 
 const SignInSignUp: React.FC<SignInSignUpProps> = () => {
     return (
-        <NavbarContent justify="end">
-            <NavbarItem className="hidden lg:flex">
-                <Link href="#">Đăng nhập</Link>
-            </NavbarItem>
+        <NavbarContent justify="center">
             <NavbarItem>
-                <Button as={Link} color="primary" href="#" variant="flat">
-                    Đăng ký
+                <Button as={Link} color="primary" href="/auth" variant="flat">
+                    Bắt đầu học ngay
                 </Button>
             </NavbarItem>
         </NavbarContent>

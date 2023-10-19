@@ -9,7 +9,7 @@ export const metadata = {
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => (
     <>
-        <Header currentUser={{ email: 'a@gmail.com' }} />
+        <Header />
         {children}
         <Footer />
     </>

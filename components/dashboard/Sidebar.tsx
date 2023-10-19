@@ -8,6 +8,8 @@ import Notification from '../header/Notification';
 import { Button } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
 import { Teacher } from '@/types';
+import { useUser } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -16,9 +18,15 @@ type MenuItem = Required<MenuProps>['items'][number];
 const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; items: MenuItem[]; teacher: Teacher }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
+    const currentUser = useUser();
+    const router = useRouter();
     const {
         token: { colorBgContainer }
     } = theme.useToken();
+    const handleLogout = () => {
+        currentUser.onChangeUser(null);
+        router.push('/auth');
+    };
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -72,7 +80,7 @@ const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; item
                     </div>
                     <div className="hidden sm:flex items-center justify-end h-[60px] sm:gap-[48px]">
                         <Notification />
-                        <Button variant="light" color="danger">
+                        <Button variant="light" color="danger" onClick={handleLogout}>
                             <p className="flex gap-2">
                                 Đăng xuất <TbLogout size={20} />
                             </p>

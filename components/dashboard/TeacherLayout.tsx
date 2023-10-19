@@ -5,7 +5,7 @@ import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutl
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from './Sidebar';
-import useUser from '@/hooks/useUser';
+import { useUser } from '@/hooks';
 import { Teacher } from '@/types';
 import NotFound from '@/app/not-found';
 

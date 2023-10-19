@@ -10,7 +10,7 @@ import { authApi } from '@/api-client';
 import { loginSchema } from '@/yup_schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
-import useUser from '@/hooks/useUser';
+import { useUser } from '@/hooks';
 import { SafeUser } from '@/types';
 
 interface LoginFormProps {}

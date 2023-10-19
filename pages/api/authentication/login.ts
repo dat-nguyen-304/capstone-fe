@@ -18,7 +18,7 @@ const proxy = httpProxy.createProxyServer();
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     if (req.method !== 'POST') {
-        return res.status(404).json({ message: 'method not supported' });
+        return res.status(404).json({ message: 'Method not supported' });
     }
 
     return new Promise(resolve => {

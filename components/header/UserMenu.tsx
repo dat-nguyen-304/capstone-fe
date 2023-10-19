@@ -4,12 +4,20 @@ import { Student } from '@/types';
 import { Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
-
+import { useUser } from '@/hooks';
+import { useRouter } from 'next/navigation';
 interface UserMenuProps {
     currentStudent: Student;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
+    const currentUser = useUser();
+    const router = useRouter();
+    const handleLogout = () => {
+        currentUser.onChangeUser(null);
+        router.push('/');
+    };
+
     return (
         <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -34,7 +42,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
                 <DropdownItem as={Link} href="/transaction" key="transaction">
                     Lịch sử giao dịch
                 </DropdownItem>
-                <DropdownItem as={Link} href="/logout" key="logout" color="danger">
+                <DropdownItem onClick={handleLogout} key="logout" color="danger">
                     Đăng xuất
                 </DropdownItem>
             </DropdownMenu>

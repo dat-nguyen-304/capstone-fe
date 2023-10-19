@@ -6,9 +6,7 @@ interface UserStore {
     onChangeUser: (user: SafeUser | null) => void;
 }
 
-const useUser = create<UserStore>(set => ({
+export const useUser = create<UserStore>(set => ({
     user: null,
     onChangeUser: (user: SafeUser | null) => set({ user })
 }));
-
-export default useUser;
