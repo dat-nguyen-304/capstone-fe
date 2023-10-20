@@ -1,5 +1,5 @@
 export type Student = {
     email: string;
-    fullname: string;
+    fullName: string;
     avatar: string;
 };

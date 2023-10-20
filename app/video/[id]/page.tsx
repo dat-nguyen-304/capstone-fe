@@ -3,9 +3,9 @@
 import dynamic from 'next/dynamic';
 import VideoItem from '@/components/videoPlayer/VideoItem';
 import VideoHeader from '@/components/header/VideoHeader';
-import { Button, Tab, Tabs } from '@nextui-org/react';
+import { Tab, Tabs } from '@nextui-org/react';
 import CommentItem from '@/components/videoPlayer/CommentItem';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { OnProgressProps } from 'react-player/base';
 import { convertSeconds } from '@/utils';
@@ -14,17 +14,11 @@ import Note from '@/components/videoPlayer/Note';
 interface VideoProps {}
 
 const Video: React.FC<VideoProps> = ({}) => {
-    const playerRef = useRef<any>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState('');
     const handleProgress = (progress: OnProgressProps) => {
-        // `progress` contains information about the video playback, including the current time
         const timeString = convertSeconds(progress.playedSeconds);
         setCurrentTime(timeString);
-    };
-    const handlePause = () => {
-        if (playerRef.current) {
-            playerRef.current.pause();
-        }
     };
     return (
         <>
@@ -34,16 +28,17 @@ const Video: React.FC<VideoProps> = ({}) => {
                     <div className="col-span-10 md:col-span-7">
                         <div>
                             <ReactPlayer
-                                ref={playerRef}
+                                playing={isPlaying}
                                 width="100%"
                                 height="450px"
                                 controls={true}
+                                onPlay={() => setIsPlaying(true)}
+                                onPause={() => setIsPlaying(false)}
                                 url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
                                 onProgress={progress => handleProgress(progress)}
                             />
                         </div>
                         <h3 className="mt-4 text-xl font-semibold">Làm quen với abcxyz</h3>
-                        <Button onClick={handlePause}>Pause</Button>
                         <div className="mt-8 px-4">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">

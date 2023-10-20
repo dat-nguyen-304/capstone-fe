@@ -44,7 +44,7 @@ const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; item
                         alt=""
                         className="cursor-pointer !rounded-full"
                     />
-                    {!collapsed && <p className="text-white">{teacher.fullname}</p>}
+                    {!collapsed && <p className="text-white">{teacher.fullName}</p>}
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>

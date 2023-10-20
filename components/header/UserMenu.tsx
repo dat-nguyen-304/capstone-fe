@@ -34,7 +34,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
             <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">Xin chào</p>
-                    <p className="font-semibold">{currentStudent.fullname}</p>
+                    <p className="font-semibold">{currentStudent.fullName}</p>
                 </DropdownItem>
                 <DropdownItem as={Link} href="/profile" key="profile">
                     Hồ sơ

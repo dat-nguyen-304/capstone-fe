@@ -16,7 +16,7 @@ export type StudentRegisterPayload = {
 export type SafeUser = {
     sub: string;
     role: 'STUDENT' | 'TEACHER' | 'ADMIN';
-    fullname: string;
+    fullName: string;
     avatar: null | string;
     exp: number;
     iat: number;
