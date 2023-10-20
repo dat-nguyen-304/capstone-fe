@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import VideoItem from '@/components/videoPlayer/VideoItem';
-import HeaderVideo from '@/components/header/HeaderVideo';
+import VideoHeader from '@/components/header/VideoHeader';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import CommentItem from '@/components/videoPlayer/CommentItem';
 import { useRef, useState } from 'react';
@@ -28,7 +28,7 @@ const Video: React.FC<VideoProps> = ({}) => {
     };
     return (
         <>
-            <HeaderVideo />
+            <VideoHeader />
             <div className="w-[90%] lg:w-4/5 mx-auto">
                 <div className="relative grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-10 md:col-span-7">

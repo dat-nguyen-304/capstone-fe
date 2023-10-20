@@ -5,14 +5,14 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { Drawer } from 'antd';
 import { Button } from '@nextui-org/react';
 import 'react-quill/dist/quill.snow.css';
-import JoditEditor from 'jodit-react';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface NoteProps {
     currentTime: string;
 }
 
 const Note: React.FC<NoteProps> = ({ currentTime }) => {
-    const [content, setContent] = useState('');
     const [open, setOpen] = useState(false);
     const showDrawer = () => {
         setOpen(true);
@@ -29,7 +29,7 @@ const Note: React.FC<NoteProps> = ({ currentTime }) => {
                 open={open}
                 onClose={() => setOpen(false)}
             >
-                <JoditEditor value={content} key={'abc'} onChange={newContent => setContent(newContent)} />
+                <ReactQuill theme="snow" />
                 <div className="mt-4 gap-4 flex justify-end ">
                     <Button size="sm">Hủy bỏ</Button>
                     <Button size="sm" color="primary">

@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@nextui-org/react';
 
-interface HeaderVideoProps {}
+interface VideoHeaderProps {}
 
-const HeaderVideo: React.FC<HeaderVideoProps> = ({}) => {
+const VideoHeader: React.FC<VideoHeaderProps> = ({}) => {
     return (
         <div className="h-[60px] bg-blue-400 flex items-center justify-between px-8">
             <div className="flex items-center gap-4">
@@ -52,4 +52,4 @@ const HeaderVideo: React.FC<HeaderVideoProps> = ({}) => {
     );
 };
 
-export default HeaderVideo;
+export default VideoHeader;
