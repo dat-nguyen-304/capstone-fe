@@ -16,6 +16,7 @@ import {
     User
 } from '@nextui-org/react';
 import TopContent from './TopContent';
+import Link from 'next/link';
 
 // const INITIAL_VISIBLE_COLUMNS = ['id', 'author', 'title', 'status', 'createdAt'];
 
@@ -192,9 +193,10 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
             <TableBody emptyContent={'Không tìm thấy kết quả'} items={sortedItems}>
                 {item => (
                     <TableRow
+                        as={Link}
                         key={item.id}
                         className="cursor-pointer border-b-1 border-black"
-                        onClick={() => console.log(item.id)}
+                        href={`/discuss/${item.id}`}
                     >
                         {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                     </TableRow>
