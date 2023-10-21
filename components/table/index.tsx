@@ -192,12 +192,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
             </TableHeader>
             <TableBody emptyContent={'Không tìm thấy kết quả'} items={sortedItems}>
                 {item => (
-                    <TableRow
-                        as={Link}
-                        key={item.id}
-                        className="cursor-pointer border-b-1 border-black"
-                        href={`/discuss/${item.id}`}
-                    >
+                    <TableRow key={item.id} className="border-b-1 border-gray-200">
                         {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                     </TableRow>
                 )}

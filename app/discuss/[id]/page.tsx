@@ -1,11 +1,12 @@
 'use client';
 
 import PostComment from '@/components/discuss/PostComment';
-import { Button, Pagination, Tab, Tabs } from '@nextui-org/react';
+import { Button, Pagination, Select, SelectItem } from '@nextui-org/react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface PostDetailProps {}
 
@@ -30,41 +31,23 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     </Button>
                 </div>
             </div>
-            <h4 className="text-sm font-semibold">Sắp xếp theo</h4>
             <div className="w-full">
-                <Tabs
-                    placeholder="abc"
-                    aria-label="Options"
+                <Select
+                    size="sm"
+                    label="Sắp xếp theo"
                     color="primary"
-                    variant="underlined"
-                    classNames={{
-                        tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
-                        cursor: 'w-full bg-[#22d3ee]',
-                        tab: 'max-w-fit px-0 h-12',
-                        tabContent: 'group-data-[selected=true]:text-[#06b6d4]'
-                    }}
+                    variant="bordered"
+                    defaultSelectedKeys={['0']}
+                    className="w-[240px] mt-4"
                 >
-                    <Tab
-                        key="photos"
-                        title={
-                            <div className="flex items-center space-x-2">
-                                <span>Thời gian</span>
-                            </div>
-                        }
-                    >
-                        <PostComment />
-                    </Tab>
-                    <Tab
-                        key="music"
-                        title={
-                            <div className="flex items-center space-x-2">
-                                <span>Tương tác</span>
-                            </div>
-                        }
-                    >
-                        <PostComment />
-                    </Tab>
-                </Tabs>
+                    <SelectItem key={0} value={0}>
+                        Thời gian
+                    </SelectItem>
+                    <SelectItem key={1} value={1}>
+                        Tương tác
+                    </SelectItem>
+                </Select>
+                <PostComment />
                 <div className="flex justify-center my-8">
                     <Pagination total={10} />
                 </div>

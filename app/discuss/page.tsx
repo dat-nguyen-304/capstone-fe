@@ -3,6 +3,7 @@ import Table from '@/components/table';
 import { Key, useCallback } from 'react';
 import { columns, posts, statusOptions } from '@/components/table/data';
 import { Chip, ChipProps, User } from '@nextui-org/react';
+import Link from 'next/link';
 
 interface TestProps {}
 
@@ -19,6 +20,12 @@ const Test: React.FC<TestProps> = ({}) => {
         const cellValue = post[columnKey as keyof Post];
 
         switch (columnKey) {
+            case 'title':
+                return (
+                    <Link className="underline" href={`/discuss/${post.id}`}>
+                        {cellValue}
+                    </Link>
+                );
             case 'author':
                 return (
                     <User
@@ -26,7 +33,7 @@ const Test: React.FC<TestProps> = ({}) => {
                         classNames={{
                             description: 'text-default-500'
                         }}
-                        // description={post.author}
+                        description="1 giờ trước"
                         name={cellValue}
                     >
                         {post.author}
@@ -52,7 +59,7 @@ const Test: React.FC<TestProps> = ({}) => {
         <div className="w-4/5 mx-auto my-8">
             <Table
                 renderCell={renderCell}
-                initialVisibleColumns={['id', 'author', 'title', 'status', 'createdAt']}
+                initialVisibleColumns={['id', 'title', 'status', 'author']}
                 columns={columns}
                 statusOptions={statusOptions}
                 posts={posts}

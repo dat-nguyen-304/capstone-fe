@@ -41,7 +41,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
                     const { accessToken, refreshToken } = JSON.parse(body);
                     if (!accessToken) {
-                        return (res as NextApiResponse).status(200).json({ errCode: 1 });
+                        return (res as NextApiResponse).status(200).json({ code: 1 });
                     }
 
                     const userSession: SafeUser = jwt_decode(accessToken);
@@ -59,7 +59,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                         sameSite: 'lax',
                         expires: new Date(refresh_token.exp)
                     });
-                    return (res as NextApiResponse).status(200).json({ userSession, errCode: 0 });
+                    return (res as NextApiResponse).status(200).json({ userSession, code: 0 });
                 } catch (error) {
                     (res as NextApiResponse).status(500);
                 }

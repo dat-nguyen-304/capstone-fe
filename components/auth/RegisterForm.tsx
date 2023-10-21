@@ -50,7 +50,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
             setIsLoading(false);
             if (res.status === 201) {
                 nextStep();
-            } else if (res.data?.message === '1') {
+            } else if (res.data?.code === '1') {
                 setError('email', {
                     type: 'manual',
                     message: 'Email đã tồn tại'

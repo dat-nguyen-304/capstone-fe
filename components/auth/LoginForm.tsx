@@ -45,18 +45,17 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
         try {
             const { email, password } = values;
             const res = await authApi.login({ email, password });
-            if (res.status === 200 && !res.data.errCode) {
+            if (res.status === 200 && !res.data.code) {
                 setMessage('');
-
                 const userSession: SafeUser = res.data.userSession;
-                currentUser.onChangeUser(userSession);
-
                 if (userSession.role === 'STUDENT') {
                     if (!userSession.avatar) userSession.avatar = '/student.png';
+                    currentUser.onChangeUser(userSession);
                     setIsLoading(false);
                     return router.push('/');
                 } else if (userSession.role === 'TEACHER') {
                     if (!userSession.avatar) userSession.avatar = '/teacher.png';
+                    currentUser.onChangeUser(userSession);
                     setIsLoading(false);
                     return router.push('/teacher');
                 }

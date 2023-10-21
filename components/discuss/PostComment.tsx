@@ -19,7 +19,7 @@ const PostComment: React.FC<PostCommentProps> = ({ title = '' }) => {
                     }}
                 />
             </div>
-            <div className="p-4 border-1 border-blue-500 col-span-8 relative rounded-r-xl rounded-e-xl sm:rounded-e-none">
+            <div className="p-4 border-1 border-blue-500 col-span-8 relative rounded-r-xl rounded-l-xl sm:rounded-l-none">
                 <User
                     name="Jane Doe"
                     description="2 giờ trước"
