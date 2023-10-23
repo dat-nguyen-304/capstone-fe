@@ -50,7 +50,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
             },
             {
                 name: 'Khóa học của tôi',
-                link: '/my-course',
+                link: '/my-courses',
                 isActive: false
             },
             {

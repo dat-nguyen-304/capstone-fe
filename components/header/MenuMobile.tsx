@@ -17,18 +17,18 @@ const MenuMobile: React.FC<MenuMobileProps> = () => {
             isActive: false
         },
         {
-            name: 'Kiểm tra đầu vào',
-            link: '/test',
+            name: 'Kiểm tra năng lực',
+            link: '/check-level',
             isActive: false
         },
         {
             name: 'Khóa học của tôi',
-            link: '/my-course',
+            link: '/my-courses',
             isActive: false
         },
         {
-            name: 'Diễn đàn',
-            link: '/forum',
+            name: 'Thảo luận',
+            link: '/discuss',
             isActive: false
         }
     ];
