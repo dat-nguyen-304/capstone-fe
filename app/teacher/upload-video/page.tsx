@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { InputDescription } from '@/components/form-input/InputDescription';
 
-const App: React.FC = () => {
+const UploadVideo: React.FC = () => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -94,4 +94,4 @@ const App: React.FC = () => {
     );
 };
 
-export default App;
+export default UploadVideo;

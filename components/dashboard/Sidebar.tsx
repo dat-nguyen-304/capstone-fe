@@ -93,8 +93,10 @@ const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; item
                         </Button>
                     </div>
                 </Header>
-                <Content style={{ margin: '0 16px' }}>
-                    <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>{children}</div>
+                <Content className="">
+                    <div className="p-1 sm:p-[24px] min-h-[360px]" style={{ background: colorBgContainer }}>
+                        {children}
+                    </div>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>CEPA ©2023</Footer>
             </Layout>
