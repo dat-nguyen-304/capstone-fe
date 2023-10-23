@@ -30,19 +30,19 @@ const Profile: React.FC = () => {
         <div className="w-[90%] mx-auto lg:grid grid-cols-9 gap-8 my-8">
             <h4 className="sm:hidden text-xl text-blue-500 font-semibold mb-8">Ảnh đại diện</h4>
             <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
-                <div className="w-full max-w-[300px] mx-auto relative">
+                <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
                     <Image src="/student.png" width={300} height={300} alt="" className="border-1 rounded-lg" />
                     <div className="absolute right-2 top-2 shadow-lg rounded-full border-2 cursor-pointer w-[40px] h-[40px] flex items-center justify-center">
                         <BiSolidPencil size={20} />
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden lg:block">
                         <h3 className="text-blue-500 text-2xl font-semibold mt-8">Nguyễn Văn An</h3>
                         <p className="mt-4 text-sm">Ngày tạo: 21/10/2023</p>
                         <p className="mt-4 text-sm">Giáo viên môn: Toán học - Vật lí</p>
                     </div>
                 </div>
             </div>
-            <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
+            <div className="col-span-5 xl:col-span-6 mt-8 lg:mt-0 relative">
                 <h4 className="text-xl text-blue-500 font-semibold mb-8">Thông tin cá nhân</h4>
                 {!data ? (
                     <div className="h-[20vh] flex flex-col justify-center items-center">
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
                                 placeholder="Giới thiệu về bạn một chút đi nào"
                             />
                         </div>
-                        <div className="absolute bottom-0 right-0 flex flex-row-reverse mt-8">
+                        <div className="lg:absolute bottom-0 right-0 flex flex-row-reverse mt-8">
                             <Button color="primary">Lưu thay đổi</Button>
                         </div>
                     </div>
