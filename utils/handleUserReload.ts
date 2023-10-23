@@ -3,7 +3,6 @@ import { SafeUser } from '@/types';
 
 export const handleUserReload = async (onChangeUser: (user: SafeUser | null) => void) => {
     const res = await authApi.refreshToken();
-    console.log(res);
 
     if (res.status === 200 && !res.data.code) {
         const userSession: SafeUser = res.data.userSession;

@@ -8,17 +8,11 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Chip,
     Pagination,
     Selection,
-    ChipProps,
-    SortDescriptor,
-    User
+    SortDescriptor
 } from '@nextui-org/react';
 import TopContent from './TopContent';
-import Link from 'next/link';
-
-// const INITIAL_VISIBLE_COLUMNS = ['id', 'author', 'title', 'status', 'createdAt'];
 
 interface AppProps {
     renderCell: (post: any, columnKey: Key) => string | number | JSX.Element;
@@ -28,7 +22,7 @@ interface AppProps {
         uid: string;
         sortable?: boolean;
     }[];
-    statusOptions: {
+    statusOptions?: {
         name: string;
         uid: string;
     }[];
@@ -62,8 +56,11 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
         if (hasSearchFilter) {
             filteredPosts = filteredPosts.filter(post => post.title.toLowerCase().includes(filterValue.toLowerCase()));
         }
-        if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredPosts = filteredPosts.filter(Post => Array.from(statusFilter).includes(Post.status));
+
+        if (statusOptions) {
+            if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
+                filteredPosts = filteredPosts.filter(Post => Array.from(statusFilter).includes(Post.status));
+            }
         }
 
         return filteredPosts;
@@ -105,6 +102,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
             <TopContent
                 filterValue={filterValue}
                 statusFilter={statusFilter}
+                columns={columns}
                 visibleColumns={visibleColumns}
                 onSearchChange={onSearchChange}
                 onRowsPerPageChange={onRowsPerPageChange}
@@ -142,7 +140,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
     const classNames = useMemo(
         () => ({
             wrapper: ['max-h-[382px]', 'max-w-3xl'],
-            th: ['bg-transparent', 'text-default-500', 'border-b', 'border-divider'],
+            th: ['bg-transparent', 'text-default-500', 'border-b', 'border-divider', 'text-xs', 'sm:text-sm'],
             td: [
                 // changing the rows border radius
                 // first
@@ -152,52 +150,56 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                 'group-data-[middle=true]:before:rounded-none',
                 // last
                 'group-data-[last=true]:first:before:rounded-none',
-                'group-data-[last=true]:last:before:rounded-none'
+                'group-data-[last=true]:last:before:rounded-none',
+                'text-xs',
+                'sm:text-sm'
             ]
         }),
         []
     );
 
     return (
-        <Table
-            isCompact
-            removeWrapper
-            aria-label="Example table with custom cells, pagination and sorting"
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            checkboxesProps={{
-                classNames: {
-                    wrapper: 'after:bg-foreground after:text-background text-background'
-                }
-            }}
-            classNames={classNames}
-            selectedKeys={selectedKeys}
-            selectionMode="none"
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {column => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === 'actions' ? 'center' : 'start'}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={'Không tìm thấy kết quả'} items={sortedItems}>
-                {item => (
-                    <TableRow key={item.id} className="border-b-1 border-gray-200">
-                        {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <div className="w-full overflow-x-scroll overflow-y-hidden">
+            <Table
+                isCompact
+                removeWrapper
+                aria-label="Example table with custom cells, pagination and sorting"
+                bottomContent={bottomContent}
+                bottomContentPlacement="outside"
+                checkboxesProps={{
+                    classNames: {
+                        wrapper: 'after:bg-foreground after:text-background text-background'
+                    }
+                }}
+                classNames={classNames}
+                selectedKeys={selectedKeys}
+                selectionMode="none"
+                sortDescriptor={sortDescriptor}
+                topContent={topContent}
+                topContentPlacement="outside"
+                onSelectionChange={setSelectedKeys}
+                onSortChange={setSortDescriptor}
+            >
+                <TableHeader columns={headerColumns}>
+                    {column => (
+                        <TableColumn
+                            key={column.uid}
+                            align={column.uid === 'actions' ? 'center' : 'start'}
+                            allowsSorting={column.sortable}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody emptyContent={'Không tìm thấy kết quả'} items={sortedItems}>
+                    {item => (
+                        <TableRow key={item.id} className="border-b-1 border-gray-200">
+                            {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
     );
 };
 

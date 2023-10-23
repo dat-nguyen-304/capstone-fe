@@ -1,14 +1,30 @@
 'use client';
 
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Selection } from '@nextui-org/react';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Select,
+    SelectItem,
+    Selection
+} from '@nextui-org/react';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
-import { columns, statusOptions } from './data';
 import { capitalize } from './utils';
+
+const rowsPerPage = [5, 10, 15];
 
 interface TopContentProps {
     filterValue: string;
     statusFilter: Selection;
+    columns: {
+        name: string;
+        uid: string;
+        sortable?: boolean | undefined;
+    }[];
     visibleColumns: Selection;
     onSearchChange: (value?: string) => void;
     onRowsPerPageChange: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -17,11 +33,16 @@ interface TopContentProps {
     setFilterValue: Dispatch<SetStateAction<string>>;
     setStatusFilter: Dispatch<SetStateAction<Selection>>;
     setVisibleColumns: Dispatch<SetStateAction<Selection>>;
+    statusOptions?: {
+        name: string;
+        uid: string;
+    }[];
 }
 
 const TopContent: React.FC<TopContentProps> = ({
     filterValue,
     statusFilter,
+    columns,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
@@ -29,7 +50,8 @@ const TopContent: React.FC<TopContentProps> = ({
     hasSearchFilter,
     setFilterValue,
     setStatusFilter,
-    setVisibleColumns
+    setVisibleColumns,
+    statusOptions
 }) => {
     return (
         <div className="flex flex-col gap-4">
@@ -49,29 +71,32 @@ const TopContent: React.FC<TopContentProps> = ({
                     onValueChange={onSearchChange}
                 />
                 <div className="flex gap-3">
+                    {statusOptions && (
+                        <Dropdown>
+                            <DropdownTrigger className="flex">
+                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                    Trạng thái
+                                </Button>
+                            </DropdownTrigger>
+
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={statusFilter}
+                                selectionMode="multiple"
+                                onSelectionChange={setStatusFilter}
+                            >
+                                {statusOptions.map(status => (
+                                    <DropdownItem key={status.uid} className="capitalize">
+                                        {capitalize(status.name)}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                    )}
                     <Dropdown>
-                        <DropdownTrigger className="hidden sm:flex">
-                            <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                Trạng thái
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            disallowEmptySelection
-                            aria-label="Table Columns"
-                            closeOnSelect={false}
-                            selectedKeys={statusFilter}
-                            selectionMode="multiple"
-                            onSelectionChange={setStatusFilter}
-                        >
-                            {statusOptions.map(status => (
-                                <DropdownItem key={status.uid} className="capitalize">
-                                    {capitalize(status.name)}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    </Dropdown>
-                    <Dropdown>
-                        <DropdownTrigger className="hidden sm:flex">
+                        <DropdownTrigger className="flex">
                             <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
                                 Cột
                             </Button>
@@ -93,12 +118,12 @@ const TopContent: React.FC<TopContentProps> = ({
                     </Dropdown>
                 </div>
             </div>
-            <div className="flex justify-between items-center">
-                <span className="text-default-400 text-small">Tìm thấy {postsLength} kết quả</span>
-                <label className="flex items-center text-default-400 text-small">
+            <div className="sm:flex justify-between items-center">
+                <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {postsLength} kết quả</span>
+                <label className="flex items-center text-default-400 text-xs sm:text-sm">
                     Số kết quả mỗi trang:
                     <select
-                        className="bg-transparent outline-none text-default-400 text-small"
+                        className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
                         onChange={onRowsPerPageChange}
                     >
                         <option value="5">5</option>

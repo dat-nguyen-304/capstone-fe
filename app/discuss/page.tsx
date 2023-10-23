@@ -5,7 +5,7 @@ import { columns, posts, statusOptions } from '@/components/table/data';
 import { Chip, ChipProps, User } from '@nextui-org/react';
 import Link from 'next/link';
 
-interface TestProps {}
+interface PostListProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     active: 'success',
@@ -15,7 +15,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 type Post = (typeof posts)[0];
 
-const Test: React.FC<TestProps> = ({}) => {
+const PostList: React.FC<PostListProps> = ({}) => {
     const renderCell = useCallback((post: Post, columnKey: Key) => {
         const cellValue = post[columnKey as keyof Post];
 
@@ -68,4 +68,4 @@ const Test: React.FC<TestProps> = ({}) => {
     );
 };
 
-export default Test;
+export default PostList;
