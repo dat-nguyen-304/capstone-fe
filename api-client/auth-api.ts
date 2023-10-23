@@ -10,19 +10,23 @@ export const authApi = {
         return await axiosClient.post('/authentication/register/teacher', payload);
     },
 
-    confirmRegister: async (id: string) => {
-        return await axiosClient.get(`/authentication/confirm?token=${id}&from=register`);
+    confirm: async (id: string) => {
+        return await axiosClient.post('/authentication/confirm', { token: id });
     },
 
     login: async (payload: LoginPayload) => {
         return await axiosClient.post('/authentication/login', payload);
     },
 
-    logout: async () => {
-        return await axiosClient.post('/logout');
+    logout: async (payload: { email: string }) => {
+        return await axiosClient.post('/logout', payload);
     },
 
     refreshToken: async () => {
-        return await axiosClient.get('/refresh-token');
+        return await axiosClient.post('/authentication/refresh-token');
+    },
+
+    forgotPassword: async (email: string) => {
+        return await axiosClient.patch('/authentication/forgot-password', { email });
     }
 };

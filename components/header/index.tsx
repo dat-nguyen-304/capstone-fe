@@ -1,6 +1,6 @@
 'use client';
 
-import { Student } from '@/types';
+import { SafeUser, Student } from '@/types';
 import { Navbar } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import Logo from './Logo';
@@ -15,11 +15,13 @@ interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { user, onChangeUser } = useUser();
+    const currentUser = useUser();
+    const [user, setUser] = useState<SafeUser | null>(currentUser.user);
 
     useEffect(() => {
         if (!user) {
-            handleUserReload(onChangeUser);
+            handleUserReload(currentUser.onChangeUser);
+            setUser(currentUser.user);
         }
     }, []);
 

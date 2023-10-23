@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React from 'react';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
+import { authApi } from '@/api-client';
 interface UserMenuProps {
     currentStudent: Student;
 }
@@ -14,6 +15,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
     const currentUser = useUser();
     const router = useRouter();
     const handleLogout = () => {
+        authApi.logout({ email: currentUser.user?.email as string });
         currentUser.onChangeUser(null);
         router.push('/');
     };

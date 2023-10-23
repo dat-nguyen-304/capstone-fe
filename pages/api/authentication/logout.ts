@@ -1,5 +1,7 @@
 import Cookies from 'cookies';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import httpProxy from 'http-proxy';
+const proxy = httpProxy.createProxyServer();
 
 type Data = {
     code: number;
@@ -20,5 +22,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const cookies = new Cookies(req, res);
     cookies.set('access_token');
 
-    res.status(200).json({ code: 0, message: 'Logout successfully' });
+    proxy.web(req, res, {
+        target: process.env.API_URL,
+        changeOrigin: true,
+        selfHandleResponse: false
+    });
 }
