@@ -22,3 +22,9 @@ export type SafeUser = {
     iat: number;
     email: string;
 };
+
+export type User = {
+    email: string;
+    fullName: string;
+    avatar: string;
+};

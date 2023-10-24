@@ -19,10 +19,12 @@ const Header: React.FC<HeaderProps> = () => {
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
 
     useEffect(() => {
-        if (!user) {
-            handleUserReload(currentUser.onChangeUser);
-            setUser(currentUser.user);
-        }
+        //     if (!user) {
+        //         console.log('start');
+        handleUserReload(currentUser.onChangeUser);
+        //     console.log('end');
+        //     setUser(currentUser.user);
+        // }
     }, []);
 
     return (

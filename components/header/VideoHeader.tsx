@@ -11,7 +11,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({}) => {
     return (
         <div className="h-[60px] bg-blue-400 flex items-center justify-between px-8">
             <div className="flex items-center gap-4">
-                <Link href="/courses/1">
+                <Link href="/course/1">
                     <Button className="text-sm" size="sm">
                         <BsArrowLeft />
                     </Button>

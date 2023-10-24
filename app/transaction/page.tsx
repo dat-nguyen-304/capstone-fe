@@ -74,7 +74,7 @@ const Transactions: React.FC<TransactionsProps> = ({}) => {
 
         switch (columnKey) {
             case 'name':
-                return <Link href={`/courses/${1}`}>{cellValue}</Link>;
+                return <Link href={`/course/${1}`}>{cellValue}</Link>;
             case 'teacher':
                 return (
                     <User

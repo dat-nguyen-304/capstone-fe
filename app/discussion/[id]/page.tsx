@@ -1,6 +1,6 @@
 'use client';
 
-import PostComment from '@/components/discuss/PostComment';
+import PostComment from '@/components/discussion/PostComment';
 import { Button, Pagination, Select, SelectItem } from '@nextui-org/react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';

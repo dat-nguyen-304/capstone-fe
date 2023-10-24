@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Notification from '../header/Notification';
 import { Button } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
-import { Teacher } from '@/types';
+import { User } from '@/types';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 
@@ -15,7 +15,13 @@ const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; items: MenuItem[]; teacher: Teacher }) => {
+interface SidebarProps {
+    user: User;
+    items: MenuItem[];
+    children: React.ReactNode;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
     const currentUser = useUser();
@@ -37,14 +43,8 @@ const Sidebar = ({ children, items, teacher }: { children: React.ReactNode; item
                 onCollapse={value => setCollapsed(value)}
             >
                 <div className="flex flex-col items-center gap-4 my-4">
-                    <Image
-                        src={teacher.avatar}
-                        width={60}
-                        height={60}
-                        alt=""
-                        className="cursor-pointer !rounded-full"
-                    />
-                    {!collapsed && <p className="text-white">{teacher.fullName}</p>}
+                    <Image src={user.avatar} width={60} height={60} alt="" className="cursor-pointer !rounded-full" />
+                    {!collapsed && <p className="text-white">{user.fullName}</p>}
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>

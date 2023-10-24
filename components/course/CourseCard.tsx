@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { Progress, Rate } from 'antd';
 import Image from 'next/image';
-import styles from '@/app/courses/page.module.css';
+import styles from '@/app/course/page.module.css';
 import Link from 'next/link';
 
 interface CourseCardProps {
@@ -12,7 +12,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse }) => {
     return (
         <div className="flex justify-center w-full">
             <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
-                <Link href={isMyCourse ? '/my-courses/1' : '/courses/1'}>
+                <Link href={isMyCourse ? '/my-course/1' : '/course/1'}>
                     <CardHeader className="overflow-visible p-0 h-[200px] ">
                         <Image
                             height={300}

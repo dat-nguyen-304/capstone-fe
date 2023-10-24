@@ -19,11 +19,11 @@ export const authApi = {
     },
 
     logout: async (payload: { email: string }) => {
-        return await axiosClient.post('/logout', payload);
+        return await axiosClient.post('/authentication/logout', payload);
     },
 
     refreshToken: async () => {
-        return await axiosClient.post('/authentication/refresh-token');
+        return await axiosClient.post('/authentication/refresh-token', { token: '' });
     },
 
     forgotPassword: async (email: string) => {

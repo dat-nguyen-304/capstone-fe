@@ -6,7 +6,7 @@ import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from './Sidebar';
 import { useUser } from '@/hooks';
-import { Teacher } from '@/types';
+import { Teacher, Admin, User } from '@/types';
 import NotFound from '@/app/not-found';
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -21,7 +21,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const items: MenuItem[] = [
-    getItem(<Link href="/teacher">Bảng điều khiển</Link>, '1', <PieChartOutlined />),
+    getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <PieChartOutlined />),
     getItem(<Link href="/teacher/profile">Cập nhật hồ sơ</Link>, '2', <UserOutlined />),
     getItem('Video', 'sub1', <DesktopOutlined />, [
         getItem(<Link href="/teacher/upload-video">Đăng tải video mới</Link>, '3'),
@@ -33,11 +33,11 @@ const items: MenuItem[] = [
     ]),
     getItem('Bài tập', 'sub3', <TeamOutlined />, [
         getItem(<Link href="/teacher/create-quiz">Tạo bài tập</Link>, '7'),
-        getItem(<Link href="/teacher/quizzes">Danh sách bài tập</Link>, '8')
+        getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '8')
     ]),
     getItem('Thống kê', 'sub4', <TeamOutlined />, [
         getItem(<Link href="/teacher/statistic/revenue">Doanh thu</Link>, '9'),
-        getItem(<Link href="/teacher/statistic/courses-videos">Khóa học & video</Link>, '10'),
+        getItem(<Link href="/teacher/statistic/course-video">Khóa học & video</Link>, '10'),
         getItem(<Link href="/teacher/statistic/users">Học sinh</Link>, '11')
     ]),
     getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
@@ -48,8 +48,9 @@ const items: MenuItem[] = [
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
     const { user } = useUser();
     if (!user) return <NotFound />;
+    if (user.role !== 'TEACHER') return <NotFound />;
     return (
-        <Sidebar teacher={user as Teacher} items={items}>
+        <Sidebar user={user as User} items={items}>
             {children}
         </Sidebar>
     );

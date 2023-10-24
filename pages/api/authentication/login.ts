@@ -52,12 +52,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                     cookies.set('access_token', accessToken, {
                         httpOnly: true,
                         sameSite: 'lax',
-                        expires: new Date(userSession.exp)
+                        expires: new Date(userSession.exp * 1000)
                     });
                     cookies.set('refresh_token', refreshToken, {
                         httpOnly: true,
                         sameSite: 'lax',
-                        expires: new Date(refresh_token.exp)
+                        expires: new Date(refresh_token.exp * 1000)
                     });
                     return (res as NextApiResponse).status(200).json({ userSession, code: 0 });
                 } catch (error) {
