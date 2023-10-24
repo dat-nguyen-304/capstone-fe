@@ -1,20 +1,25 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import VideoItem from '@/components/videoPlayer/VideoItem';
 import VideoHeader from '@/components/header/VideoHeader';
-import { Tab, Tabs } from '@nextui-org/react';
-import CommentItem from '@/components/videoPlayer/CommentItem';
+import { Button, Tab, Tabs } from '@nextui-org/react';
+import CommentItem from '@/components/video/CommentItem';
 import { useState } from 'react';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { OnProgressProps } from 'react-player/base';
 import { convertSeconds } from '@/utils';
-import Note from '@/components/videoPlayer/Note';
+import Note from '@/components/video/Note';
+import { Drawer } from 'antd';
+import VideoList from '@/components/video/VideoList';
 
 interface VideoProps {}
 
 const Video: React.FC<VideoProps> = ({}) => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const [openVideoList, setOpenVideoList] = useState(false);
+    const showDrawerVideoList = () => {
+        setOpenVideoList(true);
+    };
     const [currentTime, setCurrentTime] = useState('');
     const handleProgress = (progress: OnProgressProps) => {
         const timeString = convertSeconds(progress.playedSeconds);
@@ -23,14 +28,15 @@ const Video: React.FC<VideoProps> = ({}) => {
     return (
         <>
             <VideoHeader />
-            <div className="w-[90%] lg:w-4/5 mx-auto">
-                <div className="relative grid grid-cols-10 gap-2 mt-4 mb-16">
-                    <div className="col-span-10 md:col-span-7">
-                        <div>
+            <div className="w-[95%] 2xl:w-4/5 mx-auto">
+                <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
+                    <div className="col-span-7">
+                        <div className="object-contain">
                             <ReactPlayer
                                 playing={isPlaying}
                                 width="100%"
                                 height="450px"
+                                className="object-contain"
                                 controls={true}
                                 onPlay={() => setIsPlaying(true)}
                                 onPause={() => setIsPlaying(false)}
@@ -39,13 +45,16 @@ const Video: React.FC<VideoProps> = ({}) => {
                             />
                         </div>
                         <h3 className="mt-4 text-xl font-semibold">Làm quen với abcxyz</h3>
-                        <div className="mt-8 px-4">
+                        <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
+                            Danh sách bài học
+                        </Button>
+                        <div className="mt-8 px-0 sm:px-4">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
                                     <Note currentTime={currentTime} />
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
-                                    <ul className="px-4">
+                                    <ul className="px-0 sm:px-4">
                                         <CommentItem />
                                         <CommentItem />
                                         <CommentItem />
@@ -54,20 +63,19 @@ const Video: React.FC<VideoProps> = ({}) => {
                             </Tabs>
                         </div>
                     </div>
-                    <div className="col-span-10 h-full md:col-span-3">
-                        <div className="py-4">
-                            <ul className="h-[450px] overflow-y-scroll">
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                                <VideoItem />
-                            </ul>
-                        </div>
+                    <div className="hidden md:block h-full col-span-3">
+                        <VideoList />
                     </div>
+                    <Drawer
+                        title="Nội dung khóa học"
+                        placement="right"
+                        width={500}
+                        open={openVideoList}
+                        onClose={() => setOpenVideoList(false)}
+                        className="block md:hidden"
+                    >
+                        <VideoList isOnDrawer={true} />
+                    </Drawer>
                 </div>
             </div>
         </>

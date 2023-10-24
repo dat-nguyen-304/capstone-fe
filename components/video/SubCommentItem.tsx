@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, Button, Tooltip } from '@nextui-org/react';
+import { Avatar, Tooltip } from '@nextui-org/react';
 import { AiOutlineLike } from 'react-icons/ai';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { CiFlag1 } from 'react-icons/ci';

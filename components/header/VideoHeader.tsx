@@ -9,10 +9,10 @@ interface VideoHeaderProps {}
 
 const VideoHeader: React.FC<VideoHeaderProps> = ({}) => {
     return (
-        <div className="h-[60px] bg-blue-400 flex items-center justify-between px-8">
+        <div className="h-[60px] bg-blue-400 flex items-center justify-between px-2 sm:px-8">
             <div className="flex items-center gap-4">
                 <Link href="/course/1">
-                    <Button className="text-sm" size="sm">
+                    <Button className="text-sm p-0" size="sm">
                         <BsArrowLeft />
                     </Button>
                 </Link>
@@ -21,30 +21,33 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({}) => {
                     width={60}
                     height={60}
                     alt=""
+                    className="hidden sm:block"
                 />
-                <p className="text-white">Khóa học lấy gốc thần tốc</p>
+                <p className="text-white text-xs sm:text-sm">Khóa học lấy gốc thần tốc</p>
             </div>
             <div className="flex justify-center items-center text-white">
-                <span className="inline-flex items-center text-xs">
-                    <span className="font-bold mr-1">20</span>
-                    <span>Bài giảng</span>
-                    <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
-                </span>
-                <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
+                <div className="hidden lg:block">
                     <span className="inline-flex items-center text-xs">
-                        <span className="font-bold mr-1">5</span>
-                        <span>Bài tập</span>
-                        <Image src="/video-number/red.svg" width={30} height={30} alt="" />
+                        <span className="font-bold mr-1">20</span>
+                        <span>Bài giảng</span>
+                        <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
                     </span>
-                </span>
-                <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
-                    <span className="inline-flex items-center text-xs">
-                        <span className="mr-1">Đã học</span>
-                        <span className="font-bold">(5/10)</span>
-                        <Image src="/video-number/green.svg" width={30} height={30} alt="" />
+                    <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
+                        <span className="inline-flex items-center text-xs">
+                            <span className="font-bold mr-1">5</span>
+                            <span>Bài tập</span>
+                            <Image src="/video-number/red.svg" width={30} height={30} alt="" />
+                        </span>
                     </span>
-                </span>
-                <Button className="ml-8" color="danger" variant="solid">
+                    <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
+                        <span className="inline-flex items-center text-xs">
+                            <span className="mr-1">Đã học</span>
+                            <span className="font-bold">(5/10)</span>
+                            <Image src="/video-number/green.svg" width={30} height={30} alt="" />
+                        </span>
+                    </span>
+                </div>
+                <Button className="ml-8" color="danger" variant="solid" size="sm">
                     Báo lỗi
                 </Button>
             </div>

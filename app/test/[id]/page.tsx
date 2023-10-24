@@ -11,7 +11,7 @@ const Test: React.FC<TestProps> = ({}) => {
     return (
         <>
             <TestHeader />
-            <div className="grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[60px]">
+            <div className="xl:grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[80px] xl:mt-[60px]">
                 <div className="col-span-7 mt-4">
                     <ul>
                         <TestItem />
@@ -21,21 +21,21 @@ const Test: React.FC<TestProps> = ({}) => {
                         <TestItem />
                     </ul>
                 </div>
-                <div className="col-span-3 mt-4">
+                <div className="col-span-3 my-4">
                     <div className="p-4 bg-blue-50 rounded-xl sticky top-[76px]">
                         <span className="">Tóm tắt bài làm</span>
-                        <div className="flex items-center my-2">
+                        <div className="flex items-center my-2 justify-between sm:justify-normal">
                             <span className="inline-flex items-center text-xs">
                                 <span className="mr-2">Chưa làm</span>
                                 <div className="w-[20px] h-[20px] rounded-full border-1 border-blue-500" />
                             </span>
-                            <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2">
+                            <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
                                 <span className="inline-flex items-center text-xs">
                                     <span className="mr-2">Gán cờ</span>
                                     <div className="w-[20px] h-[20px] rounded-full bg-yellow-500" />
                                 </span>
                             </span>
-                            <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2">
+                            <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
                                 <span className="inline-flex items-center text-xs">
                                     <span className="mr-2">Đã làm</span>
                                     <div className="w-[20px] h-[20px] rounded-full bg-green-500" />

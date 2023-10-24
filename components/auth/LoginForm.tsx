@@ -45,9 +45,12 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
         try {
             const { email, password } = values;
             const res = await authApi.login({ email, password });
+            console.log({ res });
             if (res.status === 200 && !res.data.code) {
                 setMessage('');
                 const userSession: SafeUser = res.data.userSession;
+                console.log({ userSession });
+
                 if (userSession.role === 'STUDENT') {
                     if (!userSession.avatar) userSession.avatar = '/student.png';
                     currentUser.onChangeUser(userSession);
@@ -58,6 +61,11 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                     currentUser.onChangeUser(userSession);
                     setIsLoading(false);
                     return router.push('/teacher');
+                } else if (userSession.role === 'ADMIN') {
+                    if (!userSession.avatar) userSession.avatar = '/teacher.png';
+                    currentUser.onChangeUser(userSession);
+                    setIsLoading(false);
+                    return router.push('/admin');
                 }
             } else {
                 setMessage('Tên đăng nhập hoặc mật khẩu không chính xác');

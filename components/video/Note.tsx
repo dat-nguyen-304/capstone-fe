@@ -6,6 +6,7 @@ import { Drawer } from 'antd';
 import { Button } from '@nextui-org/react';
 import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
+import NoteItem from './NoteItem';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface NoteProps {
@@ -19,7 +20,7 @@ const Note: React.FC<NoteProps> = ({ currentTime }) => {
     };
     return (
         <div className="mt-4">
-            <Button onClick={showDrawer}>
+            <Button onClick={showDrawer} className="text-xs sm:text-sm">
                 <AiOutlinePlus /> Thêm ghi chú tại {currentTime}
             </Button>
             <Drawer
@@ -37,6 +38,14 @@ const Note: React.FC<NoteProps> = ({ currentTime }) => {
                     </Button>
                 </div>
             </Drawer>
+            <ul>
+                <NoteItem time={currentTime} />
+                <NoteItem time={currentTime} />
+                <NoteItem time={currentTime} />
+                <NoteItem time={currentTime} />
+                <NoteItem time={currentTime} />
+                <NoteItem time={currentTime} />
+            </ul>
         </div>
     );
 };

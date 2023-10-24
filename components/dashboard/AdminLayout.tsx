@@ -22,11 +22,11 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
     getItem(<Link href="/admin">Thông tin chung</Link>, '1', <PieChartOutlined />),
-    getItem('Quản lí người dùng', 'sub1', <DesktopOutlined />, [
+    getItem('Quản lí user', 'sub1', <DesktopOutlined />, [
         getItem(<Link href="/admin/teacher">Giáo viên</Link>, '2'),
         getItem(<Link href="/admin/student">Học sinh</Link>, '3')
     ]),
-    getItem('Quản lí Khóa học', 'sub2', <TeamOutlined />, [
+    getItem('Quản lí khóa học', 'sub2', <TeamOutlined />, [
         getItem(<Link href="/admin/course">Khóa học</Link>, '4'),
         getItem(<Link href="/admin/video">Video</Link>, '5'),
         getItem(<Link href="/admin/quiz">Câu hỏi ôn tập</Link>, '6')

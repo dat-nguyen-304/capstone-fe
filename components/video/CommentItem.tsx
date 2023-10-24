@@ -21,15 +21,15 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
             </div>
             <div className="w-full">
                 <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
-                    <h4 className="font-semibold">Nguyễn Văn An</h4>
-                    <p className="text-sm"> {defaultContent}</p>
+                    <h4 className="font-semibold text-sm sm:text-base">Nguyễn Văn An</h4>
+                    <p className="text-xs sm:text-sm"> {defaultContent}</p>
                 </div>
                 <div className="mt-1 flex gap-4 items-center">
                     <span className="flex items-center gap-2">
                         <AiOutlineLike />
-                        <span className="text-sm">7</span>
+                        <span className="text-xs sm:text-sm">7</span>
                     </span>
-                    <p className="text-sm">Phản hồi</p>
+                    <p className="text-xs sm:text-sm">Phản hồi</p>
                     <Tooltip
                         placement="right"
                         content={
@@ -48,7 +48,7 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
                 <div className="mt-2">
                     <Button variant="light" onClick={() => setShowSubComment(!showSubComment)}>
                         {showSubComment ? <BsChevronUp /> : <BsChevronDown />}
-                        <span className="text-sm">4 Phản hồi</span>
+                        <span className="text-xs sm:text-sm">4 Phản hồi</span>
                     </Button>
                     {showSubComment && (
                         <ul className="mt-2">
