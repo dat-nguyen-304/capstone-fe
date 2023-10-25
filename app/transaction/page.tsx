@@ -98,7 +98,7 @@ const Transactions: React.FC<TransactionsProps> = ({}) => {
                 renderCell={renderCell}
                 initialVisibleColumns={['id', 'name', 'subject', 'date']}
                 columns={columns}
-                posts={transactions}
+                items={transactions}
             />
         </div>
     );

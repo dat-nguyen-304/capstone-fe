@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Card } from '@nextui-org/react';
+import Link from 'next/link';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import { GoCommentDiscussion } from 'react-icons/go';
@@ -31,7 +32,9 @@ const ExamItem: React.FC<ExamItemProps> = ({}) => {
                     </div>
                 </div>
                 <Button variant="bordered" className="mt-2">
-                    Chi tiết
+                    <Link className="w-full" href="/exam/1">
+                        Chi tiết
+                    </Link>
                 </Button>
             </Card>
         </li>

@@ -26,10 +26,10 @@ interface AppProps {
         name: string;
         uid: string;
     }[];
-    posts: any[];
+    items: any[];
 }
 
-const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, statusOptions, posts }) => {
+const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, statusOptions, items }) => {
     const [filterValue, setFilterValue] = useState('');
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(initialVisibleColumns));
@@ -38,9 +38,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [page, setPage] = useState(1);
 
-    type commonType = (typeof posts)[0];
-
-    const pages = Math.ceil(posts.length / rowsPerPage);
+    const pages = Math.ceil(items.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
@@ -50,38 +48,12 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
         return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
-    const filteredItems = useMemo(() => {
-        let filteredPosts = [...posts];
-
-        if (hasSearchFilter) {
-            filteredPosts = filteredPosts.filter(post => post.title.toLowerCase().includes(filterValue.toLowerCase()));
-        }
-
-        if (statusOptions) {
-            if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
-                filteredPosts = filteredPosts.filter(Post => Array.from(statusFilter).includes(Post.status));
-            }
-        }
-
-        return filteredPosts;
-    }, [posts, filterValue, statusFilter]);
-
-    const items = useMemo(() => {
+    const itemsOnPage = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        return filteredItems.slice(start, end);
-    }, [page, filteredItems, rowsPerPage]);
-
-    const sortedItems = useMemo(() => {
-        return [...items].sort((a: commonType, b: commonType) => {
-            const first = a[sortDescriptor.column as keyof commonType] as number;
-            const second = b[sortDescriptor.column as keyof commonType] as number;
-            const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-            return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-        });
-    }, [sortDescriptor, items]);
+        return items.slice(start, end);
+    }, [page, items, rowsPerPage]);
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
@@ -96,46 +68,6 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
             setFilterValue('');
         }
     }, []);
-
-    const topContent = useMemo(() => {
-        return (
-            <TopContent
-                filterValue={filterValue}
-                statusFilter={statusFilter}
-                columns={columns}
-                visibleColumns={visibleColumns}
-                onSearchChange={onSearchChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                postsLength={posts.length}
-                hasSearchFilter={hasSearchFilter}
-                setFilterValue={setFilterValue}
-                setStatusFilter={setStatusFilter}
-                setVisibleColumns={setVisibleColumns}
-            />
-        );
-    }, [filterValue, statusFilter, visibleColumns, onSearchChange, onRowsPerPageChange, posts.length, hasSearchFilter]);
-
-    const bottomContent = useMemo(() => {
-        return (
-            <div className="py-2 px-2 flex justify-between items-center">
-                <Pagination
-                    showControls
-                    classNames={{
-                        cursor: 'bg-foreground text-background'
-                    }}
-                    color="default"
-                    isDisabled={hasSearchFilter}
-                    page={page}
-                    total={pages}
-                    variant="light"
-                    onChange={setPage}
-                />
-                {/* <span className="text-small text-default-400">
-                    {selectedKeys === 'all' ? 'All items selected' : `${selectedKeys.size} of ${items.length} selected`}
-                </span> */}
-            </div>
-        );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     const classNames = useMemo(
         () => ({
@@ -160,11 +92,22 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
 
     return (
         <div className="w-full overflow-x-scroll overflow-y-hidden">
+            <TopContent
+                filterValue={filterValue}
+                statusFilter={statusFilter}
+                columns={columns}
+                visibleColumns={visibleColumns}
+                onSearchChange={onSearchChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                postsLength={items.length}
+                setFilterValue={setFilterValue}
+                setStatusFilter={setStatusFilter}
+                setVisibleColumns={setVisibleColumns}
+            />
             <Table
                 isCompact
                 removeWrapper
                 aria-label="Example table with custom cells, pagination and sorting"
-                bottomContent={bottomContent}
                 bottomContentPlacement="outside"
                 checkboxesProps={{
                     classNames: {
@@ -175,7 +118,6 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                 selectedKeys={selectedKeys}
                 selectionMode="none"
                 sortDescriptor={sortDescriptor}
-                topContent={topContent}
                 topContentPlacement="outside"
                 onSelectionChange={setSelectedKeys}
                 onSortChange={setSortDescriptor}
@@ -191,7 +133,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={'Không tìm thấy kết quả'} items={sortedItems}>
+                <TableBody emptyContent={'Không tìm thấy kết quả'} items={itemsOnPage}>
                     {item => (
                         <TableRow key={item.id} className="border-b-1 border-gray-200">
                             {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -199,6 +141,20 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                     )}
                 </TableBody>
             </Table>
+            <div className="py-2 px-2 flex justify-between items-center">
+                <Pagination
+                    showControls
+                    classNames={{
+                        cursor: 'bg-foreground text-background'
+                    }}
+                    color="default"
+                    isDisabled={hasSearchFilter}
+                    page={page}
+                    total={pages}
+                    variant="light"
+                    onChange={setPage}
+                />
+            </div>
         </div>
     );
 };

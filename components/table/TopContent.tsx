@@ -1,16 +1,6 @@
 'use client';
 
-import {
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    Input,
-    Select,
-    SelectItem,
-    Selection
-} from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Selection } from '@nextui-org/react';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from './utils';
@@ -29,7 +19,6 @@ interface TopContentProps {
     onSearchChange: (value?: string) => void;
     onRowsPerPageChange: (e: ChangeEvent<HTMLSelectElement>) => void;
     postsLength: number;
-    hasSearchFilter: boolean;
     setFilterValue: Dispatch<SetStateAction<string>>;
     setStatusFilter: Dispatch<SetStateAction<Selection>>;
     setVisibleColumns: Dispatch<SetStateAction<Selection>>;
@@ -47,7 +36,6 @@ const TopContent: React.FC<TopContentProps> = ({
     onSearchChange,
     onRowsPerPageChange,
     postsLength,
-    hasSearchFilter,
     setFilterValue,
     setStatusFilter,
     setVisibleColumns,

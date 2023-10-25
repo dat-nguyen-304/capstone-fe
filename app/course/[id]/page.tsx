@@ -1,9 +1,9 @@
 'use client';
 
-import BuyCourse from '@/components/course/CourseDetail/BuyCourse';
-import CourseContent from '@/components/course/CourseDetail/CourseContent';
-import CourseInfo from '@/components/course/CourseDetail/CourseInfo';
-import Feedback from '@/components/course/CourseDetail/Feedback';
+import BuyCourse from '@/components/course/course-detail/BuyCourse';
+import CourseContent from '@/components/course/course-detail/CourseContent';
+import CourseInfo from '@/components/course/course-detail/CourseInfo';
+import Feedback from '@/components/course/course-detail/Feedback';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 

@@ -5,10 +5,10 @@ import { AiFillStar } from 'react-icons/ai';
 import { BsBookFill } from 'react-icons/bs';
 import { SiLevelsdotfyi } from 'react-icons/si';
 import { FaCoins } from 'react-icons/fa';
-import RatingFilter from './FilterItem/RatingFilter';
-import SubjectFilter from './FilterItem/SubjectFilter';
-import LevelFilter from './FilterItem/LevelFilter';
-import PriceFilter from './FilterItem/PriceFilter';
+import RatingFilter from './filter-item/RatingFilter';
+import SubjectFilter from './filter-item/SubjectFilter';
+import LevelFilter from './filter-item/LevelFilter';
+import PriceFilter from './filter-item/PriceFilter';
 
 interface FilterDrawerProps {
     onClose: () => void;

@@ -62,7 +62,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                 initialVisibleColumns={['id', 'title', 'status', 'author']}
                 columns={columns}
                 statusOptions={statusOptions}
-                posts={posts}
+                items={posts}
             />
         </div>
     );
