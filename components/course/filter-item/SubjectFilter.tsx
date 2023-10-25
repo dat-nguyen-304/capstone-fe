@@ -2,17 +2,15 @@
 
 import { subjectApi } from '@/api-client';
 import { Subject } from '@/types';
-import { AccordionItem, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@nextui-org/react';
+import { Checkbox, CheckboxGroup } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { Rate } from 'antd';
-import { AiFillStar } from 'react-icons/ai';
 import { PuffLoader } from 'react-spinners';
 
 interface SubjectFilterProps {}
 
 const SubjectFilter: React.FC<SubjectFilterProps> = () => {
     const { data, isLoading } = useQuery({
-        queryKey: ['SubjectFilters'],
+        queryKey: ['subjects'],
         queryFn: subjectApi.getAll
     });
     return (

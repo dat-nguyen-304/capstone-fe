@@ -7,7 +7,7 @@ interface ExamResultItemProps {}
 
 const ExamResultItem: React.FC<ExamResultItemProps> = ({}) => {
     return (
-        <li className="flex items-center justify-between border-t-1 border-black p-4 my-2">
+        <li className="flex items-center justify-between border-t-1 border-gray-300 p-4 my-2">
             <User
                 name="Làm bài lần 1"
                 description="Nộp bài lúc 30/12/2023 13:33:33"

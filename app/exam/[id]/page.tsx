@@ -35,7 +35,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
                             Thời gian làm bài 60 phút
                         </p>
                     </div>
-                    <div className="flex gap-4 items-center mt-2 sm:mt-4">
+                    <div className="flex gap-4 items-center mt-2 sm:mt-3">
                         <p className="flex items-center gap-2 text-xs sm:text-base ">
                             <FaUserEdit className="text-blue-700" />
                             50.000 đã làm đề thi này
@@ -46,28 +46,15 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
                         </p>
                     </div>
                 </div>
-                <div className="flex justify-between items-center mt-4">
-                    <h4 className="font-semibold text-sm sm:text-lg">Kết quả làm bài của bạn</h4>
-                    <Button size="sm" color="primary" className="md:hidden ml-4">
-                        <Link href="#" className="flex items-center gap-4">
-                            <FiRotateCw />
-                            <span>Làm lại</span>
-                        </Link>
-                    </Button>
-                </div>
+                <h4 className="font-semibold text-sm sm:text-lg mt-5">Kết quả làm bài của bạn</h4>
                 <ul className="p-3 sm:p-4 rounded-xl border-1 border-blue-500 shadow-xl w-full md:w-4/5 mt-4">
                     <li className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm sm:text-base">Đã làm 1 lần</span>
-                            <Button size="sm" color="primary" className="ml-4 hidden md:block">
-                                <Link href="#" className="flex items-center gap-4">
-                                    <FiRotateCw />
-                                    <span>Làm lại</span>
-                                </Link>
-                            </Button>
-                        </div>
-                        <Button size="sm">
-                            <Link href="#">Xem đáp án chi tiết</Link>
+                        <span className="text-sm sm:text-base">Đã làm 1 lần</span>
+                        <Button size="sm" color="primary">
+                            <Link href="#" className="flex items-center gap-4">
+                                <FiRotateCw />
+                                <span>Làm lại</span>
+                            </Link>
                         </Button>
                     </li>
                     <ExamResultItem />
