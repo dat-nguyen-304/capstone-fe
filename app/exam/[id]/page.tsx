@@ -9,12 +9,15 @@ import { GoCommentDiscussion } from 'react-icons/go';
 import { FiRotateCw } from 'react-icons/fi';
 import CommentItem from '@/components/video/CommentItem';
 import ExamResultItem from '@/components/exam/exam-detail/ExamResult';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 interface ExamDetailProps {}
 
 const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
     return (
         <>
+            <Header />
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
                 <h3 className="text-2xl font-bold mb-2 truncate2line">Đề thi thử môn toán BGD & ĐT</h3>
                 <div className="mt-8">
@@ -82,6 +85,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
                 </ul>
                 <Button className="w-full">Xem thêm</Button>
             </div>
+            <Footer />
         </>
     );
 };

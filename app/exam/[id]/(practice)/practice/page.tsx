@@ -1,23 +1,23 @@
 'use client';
 
-import TestHeader from '@/components/header/TestHeader';
-import TestItem from '@/components/test/TestItem';
+import DoTestItem from '@/components/test/DoTestItem';
 import { Button } from '@nextui-org/react';
+import Link from 'next/link';
 
-interface TestProps {}
+interface DoExamProps {}
 
-const Test: React.FC<TestProps> = ({}) => {
+const DoExam: React.FC<DoExamProps> = ({}) => {
     return (
         <>
-            <TestHeader />
             <div className="xl:grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[80px] xl:mt-[60px]">
                 <div className="col-span-7 mt-4">
                     <ul>
-                        <TestItem />
-                        <TestItem />
-                        <TestItem />
-                        <TestItem />
-                        <TestItem />
+                        <DoTestItem />
+                        <DoTestItem />
+                        <DoTestItem />
+                        <DoTestItem />
+                        <DoTestItem />
+                        <DoTestItem />
                     </ul>
                 </div>
                 <div className="col-span-3 my-4">
@@ -78,7 +78,7 @@ const Test: React.FC<TestProps> = ({}) => {
                             <span className="text-sm font-semibold">11:30</span>
                         </div>
                         <Button className="mt-2" color="primary">
-                            Nộp bài
+                            <Link href="/exam/1">Nộp bài</Link>
                         </Button>
                     </div>
                 </div>
@@ -87,4 +87,4 @@ const Test: React.FC<TestProps> = ({}) => {
     );
 };
 
-export default Test;
+export default DoExam;

@@ -3,9 +3,9 @@
 import { NavbarContent, NavbarItem, Button } from '@nextui-org/react';
 import Link from 'next/link';
 
-interface SignInSignUpProps {}
+interface StartNowProps {}
 
-const SignInSignUp: React.FC<SignInSignUpProps> = () => {
+const StartNow: React.FC<StartNowProps> = () => {
     return (
         <NavbarContent justify="center">
             <NavbarItem>
@@ -17,4 +17,4 @@ const SignInSignUp: React.FC<SignInSignUpProps> = () => {
     );
 };
 
-export default SignInSignUp;
+export default StartNow;

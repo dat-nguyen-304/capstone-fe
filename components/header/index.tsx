@@ -5,7 +5,7 @@ import { Navbar } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import Logo from './Logo';
 import MenuItems from './MenuItems';
-import SignInSignUp from './SignInSignUp';
+import StartNow from './StartNow';
 import MenuMobile from './MenuMobile';
 import UserItems from './UserItems';
 import { useUser } from '@/hooks';
@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = () => {
 
             <MenuItems />
 
-            {user ? <UserItems currentStudent={user as Student} /> : <SignInSignUp />}
+            {user ? <UserItems currentStudent={user as Student} /> : <StartNow />}
 
             <MenuMobile />
         </Navbar>
