@@ -1,15 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import ExamFilter from '@/components/exam/ExamFilter';
 import ExamItem from '@/components/exam/ExamItem';
-
-import { Button, Card } from '@nextui-org/react';
-import { PiTarget } from 'react-icons/pi';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { SiGoogleanalytics } from 'react-icons/si';
-import { CiPaperplane } from 'react-icons/ci';
 import ExamInfoCard from '@/components/exam/ExamInfoCard';
 
 interface ExamListProps {}

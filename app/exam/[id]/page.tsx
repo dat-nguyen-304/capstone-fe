@@ -1,6 +1,5 @@
 'use client';
 
-import ExamResult from '@/components/exam/exam-detail/ExamResult';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsBook, BsQuestionOctagon } from 'react-icons/bs';

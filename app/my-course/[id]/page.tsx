@@ -1,6 +1,5 @@
 'use client';
 
-import BuyCourse from '@/components/course/course-detail/BuyCourse';
 import CourseContent from '@/components/course/course-detail/CourseContent';
 import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';

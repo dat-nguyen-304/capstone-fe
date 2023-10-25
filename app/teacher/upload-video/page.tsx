@@ -84,7 +84,7 @@ const UploadVideo: React.FC = () => {
                 <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                     Tôi đồng ý{' '}
                     <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                        với chính sách và điều khoản của 6Live
+                        với chính sách và điều khoản của CEPA
                     </a>
                     .
                 </label>

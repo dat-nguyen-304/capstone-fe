@@ -3,7 +3,6 @@
 import TestHeader from '@/components/header/TestHeader';
 import TestItem from '@/components/test/TestItem';
 import { Button } from '@nextui-org/react';
-import Image from 'next/image';
 
 interface TestProps {}
 

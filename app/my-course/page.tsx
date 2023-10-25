@@ -1,7 +1,6 @@
 'use client';
 
 import CourseCard from '@/components/course/CourseCard';
-import CourseFilter from '@/components/course/CourseFilter';
 
 interface CourseListProps {}
 
