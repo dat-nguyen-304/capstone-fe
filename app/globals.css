@@ -90,3 +90,10 @@ nav header {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.truncate2line {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}

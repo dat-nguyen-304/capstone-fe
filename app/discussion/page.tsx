@@ -22,7 +22,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
         switch (columnKey) {
             case 'title':
                 return (
-                    <Link className="underline" href={`/discuss/${post.id}`}>
+                    <Link className="underline" href={`/discussion/${post.id}`}>
                         {cellValue}
                     </Link>
                 );

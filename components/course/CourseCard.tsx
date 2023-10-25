@@ -1,7 +1,6 @@
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { Progress, Rate } from 'antd';
 import Image from 'next/image';
-import styles from '@/app/course/page.module.css';
 import Link from 'next/link';
 
 interface CourseCardProps {
@@ -23,7 +22,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse }) => {
                         />
                     </CardHeader>
                     <CardBody className="text-small justify-between">
-                        <b className={`text-[15px] h-[40px] ${styles.truncate}`}>Khóa học lấy gốc thần tốc</b>
+                        <b className="text-[15px] h-[40px] truncate2line">Khóa học lấy gốc thần tốc</b>
                         <p className="mt-2 text-sm">Nguyễn Văn An</p>
                         <div className="flex items-baseline mt-1">
                             <span className="text-base mr-2 font-bold">4.7</span>
