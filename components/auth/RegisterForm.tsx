@@ -79,10 +79,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
             >
                 <h2 className={`${styles.title} !text-center sm:!mb-8`}>Hoàn tất đăng ký</h2>
 
-                <InputText size="sm" label="Email" name="email" control={control} />
-                <InputText size="sm" label="Họ và tên" name="fullName" control={control} />
-                <InputPassword size="sm" label="Mật khẩu" name="password" control={control} />
-                <InputPassword size="sm" label="Nhập lại mật khẩu" name="confirmPassword" control={control} />
+                <InputText size="sm" label="Email" name="email" control={control} className="my-4" />
+                <InputText size="sm" label="Họ và tên" name="fullName" control={control} className="my-4" />
+                <InputPassword size="sm" label="Mật khẩu" name="password" control={control} className="my-4" />
+                <InputPassword
+                    size="sm"
+                    label="Nhập lại mật khẩu"
+                    name="confirmPassword"
+                    control={control}
+                    className="my-4"
+                />
 
                 <div className="flex justify-center items-center gap-4">
                     <Button

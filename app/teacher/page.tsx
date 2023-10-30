@@ -6,7 +6,7 @@ import { Card, Tab, Tabs } from '@nextui-org/react';
 
 const TeacherDashboard: React.FC = () => {
     return (
-        <div className="mt-[60px]">
+        <div>
             <div className="sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
                 <Card className="p-4 mt-4 sm:mt-0">
                     <div>

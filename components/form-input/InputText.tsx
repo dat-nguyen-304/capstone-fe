@@ -26,7 +26,6 @@ export function InputText({ name, label, control, ...rest }: InputTextProps) {
             onBlur={onBlur}
             value={value}
             ref={ref}
-            className="my-4"
         />
     );
 }

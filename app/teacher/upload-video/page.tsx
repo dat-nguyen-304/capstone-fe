@@ -17,7 +17,7 @@ const UploadVideo: React.FC = () => {
     });
     return (
         <div>
-            <h3 className="font-semibold text-lg mb-4">Đăng tải video mới</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mb-4">Đăng tải video mới</h3>
             <div className="grid grid-cols-6 gap-2">
                 <div className="col-span-1">
                     <label

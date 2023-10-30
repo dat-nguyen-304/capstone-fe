@@ -17,7 +17,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse }) => {
                             height={300}
                             width={300}
                             alt=""
-                            className="w-full object-cover h-[140px]"
+                            className="w-full object-contain h-[200px]"
                             src="/banner/slide-1.png"
                         />
                     </CardHeader>

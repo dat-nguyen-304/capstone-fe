@@ -23,7 +23,7 @@ export const authApi = {
     },
 
     refreshToken: async () => {
-        return await axiosClient.post('/authentication/refresh-token', { token: '' });
+        return await axiosClient.post('/authentication/refresh-token');
     },
 
     forgotPassword: async (email: string) => {

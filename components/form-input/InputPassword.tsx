@@ -97,7 +97,6 @@ export function InputPassword({ name, label, control, ...rest }: InputPasswordPr
                 </button>
             }
             type={isVisible ? 'text' : 'password'}
-            className="my-4"
         />
     );
 }

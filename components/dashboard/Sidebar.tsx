@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                     </div>
                 </Header>
                 <Content className={collapsed ? 'sm:ml-[80px] transition-all' : 'sm:ml-[200px] transition-all '}>
-                    <div className="p-1 sm:p-[24px] min-h-[360px]" style={{ background: colorBgContainer }}>
+                    <div className="p-1 sm:p-[24px] min-h-[360px] mt-[60px]" style={{ background: colorBgContainer }}>
                         {children}
                     </div>
                 </Content>
