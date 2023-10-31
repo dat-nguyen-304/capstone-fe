@@ -43,38 +43,41 @@ const CreateCourse: React.FC = () => {
     });
 
     if (!data) return <Loader />;
-    console.log(fileRejections);
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mb-8">Tạo khóa học mới</h3>
             <div className="md:grid grid-cols-6">
-                <div className="md:col-span-3 lg:col-span-2 h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
-                    <div {...getRootProps()}>
-                        <input {...getInputProps()} name="avatar" />
-                        {uploadedFiles.length ? (
-                            <div className="group relative">
-                                <Image
-                                    className="object-cover w-full h-[240px]"
-                                    key={uploadedFiles[0].path}
-                                    src={URL.createObjectURL(uploadedFiles[0])}
-                                    alt={uploadedFiles[0].path as string}
-                                    width={240}
-                                    height={240}
-                                />
-                                <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
-                                    <RiImageEditLine size={40} />
-                                    <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
+                <div className="md:col-span-3 lg:col-span-2">
+                    <label className="font-semibold block mb-2">Ảnh thu nhỏ</label>
+                    <div className="h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
+                        <div {...getRootProps()}>
+                            <input {...getInputProps()} name="avatar" />
+                            {uploadedFiles.length ? (
+                                <div className="group relative">
+                                    <Image
+                                        className="object-cover w-full h-[240px]"
+                                        key={uploadedFiles[0].path}
+                                        src={URL.createObjectURL(uploadedFiles[0])}
+                                        alt={uploadedFiles[0].path as string}
+                                        width={240}
+                                        height={240}
+                                    />
+                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                        <RiImageEditLine size={40} />
+                                        <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
+                                    </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col justify-center items-center">
-                                <RiImageAddLine size={40} />
-                                <span className="text-sm">Tải lên ảnh thu nhỏ</span>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="flex flex-col justify-center items-center">
+                                    <RiImageAddLine size={40} />
+                                    <span className="text-sm">Tải lên ảnh thu nhỏ</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-                <div className="md:col-span-3 lg:col-span-4 grid grid-cols-2 md:ml-[20px] mt-12 md:mt-4">
+                <div className="md:col-span-3 lg:col-span-4 grid grid-cols-2 md:ml-[20px] mt-12 md:mt-8">
                     <div className="col-span-2">
                         <InputText
                             variant="bordered"
@@ -125,7 +128,8 @@ const CreateCourse: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className="mt-4">
+                <label className="font-semibold">Mô tả</label>
                 <InputDescription name="description" control={control} />
             </div>
             <div className="flex items-start my-8">
@@ -133,9 +137,9 @@ const CreateCourse: React.FC = () => {
                     <Checkbox />
                 </div>
                 <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Tôi đồng ý{' '}
+                    Tôi đồng ý với{' '}
                     <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                        với chính sách và điều khoản của CEPA
+                        chính sách và điều khoản của CEPA
                     </a>
                     .
                 </label>

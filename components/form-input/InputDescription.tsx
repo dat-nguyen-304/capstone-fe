@@ -17,10 +17,5 @@ export function InputDescription({ name, control }: InputDescriptionProps) {
         control
     });
 
-    return (
-        <>
-            <h3 className="mt-4">Mô tả</h3>
-            <ReactQuill className="h-[100px] mt-2" theme="snow" value={value} onChange={onChange} />;
-        </>
-    );
+    return <ReactQuill className="h-[100px] mt-2" theme="snow" value={value} onChange={onChange} />;
 }
