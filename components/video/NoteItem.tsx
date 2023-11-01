@@ -12,7 +12,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ time }) => {
     return (
         <li className="mt-8">
             <div className="flex justify-between items-center">
-                <Chip className="text-sm sm:text-base cursor-pointer" color="primary">
+                <Chip size="sm" className="text-sm sm:text-base cursor-pointer" color="primary">
                     {time}
                 </Chip>
                 <div className="flex items-center text-lg gap-5">

@@ -75,7 +75,7 @@ const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSub
                         <SelectItem key={2} value={2}>
                             Chưa làm
                         </SelectItem>
-                        <SelectItem key={2} value={2}>
+                        <SelectItem key={3} value={3}>
                             Đã làm
                         </SelectItem>
                     </Select>

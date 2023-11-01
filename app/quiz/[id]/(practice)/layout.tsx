@@ -6,11 +6,11 @@ export const metadata = {
     description: 'Nền tảng ôn thi Đại học số 1 Việt Nam'
 };
 
-const PracticeExamLayout = ({ children, params }: { children: React.ReactNode; params: { id: number } }) => (
+const PracticeQuizLayout = ({ children, params }: { children: React.ReactNode; params: { id: number } }) => (
     <div className="mb-16">
-        <DoTestHeader type="exam" id={params.id} />
+        <DoTestHeader type="quiz" id={params.id} />
         {children}
     </div>
 );
 
-export default PracticeExamLayout;
+export default PracticeQuizLayout;

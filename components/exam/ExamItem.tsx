@@ -33,7 +33,7 @@ const ExamItem: React.FC<ExamItemProps> = ({}) => {
                 </div>
                 <Button variant="bordered" className="mt-2">
                     <Link className="w-full" href="/exam/1">
-                        Chi tiết
+                        Làm ngay
                     </Link>
                 </Button>
             </Card>

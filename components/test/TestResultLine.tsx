@@ -3,9 +3,11 @@
 import { User } from '@nextui-org/react';
 import Link from 'next/link';
 
-interface ExamResultItemProps {}
+interface TestResultItemProps {
+    type: 'quiz' | 'exam';
+}
 
-const ExamResultItem: React.FC<ExamResultItemProps> = ({}) => {
+const TestResultLine: React.FC<TestResultItemProps> = ({ type }) => {
     return (
         <li className="flex items-center justify-between border-t-1 border-gray-300 p-4 my-2">
             <User
@@ -19,7 +21,7 @@ const ExamResultItem: React.FC<ExamResultItemProps> = ({}) => {
             <h3 className="md:hidden text-xs sm:text-sm">Làm bài lần 1</h3>
             <div className="text-xs sm:text-sm">
                 Điểm số <span className="font-bold mr-4">5</span>
-                <Link className="text-xs sm:text-sm underline text-blue-500" href="/test-result/1">
+                <Link className="text-xs sm:text-sm underline text-blue-500" href={`/${type}/1/result/1`}>
                     Xem chi tiết
                 </Link>
             </div>
@@ -27,4 +29,4 @@ const ExamResultItem: React.FC<ExamResultItemProps> = ({}) => {
     );
 };
 
-export default ExamResultItem;
+export default TestResultLine;
