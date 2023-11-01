@@ -28,8 +28,8 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/my-video">Video của tôi</Link>, '4')
     ]),
     getItem('Khóa học', 'sub2', <TeamOutlined />, [
-        getItem(<Link href="/teacher/create-course">Tạo khóa học</Link>, '5'),
-        getItem(<Link href="/teacher/my-course">Khóa học của tôi</Link>, '6')
+        getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '5'),
+        getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '6')
     ]),
     getItem('Bài tập', 'sub3', <TeamOutlined />, [
         getItem(<Link href="/teacher/create-quiz">Tạo bài tập</Link>, '7'),

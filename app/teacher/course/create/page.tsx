@@ -132,7 +132,7 @@ const CreateCourse: React.FC = () => {
                 <label className="font-semibold">Mô tả</label>
                 <InputDescription name="description" control={control} />
             </div>
-            <div className="flex items-start my-8">
+            <div className="flex items-start mb-8 mt-16">
                 <div className="flex items-center h-5">
                     <Checkbox />
                 </div>
