@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, Key, ChangeEvent } from 'react';
+import React, { useMemo, Key, Dispatch, SetStateAction } from 'react';
 import {
     Table,
     TableHeader,
@@ -9,66 +9,32 @@ import {
     TableRow,
     TableCell,
     Pagination,
-    Selection,
     SortDescriptor
 } from '@nextui-org/react';
-import TopContent from './TopContent';
 
 interface AppProps {
     renderCell: (post: any, columnKey: Key) => string | number | JSX.Element;
-    initialVisibleColumns: string[];
-    columns: {
+    items: any[];
+    headerColumns: {
         name: string;
         uid: string;
         sortable?: boolean;
     }[];
-    statusOptions?: {
-        name: string;
-        uid: string;
-    }[];
-    items: any[];
+    page: number;
+    setPage: Dispatch<SetStateAction<number>>;
+    sortDescriptor: SortDescriptor;
+    setSortDescriptor: Dispatch<SetStateAction<SortDescriptor>>;
 }
 
-const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, statusOptions, items }) => {
-    const [filterValue, setFilterValue] = useState('');
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(initialVisibleColumns));
-    const [statusFilter, setStatusFilter] = useState<Selection>('all');
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [page, setPage] = useState(1);
-
-    const pages = Math.ceil(items.length / rowsPerPage);
-
-    const hasSearchFilter = Boolean(filterValue);
-
-    const headerColumns = useMemo(() => {
-        if (visibleColumns === 'all') return columns;
-
-        return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
-    }, [visibleColumns]);
-
-    const itemsOnPage = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        return items.slice(start, end);
-    }, [page, items, rowsPerPage]);
-
-    const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
-        setRowsPerPage(Number(e.target.value));
-        setPage(1);
-    }, []);
-
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
-
+const TableContent: React.FC<AppProps> = ({
+    renderCell,
+    headerColumns,
+    items,
+    page,
+    setPage,
+    sortDescriptor,
+    setSortDescriptor
+}) => {
     const classNames = useMemo(
         () => ({
             wrapper: ['max-h-[382px]', 'max-w-3xl'],
@@ -92,18 +58,6 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
 
     return (
         <div className="w-full overflow-x-scroll overflow-y-hidden">
-            <TopContent
-                filterValue={filterValue}
-                statusFilter={statusFilter}
-                columns={columns}
-                visibleColumns={visibleColumns}
-                onSearchChange={onSearchChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                postsLength={items.length}
-                setFilterValue={setFilterValue}
-                setStatusFilter={setStatusFilter}
-                setVisibleColumns={setVisibleColumns}
-            />
             <Table
                 isCompact
                 removeWrapper
@@ -115,11 +69,9 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                     }
                 }}
                 classNames={classNames}
-                selectedKeys={selectedKeys}
                 selectionMode="none"
-                sortDescriptor={sortDescriptor}
                 topContentPlacement="outside"
-                onSelectionChange={setSelectedKeys}
+                sortDescriptor={sortDescriptor}
                 onSortChange={setSortDescriptor}
             >
                 <TableHeader columns={headerColumns}>
@@ -133,7 +85,7 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={'Không tìm thấy kết quả'} items={itemsOnPage}>
+                <TableBody emptyContent={'Không tìm thấy kết quả'} items={items}>
                     {item => (
                         <TableRow key={item.id} className="border-b-1 border-gray-200">
                             {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -148,9 +100,8 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
                         cursor: 'bg-foreground text-background'
                     }}
                     color="default"
-                    isDisabled={hasSearchFilter}
                     page={page}
-                    total={pages}
+                    total={2}
                     variant="light"
                     onChange={setPage}
                 />
@@ -159,4 +110,4 @@ const App: React.FC<AppProps> = ({ renderCell, initialVisibleColumns, columns, s
     );
 };
 
-export default App;
+export default TableContent;

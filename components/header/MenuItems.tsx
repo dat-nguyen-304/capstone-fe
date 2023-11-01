@@ -56,7 +56,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                                 Luyện đề ngay
                             </Link>
                             <Link
-                                href="/exam-history"
+                                href="/exam/history"
                                 className="text-black block px-4 py-2 hover:bg-blue-100 rounded-lg my-1"
                             >
                                 Lịch sử luyện đề

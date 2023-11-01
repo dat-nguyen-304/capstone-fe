@@ -52,7 +52,7 @@ const ExamInfoCard: React.FC<ExamInfoCardProps> = ({}) => {
                         </p>
                     </div>
                 </div>
-                <Button className="mt-2 w-full flex items-center" variant="faded" color="primary">
+                <Button className="mt-4 w-full flex items-center" variant="bordered" color="primary">
                     <SiGoogleanalytics />
                     <span> Xem thống kê</span>
                 </Button>

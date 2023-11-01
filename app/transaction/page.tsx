@@ -1,8 +1,21 @@
 'use client';
-import Table from '@/components/table';
-import { User } from '@nextui-org/react';
+
+import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Selection,
+    SortDescriptor,
+    User
+} from '@nextui-org/react';
 import Link from 'next/link';
-import { Key, useCallback } from 'react';
+import { BsChevronDown, BsSearch } from 'react-icons/bs';
+import { capitalize } from '@/components/table/utils';
+import TableContent from '@/components/table';
 
 interface TransactionsProps {}
 
@@ -69,6 +82,34 @@ const transactions = [
 type Transaction = (typeof transactions)[0];
 
 const Transactions: React.FC<TransactionsProps> = ({}) => {
+    const [filterValue, setFilterValue] = useState('');
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(
+        new Set(['id', 'name', 'subject', 'teacher', 'price', 'date'])
+    );
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(1);
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
+
+    const headerColumns = useMemo(() => {
+        if (visibleColumns === 'all') return columns;
+
+        return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
+    }, [visibleColumns]);
+
+    const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+    }, []);
+
+    const onSearchChange = useCallback((value?: string) => {
+        if (value) {
+            setFilterValue(value);
+            setPage(1);
+        } else {
+            setFilterValue('');
+        }
+    }, []);
+
     const renderCell = useCallback((transaction: Transaction, columnKey: Key) => {
         const cellValue = transaction[columnKey as keyof Transaction];
 
@@ -94,11 +135,66 @@ const Transactions: React.FC<TransactionsProps> = ({}) => {
 
     return (
         <div className="w-4/5 mx-auto my-8">
-            <Table
+            <div className="flex flex-col gap-4">
+                <div className="flex justify-between gap-3 items-end">
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[44%] border-1"
+                        placeholder="Tìm kiếm..."
+                        size="sm"
+                        startContent={<BsSearch className="text-default-300" />}
+                        value={filterValue}
+                        variant="bordered"
+                        onClear={() => setFilterValue('')}
+                        onValueChange={onSearchChange}
+                    />
+                    <div className="flex gap-3">
+                        <Dropdown>
+                            <DropdownTrigger className="flex">
+                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                    Cột
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={visibleColumns}
+                                selectionMode="multiple"
+                                onSelectionChange={setVisibleColumns}
+                            >
+                                {columns.map(column => (
+                                    <DropdownItem key={column.uid} className="capitalize">
+                                        {capitalize(column.name)}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </div>
+                <div className="sm:flex justify-between items-center">
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {transactions.length} kết quả</span>
+                    <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                        Số kết quả mỗi trang:
+                        <select
+                            className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                            onChange={onRowsPerPageChange}
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <TableContent
                 renderCell={renderCell}
-                initialVisibleColumns={['id', 'name', 'subject', 'date']}
-                columns={columns}
+                headerColumns={headerColumns}
                 items={transactions}
+                page={page}
+                setPage={setPage}
+                sortDescriptor={sortDescriptor}
+                setSortDescriptor={setSortDescriptor}
             />
         </div>
     );
