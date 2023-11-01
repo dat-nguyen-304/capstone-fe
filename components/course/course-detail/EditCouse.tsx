@@ -7,6 +7,7 @@ import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import { BsPersonWorkspace } from 'react-icons/bs';
 import Link from 'next/link';
+import { BiSolidPencil } from 'react-icons/bi';
 
 interface EditCourseProps {}
 
@@ -16,10 +17,13 @@ const EditCourse: React.FC<EditCourseProps> = ({}) => {
             <Image src="/banner/slide-1.png" width={600} height={300} alt="" className="w-full" />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">₫ 400.000</p>
-                <Button color="warning" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
-                    <Link href="/teacher/course/edit/1" className="w-full block ">
-                        <span className="text-black">Chỉnh sửa</span>
-                    </Link>
+                <Button
+                    as={Link}
+                    href="/teacher/course/edit/1"
+                    color="warning"
+                    className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
+                >
+                    Chỉnh sửa <BiSolidPencil />
                 </Button>
 
                 <div className="hidden md:block">

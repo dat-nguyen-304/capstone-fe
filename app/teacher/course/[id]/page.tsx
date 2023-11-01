@@ -1,6 +1,5 @@
 'use client';
 
-import BuyCourse from '@/components/course/course-detail/BuyCourse';
 import CourseContent from '@/components/course/course-detail/CourseContent';
 import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import EditCourse from '@/components/course/course-detail/EditCouse';
@@ -12,8 +11,8 @@ interface CourseDetailProps {}
 
 const CourseDetail: React.FC<CourseDetailProps> = ({}) => {
     return (
-        <div className="w-[98%] xl:w-4/5 mx-auto">
-            <Link href="/course" className="mt-4 flex items-center gap-2 text-sm">
+        <div className="w-[98%] xl:w-[90%] mx-auto">
+            <Link href="/teacher/course/my-course" className="mt-4 flex items-center gap-2 text-sm">
                 <BsArrowLeft />
                 <span>Quay lại</span>
             </Link>

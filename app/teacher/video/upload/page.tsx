@@ -65,8 +65,8 @@ const UploadVideo: React.FC = () => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mb-8">Đăng tải video mới</h3>
-            <div className="lg:grid grid-cols-6 gap-2">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Đăng tải video mới</h3>
+            <div className="lg:grid grid-cols-6 gap-2 mt-8">
                 <div className="col-span-1">
                     <div {...getVideoRootProps()}>
                         <input {...getVideoInputProps()} name="avatar" />
@@ -117,7 +117,7 @@ const UploadVideo: React.FC = () => {
                         </>
                     )}
                 </div>
-                <div className="col-span-2 h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4 mr-4">
+                <div className="col-span-2 h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4 mr-0 lg:mr-4">
                     <div {...getImageRootProps()}>
                         <input {...getImageInputProps()} name="avatar" />
                         {uploadedImageFile ? (
@@ -194,7 +194,7 @@ const UploadVideo: React.FC = () => {
                 <label className="block mt-4 mb-2 font-semibold">Mô tả</label>
                 <InputDescription name="description" control={control} />
             </div>
-            <div className="flex items-start mb-8 mt-16">
+            <div className="flex items-start mb-8 mt-20 sm:mt-16">
                 <div className="flex items-center h-5">
                     <Checkbox />
                 </div>

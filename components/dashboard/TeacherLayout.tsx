@@ -24,8 +24,8 @@ const items: MenuItem[] = [
     getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <PieChartOutlined />),
     getItem(<Link href="/teacher/profile">Cập nhật hồ sơ</Link>, '2', <UserOutlined />),
     getItem('Video', 'sub1', <DesktopOutlined />, [
-        getItem(<Link href="/teacher/upload-video">Đăng tải video mới</Link>, '3'),
-        getItem(<Link href="/teacher/my-video">Video của tôi</Link>, '4')
+        getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
+        getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4')
     ]),
     getItem('Khóa học', 'sub2', <TeamOutlined />, [
         getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '5'),

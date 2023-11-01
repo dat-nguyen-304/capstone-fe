@@ -46,8 +46,8 @@ const EditCourse: React.FC = () => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mb-8">Chỉnh sửa khóa học</h3>
-            <div className="md:grid grid-cols-6">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa khóa học</h3>
+            <div className="md:grid grid-cols-6 mt-8">
                 <div className="md:col-span-3 lg:col-span-2">
                     <label className="font-semibold block mb-2">Ảnh thu nhỏ</label>
                     <div className="h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
@@ -87,11 +87,11 @@ const EditCourse: React.FC = () => {
                             control={control}
                         />
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-2 mt-4">
                         <InputNumber control={control} label="Giá" name="price" />
                     </div>
                     <div className="col-span-2 sm:grid grid-cols-2 gap-4">
-                        <div className="col-span-1 mt-8">
+                        <div className="col-span-1 mt-12 md:mt-8">
                             <Select
                                 label="Chọn môn học"
                                 color="primary"
@@ -106,7 +106,7 @@ const EditCourse: React.FC = () => {
                                 ))}
                             </Select>
                         </div>
-                        <div className="col-span-1 mt-8">
+                        <div className="col-span-1 mt-12 md:mt-8">
                             <Select
                                 label="Mức độ"
                                 color="primary"
@@ -132,7 +132,7 @@ const EditCourse: React.FC = () => {
                 <label className="font-semibold">Mô tả</label>
                 <InputDescription name="description" control={control} />
             </div>
-            <div className="flex items-start mb-8 mt-16">
+            <div className="flex items-start mb-8 mt-20 sm:mt-16">
                 <div className="flex items-center h-5">
                     <Checkbox />
                 </div>
@@ -144,7 +144,7 @@ const EditCourse: React.FC = () => {
                     .
                 </label>
             </div>
-            <Button color="primary">Xác nhận video mới</Button>
+            <Button color="primary">Xác nhận thay đổi</Button>
         </div>
     );
 };

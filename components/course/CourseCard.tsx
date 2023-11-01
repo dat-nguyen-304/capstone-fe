@@ -10,7 +10,7 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse }) => {
     let detailPage = '';
-    if (isTeacherCourse) detailPage = '/teacher/course/my-course/1';
+    if (isTeacherCourse) detailPage = '/teacher/course/1';
     else if (isMyCourse) detailPage = '/my-course/1';
     else detailPage = '/course/1';
     return (
