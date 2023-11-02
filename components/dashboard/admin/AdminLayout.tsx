@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar';
 import { useUser } from '@/hooks';
 import { User } from '@/types';
 import NotFound from '@/app/not-found';

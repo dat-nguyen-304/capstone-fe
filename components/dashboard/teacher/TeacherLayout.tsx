@@ -4,9 +4,9 @@ import React from 'react';
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar';
 import { useUser } from '@/hooks';
-import { Teacher, Admin, User } from '@/types';
+import { User } from '@/types';
 import NotFound from '@/app/not-found';
 
 type MenuItem = Required<MenuProps>['items'][number];

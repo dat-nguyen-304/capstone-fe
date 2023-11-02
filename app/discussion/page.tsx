@@ -96,12 +96,12 @@ const PostList: React.FC<PostListProps> = ({}) => {
     }, []);
 
     return (
-        <div className="w-4/5 mx-auto my-8">
+        <div className="w-[90%] xl:w-4/5 mx-auto my-8">
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
-                        className="w-full sm:max-w-[44%] border-1"
+                        className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
                         size="sm"
                         startContent={<BsSearch className="text-default-300" />}

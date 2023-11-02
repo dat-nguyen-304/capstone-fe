@@ -1,4 +1,4 @@
-import AdminLayout from '@/components/dashboard/AdminLayout';
+import AdminLayout from '@/components/dashboard/admin/AdminLayout';
 import React from 'react';
 
 export const metadata = {

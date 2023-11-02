@@ -21,6 +21,8 @@ import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 import { Subject } from '@/types';
 import Loader from '@/components/Loader';
+import AvgScoreMonthChart from '@/components/chart/exam-history/AvgScoreMonthChart';
+import QuantityScoreChart from '@/components/chart/exam-history/QuantityScoreChart';
 
 interface ExamHistoryProps {}
 
@@ -137,12 +139,12 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     return (
         <>
             <Header />
-            <div className="w-4/5 mx-auto my-8">
+            <div className="w-[90%] xl:w-4/5 mx-auto my-8">
                 <div className="flex flex-col gap-4">
-                    <div className="flex justify-between gap-3 items-end">
+                    <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             isClearable
-                            className="w-full sm:max-w-[44%] border-1"
+                            className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
                             placeholder="Tìm kiếm..."
                             size="sm"
                             startContent={<BsSearch className="text-default-300" />}
@@ -228,6 +230,17 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                     sortDescriptor={sortDescriptor}
                     setSortDescriptor={setSortDescriptor}
                 />
+                <div className="md:grid grid-cols-2 mt-8 gap-4">
+                    <div className="">
+                        <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
+                        <AvgScoreMonthChart />
+                    </div>
+
+                    <div className="mt-12 md:mt-0">
+                        <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
+                        <QuantityScoreChart />
+                    </div>
+                </div>
             </div>
             <Footer />
         </>

@@ -57,7 +57,7 @@ const TableContent: React.FC<AppProps> = ({
     );
 
     return (
-        <div className="w-full overflow-x-scroll overflow-y-hidden">
+        <div className="w-full overflow-x-auto overflow-y-hidden">
             <Table
                 isCompact
                 removeWrapper

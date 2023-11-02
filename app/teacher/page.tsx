@@ -1,7 +1,7 @@
 'use client';
 
 import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
-import TopContributorItem from '@/components/chart/teacher-dashboard/TopContributorItem';
+import TopContributorItem from '@/components/dashboard/teacher/TopContributorItem';
 import { Card, Tab, Tabs } from '@nextui-org/react';
 
 const TeacherDashboard: React.FC = () => {

@@ -1,4 +1,4 @@
-import TeacherLayout from '@/components/dashboard/TeacherLayout';
+import TeacherLayout from '@/components/dashboard/teacher/TeacherLayout';
 import React from 'react';
 
 export const metadata = {
