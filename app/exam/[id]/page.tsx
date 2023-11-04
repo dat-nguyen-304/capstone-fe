@@ -8,16 +8,14 @@ import { FaUserEdit } from 'react-icons/fa';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { FiRotateCw } from 'react-icons/fi';
 import CommentItem from '@/components/video/CommentItem';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import TestResultLine from '@/components/test/TestResultLine';
+import StudentLayout from '@/components/header/StudentLayout';
 
 interface ExamDetailProps {}
 
 const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
     return (
-        <>
-            <Header />
+        <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
                 <Link href="/exam" className="mb-4 flex items-center gap-2 text-sm">
                     <BsArrowLeft />
@@ -80,8 +78,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
                 </ul>
                 <Button className="w-full">Xem thêm</Button>
             </div>
-            <Footer />
-        </>
+        </StudentLayout>
     );
 };
 

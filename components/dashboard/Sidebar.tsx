@@ -10,6 +10,7 @@ import { TbLogout, TbMenu2 } from 'react-icons/tb';
 import { User } from '@/types';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
+import { authApi } from '@/api-client';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -29,7 +30,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
     const {
         token: { colorBgContainer }
     } = theme.useToken();
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await authApi.logout({ email: currentUser.user?.email as string });
         currentUser.onChangeUser(null);
         router.push('/auth');
     };

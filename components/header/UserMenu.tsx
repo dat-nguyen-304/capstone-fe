@@ -14,8 +14,8 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
     const currentUser = useUser();
     const router = useRouter();
-    const handleLogout = () => {
-        authApi.logout({ email: currentUser.user?.email as string });
+    const handleLogout = async () => {
+        await authApi.logout({ email: currentUser.user?.email as string });
         currentUser.onChangeUser(null);
         router.push('/');
     };
@@ -34,7 +34,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentStudent }) => {
                 />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-                <DropdownItem key="profile" className="h-14 gap-2">
+                <DropdownItem key="hello" className="h-14 gap-2">
                     <p className="font-semibold">Xin chào</p>
                     <p className="font-semibold">{currentStudent.fullName}</p>
                 </DropdownItem>

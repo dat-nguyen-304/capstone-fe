@@ -1,13 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from '../Sidebar';
 import { useUser } from '@/hooks';
-import { User } from '@/types';
+import { SafeUser, User } from '@/types';
 import NotFound from '@/app/not-found';
+import { handleUserReload } from '@/utils/handleUserReload';
+import Loader from '@/components/Loader';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -46,9 +48,25 @@ const items: MenuItem[] = [
 ];
 
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
-    const { user } = useUser();
-    if (!user) return <NotFound />;
-    if (user.role !== 'TEACHER') return <NotFound />;
+    const currentUser = useUser();
+    const [user, setUser] = useState<SafeUser | null>(currentUser.user);
+    const [notFound, setNotFound] = useState<boolean>(false);
+    useEffect(() => {
+        const handleReload = async () => {
+            if (!currentUser.user) {
+                const userSession = await handleUserReload();
+                if (!userSession) {
+                    setNotFound(true);
+                } else currentUser.onChangeUser(userSession as SafeUser);
+                setUser(userSession);
+            }
+        };
+        handleReload();
+    }, [currentUser.user]);
+
+    if (!notFound && !user) return <Loader />;
+    if ((user && user.role !== 'TEACHER') || notFound) return <NotFound />;
+
     return (
         <Sidebar user={user as User} items={items}>
             {children}

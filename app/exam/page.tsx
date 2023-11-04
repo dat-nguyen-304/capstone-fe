@@ -4,8 +4,7 @@ import { useState } from 'react';
 import ExamFilter from '@/components/exam/ExamFilter';
 import ExamItem from '@/components/exam/ExamItem';
 import ExamInfoCard from '@/components/exam/ExamInfoCard';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import StudentLayout from '@/components/header/StudentLayout';
 
 interface ExamListProps {}
 
@@ -13,8 +12,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     const [selectedSubject, setSelectedSubject] = useState(0);
 
     return (
-        <>
-            <Header />
+        <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">
                 <h2 className="text-2xl font-bold">Thư viện đề thi</h2>
                 <div className="xl:grid grid-cols-4 relative">
@@ -35,8 +33,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </>
+        </StudentLayout>
     );
 };
 

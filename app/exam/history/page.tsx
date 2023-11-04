@@ -11,9 +11,8 @@ import {
     Selection,
     SortDescriptor
 } from '@nextui-org/react';
+import StudentLayout from '@/components/header/StudentLayout';
 import Link from 'next/link';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
@@ -137,8 +136,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     }
 
     return (
-        <>
-            <Header />
+        <StudentLayout>
             <div className="w-[90%] xl:w-4/5 mx-auto my-8">
                 <div className="flex flex-col gap-4">
                     <div className="sm:flex justify-between gap-3 items-end">
@@ -242,8 +240,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </>
+        </StudentLayout>
     );
 };
 

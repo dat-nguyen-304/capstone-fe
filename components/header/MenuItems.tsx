@@ -45,7 +45,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                         Kiểm tra năng lực
                     </Link>
                 </NavbarItem>
-                <NavbarItem key="discussion" isActive={true} className="font-medium text-sm">
+                <NavbarItem key="practice" isActive={true} className="font-medium text-sm">
                     <div className="relative group z-50">
                         <div className="cursor-pointer flex items-center">
                             <span>Luyện đề</span>
