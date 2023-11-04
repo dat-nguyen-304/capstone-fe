@@ -49,14 +49,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
                     // convert token to cookies
                     const cookies = new Cookies(req, res, { secure: process.env.NODE_ENV !== 'development' });
-                    cookies.set('access_token', accessToken, {
+                    cookies.set('access-token', accessToken, {
                         httpOnly: true,
-                        sameSite: 'lax',
+                        // sameSite: 'lax',
                         expires: new Date(userSession.exp * 1000)
                     });
-                    cookies.set('refresh_token', refreshToken, {
+                    cookies.set('refresh-token', refreshToken, {
                         httpOnly: true,
-                        sameSite: 'lax',
+                        // sameSite: 'lax',
                         expires: new Date(refresh_token.exp * 1000)
                     });
                     return (res as NextApiResponse).status(200).json({ userSession, code: 0 });

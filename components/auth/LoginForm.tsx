@@ -1,6 +1,5 @@
 import { Form } from 'antd';
 import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
-import { FcGoogle } from 'react-icons/fc';
 import styles from '@/app/auth/page.module.css';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
@@ -12,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { SafeUser } from '@/types';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 interface LoginFormProps {}
 
@@ -106,13 +106,26 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                 Quên mật khẩu
             </Link>
             <div className="border-t-2 mt-6 border-t-[#ccc] w-[300px] sm:w-[360px] flex justify-center">
-                <Button
-                    className="mt-6 bg-white border-[2px] border-black flex w-[280px] sm:w-[320px] text-base px-8 py-6 font-semibold text-[#333]"
-                    id="google-login"
-                    startContent={<FcGoogle size={24} />}
-                >
-                    <p className="flex-1">Đăng nhập với google</p>
-                </Button>
+                <div className="my-6">
+                    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+                        <GoogleLogin
+                            onSuccess={credentialResponse => {
+                                console.log(credentialResponse);
+                            }}
+                            onError={() => {
+                                console.log('Login Failed');
+                            }}
+                            theme="filled_blue"
+                            size="large"
+                            type="standard"
+                            locale="vi_VN"
+                            shape="pill"
+                            logo_alignment="left"
+                            text="signin_with"
+                            useOneTap
+                        />
+                    </GoogleOAuthProvider>
+                </div>
             </div>
         </Form>
     );

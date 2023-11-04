@@ -6,10 +6,11 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export type InputDescriptionProps = {
     name: string;
+    placeholder?: string;
     control: Control<any>;
 };
 
-export function InputDescription({ name, control }: InputDescriptionProps) {
+export function InputDescription({ name, control, placeholder }: InputDescriptionProps) {
     const {
         field: { onChange, value }
     } = useController({
@@ -17,5 +18,13 @@ export function InputDescription({ name, control }: InputDescriptionProps) {
         control
     });
 
-    return <ReactQuill className="h-[100px] mt-2" theme="snow" value={value} onChange={onChange} />;
+    return (
+        <ReactQuill
+            className="h-[100px] mt-2"
+            theme="snow"
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+        />
+    );
 }

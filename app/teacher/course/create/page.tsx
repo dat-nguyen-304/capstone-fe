@@ -144,7 +144,7 @@ const CreateCourse: React.FC = () => {
                     .
                 </label>
             </div>
-            <Button color="primary">Xác nhận video mới</Button>
+            <Button color="primary">Tạo khóa học mới</Button>
         </div>
     );
 };
