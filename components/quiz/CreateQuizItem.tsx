@@ -16,9 +16,9 @@ const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
         }
     });
     return (
-        <li>
+        <li className="mt-8">
             <h3 className="font-semibold text-base text-blue-700">Câu hỏi 1</h3>
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="lg:grid grid-cols-2 gap-4 mt-2">
                 <div>
                     <InputDescription name="description" control={control} placeholder="Nội dung câu hỏi..." />
                     <Select
@@ -26,7 +26,7 @@ const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
                         label="Đáp án đúng"
                         color="primary"
                         variant="bordered"
-                        defaultSelectedKeys={['0']}
+                        defaultSelectedKeys={['a']}
                         className="mt-16 w-[160px]"
                     >
                         <SelectItem key="a" value="a">
@@ -80,6 +80,7 @@ const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
                         variant="bordered"
                         labelPlacement="outside-left"
                     />
+                    <Button className="w-full">Thêm đáp án</Button>
                 </div>
             </div>
         </li>
