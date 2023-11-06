@@ -5,7 +5,7 @@ import type { MenuProps } from 'antd';
 import { Drawer, Layout, Menu, theme } from 'antd';
 import Image from 'next/image';
 import Notification from '../header/Notification';
-import { Button } from '@nextui-org/react';
+import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
 import { User } from '@/types';
 import { useUser } from '@/hooks';
@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                 <Menu theme="light" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Drawer>
             <Layout>
-                <Header className="!bg-[#001529] flex h-[60px] justify-between items-center !px-[20px] fixed top-0 left-0 right-0 z-[999]">
+                <Header className="!bg-[#001529] flex h-[60px] justify-between items-center !px-[20px] lg:!px-[80px] fixed top-0 left-0 right-0 z-[999]">
                     <div className="flex gap-4 items-center">
                         <Image
                             src="https://intaadvising.gatech.edu/wp-content/uploads/2020/11/cepa.png"
@@ -84,12 +84,36 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                         </div>
                     </div>
                     <div className="hidden sm:flex items-center justify-end h-[60px] sm:gap-[48px]">
-                        <Notification />
-                        <Button variant="light" color="danger" onClick={handleLogout}>
-                            <p className="flex gap-2">
-                                Đăng xuất <TbLogout size={20} />
-                            </p>
-                        </Button>
+                        <Dropdown placement="bottom-end">
+                            <DropdownTrigger>
+                                <Avatar
+                                    isBordered
+                                    as="button"
+                                    className="transition-transform"
+                                    color="secondary"
+                                    name="Jason Hughes"
+                                    size="sm"
+                                    src="/banner/slide-1.png"
+                                />
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Profile Actions" variant="flat">
+                                <DropdownItem key="hello" className="h-14 gap-2">
+                                    <p className="font-semibold">Xin chào</p>
+                                    <p className="font-semibold">{user.fullName}</p>
+                                </DropdownItem>
+                                <DropdownItem
+                                    className="text-black"
+                                    as={Link}
+                                    href="/change-password"
+                                    key="change-password"
+                                >
+                                    Đổi mật khẩu
+                                </DropdownItem>
+                                <DropdownItem onClick={handleLogout} key="logout" color="danger">
+                                    Đăng xuất
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                     <div className="flex sm:hidden items-center justify-end">
                         <Notification />

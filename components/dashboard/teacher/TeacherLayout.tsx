@@ -10,6 +10,7 @@ import { SafeUser, User } from '@/types';
 import NotFound from '@/app/not-found';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '@/components/Loader';
+import { Chip } from '@nextui-org/react';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -43,7 +44,16 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/statistic/users">Học sinh</Link>, '11')
     ]),
     getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
-    getItem(<Link href="/teacher/notification">Thông báo</Link>, '13', <PieChartOutlined />),
+    getItem(
+        <div className="relative">
+            <Link href="/teacher/notification">Thông báo</Link>
+            <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
+                10
+            </Chip>
+        </div>,
+        '13',
+        <PieChartOutlined />
+    ),
     getItem(<Link href="/teacher/discuss">Thảo luận</Link>, '14', <PieChartOutlined />)
 ];
 

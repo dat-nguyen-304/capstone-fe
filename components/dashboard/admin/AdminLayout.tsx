@@ -10,6 +10,7 @@ import { SafeUser, User } from '@/types';
 import NotFound from '@/app/not-found';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '@/components/Loader';
+import { Chip } from '@nextui-org/react';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -36,7 +37,17 @@ const items: MenuItem[] = [
     getItem(<Link href="/admin/revenue">Quản lí doanh thu</Link>, '7', <FileOutlined />),
     getItem(<Link href="/admin/report">Quản lí báo cáo</Link>, '8', <PieChartOutlined />),
     getItem(<Link href="/admin/test">Quản lí đề thi</Link>, '9', <PieChartOutlined />),
-    getItem(<Link href="/admin/discussion">Quản lí thảo luận</Link>, '10', <PieChartOutlined />)
+    getItem(<Link href="/admin/discussion">Quản lí thảo luận</Link>, '10', <PieChartOutlined />),
+    getItem(
+        <div className="relative">
+            <Link href="/teacher/notification">Thông báo</Link>
+            <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
+                10
+            </Chip>
+        </div>,
+        '11',
+        <PieChartOutlined />
+    )
 ];
 
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
