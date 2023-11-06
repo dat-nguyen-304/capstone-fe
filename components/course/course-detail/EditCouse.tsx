@@ -2,16 +2,18 @@
 
 import { Button } from '@nextui-org/react';
 import Image from 'next/image';
-import { SiLevelsdotfyi } from 'react-icons/si';
+import { SiGoogleanalytics, SiLevelsdotfyi } from 'react-icons/si';
 import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import { BsPersonWorkspace } from 'react-icons/bs';
 import Link from 'next/link';
 import { BiSolidPencil } from 'react-icons/bi';
 
-interface EditCourseProps {}
+interface EditCourseProps {
+    onOpen: () => void;
+}
 
-const EditCourse: React.FC<EditCourseProps> = ({}) => {
+const EditCourse: React.FC<EditCourseProps> = ({ onOpen }) => {
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image src="/banner/slide-1.png" width={600} height={300} alt="" className="w-full" />
@@ -24,6 +26,13 @@ const EditCourse: React.FC<EditCourseProps> = ({}) => {
                     className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
                 >
                     Chỉnh sửa <BiSolidPencil />
+                </Button>
+                <Button
+                    color="primary"
+                    className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
+                    onClick={onOpen}
+                >
+                    Doanh thu <SiGoogleanalytics />
                 </Button>
 
                 <div className="hidden md:block">

@@ -45,18 +45,14 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                 onCollapse={value => setCollapsed(value)}
                 style={{
                     overflow: 'auto',
-                    height: '100vh',
+                    height: '94vh',
                     position: 'fixed',
                     left: 0,
                     top: 0,
                     bottom: 0
                 }}
             >
-                <div className="flex flex-col items-center gap-4 mb-4 mt-20">
-                    <Image src={user.avatar} width={60} height={60} alt="" className="cursor-pointer !rounded-full" />
-                    {!collapsed && <p className="text-white">{user.fullName}</p>}
-                </div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                <Menu className="mt-20" theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Drawer
                 placement={'left'}
@@ -93,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                                     color="secondary"
                                     name="Jason Hughes"
                                     size="sm"
-                                    src="/banner/slide-1.png"
+                                    src={user.avatar}
                                 />
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Profile Actions" variant="flat">

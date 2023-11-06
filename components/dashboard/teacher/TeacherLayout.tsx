@@ -44,6 +44,7 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/statistic/users">Học sinh</Link>, '11')
     ]),
     getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
+    getItem(<Link href="/teacher/discuss">Thảo luận</Link>, '14', <PieChartOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -53,8 +54,7 @@ const items: MenuItem[] = [
         </div>,
         '13',
         <PieChartOutlined />
-    ),
-    getItem(<Link href="/teacher/discuss">Thảo luận</Link>, '14', <PieChartOutlined />)
+    )
 ];
 
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
