@@ -1,10 +1,10 @@
 'use client';
 
-import { InputPassword, InputText } from '@/components/form-input';
+import { InputPassword } from '@/components/form-input';
 import { changePasswordSchema } from '@/yup_schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Card } from '@nextui-org/react';
-import { Form, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 interface CourseListProps {}
 

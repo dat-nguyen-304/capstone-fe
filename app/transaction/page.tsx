@@ -81,7 +81,7 @@ const transactions = [
 
 type Transaction = (typeof transactions)[0];
 
-const Transactions: React.FC<TransactionsProps> = ({}) => {
+const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'name', 'subject', 'teacher', 'price', 'date'])
@@ -116,6 +116,8 @@ const Transactions: React.FC<TransactionsProps> = ({}) => {
         switch (columnKey) {
             case 'name':
                 return <Link href={`/course/${1}`}>{cellValue}</Link>;
+            case 'price':
+                return cellValue.toLocaleString('vi-VN');
             case 'teacher':
                 return (
                     <User
@@ -200,4 +202,4 @@ const Transactions: React.FC<TransactionsProps> = ({}) => {
     );
 };
 
-export default Transactions;
+export default Transaction;

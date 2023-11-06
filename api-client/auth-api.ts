@@ -1,4 +1,4 @@
-import { TeacherRegisterPayload, StudentRegisterPayload, LoginPayload } from '@/types';
+import { TeacherRegisterPayload, StudentRegisterPayload, LoginPayload, ResetPasswordPayload } from '@/types';
 import axiosClient from './axios-client';
 
 export const authApi = {
@@ -11,7 +11,7 @@ export const authApi = {
     },
 
     confirm: async (id: string) => {
-        return await axiosClient.post('/authentication/confirm', { token: id });
+        return await axiosClient.patch('/authentication/confirm', { token: id });
     },
 
     login: async (payload: LoginPayload) => {
@@ -28,5 +28,9 @@ export const authApi = {
 
     forgotPassword: async (email: string) => {
         return await axiosClient.patch('/authentication/forgot-password', { email });
+    },
+
+    resetPassword: async (payload: ResetPasswordPayload) => {
+        return await axiosClient.patch('/authentication/reset-password', payload);
     }
 };

@@ -37,11 +37,12 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             setMessage(errors.email?.message as string);
         } else if (errors.password?.message) {
             setMessage(errors.password?.message as string);
-        }
+        } else setMessage('');
     }, [errors]);
 
     const handleLoginSubmit = async (values: { email: string; password: string }) => {
         setIsLoading(true);
+        setMessage('');
         try {
             const { email, password } = values;
             const res = await authApi.login({ email, password });

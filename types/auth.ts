@@ -13,6 +13,12 @@ export type StudentRegisterPayload = {
     combinationIds: number[];
 };
 
+export type ResetPasswordPayload = {
+    uuid: string;
+    password: string;
+    confirmPassword: string;
+};
+
 export type SafeUser = {
     sub: string;
     role: 'STUDENT' | 'TEACHER' | 'ADMIN';
