@@ -129,8 +129,12 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>Xem chi tiết</DropdownItem>
-                                <DropdownItem>Chỉnh sửa</DropdownItem>
+                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                                    Xem chi tiết
+                                </DropdownItem>
+                                <DropdownItem as={Link} href="/teacher/quiz/edit/1">
+                                    Chỉnh sửa
+                                </DropdownItem>
                                 <DropdownItem>Vô hiệu hóa</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

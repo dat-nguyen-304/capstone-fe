@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                     bottom: 0
                 }}
             >
-                <Menu className="mt-20" theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                <Menu className="mt-14" theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Drawer
                 placement={'left'}

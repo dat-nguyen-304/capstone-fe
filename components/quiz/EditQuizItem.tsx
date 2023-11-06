@@ -5,9 +5,9 @@ import { InputFormula } from '@/components/form-input/InputFormula';
 import { Button, Select, SelectItem } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 
-interface CreateQuizItemProps {}
+interface EditQuizItemProps {}
 
-const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
+const EditQuizItem: React.FC<EditQuizItemProps> = () => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -45,7 +45,7 @@ const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
                         </SelectItem>
                     </Select>
                     <div className="mt-4">
-                        <InputFormula name="resultContent" control={control} placeholder="Nội dung lời giải..." />
+                        <InputFormula name="description" control={control} placeholder="Nội dung lời giải..." />
                     </div>
                 </div>
                 <div className="w-full">
@@ -110,4 +110,4 @@ const CreateQuizItem: React.FC<CreateQuizItemProps> = () => {
     );
 };
 
-export default CreateQuizItem;
+export default EditQuizItem;

@@ -1,13 +1,14 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import CreateQuizItem from '@/components/quiz/CreateQuizItem';
+import EditQuizItem from '@/components/quiz/EditQuizItem';
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
-interface CreateQuizProps {}
+interface EditQuizProps {}
 
-const CreateQuiz: React.FC<CreateQuizProps> = () => {
+const EditQuiz: React.FC<EditQuizProps> = () => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -18,7 +19,12 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
+            <div className="flex justify-between items-center">
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài tập</h3>
+                <Button as={Link} href="/teacher/quiz/my-quiz" size="sm">
+                    Quay lại
+                </Button>
+            </div>
             <div className="sm:grid grid-cols-6 my-4 gap-2">
                 <div className="my-4 col-span-6 lg:col-span-2">
                     <InputText variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
@@ -55,10 +61,10 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             </div>
             <div>
                 <ul>
-                    <CreateQuizItem />
-                    <CreateQuizItem />
-                    <CreateQuizItem />
-                    <CreateQuizItem />
+                    <EditQuizItem />
+                    <EditQuizItem />
+                    <EditQuizItem />
+                    <EditQuizItem />
                 </ul>
                 <Button className="w-full mt-16 font-semibold" color="primary" size="lg">
                     Thêm câu hỏi
@@ -81,4 +87,4 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     );
 };
 
-export default CreateQuiz;
+export default EditQuiz;
