@@ -34,6 +34,7 @@ export const loginSchema = yup.object().shape({
 });
 
 export const changePasswordSchema = yup.object().shape({
+    email: yup.string().trim().email('Địa chỉ email không hợp lệ'),
     oldPassword: yup
         .string()
         .required('Vui lòng nhập mật khẩu')
@@ -41,6 +42,8 @@ export const changePasswordSchema = yup.object().shape({
         .matches(/^\S*$/, 'Mật khẩu không được chứa khoảng trắng'),
     newPassword: yup
         .string()
+        .required('Vui lòng nhập mật khẩu mới')
+        .min(6, 'Mật khẩu mới phải bao gồm ít nhất 6 kí tự')
         .notOneOf([yup.ref('oldPassword'), undefined], 'Mật khẩu mới phải khác mật khẩu cũ')
         .required('Vui lòng xác nhận mật khẩu'),
     confirmPassword: yup

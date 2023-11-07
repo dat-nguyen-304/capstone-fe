@@ -4,3 +4,4 @@ export * from './combination';
 export * from './student';
 export * from './teacher';
 export * from './admin';
+export * from './user';
