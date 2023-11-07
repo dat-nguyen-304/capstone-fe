@@ -57,8 +57,8 @@ const TeacherDashboard: React.FC = () => {
                     </div>
                 </Card>
             </div>
-            <div className="md:grid md:grid-cols-10 gap-4 mt-8 px-4">
-                <Card className="md:col-span-7 p-4">
+            <div className="lg:grid lg:grid-cols-10 gap-4 mt-8 px-0">
+                <Card className="lg:col-span-7 p-4">
                     <Tabs color="primary" variant="underlined" aria-label="Tabs variants">
                         <Tab key="revenue" title="Doanh thu">
                             <RevenueChart />
@@ -74,7 +74,7 @@ const TeacherDashboard: React.FC = () => {
                         </Tab>
                     </Tabs>
                 </Card>
-                <Card className="md:col-span-3 p-4 mt-8 md:mt-0">
+                <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0">
                     <h3 className="text-lg font-semibold">Top đóng góp</h3>
                     <ul>
                         <TopContributorItem />

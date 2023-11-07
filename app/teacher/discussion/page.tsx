@@ -17,7 +17,7 @@ import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 
-interface PostListProps {}
+interface PostsProps {}
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
@@ -81,7 +81,7 @@ const posts = [
 
 type Post = (typeof posts)[0];
 
-const PostList: React.FC<PostListProps> = ({}) => {
+const PostList: React.FC<PostsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'title', 'subject', 'author', 'createdAt'])
@@ -109,16 +109,17 @@ const PostList: React.FC<PostListProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
+
     const renderCell = useCallback((post: Post, columnKey: Key) => {
         const cellValue = post[columnKey as keyof Post];
 
         switch (columnKey) {
-            case 'title':
-                return (
-                    <Link className="underline" href={`/discussion/${post.id}`}>
-                        {cellValue}
-                    </Link>
-                );
+            case 'price':
+                return cellValue.toLocaleString('vi-VN');
+            case 'fee':
+                return cellValue.toLocaleString('vi-VN');
+            case 'revenue':
+                return cellValue.toLocaleString('vi-VN');
             case 'author':
                 return (
                     <User
@@ -126,7 +127,6 @@ const PostList: React.FC<PostListProps> = ({}) => {
                         classNames={{
                             description: 'text-default-500'
                         }}
-                        description="1 giờ trước"
                         name={cellValue}
                     >
                         {post.author}
@@ -138,8 +138,9 @@ const PostList: React.FC<PostListProps> = ({}) => {
     }, []);
 
     return (
-        <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-            <div className="flex flex-col gap-4">
+        <div className="w-[98%] lg:w-[90%] mx-auto">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Thảo luận</h3>
+            <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable

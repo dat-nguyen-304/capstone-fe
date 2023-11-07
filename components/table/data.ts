@@ -20,7 +20,7 @@ const posts = [
         subject: 'Toán',
         title: 'Ngẫng mặt hận đời',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 2,
@@ -28,7 +28,7 @@ const posts = [
         subject: 'Toán',
         title: 'Management',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 3,
@@ -36,7 +36,7 @@ const posts = [
         subject: 'Toán',
         title: 'Management',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 4,
@@ -44,7 +44,7 @@ const posts = [
         subject: 'Toán',
         title: 'Management',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 5,
@@ -52,7 +52,7 @@ const posts = [
         subject: 'Toán',
         title: 'Management',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 6,
@@ -60,7 +60,7 @@ const posts = [
         subject: 'Toán',
         title: 'Management',
         react: '29',
-        status: 'paused'
+        createdAt: '23/12/2023 19:19:19'
     }
 ];
 

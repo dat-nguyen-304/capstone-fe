@@ -38,13 +38,11 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '7'),
         getItem(<Link href="/teacher/quiz/my-quiz">Danh sách bài tập</Link>, '8')
     ]),
-    getItem('Thống kê', 'sub4', <TeamOutlined />, [
-        getItem(<Link href="/teacher/statistic/revenue">Doanh thu</Link>, '9'),
-        getItem(<Link href="/teacher/statistic/course-video">Khóa học & video</Link>, '10'),
-        getItem(<Link href="/teacher/statistic/users">Học sinh</Link>, '11')
+    getItem('Thảo luận', 'sub4', <TeamOutlined />, [
+        getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '9'),
+        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '10')
     ]),
-    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
-    getItem(<Link href="/teacher/discuss">Thảo luận</Link>, '14', <PieChartOutlined />),
+    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '11', <FileOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -52,7 +50,7 @@ const items: MenuItem[] = [
                 10
             </Chip>
         </div>,
-        '13',
+        '12',
         <PieChartOutlined />
     )
 ];

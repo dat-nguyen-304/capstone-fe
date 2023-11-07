@@ -152,8 +152,9 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     }, []);
 
     return (
-        <div className="w-[90%] 3xl:w-4/5 mx-auto my-8">
-            <div className="flex flex-col gap-4">
+        <div className="w-[98%] lg:w-[90%] mx-auto">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Lịch sử giao dịch</h3>
+            <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
