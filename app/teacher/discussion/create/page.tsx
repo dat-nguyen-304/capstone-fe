@@ -1,20 +1,17 @@
 'use client';
 
-import 'react-quill/dist/quill.snow.css';
-import dynamic from 'next/dynamic';
-import { Button, Checkbox, Input, Select, SelectItem } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { Subject } from '@/types';
+import { InputFormula } from '@/components/form-input/InputFormula';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
-import { InputFormula } from '@/components/form-input/InputFormula';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
-interface CreatePostProps {}
+interface PostsProps {}
 
-const CreatePost: React.FC<CreatePostProps> = ({}) => {
+const PostList: React.FC<PostsProps> = ({}) => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -28,8 +25,8 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
     });
     if (!data) return <Loader />;
     return (
-        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
-            <h3 className="font-bold text-xl">Tạo bài viết</h3>
+        <div className="w-[98%] lg:w-[90%] mx-auto">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài viết mới</h3>
             <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                 <InputText
                     name="title"
@@ -48,7 +45,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                 <label className="text-sm font-semibold">Nội dung bài viết</label>
                 <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
             </div>
-            <div className="flex items-start mt-16 mb-6">
+            <div className="flex items-start mt-16 mb-4">
                 <div className="flex items-center h-5">
                     <Checkbox />
                 </div>
@@ -64,4 +61,4 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
     );
 };
 
-export default CreatePost;
+export default PostList;
