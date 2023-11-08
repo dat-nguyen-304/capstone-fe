@@ -7,6 +7,9 @@ import { CiFlag1 } from 'react-icons/ci';
 import SubCommentItem from './SubCommentItem';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { useState } from 'react';
+import Image from 'next/image';
+import { Gallery, Item } from 'react-photoswipe-gallery';
+import 'photoswipe/dist/photoswipe.css';
 
 interface CommentItemProps {}
 
@@ -22,6 +25,15 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
             <div className="w-full">
                 <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
                     <h4 className="font-semibold text-sm sm:text-base">Nguyễn Văn An</h4>
+                    <div className="my-2">
+                        <Gallery>
+                            <Item original="/banner/slide-1.png" width="1024" height="768">
+                                {({ open }) => (
+                                    <Image onClick={open} src="/banner/slide-1.png" width={100} height={80} alt="" />
+                                )}
+                            </Item>
+                        </Gallery>
+                    </div>
                     <p className="text-xs sm:text-sm"> {defaultContent}</p>
                 </div>
                 <div className="mt-1 flex gap-4 items-center">

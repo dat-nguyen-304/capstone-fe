@@ -1,13 +1,17 @@
 'use client';
 
-import { User } from '@nextui-org/react';
+import { Button, User } from '@nextui-org/react';
+import Image from 'next/image';
 import { AiOutlineLike } from 'react-icons/ai';
+import { BiSolidPencil } from 'react-icons/bi';
+// import { Gallery, Item } from 'react-photoswipe-gallery';
+// import 'photoswipe/dist/photoswipe.css';
 
-interface PostCommentProps {
-    title?: string;
+interface PostTitleProps {
+    title: string;
 }
 
-const PostComment: React.FC<PostCommentProps> = ({ title = '' }) => {
+const PostTitle: React.FC<PostTitleProps> = ({ title }) => {
     return (
         <div className={`my-8 grid sm:grid-cols-10 rounded-xl ${title ? 'bg-blue-50' : ''}`}>
             <div className="hidden sm:block p-4 border-1 border-l-blue-500 border-t-blue-500 border-b-blue-500 col-span-2 rounded-s-xl">
@@ -28,11 +32,24 @@ const PostComment: React.FC<PostCommentProps> = ({ title = '' }) => {
                     }}
                     className="sm:hidden"
                 />
-                <div className="text-sm">
-                    <h4 className="font-bold mb-2">{title}</h4>
-                    <span>Hello how are you</span>
+                <div>
+                    <h4 className="font-semibold text-base mb-2">{title}</h4>
+                    {/* <div className="my-2">
+                        <Gallery>
+                            <Item original="/banner/slide-1.png" width="1024" height="768">
+                                {({ open }) => (
+                                    <Image onClick={open} src="/banner/slide-1.png" width={100} height={80} alt="" />
+                                )}
+                            </Item>
+                        </Gallery>
+                    </div> */}
+                    <span className="text-xs sm:text-sm">Hello how are you</span>
                 </div>
                 <div className="absolute flex items-center gap-2 bottom-2 right-4">
+                    <Button size="sm" variant="light" className="text-yellow-500">
+                        <span className="text-sm">Chỉnh sửa</span>
+                        <BiSolidPencil className="cursor-pointer " />
+                    </Button>
                     <AiOutlineLike className="cursor-pointer text-blue-500" />
                     <span className="text-sm text-blue-500">4</span>
                 </div>
@@ -41,4 +58,4 @@ const PostComment: React.FC<PostCommentProps> = ({ title = '' }) => {
     );
 };
 
-export default PostComment;
+export default PostTitle;

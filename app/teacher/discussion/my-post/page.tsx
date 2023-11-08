@@ -9,14 +9,13 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
-    Input,
     Selection,
     SortDescriptor,
     User
 } from '@nextui-org/react';
 import TableContent from '@/components/table';
-import { AiOutlineMenu } from 'react-icons/ai';
 import Link from 'next/link';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 
 interface MyPostListProps {}
 
@@ -157,7 +156,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                         <Dropdown className="bg-background border-1 border-default-200">
                             <DropdownTrigger>
                                 <Button isIconOnly radius="full" size="sm" variant="light">
-                                    <AiOutlineMenu className="text-default-400" />
+                                    <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>

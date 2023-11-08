@@ -38,9 +38,9 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         multiple: false
     });
     return (
-        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
-            <div className="flex justify-between items-center mt-2">
-                <Link href="/discussion" className="flex items-center gap-2 text-sm">
+        <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
+            <div className="flex justify-between items-center">
+                <Link href="/teacher/discussion" className="flex items-center gap-2 text-sm">
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </Link>

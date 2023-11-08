@@ -13,7 +13,7 @@ import {
     User
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { BsChevronDown, BsSearch } from 'react-icons/bs';
+import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 
@@ -25,7 +25,8 @@ const columns = [
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'TƯƠNG TÁC', uid: 'react' },
-    { name: 'NGÀY TẠO', uid: 'createdAt' }
+    { name: 'NGÀY TẠO', uid: 'createdAt' },
+    { name: 'THAO TÁC', uid: 'action' }
 ];
 
 const posts = [
@@ -84,7 +85,7 @@ type Post = (typeof posts)[0];
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'title', 'subject', 'author', 'createdAt'])
+        new Set(['id', 'title', 'subject', 'author', 'createdAt', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -113,12 +114,6 @@ const PostList: React.FC<PostListProps> = ({}) => {
         const cellValue = post[columnKey as keyof Post];
 
         switch (columnKey) {
-            case 'title':
-                return (
-                    <Link className="underline" href={`/discussion/${post.id}`}>
-                        {cellValue}
-                    </Link>
-                );
             case 'author':
                 return (
                     <User
@@ -131,6 +126,23 @@ const PostList: React.FC<PostListProps> = ({}) => {
                     >
                         {post.author}
                     </User>
+                );
+            case 'action':
+                return (
+                    <div className="relative flex justify-start items-center gap-2">
+                        <Dropdown className="bg-background border-1 border-default-200">
+                            <DropdownTrigger>
+                                <Button isIconOnly radius="full" size="sm" variant="light">
+                                    <BsThreeDotsVertical className="text-default-400" />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem as={Link} href="/discussion/2">
+                                    Xem chi tiết
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                 );
             default:
                 return cellValue;

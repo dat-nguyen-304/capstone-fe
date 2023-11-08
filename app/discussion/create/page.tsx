@@ -1,8 +1,6 @@
 'use client';
 
-import 'react-quill/dist/quill.snow.css';
-import dynamic from 'next/dynamic';
-import { Button, Checkbox, Input, Select, SelectItem } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
@@ -38,9 +36,6 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
 
     const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
         onDrop,
-        accept: {
-            'image/png': ['.png', '.jpg', '.jpeg']
-        },
         maxFiles: 1,
         multiple: false
     });

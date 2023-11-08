@@ -14,10 +14,9 @@ import {
     User
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { BsChevronDown, BsSearch } from 'react-icons/bs';
+import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { AiOutlineMenu } from 'react-icons/ai';
 
 interface MyQuizProps {}
 
@@ -125,7 +124,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         <Dropdown className="bg-background border-1 border-default-200">
                             <DropdownTrigger>
                                 <Button isIconOnly radius="full" size="sm" variant="light">
-                                    <AiOutlineMenu className="text-default-400" />
+                                    <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
