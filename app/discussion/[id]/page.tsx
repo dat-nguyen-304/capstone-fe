@@ -38,7 +38,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         multiple: false
     });
     return (
-        <div className="w-4/5 mx-auto my-8">
+        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <div className="flex justify-between items-center mt-2">
                 <Link href="/discuss" className="flex items-center gap-2 text-sm">
                     <BsArrowLeft />

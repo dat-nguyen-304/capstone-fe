@@ -83,6 +83,12 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                             >
                                 Đăng bài mới
                             </Link>
+                            <Link
+                                href="/discussion/my-post"
+                                className="text-black block px-4 py-2 hover:bg-blue-100 rounded-lg my-1"
+                            >
+                                Bài đăng của tôi
+                            </Link>
                         </div>
                     </div>
                 </NavbarItem>
