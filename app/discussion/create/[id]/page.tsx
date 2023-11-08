@@ -44,6 +44,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
     });
 
     if (!data) return <Loader />;
+
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <h3 className="font-bold text-xl">Tạo bài viết</h3>

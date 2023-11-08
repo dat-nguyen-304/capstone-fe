@@ -36,7 +36,7 @@ const items: MenuItem[] = [
     ]),
     getItem('Bài tập', 'sub3', <TeamOutlined />, [
         getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '7'),
-        getItem(<Link href="/teacher/quiz/my-quiz">Danh sách bài tập</Link>, '8')
+        getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '8')
     ]),
     getItem('Thảo luận', 'sub4', <TeamOutlined />, [
         getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '9'),

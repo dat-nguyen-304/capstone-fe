@@ -25,19 +25,19 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
     getItem(<Link href="/admin">Thông tin chung</Link>, '1', <PieChartOutlined />),
-    getItem('Quản lí user', 'sub1', <DesktopOutlined />, [
+    getItem('Người dùng', 'sub1', <DesktopOutlined />, [
         getItem(<Link href="/admin/teacher">Giáo viên</Link>, '2'),
         getItem(<Link href="/admin/student">Học sinh</Link>, '3')
     ]),
-    getItem('Quản lí khóa học', 'sub2', <TeamOutlined />, [
+    getItem('Học tập', 'sub2', <TeamOutlined />, [
         getItem(<Link href="/admin/course">Khóa học</Link>, '4'),
         getItem(<Link href="/admin/video">Video</Link>, '5'),
         getItem(<Link href="/admin/quiz">Câu hỏi ôn tập</Link>, '6')
     ]),
-    getItem(<Link href="/admin/revenue">Quản lí doanh thu</Link>, '7', <FileOutlined />),
-    getItem(<Link href="/admin/report">Quản lí báo cáo</Link>, '8', <PieChartOutlined />),
-    getItem(<Link href="/admin/test">Quản lí đề thi</Link>, '9', <PieChartOutlined />),
-    getItem(<Link href="/admin/discussion">Quản lí thảo luận</Link>, '10', <PieChartOutlined />),
+    getItem(<Link href="/admin/revenue">Giao dịch</Link>, '7', <FileOutlined />),
+    getItem(<Link href="/admin/report">Báo cáo vi phạm</Link>, '8', <PieChartOutlined />),
+    getItem(<Link href="/admin/test">Đề thi</Link>, '9', <PieChartOutlined />),
+    getItem(<Link href="/admin/discussion">Thảo luận</Link>, '10', <PieChartOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
