@@ -6,7 +6,7 @@ import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from '../Sidebar';
 import { useUser } from '@/hooks';
-import { SafeUser, User } from '@/types';
+import { SafeUser } from '@/types';
 import NotFound from '@/app/not-found';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '@/components/Loader';
@@ -77,7 +77,7 @@ const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
     if ((user && user.role !== 'TEACHER') || notFound) return <NotFound />;
 
     return (
-        <Sidebar user={user as User} items={items}>
+        <Sidebar user={user as SafeUser} items={items}>
             {children}
         </Sidebar>
     );

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Notification from '../header/Notification';
 import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
-import { User } from '@/types';
+import { SafeUser } from '@/types';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/api-client';
@@ -17,7 +17,7 @@ const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
 interface SidebarProps {
-    user: User;
+    user: SafeUser;
     items: MenuItem[];
     children: React.ReactNode;
 }
@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                                     color="secondary"
                                     name="Jason Hughes"
                                     size="sm"
-                                    src={user.avatar}
+                                    src={user.avatar as string}
                                 />
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                                 <DropdownItem
                                     className="text-black"
                                     as={Link}
-                                    href="/change-password"
+                                    href={`${user.role === 'ADMIN' ? '/admin' : '/teacher'}/change-password`}
                                     key="change-password"
                                 >
                                     Đổi mật khẩu

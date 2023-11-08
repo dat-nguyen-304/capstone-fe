@@ -55,7 +55,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
         }
     };
     return (
-        <div className="w-[90%] sm:w-4/5 md:w-3/5 xl:w-2/5 3xl:w-[30%] mx-auto my-8 sm:my-16">
+        <div className="w-[98%] sm:w-[90%] md:w-4/5 xl:w-3/5 3xl:w-2/5 mx-auto my-8 sm:my-16">
             <Card className="p-4">
                 <h3 className="text-blue-700 font-semibold text-lg">Đổi mật khẩu</h3>
                 <form onSubmit={handleSubmit(handleChangePassword)}>

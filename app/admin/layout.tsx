@@ -2,7 +2,7 @@ import AdminLayout from '@/components/dashboard/admin/AdminLayout';
 import React from 'react';
 
 export const metadata = {
-    title: 'CEPA - ADMIN',
+    title: 'CEPA - Admin',
     description: 'Nền tảng ôn thi Đại học số 1 Việt Nam'
 };
 
