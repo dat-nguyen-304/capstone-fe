@@ -8,6 +8,10 @@ import { Subject } from '@/types';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
+import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
+import Image from 'next/image';
+import { useCallback, useState } from 'react';
+import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 
 interface PostsProps {}
 
@@ -23,7 +27,24 @@ const PostList: React.FC<PostsProps> = ({}) => {
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll
     });
+
+    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
+
+    const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+        setUploadedFiles(acceptedFiles);
+    }, []);
+
+    const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
+        onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
+        maxFiles: 1,
+        multiple: false
+    });
+
     if (!data) return <Loader />;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài viết mới</h3>
@@ -41,8 +62,34 @@ const PostList: React.FC<PostsProps> = ({}) => {
                     {(subject: Subject) => <SelectItem key={subject.id}>{subject.name}</SelectItem>}
                 </Select>
             </div>
-            <div className="mt-6">
-                <label className="text-sm font-semibold">Nội dung bài viết</label>
+            <div className="mt-8">
+                <label className="font-semibold">Nội dung bài viết</label>
+                <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
+                    <div {...getRootProps()}>
+                        <input {...getInputProps()} name="avatar" />
+                        {uploadedFiles.length ? (
+                            <div className="group relative">
+                                <Image
+                                    className="object-cover w-full h-[100px]"
+                                    key={uploadedFiles[0].path}
+                                    src={URL.createObjectURL(uploadedFiles[0])}
+                                    alt={uploadedFiles[0].path as string}
+                                    width={160}
+                                    height={100}
+                                />
+                                <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                    <RiImageEditLine size={28} />
+                                    <span className="text-sm">Cập nhật ảnh</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center">
+                                <RiImageAddLine size={28} />
+                                <span className="text-sm">Thêm ảnh</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
                 <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
             </div>
             <div className="flex items-start mt-16 mb-4">

@@ -1,16 +1,42 @@
 'use client';
 
 import PostComment from '@/components/discussion/PostComment';
-import { Button, Pagination, Select, SelectItem } from '@nextui-org/react';
-import dynamic from 'next/dynamic';
+import { InputFormula } from '@/components/form-input/InputFormula';
+import CommentItem from '@/components/video/CommentItem';
+import { Button, Card, Pagination, Select, SelectItem } from '@nextui-org/react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useCallback, useState } from 'react';
+import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
+import { useForm } from 'react-hook-form';
 import { BsArrowLeft } from 'react-icons/bs';
-import 'react-quill/dist/quill.snow.css';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 
 interface PostDetailProps {}
 
 const PostDetail: React.FC<PostDetailProps> = ({}) => {
+    const { control, handleSubmit, setError } = useForm({
+        defaultValues: {
+            title: '',
+            course: '',
+            description: ''
+        }
+    });
+
+    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
+
+    const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+        setUploadedFiles(acceptedFiles);
+    }, []);
+
+    const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
+        onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
+        maxFiles: 1,
+        multiple: false
+    });
     return (
         <div className="w-4/5 mx-auto my-8">
             <div className="flex justify-between items-center mt-2">
@@ -23,15 +49,41 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                 </Button>
             </div>
             <PostComment title="Bàn luận về abcxyz" />
-            <div>
-                <ReactQuill placeholder="Viết suy nghĩ của bạn ..." tabIndex={4} />
-                <div className="flex flex-row-reverse mt-4">
-                    <Button size="sm" color="primary">
-                        Gửi
-                    </Button>
+            <div className="flex gap-4 items-center">
+                <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
+                    <div {...getRootProps()}>
+                        <input {...getInputProps()} name="avatar" />
+                        {uploadedFiles.length ? (
+                            <div className="group relative">
+                                <Image
+                                    className="object-cover w-full h-[100px]"
+                                    key={uploadedFiles[0].path}
+                                    src={URL.createObjectURL(uploadedFiles[0])}
+                                    alt={uploadedFiles[0].path as string}
+                                    width={160}
+                                    height={100}
+                                />
+                                <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                    <RiImageEditLine size={28} />
+                                    <span className="text-sm">Cập nhật ảnh</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center">
+                                <RiImageAddLine size={28} />
+                                <span className="text-sm">Thêm ảnh</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
+                <div className="flex-[1]">
+                    <InputFormula name="response" placeholder="Viết suy nghĩ của bạn" control={control} />
+                </div>
+                <Button className="mt-8" color="primary">
+                    Gửi
+                </Button>
             </div>
-            <div className="w-full">
+            <div className="w-full mt-12">
                 <Select
                     size="sm"
                     label="Sắp xếp theo"
@@ -47,10 +99,17 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                         Tương tác
                     </SelectItem>
                 </Select>
-                <PostComment />
-                <div className="flex justify-center my-8">
-                    <Pagination total={10} />
-                </div>
+                <Card className="mt-8 p-8">
+                    <ul>
+                        <CommentItem />
+                        <CommentItem />
+                        <CommentItem />
+                        <CommentItem />
+                        <CommentItem />
+                        <CommentItem />
+                    </ul>
+                    <Button className="w-full">Xem thêm</Button>
+                </Card>
             </div>
         </div>
     );

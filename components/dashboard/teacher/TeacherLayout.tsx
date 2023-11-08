@@ -40,9 +40,10 @@ const items: MenuItem[] = [
     ]),
     getItem('Thảo luận', 'sub4', <TeamOutlined />, [
         getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '9'),
-        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '10')
+        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '10'),
+        getItem(<Link href="/teacher/discussion/my-post">Bài viết của tôi</Link>, '11')
     ]),
-    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '11', <FileOutlined />),
+    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -50,7 +51,7 @@ const items: MenuItem[] = [
                 10
             </Chip>
         </div>,
-        '12',
+        '13',
         <PieChartOutlined />
     )
 ];
