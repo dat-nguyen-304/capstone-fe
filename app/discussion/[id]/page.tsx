@@ -48,7 +48,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     Báo cáo vi phạm
                 </Button>
             </div>
-            <PostTitle title="Bàn luận về abcxyz" />
+            <PostTitle title="Bàn luận về abcxyz" from="student" />
             <div className="flex gap-4 items-center">
                 <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                     <div {...getRootProps()}>

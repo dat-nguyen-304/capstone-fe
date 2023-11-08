@@ -78,7 +78,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                                 Tất cả bài đăng
                             </Link>
                             <Link
-                                href="/discussion/create"
+                                href="/discussion/create/post"
                                 className="text-black block px-4 py-2 hover:bg-blue-100 rounded-lg my-1"
                             >
                                 Đăng bài mới

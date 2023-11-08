@@ -1,26 +1,31 @@
 'use client';
 
-import PostTitle from '@/components/discussion/PostTitle';
-import { InputFormula } from '@/components/form-input/InputFormula';
-import CommentItem from '@/components/video/CommentItem';
-import { Button, Card, Select, SelectItem } from '@nextui-org/react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useCallback, useState } from 'react';
-import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
+import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
+import { subjectApi } from '@/api-client';
+import Loader from '@/components/Loader';
+import { Subject } from '@/types';
 import { useForm } from 'react-hook-form';
-import { BsArrowLeft } from 'react-icons/bs';
+import { InputText } from '@/components/form-input';
+import { InputFormula } from '@/components/form-input/InputFormula';
+import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
+import { useCallback, useState } from 'react';
+import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 
-interface PostDetailProps {}
+interface EditPostProps {}
 
-const PostDetail: React.FC<PostDetailProps> = ({}) => {
+const EditPost: React.FC<EditPostProps> = ({}) => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
             course: '',
             description: ''
         }
+    });
+    const { data } = useQuery({
+        queryKey: ['subjects'],
+        queryFn: subjectApi.getAll
     });
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
@@ -37,19 +42,27 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         maxFiles: 1,
         multiple: false
     });
+
+    if (!data) return <Loader />;
     return (
-        <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
-            <div className="flex justify-between items-center">
-                <Link href="/teacher/discussion" className="flex items-center gap-2 text-sm">
-                    <BsArrowLeft />
-                    <span>Quay lại</span>
-                </Link>
-                <Button size="sm" color="danger">
-                    Báo cáo vi phạm
-                </Button>
+        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
+            <h3 className="font-bold text-xl">Chỉnh sửa bài viết</h3>
+            <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
+                <InputText
+                    name="title"
+                    isRequired
+                    label="Tên tiêu đề"
+                    size="sm"
+                    className="w-[100%] max-w-[360px] mb-2 sm:mb-0"
+                    variant="bordered"
+                    control={control}
+                />
+                <Select isRequired items={data} label="Chọn môn" variant="bordered" size="sm" className="max-w-xs">
+                    {(subject: Subject) => <SelectItem key={subject.id}>{subject.name}</SelectItem>}
+                </Select>
             </div>
-            <PostTitle title="Bàn luận về abcxyz" from="teacher" />
-            <div className="flex gap-4 items-center">
+            <div className="mt-6">
+                <label className="text-sm font-semibold">Nội dung bài viết</label>
                 <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                     <div {...getRootProps()}>
                         <input {...getInputProps()} name="avatar" />
@@ -76,43 +89,22 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                         )}
                     </div>
                 </div>
-                <div className="flex-[1]">
-                    <InputFormula name="response" placeholder="Viết suy nghĩ của bạn" control={control} />
+                <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
+            </div>
+            <div className="flex items-start mt-16 mb-6">
+                <div className="flex items-center h-5">
+                    <Checkbox />
                 </div>
-                <Button className="mt-8" color="primary">
-                    Gửi
-                </Button>
+                <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Tôi đồng ý{' '}
+                    <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        với chính sách và điều khoản của CEPA.
+                    </a>
+                </label>
             </div>
-            <div className="w-full mt-12">
-                <Select
-                    size="sm"
-                    label="Sắp xếp theo"
-                    color="primary"
-                    variant="bordered"
-                    defaultSelectedKeys={['0']}
-                    className="w-[240px] mt-4"
-                >
-                    <SelectItem key={0} value={0}>
-                        Thời gian
-                    </SelectItem>
-                    <SelectItem key={1} value={1}>
-                        Tương tác
-                    </SelectItem>
-                </Select>
-                <Card className="mt-8 p-8">
-                    <ul>
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                    </ul>
-                    <Button className="w-full">Xem thêm</Button>
-                </Card>
-            </div>
+            <Button color="primary">Lưu thay đổi</Button>
         </div>
     );
 };
 
-export default PostDetail;
+export default EditPost;

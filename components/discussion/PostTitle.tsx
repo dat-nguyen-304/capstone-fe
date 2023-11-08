@@ -4,14 +4,16 @@ import { Button, User } from '@nextui-org/react';
 import Image from 'next/image';
 import { AiOutlineLike } from 'react-icons/ai';
 import { BiSolidPencil } from 'react-icons/bi';
-// import { Gallery, Item } from 'react-photoswipe-gallery';
-// import 'photoswipe/dist/photoswipe.css';
+import { Gallery, Item } from 'react-photoswipe-gallery';
+import 'photoswipe/dist/photoswipe.css';
+import Link from 'next/link';
 
 interface PostTitleProps {
     title: string;
+    from: 'student' | 'teacher';
 }
 
-const PostTitle: React.FC<PostTitleProps> = ({ title }) => {
+const PostTitle: React.FC<PostTitleProps> = ({ title, from }) => {
     return (
         <div className={`my-8 grid sm:grid-cols-10 rounded-xl ${title ? 'bg-blue-50' : ''}`}>
             <div className="hidden sm:block p-4 border-1 border-l-blue-500 border-t-blue-500 border-b-blue-500 col-span-2 rounded-s-xl">
@@ -34,7 +36,7 @@ const PostTitle: React.FC<PostTitleProps> = ({ title }) => {
                 />
                 <div>
                     <h4 className="font-semibold text-base mb-2">{title}</h4>
-                    {/* <div className="my-2">
+                    <div className="my-2">
                         <Gallery>
                             <Item original="/banner/slide-1.png" width="1024" height="768">
                                 {({ open }) => (
@@ -42,11 +44,17 @@ const PostTitle: React.FC<PostTitleProps> = ({ title }) => {
                                 )}
                             </Item>
                         </Gallery>
-                    </div> */}
+                    </div>
                     <span className="text-xs sm:text-sm">Hello how are you</span>
                 </div>
                 <div className="absolute flex items-center gap-2 bottom-2 right-4">
-                    <Button size="sm" variant="light" className="text-yellow-500">
+                    <Button
+                        as={Link}
+                        href={`${from === 'student' ? '/discussion/edit/1' : '/teacher/discussion/edit/1'} `}
+                        size="sm"
+                        variant="light"
+                        className="text-yellow-500"
+                    >
                         <span className="text-sm">Chỉnh sửa</span>
                         <BiSolidPencil className="cursor-pointer " />
                     </Button>

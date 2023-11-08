@@ -36,6 +36,9 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
 
     const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
         onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
         maxFiles: 1,
         multiple: false
     });
