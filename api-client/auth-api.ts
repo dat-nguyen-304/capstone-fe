@@ -18,6 +18,10 @@ export const authApi = {
         return await axiosClient.post('/authentication/login', payload);
     },
 
+    loginWithGoogle: async (token: string) => {
+        return await axiosClient.post('/authentication/login/google', { token });
+    },
+
     logout: async (payload: { email: string }) => {
         return await axiosClient.post('/authentication/logout', payload);
     },

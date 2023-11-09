@@ -11,7 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { SafeUser } from '@/types';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 interface LoginFormProps {}
 
@@ -77,6 +77,44 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             setMessage('Vui lòng thử lại sau');
         }
     };
+
+    const handleLoginWithGoogle = async (credentialResponse: CredentialResponse) => {
+        setIsLoading(true);
+        setMessage('');
+        try {
+            const res = await authApi.loginWithGoogle(credentialResponse.credential as string);
+            console.log({ res });
+            if (res.status === 200 && !res.data.code) {
+                setMessage('');
+                const userSession: SafeUser = res.data.userSession;
+                console.log({ userSession });
+
+                if (userSession.role === 'STUDENT') {
+                    if (!userSession.avatar) userSession.avatar = '/student.png';
+                    currentUser.onChangeUser(userSession);
+                    setIsLoading(false);
+                    return router.push('/');
+                } else if (userSession.role === 'TEACHER') {
+                    if (!userSession.avatar) userSession.avatar = '/teacher.png';
+                    currentUser.onChangeUser(userSession);
+                    setIsLoading(false);
+                    return router.push('/teacher');
+                } else if (userSession.role === 'ADMIN') {
+                    if (!userSession.avatar) userSession.avatar = '/teacher.png';
+                    currentUser.onChangeUser(userSession);
+                    setIsLoading(false);
+                    return router.push('/admin');
+                }
+            } else {
+                setMessage('Vui lòng thử lại sau');
+            }
+            setIsLoading(false);
+        } catch (error) {
+            setIsLoading(false);
+            setMessage('Vui lòng thử lại sau');
+        }
+    };
+
     return (
         <Form action="#" className={styles.signInForm} onFinish={handleSubmit(handleLoginSubmit)}>
             <h2 className={styles.title}>Đăng nhập</h2>
@@ -110,9 +148,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                 <div className="my-6">
                     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
                         <GoogleLogin
-                            onSuccess={credentialResponse => {
-                                console.log(credentialResponse);
-                            }}
+                            onSuccess={credentialResponse => handleLoginWithGoogle(credentialResponse)}
                             onError={() => {
                                 console.log('Login Failed');
                             }}
