@@ -12,7 +12,6 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({}) => {
     return (
         <li className="mt-4">
             <span className="font-semibold text-sm flex items-center">
-                <BsFlag className="w-[30px] mr-2 cursor-pointer" />
                 <span>
                     <Chip color="primary" variant="flat" size="sm">
                         Câu 1

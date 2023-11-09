@@ -13,6 +13,7 @@ export type InputFormulaProps = {
     name: string;
     placeholder?: string;
     control: Control<any>;
+    value?: string;
 };
 
 export function InputFormula({ name, control, placeholder }: InputFormulaProps) {

@@ -1,13 +1,14 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import CreateQuizItem from '@/components/quiz/CreateQuizItem';
-import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import AddQuestionModal from '@/components/quiz/AddQuestionModal';
+import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 
 interface CreateQuizProps {}
 
 const CreateQuiz: React.FC<CreateQuizProps> = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -53,13 +54,12 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     </Select>
                 </div>
             </div>
+            <Button onClick={onOpen} color="primary">
+                Thêm câu hỏi
+            </Button>
+            <AddQuestionModal isOpen={isOpen} onClose={onClose} />
             <div>
-                <ul>
-                    <CreateQuizItem />
-                    <CreateQuizItem />
-                    <CreateQuizItem />
-                    <CreateQuizItem />
-                </ul>
+                <ul></ul>
                 <Button className="w-full mt-16 font-semibold" color="primary" size="lg">
                     Thêm câu hỏi
                 </Button>
