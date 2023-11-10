@@ -20,9 +20,14 @@ const Active: React.FC<ActiveProps> = ({ params }) => {
     useEffect(() => {
         const confirmRegister = async () => {
             try {
-                await authApi.confirm(params.id);
-                setIsLoading(false);
-                setIsActivated(true);
+                const res = await authApi.confirm(params.id);
+                if (!res.data.code) {
+                    setIsLoading(false);
+                    setIsActivated(true);
+                } else {
+                    setIsLoading(false);
+                    setIsActivated(false);
+                }
             } catch (error) {
                 setIsLoading(false);
                 setIsActivated(false);

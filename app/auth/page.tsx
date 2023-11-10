@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import { useState } from 'react';
 import LoginForm from '@/components/auth/LoginForm';
 import RegisterRoot from '@/components/auth/RegisterRoot';
+import LoaderLayer from '@/components/LoaderLayer';
 
 interface AuthPageProps {}
 

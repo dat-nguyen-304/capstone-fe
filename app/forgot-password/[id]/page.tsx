@@ -40,9 +40,14 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ params }) => {
     useEffect(() => {
         const confirmToken = async () => {
             try {
-                await authApi.confirm(params.id);
-                setIsValid(true);
-                setIsVerifying(false);
+                const res = await authApi.confirm(params.id);
+                if (!res.data.code) {
+                    setIsValid(true);
+                    setIsVerifying(false);
+                } else {
+                    setIsValid(false);
+                    setIsVerifying(false);
+                }
             } catch (error) {
                 setIsVerifying(false);
                 setIsValid(false);

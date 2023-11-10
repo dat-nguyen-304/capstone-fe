@@ -3,7 +3,7 @@
 import { useUser } from '@/hooks';
 import { SafeUser } from '@/types';
 import { useEffect, useState } from 'react';
-import Header from './UserHeader';
+import UserHeader from './UserHeader';
 import Footer from '../footer';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '../Loader';
@@ -35,10 +35,11 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     }, [currentUser.user]);
 
     if (isLoading) return <Loader />;
+    
 
     return (
         <>
-            <Header user={user} />
+            <UserHeader user={user} />
             {children}
             <Footer />
         </>
