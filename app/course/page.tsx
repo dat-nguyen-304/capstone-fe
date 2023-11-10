@@ -1,11 +1,10 @@
 'use client';
 
 import { courseApi } from '@/api-client';
-import Loader from '@/components/Loader';
 import CourseCard from '@/components/course/CourseCard';
 import CourseFilter from '@/components/course/CourseFilter';
 import { CourseCardType } from '@/types';
-import { Pagination, Skeleton } from '@nextui-org/react';
+import { Pagination } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
@@ -20,7 +19,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['courses', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getCourses(page - 1)
+        queryFn: () => courseApi.getAll(page - 1)
     });
 
     useEffect(() => {
