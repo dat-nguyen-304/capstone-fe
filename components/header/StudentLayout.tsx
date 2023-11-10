@@ -35,7 +35,6 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     }, [currentUser.user]);
 
     if (isLoading) return <Loader />;
-    
 
     return (
         <>

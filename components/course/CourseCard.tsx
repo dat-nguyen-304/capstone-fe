@@ -1,3 +1,4 @@
+import { CourseCardType } from '@/types';
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { Progress, Rate } from 'antd';
 import Image from 'next/image';
@@ -6,9 +7,10 @@ import Link from 'next/link';
 interface CourseCardProps {
     isMyCourse?: boolean;
     isTeacherCourse?: boolean;
+    course: CourseCardType;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, course }) => {
     let detailPage = '';
     if (isTeacherCourse) detailPage = '/teacher/course/1';
     else if (isMyCourse) detailPage = '/my-course/1';
@@ -28,21 +30,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse }) 
                     </CardHeader>
                     <CardBody className="text-small justify-between">
                         <b className="text-[15px] h-[40px] font-semibold truncate2line text-black">
-                            Khóa học lấy gốc thần tốc
+                            {course.courseName}
                         </b>
-                        <p className="mt-2 text-sm text-black">Nguyễn Văn An</p>
+                        <p className="mt-2 text-sm text-black">{course.teacherName}</p>
                         <div className="flex items-baseline mt-1">
-                            <span className="text-base mr-2 font-bold text-black">4.7</span>
-                            <Rate disabled allowHalf defaultValue={4.7} className="!text-xs" />
-                            <span className="text-xs ml-2 text-black">(100)</span>
+                            <span className="text-base mr-2 font-bold text-black">{course.rating}</span>
+                            <Rate disabled allowHalf defaultValue={course.rating} className="!text-xs" />
+                            <span className="text-xs ml-2 text-black">({course.numberOfRate})</span>
                         </div>
                         <div className="mt-1 text-xs">
-                            <span className="text-black">50 bài giảng</span>
+                            <span className="text-black">{course.totalVideo} bài giảng</span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2 text-black">
-                                Toán học
+                                {course.subject}
                             </span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2 text-black">
-                                Cơ bản
+                                {course.level}
                             </span>
                         </div>
                         {isMyCourse ? (
@@ -50,7 +52,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse }) 
                                 <Progress className="w-full" percent={30} />
                             </div>
                         ) : (
-                            <p className="mt-1 text-[#333] font-bold text-base">₫ 400.000</p>
+                            <p className="mt-1 text-[#333] font-bold text-base">₫ {course.price}</p>
                         )}
                     </CardBody>
                 </Link>

@@ -146,10 +146,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             </Link>
             <div className="border-t-2 mt-6 border-t-[#ccc] w-[300px] sm:w-[360px] flex justify-center">
                 <div className="my-6">
-                    <GoogleOAuthProvider
-                        clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
-                        onScriptLoadSuccess={() => console.log('hello')}
-                    >
+                    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
                         <GoogleLogin
                             onSuccess={credentialResponse => handleLoginWithGoogle(credentialResponse)}
                             onError={() => {
