@@ -24,6 +24,7 @@ interface AppProps {
     setPage: Dispatch<SetStateAction<number>>;
     sortDescriptor: SortDescriptor;
     setSortDescriptor: Dispatch<SetStateAction<SortDescriptor>>;
+    totalPage: number;
 }
 
 const TableContent: React.FC<AppProps> = ({
@@ -33,7 +34,8 @@ const TableContent: React.FC<AppProps> = ({
     page,
     setPage,
     sortDescriptor,
-    setSortDescriptor
+    setSortDescriptor,
+    totalPage
 }) => {
     const classNames = useMemo(
         () => ({
@@ -101,7 +103,7 @@ const TableContent: React.FC<AppProps> = ({
                     }}
                     color="default"
                     page={page}
-                    total={2}
+                    total={totalPage}
                     variant="light"
                     onChange={setPage}
                 />

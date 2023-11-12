@@ -1,6 +1,6 @@
 export type CourseCardType = {
     id: number;
-    thumbnail: string;
+    thumbnial: string;
     courseName: string;
     teacherName: string;
     rating: number;

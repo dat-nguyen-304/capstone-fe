@@ -4,3 +4,8 @@ export type ChangePasswordPayload = {
     newPassword: string;
     confirmPassword: string;
 };
+
+export type ChangeUserStatus = {
+    userId: number;
+    userStatus: string;
+};

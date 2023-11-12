@@ -17,20 +17,24 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-
+import { studentApi, userApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
 interface MyQuizProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger'
+    ENABLE: 'success',
+    WAITTING: 'primary',
+    DISABLE: 'warning',
+    BANNED: 'danger'
 };
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'TỔ HỢP MÔN', uid: 'combination' },
-    { name: 'ĐÃ THAM GIA', uid: 'createdAt', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status' },
+    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
+    { name: 'Email', uid: 'email', sortable: true },
+    // { name: 'TỔ HỢP MÔN', uid: 'targets?.[0]?.name' },
+    // { name: 'ĐÃ THAM GIA', uid: 'createdAt', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'userStatus' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -40,35 +44,35 @@ const students = [
         name: 'Nguyễn Văn A',
         combination: 'A00 A01',
         createdAt: '02/11/2023',
-        status: 'active'
+        userStatus: 'active'
     },
     {
         id: 2,
         name: 'Nguyễn Văn A',
         combination: 'A00 A01',
         createdAt: '02/11/2023',
-        status: 'active'
+        userStatus: 'active'
     },
     {
         id: 3,
         name: 'Nguyễn Văn A',
         combination: 'A00 A01',
         createdAt: '02/11/2023',
-        status: 'active'
+        userStatus: 'active'
     },
     {
         id: 4,
         name: 'Nguyễn Văn A',
         combination: 'A00 A01',
         createdAt: '02/11/2023',
-        status: 'unActive'
+        userStatus: 'unActive'
     },
     {
         id: 5,
         name: 'Nguyễn Văn A',
         combination: 'A00 A01',
         createdAt: '02/11/2023',
-        status: 'active'
+        userStatus: 'active'
     }
 ];
 
@@ -77,12 +81,34 @@ type Student = (typeof students)[0];
 const MyQuiz: React.FC<MyQuizProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'combination', 'createdAt', 'status', 'action'])
+        // new Set(['id', 'fullName', 'email', 'targets?.[0]?.name', 'createdAt', 'userStatus', 'action'])
+        new Set(['id', 'fullName', 'email', 'userStatus', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [updateState, setUpdateState] = useState<Boolean>(false);
+    const { data: studentsData, isLoading } = useQuery({
+        queryKey: ['students', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }],
+        queryFn: () => studentApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
+    });
+    console.log(studentsData);
+
+    const handleStatusChange = async (userId: number, userStatus: string) => {
+        try {
+            const res = await userApi.changeUserStatus({
+                userId,
+                userStatus
+            });
+            if (!res.data.code) {
+                setUpdateState(prev => !prev);
+            }
+        } catch (error) {
+            // Handle error
+            console.error('Error changing user status', error);
+        }
+    };
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -107,7 +133,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         const cellValue = student[columnKey as keyof Student];
 
         switch (columnKey) {
-            case 'name':
+            case 'fullName':
                 return (
                     <User
                         avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
@@ -117,15 +143,21 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         name={cellValue}
                     />
                 );
-            case 'status':
+            case 'userStatus':
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[student.status]}
+                        color={statusColorMap[student?.userStatus]}
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'active' ? 'Hoạt động' : 'Vô hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'WAITTING'
+                            ? 'Chờ Xác Thực'
+                            : cellValue === 'BANNED'
+                            ? 'Bị Cấm'
+                            : 'Vô Hiệu'}
                     </Chip>
                 );
             case 'action':
@@ -137,11 +169,28 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
+                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
                                 <DropdownItem as={Link} href="/teacher/quiz/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                <DropdownItem
+                                    key={student?.userStatus === 'ENABLE' ? 'enableDis' : 'enable'}
+                                    onClick={() => handleStatusChange(student.id, 'ENABLE')}
+                                >
+                                    Kích Hoạt
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={student?.userStatus === 'DISABLE' ? 'disableDis' : 'disable'}
+                                    onClick={() => handleStatusChange(student.id, 'DISABLE')}
+                                >
+                                    Vô Hiệu Hóa
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={student?.userStatus === 'BANNED' ? 'bannedDis' : 'banned'}
+                                    onClick={() => handleStatusChange(student.id, 'BANNED')}
+                                >
+                                    Cấm
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -170,22 +219,31 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Trạng thái
+                                    {statusFilter}
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
                                 aria-label="Table Columns"
-                                closeOnSelect={false}
+                                closeOnSelect={true}
                                 selectedKeys={statusFilter}
-                                selectionMode="multiple"
+                                selectionMode="single"
                                 onSelectionChange={setStatusFilter}
                             >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
+                                <DropdownItem key="ALL" className="capitalize">
+                                    {capitalize('ALL')}
                                 </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
+                                <DropdownItem key="ENABLE" className="capitalize">
+                                    {capitalize('ENABLE')}
+                                </DropdownItem>
+                                <DropdownItem key="WAITTING" className="capitalize">
+                                    {capitalize('WAITTING')}
+                                </DropdownItem>
+                                <DropdownItem key="DISABLE" className="capitalize">
+                                    {capitalize('DISABLE')}
+                                </DropdownItem>
+                                <DropdownItem key="BANNED" className="capitalize">
+                                    {capitalize('BANNED')}
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -213,7 +271,9 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {students.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">
+                        Tìm thấy {studentsData?.data?.length} kết quả
+                    </span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -223,6 +283,8 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
                         </select>
                     </label>
                 </div>
@@ -230,11 +292,12 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={students}
+                items={studentsData?.data || []}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={studentsData?.totalPage}
             />
         </div>
     );

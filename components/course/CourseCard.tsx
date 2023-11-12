@@ -14,7 +14,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
     let detailPage = '';
     if (isTeacherCourse) detailPage = '/teacher/course/1';
     else if (isMyCourse) detailPage = '/my-course/1';
-    else detailPage = '/course/1';
+    else detailPage = `/course/${course?.id}`;
     return (
         <div className="flex justify-center w-full">
             <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
@@ -25,7 +25,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                             width={300}
                             alt=""
                             className="w-full object-contain h-[200px]"
-                            src="/banner/slide-1.png"
+                            src={course?.thumbnial}
                         />
                     </CardHeader>
                     <CardBody className="text-small justify-between">

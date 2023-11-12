@@ -197,7 +197,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     }, []);
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách giáo viên</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách khóa học</h3>
             <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -264,7 +264,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses?.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -286,6 +286,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );

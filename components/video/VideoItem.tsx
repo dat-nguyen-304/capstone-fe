@@ -3,7 +3,14 @@
 import Image from 'next/image';
 import { RxVideo } from 'react-icons/rx';
 
-interface VideoItemProps {}
+interface VideoItemProps {
+    videoItem?: {
+        videoName: string;
+        duration: number;
+        totalComment: number;
+        totalLike: number;
+    };
+}
 
 const VideoItem: React.FC<VideoItemProps> = ({}) => {
     return (
