@@ -34,7 +34,7 @@ const items: MenuItem[] = [
         getItem(<Link href="/admin/video">Video</Link>, '5'),
         getItem(<Link href="/admin/quiz">Câu hỏi ôn tập</Link>, '6')
     ]),
-    getItem(<Link href="/admin/revenue">Giao dịch</Link>, '7', <FileOutlined />),
+    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '7', <FileOutlined />),
     getItem(<Link href="/admin/report">Báo cáo vi phạm</Link>, '8', <PieChartOutlined />),
     getItem(<Link href="/admin/test">Đề thi</Link>, '9', <PieChartOutlined />),
     getItem(<Link href="/admin/discussion">Thảo luận</Link>, '10', <PieChartOutlined />),
