@@ -17,10 +17,8 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useQuery } from '@tanstack/react-query';
-import { teacherApi } from '@/api-client';
 
-interface CoursesProps {}
+interface VideosProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     active: 'success',
@@ -31,87 +29,98 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
-    { name: 'GIÁO VIÊN', uid: 'teacherName' },
+    { name: 'TÊN VIDEO', uid: 'videoName', sortable: true },
+    { name: 'KHÓA HỌC', uid: 'courseName' },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'MỨC ĐỘ', uid: 'level' },
-    { name: 'ĐÁNH GIÁ', uid: 'rating' },
+    { name: 'GIÁO VIÊN', uid: 'teacher' },
+    { name: 'LIKE', uid: 'like' },
     { name: 'NGÀY TẠO', uid: 'createdAt', sortable: true },
     { name: 'CẬP NHẬT', uid: 'updatedAt', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const courses = [
+const videos = [
     {
         id: 1,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023',
         status: 'active'
     },
     {
         id: 2,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023',
-        status: 'unActive'
+        status: 'active'
     },
     {
         id: 3,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023',
         status: 'active'
     },
     {
         id: 4,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023',
-        status: 'waiting'
+        status: 'active'
     },
     {
         id: 5,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023',
-        status: 'updating'
+        status: 'active'
+    },
+    {
+        id: 6,
+        videoName: 'Làm quen với abcxyz',
+        courseName: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
+        createdAt: '02/11/2023',
+        updatedAt: '02/11/2023',
+        status: 'active'
     }
 ];
 
-type Course = (typeof courses)[0];
+type Video = (typeof videos)[0];
 
-const Courses: React.FC<CoursesProps> = () => {
+const Videos: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set([
             'id',
+            'videoName',
             'courseName',
-            'teacherName',
+            'teacher',
             'subject',
-            'level',
-            'rating',
+            'like',
             'createdAt',
             'updatedAt',
             'status',
@@ -142,11 +151,11 @@ const Courses: React.FC<CoursesProps> = () => {
             setFilterValue('');
         }
     }, []);
-    const renderCell = useCallback((course: Course, columnKey: Key) => {
-        const cellValue = course[columnKey as keyof Course];
+    const renderCell = useCallback((video: Video, columnKey: Key) => {
+        const cellValue = video[columnKey as keyof Video];
 
         switch (columnKey) {
-            case 'teacherName':
+            case 'teacher':
                 return (
                     <User
                         avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
@@ -166,7 +175,7 @@ const Courses: React.FC<CoursesProps> = () => {
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[course.status]}
+                        color={statusColorMap[video.status]}
                         size="sm"
                         variant="dot"
                     >
@@ -197,7 +206,7 @@ const Courses: React.FC<CoursesProps> = () => {
     }, []);
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách khóa học</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách video</h3>
             <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -264,7 +273,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses?.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {videos.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -281,15 +290,14 @@ const Courses: React.FC<CoursesProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={courses}
+                items={videos}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
-                totalPage={2}
             />
         </div>
     );
 };
 
-export default Courses;
+export default Videos;
