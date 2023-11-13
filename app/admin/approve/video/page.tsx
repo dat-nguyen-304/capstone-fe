@@ -3,7 +3,6 @@
 import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
 import {
     Button,
-    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -20,80 +19,100 @@ import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import ConfirmModal from '@/components/modal/ConfirmModal';
 
-interface CoursesProps {}
-
-const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger',
-    updating: 'primary',
-    waiting: 'warning'
-};
+interface VideosProps {}
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
-    { name: 'GIÁO VIÊN', uid: 'teacherName' },
+    { name: 'TÊN VIDEO', uid: 'videoName', sortable: true },
+    { name: 'KHÓA HỌC', uid: 'courseName' },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'MỨC ĐỘ', uid: 'level' },
+    { name: 'GIÁO VIÊN', uid: 'teacher' },
+    { name: 'LIKE', uid: 'like' },
     { name: 'NGÀY TẠO', uid: 'createdAt', sortable: true },
     { name: 'CẬP NHẬT', uid: 'updatedAt', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const courses = [
+const videos = [
     {
         id: 1,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
     {
         id: 2,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
     {
         id: 3,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
     {
         id: 4,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
     {
         id: 5,
+        videoName: 'Làm quen với abcxyz',
         courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
-        level: 'Cơ bản',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
+        createdAt: '02/11/2023',
+        updatedAt: '02/11/2023'
+    },
+    {
+        id: 6,
+        videoName: 'Làm quen với abcxyz',
+        courseName: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
+        teacher: 'Nguyễn Văn A',
+        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     }
 ];
 
-type Course = (typeof courses)[0];
+type Video = (typeof videos)[0];
 
-const Courses: React.FC<CoursesProps> = () => {
+const Videos: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'courseName', 'teacherName', 'subject', 'level', 'createdAt', 'updatedAt', 'action'])
+        new Set([
+            'id',
+            'videoName',
+            'courseName',
+            'teacher',
+            'subject',
+            'like',
+            'createdAt',
+            'updatedAt',
+            'status',
+            'action'
+        ])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -119,14 +138,11 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const { isOpen: isApproveOpen, onOpen: onApproveOpen, onOpenChange: onApproveOpenChange } = useDisclosure();
-    const { isOpen: isDeclineOpen, onOpen: onDeclineOpen, onOpenChange: onDeclineOpenChange } = useDisclosure();
-
-    const renderCell = useCallback((course: Course, columnKey: Key) => {
-        const cellValue = course[columnKey as keyof Course];
+    const renderCell = useCallback((video: Video, columnKey: Key) => {
+        const cellValue = video[columnKey as keyof Video];
 
         switch (columnKey) {
-            case 'teacherName':
+            case 'teacher':
                 return (
                     <User
                         avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
@@ -164,9 +180,12 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
+    const { isOpen: isApproveOpen, onOpen: onApproveOpen, onOpenChange: onApproveOpenChange } = useDisclosure();
+    const { isOpen: isDeclineOpen, onOpen: onDeclineOpen, onOpenChange: onDeclineOpenChange } = useDisclosure();
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học chờ phê duyệt</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video chờ phê duyệt</h3>
             <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -205,7 +224,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses?.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {videos.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -222,7 +241,7 @@ const Courses: React.FC<CoursesProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={courses}
+                items={videos}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
@@ -232,17 +251,17 @@ const Courses: React.FC<CoursesProps> = () => {
             <ConfirmModal
                 isOpen={isApproveOpen}
                 onOpenChange={onApproveOpenChange}
-                content="Khóa học sẽ được đăng bán sau khi được duyệt. Bạn chắc chứ?"
+                content="Video sẽ được thêm vào khóa học của giáo viên sau khi được duyệt. Bạn chắc chứ?"
                 type="warning"
             />
             <ConfirmModal
                 isOpen={isDeclineOpen}
                 onOpenChange={onDeclineOpenChange}
-                content="Khóa học sẽ không được đăng bán sau khi đã từ chối. Bạn chắc chứ?"
+                content="Video sẽ không được thêm vào khóa học của giáo viên sau khi đã từ chối. Bạn chắc chứ?"
                 type="danger"
             />
         </div>
     );
 };
 
-export default Courses;
+export default Videos;
