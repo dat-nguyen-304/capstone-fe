@@ -34,10 +34,14 @@ const items: MenuItem[] = [
         getItem(<Link href="/admin/video">Video</Link>, '5'),
         getItem(<Link href="/admin/quiz">Câu hỏi ôn tập</Link>, '6')
     ]),
-    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '7', <FileOutlined />),
-    getItem(<Link href="/admin/report">Báo cáo vi phạm</Link>, '8', <PieChartOutlined />),
-    getItem(<Link href="/admin/test">Đề thi</Link>, '9', <PieChartOutlined />),
-    getItem(<Link href="/admin/discussion">Thảo luận</Link>, '10', <PieChartOutlined />),
+    getItem('Phê duyệt', 'sub3', <TeamOutlined />, [
+        getItem(<Link href="/admin/approve/course">Khóa học</Link>, '7'),
+        getItem(<Link href="/admin/approve/video">Video</Link>, '8')
+    ]),
+    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '9', <FileOutlined />),
+    getItem(<Link href="/admin/report">Báo cáo vi phạm</Link>, '10', <PieChartOutlined />),
+    getItem(<Link href="/admin/test">Đề thi</Link>, '11', <PieChartOutlined />),
+    getItem(<Link href="/admin/discussion">Thảo luận</Link>, '12', <PieChartOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -45,7 +49,7 @@ const items: MenuItem[] = [
                 10
             </Chip>
         </div>,
-        '11',
+        '13',
         <PieChartOutlined />
     )
 ];

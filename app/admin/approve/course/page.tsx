@@ -35,10 +35,8 @@ const columns = [
     { name: 'GIÁO VIÊN', uid: 'teacherName' },
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'MỨC ĐỘ', uid: 'level' },
-    { name: 'ĐÁNH GIÁ', uid: 'rating' },
     { name: 'NGÀY TẠO', uid: 'createdAt', sortable: true },
     { name: 'CẬP NHẬT', uid: 'updatedAt', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -49,10 +47,8 @@ const courses = [
         teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
         level: 'Cơ bản',
-        rating: '4.4',
         createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
+        updatedAt: '02/11/2023'
     },
     {
         id: 2,
@@ -60,10 +56,8 @@ const courses = [
         teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
         level: 'Cơ bản',
-        rating: '4.4',
         createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'unActive'
+        updatedAt: '02/11/2023'
     },
     {
         id: 3,
@@ -71,10 +65,8 @@ const courses = [
         teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
         level: 'Cơ bản',
-        rating: '4.4',
         createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
+        updatedAt: '02/11/2023'
     },
     {
         id: 4,
@@ -82,10 +74,8 @@ const courses = [
         teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
         level: 'Cơ bản',
-        rating: '4.4',
         createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'waiting'
+        updatedAt: '02/11/2023'
     },
     {
         id: 5,
@@ -93,10 +83,8 @@ const courses = [
         teacherName: 'Nguyễn Văn A',
         subject: 'Toán học',
         level: 'Cơ bản',
-        rating: '4.4',
         createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'updating'
+        updatedAt: '02/11/2023'
     }
 ];
 
@@ -105,23 +93,11 @@ type Course = (typeof courses)[0];
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set([
-            'id',
-            'courseName',
-            'teacherName',
-            'subject',
-            'level',
-            'rating',
-            'createdAt',
-            'updatedAt',
-            'status',
-            'action'
-        ])
+        new Set(['id', 'courseName', 'teacherName', 'subject', 'level', 'createdAt', 'updatedAt', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -156,23 +132,6 @@ const Courses: React.FC<CoursesProps> = () => {
                         name={cellValue}
                     />
                 );
-            case 'status':
-                let statusName = '';
-                if (cellValue === 'active') statusName = 'Hoạt động';
-                else if (cellValue === 'unActive') statusName = 'Vô hiệu';
-                else if (cellValue === 'updating') statusName = 'Chờ cập nhật';
-                else if (cellValue === 'waiting') statusName = 'Chờ phê duyệt';
-
-                return (
-                    <Chip
-                        className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[course.status]}
-                        size="sm"
-                        variant="dot"
-                    >
-                        {statusName}
-                    </Chip>
-                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -183,10 +142,11 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
+                                <DropdownItem color="success">Duyệt</DropdownItem>
+                                <DropdownItem color="danger">Từ chối</DropdownItem>
                                 <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="danger">Vô hiệu hóa</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -197,7 +157,7 @@ const Courses: React.FC<CoursesProps> = () => {
     }, []);
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách khóa học</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học chờ phê duyệt</h3>
             <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -212,34 +172,6 @@ const Courses: React.FC<CoursesProps> = () => {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
-                                </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
-                                </DropdownItem>
-                                <DropdownItem key="updating" className="capitalize">
-                                    {capitalize('Chờ cập nhật')}
-                                </DropdownItem>
-                                <DropdownItem key="waiting" className="capitalize">
-                                    {capitalize('Chờ phê duyệt')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
