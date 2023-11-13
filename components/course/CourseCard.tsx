@@ -17,7 +17,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
     else detailPage = `/course/${course?.id}`;
     return (
         <div className="flex justify-center w-full">
-            <Card shadow="sm" isPressable className="w-full max-w-[400px] mt-4 mx-1 overflow-auto">
+            <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
                 <Link href={detailPage}>
                     <CardHeader className="overflow-visible p-0">
                         <Image height={216} width={384} alt="" className="rounded-xl" src={course?.thumbnial} />

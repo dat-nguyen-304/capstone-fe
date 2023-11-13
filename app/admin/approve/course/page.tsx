@@ -11,14 +11,13 @@ import {
     Input,
     Selection,
     SortDescriptor,
-    User,
-    useDisclosure
+    User
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import ConfirmModal from '@/components/modal/ConfirmModal';
+import { useConfirmModal } from '@/hooks';
 
 interface CoursesProps {}
 
@@ -119,8 +118,21 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const { isOpen: isApproveOpen, onOpen: onApproveOpen, onOpenChange: onApproveOpenChange } = useDisclosure();
-    const { isOpen: isDeclineOpen, onOpen: onDeclineOpen, onOpenChange: onDeclineOpenChange } = useDisclosure();
+    const { onOpen, onTitle, onContent, onType } = useConfirmModal();
+
+    const onApproveOpen = () => {
+        onTitle('Xác nhận duyệt');
+        onContent('Video sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?');
+        onType('warning');
+        onOpen();
+    };
+
+    const onDeclineOpen = () => {
+        onTitle('Xác nhận từ chối');
+        onContent('Video sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?');
+        onType('danger');
+        onOpen();
+    };
 
     const renderCell = useCallback((course: Course, columnKey: Key) => {
         const cellValue = course[columnKey as keyof Course];
@@ -228,18 +240,6 @@ const Courses: React.FC<CoursesProps> = () => {
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
                 totalPage={2}
-            />
-            <ConfirmModal
-                isOpen={isApproveOpen}
-                onOpenChange={onApproveOpenChange}
-                content="Khóa học sẽ được đăng bán sau khi được duyệt. Bạn chắc chứ?"
-                type="warning"
-            />
-            <ConfirmModal
-                isOpen={isDeclineOpen}
-                onOpenChange={onDeclineOpenChange}
-                content="Khóa học sẽ không được đăng bán sau khi đã từ chối. Bạn chắc chứ?"
-                type="danger"
             />
         </div>
     );

@@ -1,22 +1,25 @@
 'use client';
 
-import { Accordion, AccordionItem, Chip, Radio, RadioGroup } from '@nextui-org/react';
+import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup } from '@nextui-org/react';
 
-interface TestReviewItemProps {}
+interface TestEditItemProps {}
 
-const TestReviewItem: React.FC<TestReviewItemProps> = ({}) => {
+const TestEditItem: React.FC<TestEditItemProps> = ({}) => {
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
     return (
         <li className="mt-4">
-            <span className="font-semibold text-sm flex items-center">
-                <span>
-                    <Chip color="primary" variant="flat" size="sm">
+            <span className="font-semibold text-sm">
+                <div className="flex items-center gap-4">
+                    <Chip color="primary" variant="flat" size="md">
                         Câu 1
-                    </Chip>{' '}
-                    {defaultContent}
-                </span>
+                    </Chip>
+                    <Button color="warning" size="sm">
+                        Chỉnh sửa
+                    </Button>
+                </div>
+                <p className="mt-2">{defaultContent}</p>
             </span>
             <RadioGroup value="london" className="mt-2">
                 <Radio size="sm" value="buenos-aires">
@@ -55,4 +58,4 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({}) => {
     );
 };
 
-export default TestReviewItem;
+export default TestEditItem;

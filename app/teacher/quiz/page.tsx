@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
+import { useConfirmModal } from '@/hooks';
 
 interface MyQuizProps {}
 
@@ -103,6 +104,16 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             setFilterValue('');
         }
     }, []);
+
+    const { onOpen, onTitle, onContent, onType } = useConfirmModal();
+
+    const onDeactivateOpen = () => {
+        onTitle('Xác nhận vô hiệu hóa');
+        onContent('Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?');
+        onType('danger');
+        onOpen();
+    };
+
     const renderCell = useCallback((quiz: Quiz, columnKey: Key) => {
         const cellValue = quiz[columnKey as keyof Quiz];
 
@@ -128,13 +139,15 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                                <DropdownItem color="primary" as={Link} href="/teacher/quiz/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem as={Link} href="/teacher/quiz/edit/1">
+                                <DropdownItem color="warning" as={Link} href="/teacher/quiz/edit/1">
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                <DropdownItem color="danger" onClick={onDeactivateOpen}>
+                                    Vô hiệu hóa
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
