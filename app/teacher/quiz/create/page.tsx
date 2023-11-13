@@ -2,7 +2,7 @@
 
 import { InputText } from '@/components/form-input';
 import AddQuestionModal from '@/components/quiz/AddQuestionModal';
-import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
+import { Button, Checkbox, Chip, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 
 interface CreateQuizProps {}
@@ -21,11 +21,18 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
             <div className="sm:grid grid-cols-6 my-4 gap-2">
-                <div className="my-4 col-span-6 lg:col-span-2">
-                    <InputText variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
+                <div className="my-4 col-span-6 lg:col-span-3">
+                    <InputText isRequired variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
                 </div>
-                <div className=" my-4 col-span-3 lg:col-span-2">
-                    <Select size="sm" label="Khóa học" color="primary" variant="bordered" defaultSelectedKeys={['0']}>
+                <div className=" my-4 col-span-3 lg:col-span-3">
+                    <Select
+                        size="sm"
+                        isRequired
+                        label="Khóa học"
+                        color="primary"
+                        variant="bordered"
+                        defaultSelectedKeys={['0']}
+                    >
                         <SelectItem key={0} value={0}>
                             Mặc định
                         </SelectItem>
@@ -43,18 +50,19 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </SelectItem>
                     </Select>
                 </div>
-                <div className=" my-4 col-span-3 lg:col-span-2">
-                    <Select size="sm" label="Thêm vào" color="primary" variant="bordered" defaultSelectedKeys={['0']}>
-                        <SelectItem key={0} value={0}>
-                            Cuối danh sách
-                        </SelectItem>
-                        <SelectItem key={1} value={1}>
-                            Đầu danh sách
-                        </SelectItem>
-                    </Select>
-                </div>
             </div>
-            <Button onClick={onOpen} color="primary">
+            <div>
+                <label className="font-semibold text-base text-[#444]">Chủ đề</label>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                    <li>
+                        <Chip variant="bordered">abc</Chip>
+                    </li>
+                    <li>
+                        <Chip variant="bordered">abc</Chip>
+                    </li>
+                </ul>
+            </div>
+            <Button onClick={onOpen} color="primary" className="mt-8">
                 Thêm câu hỏi
             </Button>
             <AddQuestionModal isOpen={isOpen} onClose={onClose} />

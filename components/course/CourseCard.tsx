@@ -17,16 +17,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
     else detailPage = `/course/${course?.id}`;
     return (
         <div className="flex justify-center w-full">
-            <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
+            <Card shadow="sm" isPressable className="w-full max-w-[400px] mt-4 mx-1 overflow-auto">
                 <Link href={detailPage}>
-                    <CardHeader className="overflow-visible p-0 h-[200px] ">
-                        <Image
-                            height={300}
-                            width={300}
-                            alt=""
-                            className="w-full object-contain h-[200px]"
-                            src={course?.thumbnial}
-                        />
+                    <CardHeader className="overflow-visible p-0">
+                        <Image height={216} width={384} alt="" className="rounded-xl" src={course?.thumbnial} />
                     </CardHeader>
                     <CardBody className="text-small justify-between">
                         <b className="text-[15px] h-[40px] font-semibold truncate2line text-black">
@@ -52,7 +46,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                                 <Progress className="w-full" percent={30} />
                             </div>
                         ) : (
-                            <p className="mt-1 text-[#333] font-bold text-base">₫ {course.price}</p>
+                            <p className="mt-1 text-[#333] font-bold text-base">
+                                ₫ {course.price.toLocaleString('vi-VN')}
+                            </p>
                         )}
                     </CardBody>
                 </Link>

@@ -37,7 +37,7 @@ const Profile: React.FC = () => {
                     </div>
                     <div className="hidden lg:block">
                         <h3 className="text-blue-500 text-2xl font-semibold mt-8">Nguyễn Văn An</h3>
-                        <p className="mt-4 text-sm">Ngày tạo: 21/10/2023</p>
+                        <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>
                         <p className="mt-4 text-sm">Giáo viên môn: Toán học - Vật lí</p>
                     </div>
                 </div>
