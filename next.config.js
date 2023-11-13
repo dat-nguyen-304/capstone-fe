@@ -2,14 +2,15 @@
 const nextConfig = {
     images: {
         domains: [
-            "cdn3d.iconscout.com",
-            "intaadvising.gatech.edu",
-            "dienmaycongthanh.vn",
-            "motiongility.com",
-            "www.ninjatropic.com",
-            "dienbientv.vn"
+            'cdn3d.iconscout.com',
+            'intaadvising.gatech.edu',
+            'dienmaycongthanh.vn',
+            'motiongility.com',
+            'www.ninjatropic.com',
+            'dienbientv.vn',
+            'cdn2.hoc247.vn'
         ]
     }
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

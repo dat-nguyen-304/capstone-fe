@@ -12,6 +12,19 @@ import { useUser } from '@/hooks';
 
 interface MyCourseProps {}
 
+const mockApi = {
+    id: 1,
+    thumbnail: 'abc',
+    courseName: 'Khoa hoc cap toc',
+    teacherName: 'Teacher A',
+    rating: 5,
+    numberOfRate: 30,
+    totalVideo: 30,
+    subject: 'Vật lý',
+    level: 'Cơ bản',
+    price: 500000
+};
+
 const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();

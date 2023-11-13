@@ -5,15 +5,27 @@ import VideoItem from './VideoItem';
 
 interface CourseContentProps {
     isMyCourse?: boolean;
+    courseContent?: {
+        totalVideo: number;
+        listVideo: Array<{
+            id: number;
+            name: string;
+            duration: number;
+            totalComment: number;
+            totalLike: number;
+        }>;
+    };
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse }) => {
+const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, courseContent }) => {
+    console.log(courseContent?.listVideo);
+
     return (
         <>
             <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>
             <div className="px-4 sm:px-8 mt-4 text-sm">
                 <span className="inline-flex items-center">
-                    <span className="font-bold mr-1">20</span>
+                    <span className="font-bold mr-1">{courseContent?.totalVideo}</span>
                     <span>Bài giảng</span>
                     <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
                 </span>
@@ -36,13 +48,9 @@ const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse }) => {
                 )}
             </div>
             <ul className="max-h-[500px] overflow-y-scroll mt-8">
-                <VideoItem />
-                <VideoItem />
-                <VideoItem />
-                <VideoItem />
-                <VideoItem />
-                <VideoItem />
-                <VideoItem />
+                {courseContent?.listVideo?.map((videoItem, index) => (
+                    <VideoItem key={index} videoItem={videoItem} index={index} />
+                ))}
             </ul>
         </>
     );

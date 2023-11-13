@@ -1,8 +1,11 @@
+import { Teacher } from '@/types';
 import axiosClient from './axios-client';
 
 export const teacherApi = {
-    getAll: async () => {
-        const res = await axiosClient.get(`/teacher`);
-        return res.data;
+    getAll: async (page: number, size: number, status: String) => {
+        const { data: teachers } = await axiosClient.get(
+            `/teacher?page=${page}&size=${size}&sortType=ASC&userStatus=${status}`
+        );
+        return teachers;
     }
 };

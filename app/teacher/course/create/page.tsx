@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Checkbox, Select, SelectItem, Selection } from '@nextui-org/react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
-import { Subject } from '@/types';
+import { subjectApi, topicApi } from '@/api-client';
+import { Subject, Topic } from '@/types';
 import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import Loader from '@/components/Loader';
@@ -15,11 +15,29 @@ import { InputNumber } from '@/components/form-input/InputNumber';
 import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
 
 const CreateCourse: React.FC = () => {
-    const { data, isLoading } = useQuery({
+    const [selectedSubject, setSelectedSubject] = useState<number>(1);
+    const [values, setValues] = useState<Selection>(new Set(['1']));
+    const [topicSelected, setTopicSelected] = useState<number>(1);
+    const { data: subjectsData, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll
     });
-    const [values, setValues] = useState<Selection>(new Set(['1']));
+
+    const { data: topicsData } = useQuery({
+        queryKey: ['topics', selectedSubject],
+        queryFn: () => (selectedSubject !== 0 ? topicApi.getTopicsBySubject(selectedSubject) : [])
+    });
+
+    useEffect(() => {
+        if (selectedSubject === 0) {
+            setTopicSelected(1);
+        } else if (topicsData && topicsData.length > 0) {
+            setTopicSelected(topicsData?.[0]?.id || 1);
+        }
+    }, [selectedSubject, topicsData]);
+
+    console.log(topicSelected);
+
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -27,6 +45,7 @@ const CreateCourse: React.FC = () => {
             description: ''
         }
     });
+
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -42,7 +61,8 @@ const CreateCourse: React.FC = () => {
         multiple: false
     });
 
-    if (!data) return <Loader />;
+    if (!subjectsData) return <Loader />;
+    if (!topicsData) return <Loader />;
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
@@ -87,8 +107,28 @@ const CreateCourse: React.FC = () => {
                             control={control}
                         />
                     </div>
-                    <div className="col-span-2 mt-4">
-                        <InputNumber control={control} label="Giá" name="price" />
+                    <div className="col-span-2 sm:grid grid-cols-2 gap-4">
+                        <div className="col-span-1 mt-1">
+                            <InputNumber control={control} label="Giá" name="price" />
+                        </div>
+                        <div className="col-span-1 mt-12 md:mt-8">
+                            <Select
+                                isRequired
+                                label="Chọn chủ đề môn học"
+                                color="primary"
+                                variant="bordered"
+                                labelPlacement="outside"
+                                // defaultSelectedKeys={[String(topicSelected)]}
+                                value={topicSelected}
+                                onChange={event => setTopicSelected(Number(event.target.value))}
+                            >
+                                {topicsData?.map((topic: Topic) => (
+                                    <SelectItem key={topic?.id} value={topic?.id}>
+                                        {topic?.name}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </div>
                     </div>
                     <div className="col-span-2 sm:grid grid-cols-2 gap-4">
                         <div className="col-span-1 mt-12 md:mt-8">
@@ -97,9 +137,11 @@ const CreateCourse: React.FC = () => {
                                 color="primary"
                                 variant="bordered"
                                 labelPlacement="outside"
-                                defaultSelectedKeys={['1']}
+                                defaultSelectedKeys={[String(selectedSubject)]}
+                                value={selectedSubject}
+                                onChange={event => setSelectedSubject(Number(event.target.value))}
                             >
-                                {data.map((subject: Subject) => (
+                                {subjectsData.map((subject: Subject) => (
                                     <SelectItem key={subject.id} value={subject.id}>
                                         {subject.name}
                                     </SelectItem>

@@ -4,3 +4,5 @@ export * from './combination-api';
 export * from './user-api';
 export * from './course-api';
 export * from './teacher-api';
+export * from './student-api';
+export * from './topic-api';

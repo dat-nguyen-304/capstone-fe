@@ -264,7 +264,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses?.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -286,6 +286,7 @@ const Courses: React.FC<CoursesProps> = () => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );
