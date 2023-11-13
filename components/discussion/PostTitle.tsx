@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 interface PostTitleProps {
     title: string;
-    from: 'student' | 'teacher';
+    from: 'student' | 'teacher' | 'admin';
 }
 
 const PostTitle: React.FC<PostTitleProps> = ({ title, from }) => {
