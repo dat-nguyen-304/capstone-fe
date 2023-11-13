@@ -228,6 +228,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );

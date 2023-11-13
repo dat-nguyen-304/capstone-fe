@@ -214,6 +214,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );

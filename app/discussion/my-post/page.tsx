@@ -200,6 +200,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );

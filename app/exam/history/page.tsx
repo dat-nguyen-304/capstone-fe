@@ -227,6 +227,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                     setPage={setPage}
                     sortDescriptor={sortDescriptor}
                     setSortDescriptor={setSortDescriptor}
+                    totalPage={2}
                 />
                 <div className="md:grid grid-cols-2 mt-8 gap-4">
                     <div className="">

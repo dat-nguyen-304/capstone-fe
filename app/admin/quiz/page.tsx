@@ -295,6 +295,7 @@ const Quizzes: React.FC<VideosProps> = () => {
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
+                totalPage={2}
             />
         </div>
     );
