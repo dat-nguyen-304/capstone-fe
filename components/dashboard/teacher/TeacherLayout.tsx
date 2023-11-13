@@ -1,7 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import {
+    PlaySquareOutlined,
+    LineChartOutlined,
+    BellOutlined,
+    CalculatorOutlined,
+    IdcardOutlined,
+    CommentOutlined,
+    BarChartOutlined,
+    AuditOutlined
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from '../Sidebar';
@@ -24,26 +33,26 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const items: MenuItem[] = [
-    getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <PieChartOutlined />),
-    getItem(<Link href="/teacher/profile">Cập nhật hồ sơ</Link>, '2', <UserOutlined />),
-    getItem('Video', 'sub1', <DesktopOutlined />, [
+    getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <BarChartOutlined />),
+    getItem(<Link href="/teacher/profile">Cập nhật hồ sơ</Link>, '2', <IdcardOutlined />),
+    getItem('Video', 'sub1', <PlaySquareOutlined />, [
         getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
         getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4')
     ]),
-    getItem('Khóa học', 'sub2', <TeamOutlined />, [
+    getItem('Khóa học', 'sub2', <AuditOutlined />, [
         getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '5'),
         getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '6')
     ]),
-    getItem('Bài tập', 'sub3', <TeamOutlined />, [
+    getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
         getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '7'),
         getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '8')
     ]),
-    getItem('Thảo luận', 'sub4', <TeamOutlined />, [
+    getItem('Thảo luận', 'sub4', <CommentOutlined />, [
         getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '9'),
         getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '10'),
         getItem(<Link href="/teacher/discussion/my-post">Bài viết của tôi</Link>, '11')
     ]),
-    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <FileOutlined />),
+    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <LineChartOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -52,7 +61,7 @@ const items: MenuItem[] = [
             </Chip>
         </div>,
         '13',
-        <PieChartOutlined />
+        <BellOutlined />
     )
 ];
 
