@@ -7,10 +7,20 @@ const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 import { BiSolidLike, BiSolidPencil } from 'react-icons/bi';
+import { videoApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import Loader from '@/components/Loader';
+interface VideoProps {
+    params: { id: number };
+}
 
-interface VideoProps {}
+const Video: React.FC<VideoProps> = ({ params }) => {
+    const { data, isLoading } = useQuery<any>({
+        queryKey: ['video-teacher-detail', params?.id],
+        queryFn: () => videoApi.getVideoDetailById(params?.id)
+    });
 
-const Video: React.FC<VideoProps> = ({}) => {
+    if (!data) return <Loader />;
     return (
         <>
             <div className="flex items-center justify-between">
@@ -18,14 +28,14 @@ const Video: React.FC<VideoProps> = ({}) => {
                     <Button as={Link} size="sm" href="/teacher/video/my-video">
                         <BsArrowLeft />
                     </Button>
-                    <p className="text-blue-700 text-xs sm:text-base font-semibold">Làm quen với abcxyz</p>
+                    <p className="text-blue-700 text-xs sm:text-base font-semibold">{data?.name}</p>
                 </div>
                 <div className="flex justify-center items-center text-black">
                     <div className="hidden lg:block">
                         <span className="inline-flex items-center text-sm">2 tháng trước</span>
                         <span className="before:content-['•'] before:inline-block before:text-black before:mx-2">
                             <span className="inline-flex items-center text-sm">
-                                <span className="text-black">120</span>
+                                <span className="text-black">{data?.like}</span>
                                 <BiSolidLike className="text-sm text-blue-500 ml-2" />
                             </span>
                         </span>
@@ -50,14 +60,17 @@ const Video: React.FC<VideoProps> = ({}) => {
                                 height="450px"
                                 className="object-contain"
                                 controls={true}
-                                url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
+                                url={
+                                    data?.url ||
+                                    'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
+                                }
                             />
                         </div>
                         <div className="block lg:hidden mt-4">
                             <span className="inline-flex items-center text-sm">2 tháng trước</span>
                             <span className="before:content-['•'] before:inline-block before:text-black before:mx-2">
                                 <span className="inline-flex items-center text-sm">
-                                    <span className="text-black">120</span>
+                                    <span className="text-black">{data?.like}</span>
                                     <BiSolidLike className="text-sm text-blue-500 ml-2" />
                                 </span>
                             </span>

@@ -5,6 +5,7 @@ import VideoItem from './VideoItem';
 
 interface CourseContentProps {
     isMyCourse?: boolean;
+    isTeacherCourse?: boolean;
     courseContent?: {
         totalVideo: number;
         listVideo: Array<{
@@ -17,9 +18,7 @@ interface CourseContentProps {
     };
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, courseContent }) => {
-    console.log(courseContent?.listVideo);
-
+const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, isTeacherCourse, courseContent }) => {
     return (
         <>
             <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>

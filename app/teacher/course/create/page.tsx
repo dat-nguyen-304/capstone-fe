@@ -36,8 +36,6 @@ const CreateCourse: React.FC = () => {
         }
     }, [selectedSubject, topicsData]);
 
-    console.log(topicSelected);
-
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',

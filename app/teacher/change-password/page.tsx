@@ -51,7 +51,6 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
             setIsLoading(false);
             setErrorMessage('Vui lòng thử lại sao');
             setSuccessMessage('');
-            console.log(error);
         }
     };
     return (

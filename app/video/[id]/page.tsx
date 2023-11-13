@@ -11,10 +11,15 @@ import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
 import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
+import { videoApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import Loader from '@/components/Loader';
 
-interface VideoProps {}
+interface VideoProps {
+    params: { id: number };
+}
 
-const Video: React.FC<VideoProps> = ({}) => {
+const Video: React.FC<VideoProps> = ({ params }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [openVideoList, setOpenVideoList] = useState(false);
     const showDrawerVideoList = () => {
@@ -25,6 +30,11 @@ const Video: React.FC<VideoProps> = ({}) => {
         const timeString = convertSeconds(progress.playedSeconds);
         setCurrentTime(timeString);
     };
+    const { data, isLoading } = useQuery<any>({
+        queryKey: ['video-detail', params?.id],
+        queryFn: () => videoApi.getVideoDetailById(params?.id)
+    });
+    if (!data) return <Loader />;
     return (
         <>
             <VideoHeader />
@@ -40,11 +50,15 @@ const Video: React.FC<VideoProps> = ({}) => {
                                 controls={true}
                                 onPlay={() => setIsPlaying(true)}
                                 onPause={() => setIsPlaying(false)}
-                                url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
+                                // url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
+                                url={
+                                    data?.url ||
+                                    'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
+                                }
                                 onProgress={progress => handleProgress(progress)}
                             />
                         </div>
-                        <h3 className="mt-4 text-xl font-semibold">Làm quen với abcxyz</h3>
+                        <h3 className="mt-4 text-xl font-semibold">{data?.name}</h3>
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học
                         </Button>
@@ -65,7 +79,7 @@ const Video: React.FC<VideoProps> = ({}) => {
                         </div>
                     </div>
                     <div className="hidden md:block h-full col-span-3">
-                        <VideoList />
+                        <VideoList video={data?.videoItemResponses} />
                     </div>
                     <Drawer
                         title="Nội dung khóa học"
@@ -75,7 +89,7 @@ const Video: React.FC<VideoProps> = ({}) => {
                         onClose={() => setOpenVideoList(false)}
                         className="block md:hidden"
                     >
-                        <VideoList isOnDrawer={true} />
+                        <VideoList isOnDrawer={true} video={data?.videoItemResponses} />
                     </Drawer>
                 </div>
             </div>

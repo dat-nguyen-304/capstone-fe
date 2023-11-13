@@ -8,6 +8,7 @@ export const courseApi = {
     },
     getCourseById: async (courseId: number) => {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
+        return res.data;
     },
     getAllOfTeacher: async (email: string, page: number) => {
         const res = await axiosClient.get(`/courses/teacher?email=${email}&page=${page}&size=20&sortType=ASC`);

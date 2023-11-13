@@ -35,7 +35,6 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
             setCheckEmail(true);
         } catch (error) {
             setIsLoading(false);
-            console.log(error);
         }
     };
     return (

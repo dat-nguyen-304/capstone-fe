@@ -78,7 +78,6 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ params }) => {
         } catch (error) {
             setIsLoading(false);
             setMessage('Vui lòng thử lại sau');
-            console.log(error);
         }
     };
 

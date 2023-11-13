@@ -51,7 +51,6 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             top: 0
         });
     };
-    console.log({ data });
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">

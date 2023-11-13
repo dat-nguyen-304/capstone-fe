@@ -12,8 +12,8 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, course }) => {
     let detailPage = '';
-    if (isTeacherCourse) detailPage = '/teacher/course/1';
-    else if (isMyCourse) detailPage = '/my-course/1';
+    if (isTeacherCourse) detailPage = `/teacher/course/${course?.id}`;
+    else if (isMyCourse) detailPage = `/my-course/${course?.id}`;
     else detailPage = `/course/${course?.id}`;
     return (
         <div className="flex justify-center w-full">

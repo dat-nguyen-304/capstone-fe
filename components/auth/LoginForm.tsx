@@ -106,12 +106,12 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                     return router.push('/admin');
                 }
             } else {
-                setMessage('Vui lòng thử lại sau');
+                setMessage('Email không tồn tại');
             }
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
-            setMessage('Vui lòng thử lại sau');
+            setMessage('Email không tồn tại');
         }
     };
 

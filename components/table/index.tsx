@@ -57,7 +57,6 @@ const TableContent: React.FC<AppProps> = ({
         }),
         []
     );
-
     return (
         <div className="w-full overflow-x-auto overflow-y-hidden">
             <Table

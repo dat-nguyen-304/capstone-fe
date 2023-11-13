@@ -58,7 +58,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role, subjectIds, combinati
             }
         } catch (error: any) {
             setIsLoading(false);
-            console.log(error.message);
         }
     };
 

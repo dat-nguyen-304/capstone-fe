@@ -6,3 +6,4 @@ export * from './course-api';
 export * from './teacher-api';
 export * from './student-api';
 export * from './topic-api';
+export * from './video-api';

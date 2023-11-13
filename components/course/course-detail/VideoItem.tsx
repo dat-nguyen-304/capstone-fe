@@ -7,6 +7,8 @@ import { FaComments } from 'react-icons/fa';
 import { RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
+    isMyVideo?: boolean;
+    isTeacherVideo?: boolean;
     videoItem: {
         id: number;
         name: string;
@@ -30,10 +32,14 @@ const floatToTime = (durationFloat: number): string => {
     return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index }) => {
+const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, isMyVideo, isTeacherVideo }) => {
+    let detailPage = '';
+    if (isTeacherVideo) detailPage = `/teacher/video/${videoItem?.id}`;
+    else if (isMyVideo) detailPage = `/my-course/${videoItem?.id}`;
+    else detailPage = `/video/${videoItem?.id}`;
     return (
         <li className="relative w-[85%] sm:w-[90%] mx-auto mb-4 py-4 bg-white rounded-xl shadow-lg">
-            <Link href={`/video/${videoItem?.id}`}>
+            <Link href={detailPage}>
                 <div className="absolute top-1/2 translate-y-[-50%] translate-x-[-50%]">
                     <Image src="/video-number/blue.svg" width={60} height={60} alt="" />
                     <p className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] text-white text-sm">
