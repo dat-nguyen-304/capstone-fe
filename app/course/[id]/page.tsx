@@ -14,12 +14,15 @@ interface CourseDetailProps {
 }
 
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
+
+    if (!data || isLoading) return <Loader />;
+
     const courseInfo = {
-        courseName: data?.courseResponse?.courseName,
+        courseName: data?.courseResponse?.courseName as string,
         subject: data?.courseResponse?.subject,
         level: data?.courseResponse?.level,
         teacherName: data?.courseResponse?.teacherName,
@@ -40,8 +43,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalVideo: data?.courseResponse?.totalVideo,
         listVideo: data?.videoResponse
     };
-    console.log(data);
-    if (!data) return <Loader />;
+
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">
             <Link href="/course" className="mt-4 flex items-center gap-2 text-sm">

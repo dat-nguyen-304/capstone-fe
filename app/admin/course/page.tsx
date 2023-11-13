@@ -18,7 +18,7 @@ import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useQuery } from '@tanstack/react-query';
-import { teacherApi } from '@/api-client';
+import { courseApi } from '@/api-client';
 
 interface CoursesProps {}
 
@@ -36,8 +36,8 @@ const columns = [
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'MỨC ĐỘ', uid: 'level' },
     { name: 'ĐÁNH GIÁ', uid: 'rating' },
-    { name: 'NGÀY TẠO', uid: 'createdAt', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updatedAt', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
+    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -112,8 +112,8 @@ const Courses: React.FC<CoursesProps> = () => {
             'subject',
             'level',
             'rating',
-            'createdAt',
-            'updatedAt',
+            'createdDate',
+            'updateDate',
             'status',
             'action'
         ])
@@ -121,7 +121,16 @@ const Courses: React.FC<CoursesProps> = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [updateState, setUpdateState] = useState<Boolean>(false);
+    const { data: coursesData, isLoading } = useQuery({
+        queryKey: [
+            'coursesAdmin',
+            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
+        ],
+        queryFn: () => courseApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
+    });
+    console.log(coursesData);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -158,8 +167,8 @@ const Courses: React.FC<CoursesProps> = () => {
                 );
             case 'status':
                 let statusName = '';
-                if (cellValue === 'active') statusName = 'Hoạt động';
-                else if (cellValue === 'unActive') statusName = 'Vô hiệu';
+                if (cellValue === '"AVAILABLE"') statusName = 'Hoạt động';
+                else if (cellValue === '"UNAVAILABLE"') statusName = 'Vô hiệu';
                 else if (cellValue === 'updating') statusName = 'Chờ cập nhật';
                 else if (cellValue === 'waiting') statusName = 'Chờ phê duyệt';
 
@@ -264,7 +273,9 @@ const Courses: React.FC<CoursesProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {courses?.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">
+                        Tìm thấy {coursesData?.data?.length} kết quả
+                    </span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -274,6 +285,8 @@ const Courses: React.FC<CoursesProps> = () => {
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
                         </select>
                     </label>
                 </div>
@@ -281,12 +294,12 @@ const Courses: React.FC<CoursesProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={courses}
+                items={coursesData?.data || []}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
                 setSortDescriptor={setSortDescriptor}
-                totalPage={2}
+                totalPage={coursesData?.totalPage}
             />
         </div>
     );
