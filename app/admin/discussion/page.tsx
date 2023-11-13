@@ -1,9 +1,8 @@
 'use client';
+
 import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
 import {
     Button,
-    Chip,
-    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -17,73 +16,80 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useConfirmModal } from '@/hooks';
 
-interface MyQuizProps {}
-
-const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger'
-};
+interface PostListProps {}
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'KHÓA HỌC', uid: 'course', sortable: true },
-    { name: 'ĐÃ TẠO', uid: 'createdAt', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status' },
-    { name: 'THAO TÁC', uid: 'action', sortable: false }
+    { name: 'TÁC GIẢ', uid: 'author', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
+    { name: 'TƯƠNG TÁC', uid: 'react' },
+    { name: 'NGÀY TẠO', uid: 'createdAt' },
+    { name: 'THAO TÁC', uid: 'action' }
 ];
 
-const quizzes = [
+const posts = [
     {
         id: 1,
-        name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
-        createdAt: '02/11/2023',
-        status: 'active'
+        author: 'Tony Reichert',
+        title: 'Ngẫng mặt hận đời',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 2,
-        name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
-        createdAt: '02/11/2023',
-        status: 'active'
+        author: 'Tony Reichert',
+        title: 'Management',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 3,
-        name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
-        createdAt: '02/11/2023',
-        status: 'active'
+        author: 'Tony Reichert',
+        title: 'Management',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 4,
-        name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
-        createdAt: '02/11/2023',
-        status: 'unActive'
+        author: 'Tony Reichert',
+        title: 'Management',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
     },
     {
         id: 5,
-        name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
-        createdAt: '02/11/2023',
-        status: 'active'
+        author: 'Tony Reichert',
+        title: 'Management',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
+    },
+    {
+        id: 6,
+        author: 'Tony Reichert',
+        title: 'Management',
+        subject: 'Toán',
+        react: '29',
+        createdAt: '23/12/2023 19:19:19'
     }
 ];
 
-type Quiz = (typeof quizzes)[0];
+type Post = (typeof posts)[0];
 
-const MyQuiz: React.FC<MyQuizProps> = () => {
+const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'course', 'createdAt', 'status', 'action'])
+        new Set(['id', 'title', 'subject', 'author', 'createdAt', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -105,29 +111,21 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType } = useConfirmModal();
-
-    const onDeactivateOpen = () => {
-        onTitle('Xác nhận vô hiệu hóa');
-        onContent('Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?');
-        onType('danger');
-        onOpen();
-    };
-
-    const renderCell = useCallback((quiz: Quiz, columnKey: Key) => {
-        const cellValue = quiz[columnKey as keyof Quiz];
+    const renderCell = useCallback((post: Post, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof Post];
 
         switch (columnKey) {
-            case 'status':
+            case 'author':
                 return (
-                    <Chip
-                        className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[quiz.status]}
-                        size="sm"
-                        variant="dot"
+                    <User
+                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
                     >
-                        {cellValue === 'active' ? 'Hoạt động' : 'Vô hiệu'}
-                    </Chip>
+                        {post.author}
+                    </User>
                 );
             case 'action':
                 return (
@@ -139,14 +137,8 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem color="primary" as={Link} href="/teacher/quiz/1">
+                                <DropdownItem as={Link} href="/admin/discussion/2">
                                     Xem chi tiết
-                                </DropdownItem>
-                                <DropdownItem color="warning" as={Link} href="/teacher/quiz/edit/1">
-                                    Chỉnh sửa
-                                </DropdownItem>
-                                <DropdownItem color="danger" onClick={onDeactivateOpen}>
-                                    Vô hiệu hóa
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -156,9 +148,10 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 return cellValue;
         }
     }, []);
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách bài tập</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Thảo luận</h3>
             <div className="flex flex-col gap-4 mt-8">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -173,28 +166,6 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
-                                </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
@@ -219,7 +190,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {quizzes.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {posts.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -236,7 +207,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={quizzes}
+                items={posts}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
@@ -247,4 +218,4 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     );
 };
 
-export default MyQuiz;
+export default PostList;

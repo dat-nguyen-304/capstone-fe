@@ -4,9 +4,9 @@ import TestReviewItem from '@/components/test/TestReviewItem';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 
-interface QuizDetailProps {}
+interface ExamDetailProps {}
 
-const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
+const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
     return (
         <>
             <div className="w-[90%] mx-auto">
@@ -16,7 +16,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
                         <Button
                             as={Link}
                             size="sm"
-                            href="/teacher/quiz/edit/1"
+                            href="/admin/exam/edit/1"
                             className="text-black hover:text-black mr-2"
                             color="warning"
                         >
@@ -25,7 +25,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
                         <Button
                             as={Link}
                             size="sm"
-                            href="/teacher/quiz"
+                            href="/admin/exam"
                             className="!text-red hover:!text-red"
                             color="danger"
                             variant="bordered"
@@ -49,4 +49,4 @@ const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
     );
 };
 
-export default QuizDetail;
+export default ExamDetail;

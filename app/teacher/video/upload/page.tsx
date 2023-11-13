@@ -61,6 +61,24 @@ const UploadVideo: React.FC = () => {
         maxFiles: 1,
         multiple: false
     });
+
+    const [uploadedAttachedFiles, setUploadedAttachedFiles] = useState<FileWithPath[]>();
+    const [uploadedAttachedUrl, setUploadedAttachedUrl] = useState<string | null>(null);
+    const onAttachedDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+        setUploadedAttachedFiles(acceptedFiles);
+    }, []);
+
+    const { getRootProps: getAttachedRootProps, getInputProps: getAttachedInputProps }: DropzoneRootProps = useDropzone(
+        {
+            onDrop: onAttachedDrop,
+            accept: {
+                'application/pdf': ['.pdf'],
+                'application/msword': ['.doc', '.docx']
+            },
+            multiple: true
+        }
+    );
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
@@ -145,10 +163,18 @@ const UploadVideo: React.FC = () => {
                 </div>
                 <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
                     <div className="col-span-2">
-                        <InputText variant="bordered" name="name" size="sm" label="Tên Video" control={control} />
+                        <InputText
+                            isRequired
+                            variant="bordered"
+                            name="name"
+                            size="sm"
+                            label="Tên Video"
+                            control={control}
+                        />
                     </div>
-                    <div className="col-span-1 my-4">
+                    <div className="col-span-2 my-4">
                         <Select
+                            isRequired
                             size="sm"
                             label="Khóa học"
                             color="primary"
@@ -172,21 +198,23 @@ const UploadVideo: React.FC = () => {
                             </SelectItem>
                         </Select>
                     </div>
-                    <div className="col-span-1 my-4">
-                        <Select
-                            size="sm"
-                            label="Thêm vào"
-                            color="primary"
-                            variant="bordered"
-                            defaultSelectedKeys={['0']}
-                        >
-                            <SelectItem key={0} value={0}>
-                                Cuối danh sách
-                            </SelectItem>
-                            <SelectItem key={1} value={1}>
-                                Đầu danh sách
-                            </SelectItem>
-                        </Select>
+                    <div className="col-span-2 my-4">
+                        <div {...getAttachedRootProps()}>
+                            <input {...getAttachedInputProps()} name="avatar" />
+                            <div className="w-full sm:w-1/2 border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
+                                Tải lên file đính kèm <BiUpArrowAlt size={24} />{' '}
+                            </div>
+                        </div>
+                        {uploadedAttachedFiles && (
+                            <div className="mt-4">
+                                <label className="font-semibold">Đã tải lên file</label>
+                                {uploadedAttachedFiles.map(attachedFile => (
+                                    <p key={attachedFile.path} className="truncate mt-2">
+                                        {attachedFile.path}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

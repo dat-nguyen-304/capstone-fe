@@ -209,10 +209,10 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                                <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                <DropdownItem color="danger">Vô hiệu hóa</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

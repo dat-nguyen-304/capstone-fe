@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+    BarChartOutlined,
+    LineChartOutlined,
+    BellOutlined,
+    TeamOutlined,
+    AuditOutlined,
+    CalculatorOutlined,
+    CheckCircleOutlined,
+    StopOutlined,
+    CommentOutlined
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Link from 'next/link';
 import Sidebar from '../Sidebar';
@@ -24,29 +34,36 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const items: MenuItem[] = [
-    getItem(<Link href="/admin">Thông tin chung</Link>, '1', <PieChartOutlined />),
-    getItem('Người dùng', 'sub1', <DesktopOutlined />, [
+    getItem(<Link href="/admin">Thông tin chung</Link>, '1', <BarChartOutlined />),
+    getItem('Người dùng', 'sub1', <TeamOutlined />, [
         getItem(<Link href="/admin/teacher">Giáo viên</Link>, '2'),
         getItem(<Link href="/admin/student">Học sinh</Link>, '3')
     ]),
-    getItem('Học tập', 'sub2', <TeamOutlined />, [
+    getItem('Học tập', 'sub2', <AuditOutlined />, [
         getItem(<Link href="/admin/course">Khóa học</Link>, '4'),
         getItem(<Link href="/admin/video">Video</Link>, '5'),
         getItem(<Link href="/admin/quiz">Câu hỏi ôn tập</Link>, '6')
     ]),
-    getItem(<Link href="/admin/revenue">Giao dịch</Link>, '7', <FileOutlined />),
-    getItem(<Link href="/admin/report">Báo cáo vi phạm</Link>, '8', <PieChartOutlined />),
-    getItem(<Link href="/admin/test">Đề thi</Link>, '9', <PieChartOutlined />),
-    getItem(<Link href="/admin/discussion">Thảo luận</Link>, '10', <PieChartOutlined />),
+    getItem('Đề thi', 'sub3', <CalculatorOutlined />, [
+        getItem(<Link href="/admin/exam">Tất cả đề thi</Link>, '7'),
+        getItem(<Link href="/admin/exam/create">Tạo đề thi</Link>, '8')
+    ]),
+    getItem('Phê duyệt', 'sub4', <CheckCircleOutlined />, [
+        getItem(<Link href="/admin/approve/course">Khóa học</Link>, '9'),
+        getItem(<Link href="/admin/approve/video">Video</Link>, '10')
+    ]),
+    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '11', <LineChartOutlined />),
+    getItem(<Link href="/admin/report">Xử lý vi phạm</Link>, '12', <StopOutlined />),
+    getItem(<Link href="/admin/discussion">Thảo luận</Link>, '13', <CommentOutlined />),
     getItem(
         <div className="relative">
-            <Link href="/teacher/notification">Thông báo</Link>
+            <Link href="/admin/notification">Thông báo</Link>
             <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
                 10
             </Chip>
         </div>,
-        '11',
-        <PieChartOutlined />
+        '14',
+        <BellOutlined />
     )
 ];
 

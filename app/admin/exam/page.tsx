@@ -11,7 +11,8 @@ import {
     Input,
     Selection,
     SortDescriptor,
-    User
+    User,
+    useDisclosure
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
@@ -19,7 +20,7 @@ import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useConfirmModal } from '@/hooks';
 
-interface MyQuizProps {}
+interface ExamsProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     active: 'success',
@@ -29,56 +30,56 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'KHÓA HỌC', uid: 'course', sortable: true },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'ĐÃ TẠO', uid: 'createdAt', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const quizzes = [
+const exams = [
     {
         id: 1,
         name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
         createdAt: '02/11/2023',
         status: 'active'
     },
     {
         id: 2,
         name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
         createdAt: '02/11/2023',
         status: 'active'
     },
     {
         id: 3,
         name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
         createdAt: '02/11/2023',
         status: 'active'
     },
     {
         id: 4,
         name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
         createdAt: '02/11/2023',
         status: 'unActive'
     },
     {
         id: 5,
         name: 'Luyện tập Abcxyz',
-        course: 'Lấy gốc thần tốc',
+        subject: 'Toán học',
         createdAt: '02/11/2023',
         status: 'active'
     }
 ];
 
-type Quiz = (typeof quizzes)[0];
+type Exam = (typeof exams)[0];
 
-const MyQuiz: React.FC<MyQuizProps> = () => {
+const Exams: React.FC<ExamsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'course', 'createdAt', 'status', 'action'])
+        new Set(['id', 'name', 'subject', 'createdAt', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -109,20 +110,20 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
 
     const onDeactivateOpen = () => {
         onTitle('Xác nhận vô hiệu hóa');
-        onContent('Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?');
+        onContent('Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?');
         onType('danger');
         onOpen();
     };
 
-    const renderCell = useCallback((quiz: Quiz, columnKey: Key) => {
-        const cellValue = quiz[columnKey as keyof Quiz];
+    const renderCell = useCallback((exam: Exam, columnKey: Key) => {
+        const cellValue = exam[columnKey as keyof Exam];
 
         switch (columnKey) {
             case 'status':
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[quiz.status]}
+                        color={statusColorMap[exam.status]}
                         size="sm"
                         variant="dot"
                     >
@@ -139,10 +140,10 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem color="primary" as={Link} href="/teacher/quiz/1">
+                                <DropdownItem color="primary" as={Link} href="/admin/exam/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" as={Link} href="/teacher/quiz/edit/1">
+                                <DropdownItem color="warning" as={Link} href="/admin/exam/edit/1">
                                     Chỉnh sửa
                                 </DropdownItem>
                                 <DropdownItem color="danger" onClick={onDeactivateOpen}>
@@ -219,7 +220,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                     </div>
                 </div>
                 <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {quizzes.length} kết quả</span>
+                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {exams.length} kết quả</span>
                     <label className="flex items-center text-default-400 text-xs sm:text-sm">
                         Số kết quả mỗi trang:
                         <select
@@ -236,7 +237,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             <TableContent
                 renderCell={renderCell}
                 headerColumns={headerColumns}
-                items={quizzes}
+                items={exams}
                 page={page}
                 setPage={setPage}
                 sortDescriptor={sortDescriptor}
@@ -247,4 +248,4 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     );
 };
 
-export default MyQuiz;
+export default Exams;

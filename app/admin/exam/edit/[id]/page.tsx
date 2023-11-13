@@ -2,13 +2,14 @@
 
 import { InputText } from '@/components/form-input';
 import TestEditItem from '@/components/test/TestEditItem';
+// import EditExamItem from '@/components/quiz/EditExamItem';
 import { Button, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
-interface EditQuizProps {}
+interface EditExamProps {}
 
-const EditQuiz: React.FC<EditQuizProps> = () => {
+const EditExam: React.FC<EditExamProps> = () => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -20,8 +21,8 @@ const EditQuiz: React.FC<EditQuizProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài tập</h3>
-                <Button as={Link} href="/teacher/quiz" size="sm">
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
+                <Button as={Link} href="/admin/exam" size="sm">
                     Quay lại
                 </Button>
             </div>
@@ -77,4 +78,4 @@ const EditQuiz: React.FC<EditQuizProps> = () => {
     );
 };
 
-export default EditQuiz;
+export default EditExam;

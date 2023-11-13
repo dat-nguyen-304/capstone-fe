@@ -19,7 +19,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo đề thi mới</h3>
             <div className="sm:grid grid-cols-6 my-4 gap-2">
                 <div className="my-4 col-span-6 lg:col-span-3">
                     <InputText isRequired variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
@@ -28,7 +28,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     <Select
                         size="sm"
                         isRequired
-                        label="Khóa học"
+                        label="Môn học"
                         color="primary"
                         variant="bordered"
                         defaultSelectedKeys={['0']}
@@ -51,40 +51,19 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     </Select>
                 </div>
             </div>
-            <div>
-                <label className="font-semibold text-base text-[#444]">Chủ đề</label>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                    <li>
-                        <Chip variant="bordered">abc</Chip>
-                    </li>
-                    <li>
-                        <Chip variant="bordered">abc</Chip>
-                    </li>
-                </ul>
-            </div>
             <Button onClick={onOpen} color="primary" className="mt-8">
                 Thêm câu hỏi
             </Button>
             <AddQuestionModal isOpen={isOpen} onClose={onClose} />
             <div>
                 <ul></ul>
-                <Button className="w-full mt-16 font-semibold" color="primary" size="lg">
+                <Button onClick={onOpen} className="w-full mt-16 font-semibold" color="primary" size="lg">
                     Thêm câu hỏi
                 </Button>
             </div>
-            <div className="flex items-start mb-4 mt-8 sm:mt-12">
-                <div className="flex items-center h-5">
-                    <Checkbox />
-                </div>
-                <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Tôi đồng ý với{' '}
-                    <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                        chính sách và điều khoản của CEPA
-                    </a>
-                    .
-                </label>
-            </div>
-            <Button color="primary">Tạo bài tập mới</Button>
+            <Button className="mt-8" color="primary">
+                Tạo bài thi mới
+            </Button>
         </div>
     );
 };
