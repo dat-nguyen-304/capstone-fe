@@ -21,12 +21,15 @@ import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { VideoCardType } from '@/types';
 import { Spin } from 'antd';
+import { useConfirmModal } from '@/hooks';
 interface VideosProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     AVAILABLE: 'success',
+    REJECT: 'danger',
     BANNED: 'danger',
     WAITING: 'primary',
+    UPDATING: 'primary',
     UNAVAILABLE: 'warning'
 };
 const columns = [
@@ -158,6 +161,33 @@ const Videos: React.FC<VideosProps> = () => {
         }
     }, [videosData]);
 
+    const handleStatusChange = async (id: number, verifyStatus: string) => {
+        try {
+            const res = await videoApi.changeVideoStatus({
+                id,
+                verifyStatus
+            });
+            console.log(res);
+
+            if (!res.data.code) {
+                onType('success');
+                if (verifyStatus == 'ACCEPTED') {
+                    onContent('Video đã được duyệt thành công');
+                } else if (verifyStatus == 'REJECT') {
+                    onContent('Video không được phê duyệt thành công');
+                }
+                onActiveFn(onClose);
+                setUpdateState(prev => !prev);
+            }
+        } catch (error) {
+            // Handle error
+            onType('danger');
+            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            onActiveFn(onClose);
+            console.error('Error changing video status', error);
+        }
+    };
+
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -177,6 +207,25 @@ const Videos: React.FC<VideosProps> = () => {
             setFilterValue('');
         }
     }, []);
+
+    const { onOpen, onTitle, onContent, onType, onClose, onActiveFn } = useConfirmModal();
+
+    const onApproveOpen = (id: number, action: string) => {
+        onTitle('Xác nhận duyệt');
+        onContent('Video sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?');
+        onType('warning');
+        onOpen();
+        onActiveFn(() => handleStatusChange(id, action));
+    };
+
+    const onDeclineOpen = (id: number, action: string) => {
+        onTitle('Xác nhận từ chối');
+        onContent('Video sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?');
+        onType('danger');
+        onOpen();
+        onActiveFn(() => handleStatusChange(id, action));
+    };
+
     const renderCell = useCallback((video: Video, columnKey: Key) => {
         const cellValue = video[columnKey as keyof Video];
 
@@ -203,8 +252,12 @@ const Videos: React.FC<VideosProps> = () => {
                             ? 'Hoạt động'
                             : cellValue === 'WAITING'
                             ? 'Chờ xác thực'
+                            : cellValue === 'REJECT'
+                            ? 'Bị từ chối'
                             : cellValue === 'BANNED'
-                            ? 'Bị Từ chối'
+                            ? 'Bị Xóa'
+                            : cellValue === 'UPDATING'
+                            ? 'Chờ cập nhật'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -217,11 +270,24 @@ const Videos: React.FC<VideosProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
+                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
                                 <DropdownItem as={Link} href="/teacher/quiz/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                <DropdownItem
+                                    color="success"
+                                    key={video.status === 'AVAILABLE' ? 'enableDis' : 'enable'}
+                                    onClick={() => onApproveOpen(video?.id, 'ACCEPTED')}
+                                >
+                                    Duyệt
+                                </DropdownItem>
+                                <DropdownItem
+                                    color="danger"
+                                    key={video.status === 'REJECT' ? 'bannedDis' : 'banned'}
+                                    onClick={() => onDeclineOpen(video?.id, 'REJECT')}
+                                >
+                                    Từ chối
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -283,14 +349,20 @@ const Videos: React.FC<VideosProps> = () => {
                                     <DropdownItem key="AVAILABLE" className="capitalize">
                                         {capitalize('Hoạt Động')}
                                     </DropdownItem>
-                                    <DropdownItem key="WAITTING" className="capitalize">
-                                        {capitalize('Đợi Xác Thực')}
+                                    <DropdownItem key="WAITING" className="capitalize">
+                                        {capitalize('Chờ Xác Thực')}
+                                    </DropdownItem>
+                                    <DropdownItem key="UPDATING" className="capitalize">
+                                        {capitalize('Chờ Cập Nhật')}
                                     </DropdownItem>
                                     <DropdownItem key="UNAVAILABLE" className="capitalize">
                                         {capitalize('Vô Hiệu')}
                                     </DropdownItem>
-                                    <DropdownItem key="BANNED" className="capitalize">
+                                    <DropdownItem key="REJECT" className="capitalize">
                                         {capitalize('Bị Từ Chối')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Xóa')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

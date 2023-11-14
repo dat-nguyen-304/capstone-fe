@@ -1,3 +1,4 @@
+import { ChangeVideoStatus } from '@/types';
 import axiosClient from './axios-client';
 
 export const videoApi = {
@@ -20,5 +21,8 @@ export const videoApi = {
             `/videos/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`
         );
         return res.data;
+    },
+    changeVideoStatus: async (payload: ChangeVideoStatus) => {
+        return await axiosClient.post('/videos/admin/verify-video', payload);
     }
 };

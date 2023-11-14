@@ -10,3 +10,8 @@ export type CourseCardType = {
     level: string;
     price: number;
 };
+
+export type ChangeCourseStatus = {
+    id: number;
+    verifyStatus: string;
+};

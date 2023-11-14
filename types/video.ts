@@ -7,3 +7,8 @@ export type VideoCardType = {
     createDate: string;
     videoStatus: string;
 };
+
+export type ChangeVideoStatus = {
+    id: number;
+    verifyStatus: string;
+};

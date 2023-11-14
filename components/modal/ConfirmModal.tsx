@@ -7,7 +7,7 @@ import Image from 'next/image';
 interface ApproveModalProps {}
 
 const ConfirmModal: React.FC<ApproveModalProps> = () => {
-    const { isOpen, title, type, content, onClose } = useConfirmModal();
+    const { isOpen, title, type, content, onClose, activeFn } = useConfirmModal();
     console.log(isOpen);
     return (
         <Modal isOpen={isOpen} size="xl" onOpenChange={onClose}>
@@ -27,7 +27,7 @@ const ConfirmModal: React.FC<ApproveModalProps> = () => {
                     <Button color="danger" variant="light" onPress={onClose}>
                         Hủy bỏ
                     </Button>
-                    <Button color="primary" onPress={onClose}>
+                    <Button color="primary" onPress={activeFn}>
                         Đồng ý
                     </Button>
                 </ModalFooter>

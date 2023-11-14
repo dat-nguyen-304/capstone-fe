@@ -22,13 +22,16 @@ import { courseApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
+import { useConfirmModal } from '@/hooks';
 
 interface CoursesProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     AVAILABLE: 'success',
+    REJECT: 'danger',
     BANNED: 'danger',
     WAITING: 'primary',
+    UPDATING: 'primary',
     UNAVAILABLE: 'warning'
 };
 
@@ -149,6 +152,32 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, [coursesData]);
 
+    const handleStatusChange = async (id: number, verifyStatus: string) => {
+        try {
+            const res = await courseApi.changeCourseStatus({
+                id,
+                verifyStatus
+            });
+
+            if (!res.data.code) {
+                onType('success');
+                if (verifyStatus == 'ACCEPTED') {
+                    onContent('Khóa học đã được duyệt thành công');
+                } else if (verifyStatus == 'REJECT') {
+                    onContent('Khóa học không được phê duyệt thành công');
+                }
+                onActiveFn(onClose);
+                setUpdateState(prev => !prev);
+            }
+        } catch (error) {
+            // Handle error
+            onType('danger');
+            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            onActiveFn(onClose);
+            console.error('Error changing user status', error);
+        }
+    };
+
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -168,6 +197,25 @@ const Courses: React.FC<CoursesProps> = () => {
             setFilterValue('');
         }
     }, []);
+
+    const { onOpen, onTitle, onContent, onType, onClose, onActiveFn } = useConfirmModal();
+
+    const onApproveOpen = (id: number, action: string) => {
+        onTitle('Xác nhận duyệt');
+        onContent('Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?');
+        onType('warning');
+        onOpen();
+        onActiveFn(() => handleStatusChange(id, action));
+    };
+
+    const onDeclineOpen = (id: number, action: string) => {
+        onTitle('Xác nhận từ chối');
+        onContent('Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?');
+        onType('danger');
+        onOpen();
+        onActiveFn(() => handleStatusChange(id, action));
+    };
+
     const renderCell = useCallback((course: Course, columnKey: Key) => {
         const cellValue = course[columnKey as keyof Course];
 
@@ -194,8 +242,12 @@ const Courses: React.FC<CoursesProps> = () => {
                             ? 'Hoạt động'
                             : cellValue === 'WAITING'
                             ? 'Chờ xác thực'
+                            : cellValue === 'REJECT'
+                            ? 'Bị từ chối'
                             : cellValue === 'BANNED'
-                            ? 'Bị Từ chối'
+                            ? 'Bị Xóa'
+                            : cellValue === 'UPDATING'
+                            ? 'Chờ cập nhật'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -208,11 +260,24 @@ const Courses: React.FC<CoursesProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
+                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
                                 <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="danger">Vô hiệu hóa</DropdownItem>
+                                <DropdownItem
+                                    color="success"
+                                    key={course.status === 'AVAILABLE' ? 'enableDis' : 'enable'}
+                                    onClick={() => onApproveOpen(course?.id, 'ACCEPTED')}
+                                >
+                                    Duyệt
+                                </DropdownItem>
+                                <DropdownItem
+                                    color="danger"
+                                    key={course.status === 'REJECT' ? 'bannedDis' : 'banned'}
+                                    onClick={() => onDeclineOpen(course?.id, 'REJECT')}
+                                >
+                                    Từ chối
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -275,14 +340,20 @@ const Courses: React.FC<CoursesProps> = () => {
                                     <DropdownItem key="AVAILABLE" className="capitalize">
                                         {capitalize('Hoạt Động')}
                                     </DropdownItem>
-                                    <DropdownItem key="WAITTING" className="capitalize">
-                                        {capitalize('Đợi Xác Thực')}
+                                    <DropdownItem key="WAITING" className="capitalize">
+                                        {capitalize('Chờ Xác Thực')}
+                                    </DropdownItem>
+                                    <DropdownItem key="UPDATING" className="capitalize">
+                                        {capitalize('Chờ Cập Nhật')}
                                     </DropdownItem>
                                     <DropdownItem key="UNAVAILABLE" className="capitalize">
                                         {capitalize('Vô Hiệu')}
                                     </DropdownItem>
-                                    <DropdownItem key="BANNED" className="capitalize">
+                                    <DropdownItem key="REJECT" className="capitalize">
                                         {capitalize('Bị Từ Chối')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Xóa')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

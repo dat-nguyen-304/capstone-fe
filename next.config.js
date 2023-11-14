@@ -8,7 +8,8 @@ const nextConfig = {
             'motiongility.com',
             'www.ninjatropic.com',
             'dienbientv.vn',
-            'cdn2.hoc247.vn'
+            'cdn2.hoc247.vn',
+            'res.cloudinary.com'
         ]
     }
 };

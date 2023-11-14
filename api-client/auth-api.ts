@@ -36,5 +36,9 @@ export const authApi = {
 
     resetPassword: async (payload: ResetPasswordPayload) => {
         return await axiosClient.patch('/authentication/reset-password', payload);
+    },
+
+    activeAccount: async (id: string) => {
+        return await axiosClient.patch('/authentication/active-account', { token: id });
     }
 };

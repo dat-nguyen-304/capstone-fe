@@ -11,6 +11,7 @@ interface ConfirmModalStore {
     content: string;
     onContent: (content: string) => void;
     activeFn: () => void;
+    onActiveFn: (activeFn: () => void) => void;
 }
 
 export const useConfirmModal = create<ConfirmModalStore>(set => ({

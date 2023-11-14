@@ -1,4 +1,4 @@
-import { CourseCardType } from '@/types';
+import { ChangeCourseStatus, CourseCardType } from '@/types';
 import axiosClient from './axios-client';
 
 export const courseApi = {
@@ -19,5 +19,8 @@ export const courseApi = {
             `/courses/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`
         );
         return res.data;
+    },
+    changeCourseStatus: async (payload: ChangeCourseStatus) => {
+        return await axiosClient.post('/courses/admin/verify-course', payload);
     }
 };

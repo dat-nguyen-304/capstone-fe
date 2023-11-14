@@ -20,6 +20,7 @@ import TableContent from '@/components/table';
 import { studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
+import { useConfirmModal } from '@/hooks';
 interface MyQuizProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -118,10 +119,22 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 userStatus
             });
             if (!res.data.code) {
+                onType('success');
+                if (userStatus == 'ENABLE') {
+                    onContent('Tài khoản đã được kích hoạt thành công');
+                } else if (userStatus == 'DISABLE') {
+                    onContent('Tài khoản đã được vô hiệu thành công');
+                } else {
+                    onContent('Tài khoản đã được cấm thành công');
+                }
+                onActiveFn(onClose);
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
+            onType('danger');
+            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            onActiveFn(onClose);
             console.error('Error changing user status', error);
         }
     };
@@ -145,6 +158,23 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             setFilterValue('');
         }
     }, []);
+
+    const { onOpen, onTitle, onContent, onType, onActiveFn, onClose } = useConfirmModal();
+
+    const onApproveOpen = (id: number, action: string) => {
+        onTitle('Xác nhận duyệt');
+        if (action == 'ENABLE') {
+            onContent('Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?');
+        } else if (action == 'DISABLE') {
+            onContent('Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?');
+        } else {
+            onContent('Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?');
+        }
+        onType('warning');
+        onOpen();
+        onActiveFn(() => handleStatusChange(id, action));
+    };
+
     const renderCell = useCallback((student: Student, columnKey: Key) => {
         const cellValue = student[columnKey as keyof Student];
 
@@ -172,7 +202,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                             : cellValue === 'WAITTING'
                             ? 'Chờ Xác Thực'
                             : cellValue === 'BANNED'
-                            ? 'Bị Cấm'
+                            ? 'Tài Khoản Bị Cấm'
                             : 'Vô Hiệu'}
                     </Chip>
                 );
@@ -186,26 +216,29 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                                <DropdownItem color="primary" as={Link} href="/teacher/quiz/1">
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
+                                    color="success"
                                     key={student?.userStatus === 'ENABLE' ? 'enableDis' : 'enable'}
-                                    onClick={() => handleStatusChange(student.id, 'ENABLE')}
+                                    onClick={() => onApproveOpen(student.id, 'ENABLE')}
                                 >
                                     Kích Hoạt
                                 </DropdownItem>
                                 <DropdownItem
+                                    color="danger"
                                     key={student?.userStatus === 'DISABLE' ? 'disableDis' : 'disable'}
-                                    onClick={() => handleStatusChange(student.id, 'DISABLE')}
+                                    onClick={() => onApproveOpen(student.id, 'DISABLE')}
                                 >
                                     Vô Hiệu Hóa
                                 </DropdownItem>
                                 <DropdownItem
+                                    color="danger"
                                     key={student?.userStatus === 'BANNED' ? 'bannedDis' : 'banned'}
-                                    onClick={() => handleStatusChange(student.id, 'BANNED')}
+                                    onClick={() => onApproveOpen(student.id, 'BANNED')}
                                 >
-                                    Cấm
+                                    Tài Khoản Bị Cấm
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
