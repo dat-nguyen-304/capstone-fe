@@ -123,31 +123,36 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, [coursesData]);
 
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
-            onType('loading');
-            onContent('');
-            onTitle('Vui lòng chờ');
+            onLoading();
             const res = await courseApi.changeCourseStatus({
                 id,
                 verifyStatus
             });
 
             if (!res.data.code) {
-                onType('success');
                 if (verifyStatus == 'ACCEPTED') {
-                    onContent('Khóa học đã được duyệt thành công');
+                    onSuccess({
+                        title: 'Duyệt thành công',
+                        content: 'Khóa học đã được duyệt thành công'
+                    });
                 } else if (verifyStatus == 'REJECT') {
-                    onContent('Khóa học không được phê duyệt thành công');
+                    onSuccess({
+                        title: 'Đã từ chối',
+                        content: 'Đã từ chối khóa học thành công'
+                    });
                 }
-                onActiveFn(onClose);
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
-            onType('danger');
-            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            onActiveFn(onClose);
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
             console.error('Error changing user status', error);
         }
     };
@@ -172,22 +177,22 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType, onClose, onActiveFn } = useConfirmModal();
-
     const onApproveOpen = (id: number, action: string) => {
-        onTitle('Xác nhận duyệt');
-        onContent('Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?');
-        onType('warning');
+        onWarning({
+            title: 'Xác nhận duyệt',
+            content: 'Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, action)
+        });
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
     const onDeclineOpen = (id: number, action: string) => {
-        onTitle('Xác nhận từ chối');
-        onContent('Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?');
-        onType('danger');
+        onDanger({
+            title: 'Xác nhận từ chối',
+            content: 'Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, action)
+        });
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
     const renderCell = useCallback((course: Course, columnKey: Key) => {

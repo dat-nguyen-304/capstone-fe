@@ -29,6 +29,12 @@ const ConfirmModal: React.FC<ApproveModalProps> = () => {
                         Đóng
                     </Button>
                 );
+            case 'danger':
+                return (
+                    <Button color="primary" onPress={activeFn}>
+                        Đóng
+                    </Button>
+                );
             case 'loading':
                 return <></>;
             default:

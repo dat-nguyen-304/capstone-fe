@@ -5,13 +5,13 @@ interface ConfirmModalStore {
     onOpen: () => void;
     onClose: () => void;
     title: string;
-    onTitle: (title: string) => void;
     type: 'success' | 'danger' | 'warning' | 'loading';
-    onType: (type: 'success' | 'danger' | 'warning' | 'loading') => void;
     content: string;
-    onContent: (content: string) => void;
     activeFn: () => void;
-    onActiveFn: (activeFn: () => void) => void;
+    onSuccess: ({ title, content, activeFn }: { title: string; content: string; activeFn?: () => void }) => void;
+    onDanger: ({ title, content, activeFn }: { title: string; content: string; activeFn?: () => void }) => void;
+    onWarning: ({ title, content, activeFn }: { title: string; content: string; activeFn?: () => void }) => void;
+    onLoading: () => void;
 }
 
 export const useConfirmModal = create<ConfirmModalStore>(set => ({
@@ -19,11 +19,35 @@ export const useConfirmModal = create<ConfirmModalStore>(set => ({
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false }),
     title: '',
-    onTitle: (title: string) => set({ title }),
     type: 'danger',
-    onType: (type: 'success' | 'danger' | 'warning' | 'loading') => set({ type }),
     content: '',
-    onContent: (content: string) => set({ content }),
     activeFn: () => {},
-    onActiveFn: (activeFn: () => void) => set({ activeFn })
+    onSuccess: ({ title, content, activeFn = () => set({ isOpen: false }) }) =>
+        set({
+            type: 'success',
+            title,
+            content,
+            activeFn
+        }),
+    onWarning: ({ title, content, activeFn = () => set({ isOpen: false }) }) =>
+        set({
+            type: 'warning',
+            title,
+            content,
+            activeFn
+        }),
+    onDanger: ({ title, content, activeFn = () => set({ isOpen: false }) }) =>
+        set({
+            type: 'danger',
+            title,
+            content,
+            activeFn: activeFn
+        }),
+    onLoading: () =>
+        set({
+            type: 'loading',
+            title: 'Vui lòng chờ',
+            content: '',
+            activeFn: () => set({ isOpen: false })
+        })
 }));
