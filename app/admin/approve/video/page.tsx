@@ -37,7 +37,6 @@ const columns = [
     { name: 'KHÓA HỌC', uid: 'courseName' },
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'GIÁO VIÊN', uid: 'teacher' },
-    { name: 'LIKE', uid: 'like' },
     { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
     { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
@@ -50,7 +49,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
@@ -60,7 +58,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
@@ -70,7 +67,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
@@ -80,7 +76,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
@@ -90,7 +85,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     },
@@ -100,7 +94,6 @@ const videos = [
         courseName: 'Lấy gốc thần tốc',
         subject: 'Toán học',
         teacher: 'Nguyễn Văn A',
-        like: '40',
         createdAt: '02/11/2023',
         updatedAt: '02/11/2023'
     }
@@ -111,7 +104,7 @@ type Video = (typeof videos)[0];
 const Videos: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'courseName', 'teacher', 'subject', 'like', 'createdDate', 'updateDate', 'action'])
+        new Set(['id', 'name', 'courseName', 'teacher', 'subject', 'createdDate', 'updateDate', 'action'])
     );
     const [videos, setVideos] = useState<VideoCardType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);

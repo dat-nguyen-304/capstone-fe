@@ -125,6 +125,9 @@ const Courses: React.FC<CoursesProps> = () => {
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
+            onType('loading');
+            onContent('');
+            onTitle('Vui lòng chờ');
             const res = await courseApi.changeCourseStatus({
                 id,
                 verifyStatus
