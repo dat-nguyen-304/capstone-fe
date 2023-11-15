@@ -21,7 +21,7 @@ import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { VideoCardType } from '@/types';
 import { Spin } from 'antd';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 interface VideosProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -215,7 +215,7 @@ const Videos: React.FC<VideosProps> = () => {
         }
     }, []);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const onApproveOpen = (id: number, action: string) => {
         onWarning({

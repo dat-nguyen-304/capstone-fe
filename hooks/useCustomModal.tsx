@@ -14,7 +14,7 @@ interface ConfirmModalStore {
     onLoading: () => void;
 }
 
-export const useConfirmModal = create<ConfirmModalStore>(set => ({
+export const useCustomModal = create<ConfirmModalStore>(set => ({
     isOpen: false,
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false }),

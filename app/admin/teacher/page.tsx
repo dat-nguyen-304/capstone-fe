@@ -21,7 +21,7 @@ import { teacherApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { TeacherType } from '@/types';
 import { Spin } from 'antd';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 interface MyQuizProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -168,7 +168,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const onApproveOpen = (id: number, action: string) => {
         if (action == 'ENABLE') {

@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 
 interface MyQuizProps {}
 
@@ -105,7 +105,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const onDeactivateOpen = () => {
         onDanger({

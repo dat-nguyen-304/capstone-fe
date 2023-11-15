@@ -22,7 +22,7 @@ import { courseApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 
 interface CoursesProps {}
 
@@ -205,7 +205,7 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const onApproveOpen = (id: number, action: string) => {
         onWarning({

@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { courseApi } from '@/api-client';
 import { CourseCardType } from '@/types';
@@ -123,7 +123,7 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, [coursesData]);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {

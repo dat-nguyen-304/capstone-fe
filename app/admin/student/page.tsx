@@ -20,7 +20,7 @@ import TableContent from '@/components/table';
 import { studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 import { StudentType } from '@/types';
 interface MyQuizProps {}
 
@@ -130,7 +130,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const onApproveOpen = (id: number, action: string) => {
         if (action == 'ENABLE') {

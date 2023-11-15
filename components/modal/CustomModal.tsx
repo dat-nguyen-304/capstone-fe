@@ -1,14 +1,14 @@
 'use client';
 
-import { useConfirmModal } from '@/hooks';
+import { useCustomModal } from '@/hooks';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import Image from 'next/image';
 import { PuffLoader } from 'react-spinners';
 
-interface ApproveModalProps {}
+interface CustomModalProps {}
 
-const ConfirmModal: React.FC<ApproveModalProps> = () => {
-    const { isOpen, title, type, content, onClose, activeFn } = useConfirmModal();
+const CustomModal: React.FC<CustomModalProps> = () => {
+    const { isOpen, title, type, content, onClose, activeFn } = useCustomModal();
 
     const imgBody = (key: typeof type) => {
         switch (key) {
@@ -65,4 +65,4 @@ const ConfirmModal: React.FC<ApproveModalProps> = () => {
     );
 };
 
-export default ConfirmModal;
+export default CustomModal;

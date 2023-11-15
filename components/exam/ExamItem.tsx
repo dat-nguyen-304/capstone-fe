@@ -4,7 +4,7 @@ import { Button, Card } from '@nextui-org/react';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import { GoCommentDiscussion } from 'react-icons/go';
-import { useConfirmModal, useUser } from '@/hooks';
+import { useCustomModal, useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 
 interface ExamItemProps {}
@@ -12,7 +12,7 @@ interface ExamItemProps {}
 const ExamItem: React.FC<ExamItemProps> = ({}) => {
     const { user } = useUser();
     const router = useRouter();
-    const { onOpen, onClose, onWarning } = useConfirmModal();
+    const { onOpen, onClose, onWarning } = useCustomModal();
 
     const handleDoExam = (id: number) => {
         if (user?.role === 'STUDENT') {
