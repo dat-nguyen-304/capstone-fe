@@ -7,7 +7,7 @@ import { PuffLoader } from 'react-spinners';
 
 interface CustomModalProps {}
 
-const CustomModal: React.FC<CustomModalProps> = () => {
+export const CustomModal: React.FC<CustomModalProps> = () => {
     const { isOpen, title, type, content, onClose, activeFn } = useCustomModal();
 
     const imgBody = (key: typeof type) => {
@@ -64,5 +64,3 @@ const CustomModal: React.FC<CustomModalProps> = () => {
         </Modal>
     );
 };
-
-export default CustomModal;

@@ -3,7 +3,7 @@
 import PostTitle from '@/components/discussion/PostTitle';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import CommentItem from '@/components/video/CommentItem';
-import { useUser } from '@/hooks';
+import { useReportModal, useUser } from '@/hooks';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 interface PostDetailProps {}
 
 const PostDetail: React.FC<PostDetailProps> = ({}) => {
+    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
     const currentUser = useUser();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
@@ -39,6 +40,12 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         maxFiles: 1,
         multiple: false
     });
+
+    const reportDiscussion = () => {
+        onContentType('discussion');
+        onOpen();
+    };
+
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <div className="flex justify-between items-center mt-2">
@@ -47,8 +54,8 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <span>Quay lại</span>
                 </Link>
                 {currentUser.user && (
-                    <Button size="sm" color="danger">
-                        Báo cáo vi phạm
+                    <Button size="sm" color="danger" onClick={reportDiscussion}>
+                        Báo cáo
                     </Button>
                 )}
             </div>
