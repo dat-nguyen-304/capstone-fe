@@ -6,6 +6,7 @@ import { SiLevelsdotfyi } from 'react-icons/si';
 import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import { BsPersonWorkspace } from 'react-icons/bs';
+import { useUser } from '@/hooks';
 
 interface BuyCourseProps {
     buyCourse?: {
@@ -19,6 +20,7 @@ interface BuyCourseProps {
 }
 
 const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
+    const { user } = useUser();
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -26,13 +28,17 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full"
+                className="w-full rounded-xl"
             />
             <div className="flex justify-center flex-col items-center">
-                <p className="text-center text-2xl text-orange-500 mt-4 font-bold">₫ {buyCourse?.price}</p>
-                <Button color="primary" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
-                    Mua ngay
-                </Button>
+                <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
+                    ₫ {buyCourse?.price.toLocaleString('vi-VN')}
+                </p>
+                {user?.role === 'STUDENT' && (
+                    <Button color="primary" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
+                        Mua ngay
+                    </Button>
+                )}
                 <div className="hidden md:block">
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />

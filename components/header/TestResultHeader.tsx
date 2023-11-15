@@ -1,5 +1,7 @@
 'use client';
 
+import NotFound from '@/app/not-found';
+import { useUser } from '@/hooks';
 import { Button } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +12,10 @@ interface TestResultHeaderProps {
 }
 
 const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id }) => {
+    const { user } = useUser();
+
+    if (user?.role !== 'STUDENT') return <NotFound />;
+
     return (
         <div className="h-[60px] z-10 fixed left-0 right-0 top-0 bg-blue-400 flex items-center justify-between px-2 sm:px-8 text-white">
             <div className="flex items-center gap-4">

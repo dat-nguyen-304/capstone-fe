@@ -1,14 +1,35 @@
 'use client';
 
 import { Button, Card } from '@nextui-org/react';
-import Link from 'next/link';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import { GoCommentDiscussion } from 'react-icons/go';
+import { useConfirmModal, useUser } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
 interface ExamItemProps {}
 
 const ExamItem: React.FC<ExamItemProps> = ({}) => {
+    const { user } = useUser();
+    const router = useRouter();
+    const { onOpen, onClose, onWarning } = useConfirmModal();
+
+    const handleDoExam = (id: number) => {
+        if (user?.role === 'STUDENT') {
+            router.push(`/exam/${id}`);
+        } else if (!user?.role) {
+            onWarning({
+                title: 'Yêu cầu đăng nhập',
+                content: 'Bạn cần đăng nhập để làm bài thi',
+                activeFn: () => {
+                    router.push('/auth');
+                    onClose();
+                }
+            });
+            onOpen();
+        }
+    };
+
     return (
         <li>
             <Card className="border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
@@ -31,10 +52,8 @@ const ExamItem: React.FC<ExamItemProps> = ({}) => {
                         <span className="text-xs sm:text-sm">900</span>
                     </div>
                 </div>
-                <Button variant="bordered" className="mt-2">
-                    <Link className="w-full" href="/exam/1">
-                        Làm ngay
-                    </Link>
+                <Button variant="bordered" className="mt-2" onClick={() => handleDoExam(1)}>
+                    Làm ngay
                 </Button>
             </Card>
         </li>

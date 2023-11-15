@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import type { MenuProps } from 'antd';
 import { Drawer, Layout, Menu, theme } from 'antd';
 import Image from 'next/image';
-import Notification from '../header/Notification';
+import Notification from '../notification/HeaderNotification';
 import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
 import { SafeUser } from '@/types';

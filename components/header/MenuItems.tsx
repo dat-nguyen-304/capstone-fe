@@ -10,7 +10,7 @@ interface MenuItemsProps {}
 const MenuItems: React.FC<MenuItemsProps> = () => {
     const { user } = useUser();
     let content;
-    if (user) {
+    if (user?.role === 'STUDENT') {
         content = (
             <NavbarContent className="hidden md:flex gap-8" justify="center">
                 <NavbarItem key="homepage" isActive={true} className="font-medium text-sm">
@@ -94,7 +94,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                 </NavbarItem>
             </NavbarContent>
         );
-    } else {
+    } else if (!user?.role) {
         content = (
             <NavbarContent className="hidden md:flex gap-8" justify="center">
                 <NavbarItem key="homepage" isActive={true} className="font-medium text-sm">
@@ -120,6 +120,21 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                 <NavbarItem key="discussion" isActive={false} className="font-medium text-sm">
                     <Link color="foreground" href="/discussion">
                         Thảo luận
+                    </Link>
+                </NavbarItem>
+            </NavbarContent>
+        );
+    } else {
+        content = (
+            <NavbarContent className="hidden md:flex gap-8" justify="center">
+                <NavbarItem key="homepage" isActive={true} className="font-medium text-sm">
+                    <Link color="foreground" href="/">
+                        Trang chủ
+                    </Link>
+                </NavbarItem>
+                <NavbarItem key="course" isActive={false} className="font-medium text-sm">
+                    <Link color="foreground" href="/course">
+                        Khóa học
                     </Link>
                 </NavbarItem>
             </NavbarContent>

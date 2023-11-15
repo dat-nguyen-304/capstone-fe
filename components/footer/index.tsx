@@ -31,12 +31,12 @@ const Footer: React.FC<FooterProps> = () => {
                         <div className="flex">
                             <p className="mr-1 text-gray-800">Số điện thoại</p>
                             <a
-                                href="tel:0357543625"
+                                href="tel:0522422411"
                                 aria-label="Our phone"
                                 title="Our phone"
                                 className="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800"
                             >
-                                (+84) 357 543 625
+                                (+84)5 224 224 11
                             </a>
                         </div>
                         <div className="flex">

@@ -22,6 +22,8 @@ import { Subject } from '@/types';
 import Loader from '@/components/Loader';
 import AvgScoreMonthChart from '@/components/chart/exam-history/AvgScoreMonthChart';
 import QuantityScoreChart from '@/components/chart/exam-history/QuantityScoreChart';
+import { useUser } from '@/hooks';
+import NotFound from '@/app/not-found';
 
 interface ExamHistoryProps {}
 
@@ -81,6 +83,7 @@ const exams = [
 type Exam = (typeof exams)[0];
 
 const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
+    const { user } = useUser();
     const { data } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll
@@ -123,6 +126,8 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 return cellValue;
         }
     }, []);
+
+    if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
 
     if (!data) return <Loader />;
     else {

@@ -16,6 +16,8 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
+import { useUser } from '@/hooks';
+import NotFound from '../not-found';
 
 interface TransactionsProps {}
 
@@ -82,6 +84,7 @@ const transactions = [
 type Transaction = (typeof transactions)[0];
 
 const Transaction: React.FC<TransactionsProps> = ({}) => {
+    const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'name', 'subject', 'teacher', 'price', 'date'])
@@ -134,6 +137,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                 return cellValue;
         }
     }, []);
+
+    if (user?.role !== 'STUDENT') return <NotFound />;
 
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
