@@ -10,19 +10,20 @@ import { useRouter } from 'next/navigation';
 interface ExamItemProps {}
 
 const ExamItem: React.FC<ExamItemProps> = ({}) => {
-    const currentUser = useUser();
+    const { user } = useUser();
     const router = useRouter();
-    const { onOpen, onWarning } = useConfirmModal();
+    const { onOpen, onClose, onWarning } = useConfirmModal();
 
     const handleDoExam = (id: number) => {
-        if (currentUser.user) {
+        if (user?.role === 'STUDENT') {
             router.push(`/exam/${id}`);
-        } else {
+        } else if (!user?.role) {
             onWarning({
                 title: 'Yêu cầu đăng nhập',
                 content: 'Bạn cần đăng nhập để làm bài thi',
                 activeFn: () => {
                     router.push('/auth');
+                    onClose();
                 }
             });
             onOpen();

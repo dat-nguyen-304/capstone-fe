@@ -12,10 +12,13 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
+import { useUser } from '@/hooks';
+import NotFound from '@/app/not-found';
 
 interface EditPostProps {}
 
 const EditPost: React.FC<EditPostProps> = ({}) => {
+    const { user } = useUser();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -43,7 +46,10 @@ const EditPost: React.FC<EditPostProps> = ({}) => {
         multiple: false
     });
 
+    if (user?.role !== 'STUDENT') return <NotFound />;
+
     if (!data) return <Loader />;
+
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <h3 className="font-bold text-xl">Chỉnh sửa bài viết</h3>

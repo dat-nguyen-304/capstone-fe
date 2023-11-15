@@ -2,9 +2,16 @@
 
 import NotificationItem from '@/components/notification/NotificationItem';
 import { Tab, Tabs } from '@nextui-org/react';
+import { useUser } from '@/hooks';
+import NotFound from '../not-found';
+
 interface UserNotificationProps {}
 
 const UserNotification: React.FC<UserNotificationProps> = ({}) => {
+    const { user } = useUser();
+
+    if (user?.role !== 'STUDENT') return <NotFound />;
+
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
             <h3 className="text-xl text-blue-500 font-semibold my-4 sm:mt-0">Thông báo</h3>

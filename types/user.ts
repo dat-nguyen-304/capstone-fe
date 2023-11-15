@@ -1,3 +1,10 @@
+export type CommonUser = {
+    role: string;
+    email: string;
+    fullName: string;
+    avatar: string;
+};
+
 export type ChangePasswordPayload = {
     email: string;
     oldPassword: string;

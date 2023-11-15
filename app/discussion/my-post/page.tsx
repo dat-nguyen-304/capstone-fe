@@ -16,6 +16,8 @@ import {
 import TableContent from '@/components/table';
 import Link from 'next/link';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useUser } from '@/hooks';
+import NotFound from '@/app/not-found';
 
 interface MyPostListProps {}
 
@@ -95,6 +97,7 @@ const posts = [
 type Post = (typeof posts)[0];
 
 const MyPostList: React.FC<MyPostListProps> = ({}) => {
+    const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'title', 'subject', 'react', 'author', 'createdAt', 'status', 'action'])
@@ -172,6 +175,8 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                 return cellValue;
         }
     }, []);
+
+    if (user?.role !== 'STUDENT') return <NotFound />;
 
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">

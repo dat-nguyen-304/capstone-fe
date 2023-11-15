@@ -1,20 +1,20 @@
 'use client';
 
-import { Student } from '@/types';
+import { CommonUser } from '@/types';
 import { NavbarContent } from '@nextui-org/react';
 import React from 'react';
 import Notification from '../notification/HeaderNotification';
 import UserMenu from './UserMenu';
 
 interface UserItemsProps {
-    currentStudent: Student;
+    currentUser: CommonUser;
 }
 
-const UserItems: React.FC<UserItemsProps> = ({ currentStudent }) => {
+const UserItems: React.FC<UserItemsProps> = ({ currentUser }) => {
     return (
         <NavbarContent as="div" justify="center" className="flex gap-[48px] items-center">
-            <Notification />
-            <UserMenu currentStudent={currentStudent} />
+            {currentUser.role === 'STUDENT' && <Notification />}
+            <UserMenu currentUser={currentUser} />
         </NavbarContent>
     );
 };

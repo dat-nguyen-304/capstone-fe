@@ -1,6 +1,6 @@
 'use client';
 
-import { SafeUser, Student } from '@/types';
+import { CommonUser, SafeUser } from '@/types';
 import { Navbar } from '@nextui-org/react';
 import { useState } from 'react';
 import Logo from './Logo';
@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
             <MenuItems />
 
-            {user ? <UserItems currentStudent={user as Student} /> : <StartNow />}
+            {user ? <UserItems currentUser={user as CommonUser} /> : <StartNow />}
 
             <MenuMobile />
         </Navbar>

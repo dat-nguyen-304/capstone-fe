@@ -5,11 +5,17 @@ import ExamFilter from '@/components/exam/ExamFilter';
 import ExamItem from '@/components/exam/ExamItem';
 import ExamInfoCard from '@/components/exam/ExamInfoCard';
 import StudentLayout from '@/components/header/StudentLayout';
+import { useUser } from '@/hooks';
+import NotFound from '../not-found';
 
 interface ExamListProps {}
 
 const ExamList: React.FC<ExamListProps> = ({}) => {
+    const { user } = useUser();
+
     const [selectedSubject, setSelectedSubject] = useState(0);
+
+    if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
 
     return (
         <StudentLayout>

@@ -63,9 +63,10 @@ const ExamInfoCard: React.FC<ExamInfoCardProps> = ({}) => {
                     </Button>
                 </div>
             ) : (
-                <div className="flex flex-col items-center w-full h-[300px] py-4 px-6">
+                <div className="flex flex-col items-center w-full h-[400px] p-4">
                     <Image src="/need-login.png" alt="" width={200} height={200} className="mb-2" />
-                    <Button as={Link} href="/auth" className="mt-8" color="primary">
+                    <p className="text-sm my-8">Đăng nhập ngay để làm bài thi nào</p>
+                    <Button as={Link} href="/auth" color="primary">
                         Đăng nhập ngay
                     </Button>
                 </div>

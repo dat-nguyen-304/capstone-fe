@@ -12,10 +12,13 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
+import { useUser } from '@/hooks';
+import NotFound from '@/app/not-found';
 
 interface CreatePostProps {}
 
 const CreatePost: React.FC<CreatePostProps> = ({}) => {
+    const { user } = useUser();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -42,6 +45,8 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
         maxFiles: 1,
         multiple: false
     });
+
+    if (user?.role !== 'STUDENT') return <NotFound />;
 
     if (!data) return <Loader />;
 
