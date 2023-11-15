@@ -3,7 +3,7 @@
 import { Student } from '@/types';
 import { NavbarContent } from '@nextui-org/react';
 import React from 'react';
-import Notification from './Notification';
+import Notification from '../notification/HeaderNotification';
 import UserMenu from './UserMenu';
 
 interface UserItemsProps {
