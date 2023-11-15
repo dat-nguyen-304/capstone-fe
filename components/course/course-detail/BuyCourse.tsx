@@ -9,6 +9,7 @@ import { BsPersonWorkspace } from 'react-icons/bs';
 
 interface BuyCourseProps {
     buyCourse?: {
+        id: number;
         thumbnail: string;
         price: number;
         subject: string;

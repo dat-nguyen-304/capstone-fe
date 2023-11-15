@@ -15,24 +15,25 @@ interface CourseDetailProps {
     params: { id: number };
 }
 
-const CourseInfoTest = {
-    createDate: '2023-11-11T23:34:48.088886',
-    courseName: 'Lập Trình C++',
-    subject: 'Lập Trình',
-    level: 'Cơ bản',
-    rating: 4.7,
-    numberOfRate: 100,
-    totalStudent: 100,
-    teacherName: 'Bùi Đức Tiến',
-    description:
-        'Khóa học lập trình C++ từ cơ bản tới nâng cao dành cho người mới bắt đầu. Mục tiêu của khóa học này nhằm giúp các bạn nắm được các khái niệm căn cơ của lập trình, giúp các bạn có nền tảng vững chắc để chinh phục con đường trở thành một lập trình viên.'
-};
+// const CourseInfoTest = {
+//     createDate: '2023-11-11T23:34:48.088886',
+//     courseName: 'Lập Trình C++',
+//     subject: 'Lập Trình',
+//     level: 'Cơ bản',
+//     rating: 4.7,
+//     numberOfRate: 100,
+//     totalStudent: 100,
+//     teacherName: 'Bùi Đức Tiến',
+//     description:
+//         'Khóa học lập trình C++ từ cơ bản tới nâng cao dành cho người mới bắt đầu. Mục tiêu của khóa học này nhằm giúp các bạn nắm được các khái niệm căn cơ của lập trình, giúp các bạn có nền tảng vững chắc để chinh phục con đường trở thành một lập trình viên.'
+// };
 
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
-        queryFn: () => courseApi.getCourseById(params?.id)
+        queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
     });
+    console.log(data);
 
     const courseInfo = {
         courseName: data?.courseResponse?.courseName as string,
@@ -43,9 +44,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         rating: data?.courseResponse?.rating,
         totalStudent: data?.totalStudent,
         description: data?.description,
-        createDate: data?.createDate
+        updateDate: data?.createDate
     };
     const editCourse = {
+        id: data?.id,
         thumbnail: data?.courseResponse?.thumbnial,
         price: data?.courseResponse?.price,
         subject: data?.courseResponse?.subject,
@@ -53,6 +55,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalVideo: data?.courseResponse?.totalVideo
     };
     const courseContent = {
+        id: data?.id,
         totalVideo: data?.courseResponse?.totalVideo,
         listVideo: data?.videoResponse
     };
@@ -72,7 +75,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                     <Feedback />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
-                    <EditCourse onOpen={onOpen} />
+                    <EditCourse onOpen={onOpen} editCourse={editCourse} />
                 </div>
             </div>
             <CourseRevenueModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />

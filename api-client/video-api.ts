@@ -1,5 +1,6 @@
 import { ChangeVideoStatus } from '@/types';
 import axiosClient from './axios-client';
+import axiosFormData from './axios-form';
 
 export const videoApi = {
     getByCourseId: async (courseId: number, page: number, size: number) => {
@@ -24,5 +25,15 @@ export const videoApi = {
     },
     changeVideoStatus: async (payload: ChangeVideoStatus) => {
         return await axiosClient.post('/videos/admin/verify-video', payload);
+    },
+    createVideo: async (payload: any) => {
+        return await axiosFormData.post('/videos', payload);
+    },
+    getVideoDetailByIdForAdminAndTeacher: async (videoId: number) => {
+        const res = await axiosClient.get(`/videos/teacher/${videoId}`);
+        return res.data;
+    },
+    updateVideo: async (payload: any) => {
+        return await axiosFormData.put('/videos/update', payload);
     }
 };

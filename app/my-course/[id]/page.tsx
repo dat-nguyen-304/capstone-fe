@@ -10,7 +10,7 @@ import { BsArrowLeft } from 'react-icons/bs';
 
 interface CourseDetailProps {}
 const CourseInfoTest = {
-    createDate: '2023-11-11T23:34:48.088886',
+    updateDate: '2023-11-11T23:34:48.088886',
     courseName: 'Lập Trình C++',
     subject: 'Lập Trình',
     level: 'Cơ bản',

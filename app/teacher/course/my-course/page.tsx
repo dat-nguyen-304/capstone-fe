@@ -12,19 +12,6 @@ import { useUser } from '@/hooks';
 
 interface MyCourseProps {}
 
-const mockApi = {
-    id: 1,
-    thumbnail: 'abc',
-    courseName: 'Khoa hoc cap toc',
-    teacherName: 'Teacher A',
-    rating: 5,
-    numberOfRate: 30,
-    totalVideo: 30,
-    subject: 'Vật lý',
-    level: 'Cơ bản',
-    price: 500000
-};
-
 const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
@@ -34,7 +21,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['courses', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacher(currentUser.user?.email as string, page - 1)
+        queryFn: () => courseApi.getAllOfTeacher(currentUser.user?.email as string, page - 1, 20)
     });
 
     useEffect(() => {

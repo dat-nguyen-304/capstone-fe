@@ -4,18 +4,33 @@ import Image from 'next/image';
 import VideoSortItem from './VideoSortItem';
 import { Button } from '@nextui-org/react';
 
-interface CourseContentProps {}
+interface CourseContentProps {
+    courseContent?: {
+        teacherName: string;
+        courseName: string;
+        totalVideo: number;
+        listVideo: Array<{
+            id: number;
+            name: string;
+            duration: number;
+            totalComment: number;
+            totalLike: number;
+            thumbnail: string;
+            ordinalNumber: number;
+        }>;
+    };
+}
 
-const CourseContent: React.FC<CourseContentProps> = ({}) => {
+const CourseContent: React.FC<CourseContentProps> = ({ courseContent }) => {
     return (
         <div className="xl:grid grid-cols-10 mt-6">
             <div className="hidden xl:block col-span-3 p-4 bg-blue-200 rounded-xl sticky top-[70px] h-[380px]">
                 <Image src="/banner/slide-1.png" alt="" width={300} height={240} />
-                <h2 className="truncate2line font-bold text-lg mt-4">Khóa học abcxyz</h2>
-                <h3 className="mt-1 font-semibold">Nguyễn Văn An</h3>
+                <h2 className="truncate2line font-bold text-lg mt-4">{courseContent?.courseName}</h2>
+                <h3 className="mt-1 font-semibold">{courseContent?.teacherName}</h3>
                 <div className="mt-4">
                     <span className="inline-flex items-center">
-                        <span className="text-sm font-bold mr-1">20</span>
+                        <span className="text-sm font-bold mr-1">{courseContent?.totalVideo}</span>
                         <span className="text-sm mr-1">Bài giảng</span>
                         <Image src="/video-number/blue.svg" width={25} height={25} alt="" />
                     </span>
@@ -36,18 +51,9 @@ const CourseContent: React.FC<CourseContentProps> = ({}) => {
             </div>
             <div className="col-span-7 mx-0 xl:mx-[40px]">
                 <ul>
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
-                    <VideoSortItem />
+                    {courseContent?.listVideo?.map((videoItem, index) => (
+                        <VideoSortItem key={index} videoItem={videoItem} index={index} />
+                    ))}
                 </ul>
             </div>
         </div>

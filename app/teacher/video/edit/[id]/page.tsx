@@ -9,16 +9,21 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import dynamic from 'next/dynamic';
+import { videoApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import Loader from '@/components/Loader';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
-const UploadVideo: React.FC = () => {
-    const { control, handleSubmit, setError } = useForm({
-        defaultValues: {
-            name: '',
-            course: '',
-            description: ''
-        }
+interface UploadVideoProps {
+    params: { id: number };
+}
+
+const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
+    const { data, isLoading } = useQuery<any>({
+        queryKey: ['course'],
+        queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
     });
+    console.log(data);
 
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
@@ -33,7 +38,60 @@ const UploadVideo: React.FC = () => {
         maxFiles: 1,
         multiple: false
     });
+    const { control, handleSubmit, setError } = useForm({
+        defaultValues: {
+            name: data?.name,
+            course: '',
+            description: data?.description
+        }
+    });
+    // const onSubmit = async (formData: any) => {
+    //     try {
+    //         // const videoRequest = {
+    //         //     description: formData.description,
+    //         //     name: formData.name,
+    //         //     price: formData.price,
+    //         //     subject: getSubjectNameById(selectedSubject),
+    //         //     levelId: levelId,
+    //         //     topic: topicsArray
+    //         // };
+    //         const videoRequest = {
+    //             name: 'Video Khóa Học Cấp Tốc',
+    //             videoId: 1,
+    //             description: 'Video Tiếng Anh',
+    //             videoStatus: 'PRIVATE',
+    //             order: 0
+    //         };
 
+    //         console.log(videoRequest);
+    //         console.log(uploadedImageFile);
+    //         console.log(uploadedVideoFile);
+
+    //         const formDataPayload = new FormData();
+    //         formDataPayload.append(
+    //             'videoRequest',
+    //             new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
+    //         );
+    //         if (uploadedVideoFile) {
+    //             formDataPayload.append('video', uploadedVideoFile);
+    //         }
+
+    //         if (uploadedImageFile) {
+    //             formDataPayload.append('thumbnail', uploadedImageFile);
+    //         }
+
+    //         const response = await videoApi.createVideo(formDataPayload);
+    //         console.log('Course created successfully:', response);
+    //         // if (response) {
+    //         //     router.push('/teacher/course/my-course');
+    //         // }
+    //         // Handle the response as needed
+    //     } catch (error) {
+    //         console.error('Error creating course:', error);
+    //         // Handle error
+    //     }
+    // };
+    if (!data) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa video</h3>

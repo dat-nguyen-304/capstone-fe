@@ -8,3 +8,4 @@ export * from './user';
 export * from './course';
 export * from './topic';
 export * from './video';
+export * from './transaction';

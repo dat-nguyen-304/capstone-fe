@@ -11,17 +11,31 @@ import { BiSolidPencil } from 'react-icons/bi';
 
 interface EditCourseProps {
     onOpen: () => void;
+    editCourse?: {
+        id: number;
+        thumbnail: string;
+        price: number;
+        subject: string;
+        level: string;
+        totalVideo: number;
+    };
 }
 
-const EditCourse: React.FC<EditCourseProps> = ({ onOpen }) => {
+const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
-            <Image src="/banner/slide-1.png" width={600} height={300} alt="" className="w-full" />
+            <Image
+                src={editCourse?.thumbnail || '/banner/slide-1.png'}
+                width={600}
+                height={300}
+                alt=""
+                className="w-full"
+            />
             <div className="flex justify-center flex-col items-center">
-                <p className="text-center text-2xl text-orange-500 mt-4 font-bold">₫ 400.000</p>
+                <p className="text-center text-2xl text-orange-500 mt-4 font-bold">₫ {editCourse?.price}</p>
                 <Button
                     as={Link}
-                    href="/teacher/course/edit/1"
+                    href={`/teacher/course/edit/${editCourse?.id}`}
                     color="warning"
                     className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
                 >
@@ -38,11 +52,13 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen }) => {
                 <div className="hidden md:block">
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />
-                        <span className="text-sm">Toán học - Cơ bản</span>
+                        <span className="text-sm">
+                            {editCourse?.subject} - {editCourse?.level}
+                        </span>
                     </div>
                     <div className="flex items-center my-4">
                         <TfiVideoClapper className="mr-8" />
-                        <span className="text-sm">20 bài giảng </span>
+                        <span className="text-sm">{editCourse?.totalVideo} bài giảng </span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />

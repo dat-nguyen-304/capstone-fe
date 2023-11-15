@@ -10,8 +10,8 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;
     },
-    getAllOfTeacher: async (email: string, page: number) => {
-        const res = await axiosClient.get(`/courses/teacher?email=${email}&page=${page}&size=20&sortType=ASC`);
+    getAllOfTeacher: async (email: string, page: number, size: number) => {
+        const res = await axiosClient.get(`/courses/teacher?email=${email}&page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
     getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
@@ -25,5 +25,12 @@ export const courseApi = {
     },
     createCourse: async (payload: any) => {
         return await axiosFormData.post('/courses/teacher/create', payload);
+    },
+    getCourseByIdForAdminAndTeacher: async (courseId: number) => {
+        const res = await axiosClient.get(`/courses/detail/teacher?id=${courseId}`);
+        return res.data;
+    },
+    updateCourse: async (payload: any) => {
+        return await axiosFormData.put('/courses/teacher/update', payload);
     }
 };

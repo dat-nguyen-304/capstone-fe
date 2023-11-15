@@ -7,6 +7,7 @@ interface CourseContentProps {
     isMyCourse?: boolean;
     isTeacherCourse?: boolean;
     courseContent?: {
+        id: number;
         totalVideo: number;
         listVideo: Array<{
             id: number;

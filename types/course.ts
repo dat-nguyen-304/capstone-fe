@@ -1,3 +1,8 @@
+export type Course = {
+    id: number;
+    courseName: string;
+};
+
 export type CourseCardType = {
     id: number;
     thumbnial: string;

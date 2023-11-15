@@ -28,9 +28,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         rating: data?.courseResponse?.rating,
         totalStudent: data?.totalStudent,
         description: data?.description,
-        createDate: data?.createDate
+        updateDate: data?.courseResponse?.updateDate
     };
     const buyCourse = {
+        id: data?.id,
         thumbnail: data?.courseResponse?.thumbnial,
         price: data?.courseResponse?.price,
         subject: data?.courseResponse?.subject,
@@ -38,9 +39,12 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalVideo: data?.courseResponse?.totalVideo
     };
     const courseContent = {
+        id: data?.id,
         totalVideo: data?.courseResponse?.totalVideo,
         listVideo: data?.videoResponse
     };
+    console.log(data);
+
     if (!data) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">

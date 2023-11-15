@@ -14,23 +14,44 @@ import Loader from '@/components/Loader';
 import { InputNumber } from '@/components/form-input/InputNumber';
 import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
-const getSubjectNameById = (id: number): string => {
+const getObjectSubjectById = (id: number): object => {
     if (id == 1) {
-        return 'Toán học';
+        return {
+            name: 'Toán học',
+            id: 1
+        };
     } else if (id == 2) {
-        return 'Vật lí';
+        return {
+            name: 'Vật lí',
+            id: 2
+        };
     } else if (id == 3) {
-        return 'Hóa học';
+        return {
+            name: 'Hóa học',
+            id: 3
+        };
     } else if (id == 4) {
-        return 'Tiếng anh';
+        return {
+            name: 'Tiếng anh',
+            id: 4
+        };
     } else if (id == 5) {
-        return 'Sinh học';
+        return {
+            name: 'Sinh học',
+            id: 5
+        };
     } else if (id == 6) {
-        return 'Lịch sử';
+        return {
+            name: 'Lịch sử',
+            id: 6
+        };
     } else if (id == 7) {
-        return 'Địa lý';
+        return { name: 'Địa lý', id: 7 };
     } else {
-        return '';
+        return {
+            name: '',
+            id: 0
+        };
     }
 };
 const CreateCourse: React.FC = () => {
@@ -75,16 +96,19 @@ const CreateCourse: React.FC = () => {
 
     const onSubmit = async (formData: any) => {
         try {
-            // const phrases = selectedTopics.split(',');
-            // const quotedPhrases = phrases.map(phrase => `"${phrase.trim()}"`);
-            // const result = quotedPhrases.join(',');
             const phrases = selectedTopics.split(',');
-            const topicsArray = phrases.map(phrase => phrase.trim());
+            const topicsArray = phrases
+                .map(phrase => phrase.trim())
+                .map(topicName => {
+                    const topic = topicsData?.find(t => t.name === topicName);
+                    return topic ? { name: topic.name, id: topic.id } : null;
+                })
+                .filter(Boolean);
             const courseRequest = {
                 description: formData.description,
                 name: formData.name,
                 price: formData.price,
-                subject: getSubjectNameById(selectedSubject),
+                subject: getObjectSubjectById(selectedSubject),
                 levelId: levelId,
                 topic: topicsArray
             };

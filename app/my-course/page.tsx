@@ -6,7 +6,7 @@ interface CourseListProps {}
 
 const mockApi = {
     id: 1,
-    thumbnial: 'abc',
+    thumbnial: '/banner/slide-1.png',
     courseName: 'Khoa hoc cap toc',
     teacherName: 'Teacher A',
     rating: 5,
