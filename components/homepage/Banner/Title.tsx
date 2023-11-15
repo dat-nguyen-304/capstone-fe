@@ -27,7 +27,7 @@ const Title: React.FC<TitleProps> = () => {
                         size="lg"
                         className="!text-white font-bold w-full sm:w-auto rounded-xl py-7 text-lg my-5 text-20 bg-[#0071F9]"
                     >
-                        Xây lộ trình cho tôi
+                        Gợi ý khóa học cho tôi
                     </Button>
                 </motion.div>
                 <motion.div {...vertical(-100, 0.5, 0)} className="flex items-center justify-center sm:justify-start">
