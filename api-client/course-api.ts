@@ -32,5 +32,9 @@ export const courseApi = {
     },
     updateCourse: async (payload: any) => {
         return await axiosFormData.put('/courses/teacher/update', payload);
+    },
+    getEnrollCourse: async (page: number) => {
+        const res = await axiosClient.get(`/enroll-course?page=${page}&size=20&sortType=ASC`);
+        return res.data;
     }
 };

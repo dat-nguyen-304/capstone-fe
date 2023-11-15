@@ -6,6 +6,7 @@ import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import { BsPersonWorkspace } from 'react-icons/bs';
 import { useUser } from '@/hooks';
+import { redirect } from 'next/navigation';
 import {
     Button,
     Modal,
@@ -17,9 +18,11 @@ import {
     SelectItem,
     Select
 } from '@nextui-org/react';
-
+import { transactionApi } from '@/api-client';
+import { Transaction } from '@/types';
+import { useState } from 'react';
 interface BuyCourseProps {
-    buyCourse?: {
+    buyCourse: {
         id: number;
         thumbnail: string;
         price: number;
@@ -32,6 +35,26 @@ interface BuyCourseProps {
 const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
     const { user } = useUser();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [bankCode, setBankCode] = useState<string>('ncb');
+    const handleConfirmButtonClick = async () => {
+        // Assuming you have the necessary data for the payload
+        const paymentPayload: Transaction = {
+            courseId: buyCourse?.id,
+            bankCode: bankCode,
+            language: 'vn'
+        };
+
+        try {
+            const res = await transactionApi.createPayment(paymentPayload);
+            // window.location.href = res?.data;
+            window.open(res?.data, '_blank');
+            onOpenChange();
+        } catch (error) {
+            // Handle errors here, e.g., show an error message
+            console.error('Error creating payment:', error);
+        }
+    };
+
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -77,7 +100,13 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">Phương thức thanh toán</ModalHeader>
                             <ModalBody>
-                                <Select isRequired label="Ngân hàng" defaultSelectedKeys={['ncb']} className="w-full">
+                                <Select
+                                    isRequired
+                                    label="Ngân hàng"
+                                    defaultSelectedKeys={['ncb']}
+                                    className="w-full"
+                                    onChange={event => setBankCode(event?.target?.value)}
+                                >
                                     <SelectItem key="ncb" value="ncb">
                                         Ngân hàng quốc dân (NCB)
                                     </SelectItem>
@@ -98,7 +127,7 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Hủy bỏ
                                 </Button>
-                                <Button color="primary" onPress={onClose}>
+                                <Button color="primary" onPress={handleConfirmButtonClick}>
                                     Xác nhận
                                 </Button>
                             </ModalFooter>

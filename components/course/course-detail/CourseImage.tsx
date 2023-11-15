@@ -6,21 +6,38 @@ import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader, FaCheckDouble } from 'react-icons/fa';
 import { Progress } from 'antd';
 
-interface CourseImageProps {}
+interface CourseImageProps {
+    courseImage: {
+        id: number;
+        thumbnail: string;
+        price: number;
+        subject: string;
+        level: string;
+        totalVideo: number;
+    };
+}
 
-const CourseImage: React.FC<CourseImageProps> = ({}) => {
+const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
-            <Image src="/banner/slide-1.png" width={600} height={300} alt="" className="w-full" />
+            <Image
+                src={courseImage.thumbnail || '/banner/slide-1.png'}
+                width={600}
+                height={300}
+                alt=""
+                className="w-full"
+            />
             <div className="hidden md:flex justify-center flex-col items-center">
                 <div>
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />
-                        <span className="text-sm">Toán học - Cơ bản</span>
+                        <span className="text-sm">
+                            {courseImage?.subject} - {courseImage?.level}
+                        </span>
                     </div>
                     <div className="flex items-center my-4">
                         <TfiVideoClapper className="mr-8" />
-                        <span className="text-sm">20 bài giảng </span>
+                        <span className="text-sm">{courseImage.totalVideo} bài giảng </span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />

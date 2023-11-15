@@ -1,31 +1,57 @@
 'use client';
 
+import { courseApi } from '@/api-client';
 import CourseCard from '@/components/course/CourseCard';
+import { CourseCardType } from '@/types';
+import { Pagination } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
+import { Spin } from 'antd';
+import { useEffect, useState } from 'react';
 
 interface CourseListProps {}
 
-const mockApi = {
-    id: 1,
-    thumbnial: '/banner/slide-1.png',
-    courseName: 'Khoa hoc cap toc',
-    teacherName: 'Teacher A',
-    rating: 5,
-    numberOfRate: 30,
-    totalVideo: 30,
-    subject: 'Vật lý',
-    level: 'Cơ bản',
-    price: 500000
-};
 const CourseList: React.FC<CourseListProps> = ({}) => {
+    const [courses, setCourses] = useState<CourseCardType[]>([]);
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [page, setPage] = useState(1);
+    const { status, error, data, isPreviousData } = useQuery({
+        queryKey: ['my-courses', { page }],
+        // keepPreviousData: true,
+        queryFn: () => courseApi.getEnrollCourse(page - 1)
+    });
+    useEffect(() => {
+        if (data?.data) {
+            setCourses(data.data);
+            setTotalPage(data.totalPage);
+            setTotalRow(data.totalRow);
+        }
+    }, [data]);
+    const scrollToTop = (value: number) => {
+        setPage(value);
+        window.scrollTo({
+            top: 0
+        });
+    };
+
     return (
         <div className="w-[90%] mx-auto mt-8">
-            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                <CourseCard isMyCourse={true} course={mockApi} />
-                <CourseCard isMyCourse={true} course={mockApi} />
-                <CourseCard isMyCourse={true} course={mockApi} />
-                <CourseCard isMyCourse={true} course={mockApi} />
-                <CourseCard isMyCourse={true} course={mockApi} />
-            </div>
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {courses.length ? (
+                        courses.map((courseItem: CourseCardType) => (
+                            <CourseCard isMyCourse={true} key={courseItem.id} course={courseItem} />
+                        ))
+                    ) : (
+                        <></>
+                    )}
+                </div>
+                {totalPage && (
+                    <div className="flex justify-center my-8">
+                        <Pagination page={page} total={totalPage} onChange={value => scrollToTop(value)} showControls />
+                    </div>
+                )}
+            </Spin>
         </div>
     );
 };

@@ -19,6 +19,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['video-teacher-detail', params?.id],
         queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
     });
+    console.log(params?.id);
     console.log(data);
 
     if (!data) return <Loader />;
@@ -42,7 +43,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         </span>
                         <Button
                             as={Link}
-                            href="/teacher/video/edit/1"
+                            href={`/teacher/video/edit/${params?.id}`}
                             size="sm"
                             color="warning"
                             className="ml-4 text-black hover:text-black"
