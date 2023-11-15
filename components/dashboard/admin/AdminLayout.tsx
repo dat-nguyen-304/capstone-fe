@@ -67,7 +67,7 @@ const items: MenuItem[] = [
     )
 ];
 
-const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [notFound, setNotFound] = useState<boolean>(false);
@@ -94,4 +94,4 @@ const TeacherLayout = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default TeacherLayout;
+export default AdminLayout;

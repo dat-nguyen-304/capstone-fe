@@ -26,7 +26,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ type, content, time
             />
         );
     return (
-        <li className="flex rounded-xl border-2 p-4 items-center my-2">
+        <li className="flex rounded-xl border-2 p-2 sm:p-4 items-center my-2">
             <div className="w-[50px]">{icon}</div>
             <div className="flex-[1] text-xs sm:text-sm">
                 <p>{content}</p>
@@ -37,7 +37,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ type, content, time
                     </p>
                 )}
             </div>
-            <p className="text-xs sm:text-sm">{time}</p>
+            <p className="text-xs sm:text-sm ml-1">{time}</p>
         </li>
     );
 };
