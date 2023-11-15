@@ -1,12 +1,22 @@
 'use client';
 
-import { Button } from '@nextui-org/react';
 import Image from 'next/image';
 import { SiLevelsdotfyi } from 'react-icons/si';
 import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import { BsPersonWorkspace } from 'react-icons/bs';
 import { useUser } from '@/hooks';
+import {
+    Button,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    SelectItem,
+    Select
+} from '@nextui-org/react';
 
 interface BuyCourseProps {
     buyCourse?: {
@@ -21,6 +31,7 @@ interface BuyCourseProps {
 
 const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
     const { user } = useUser();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -35,7 +46,7 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                     ₫ {buyCourse?.price.toLocaleString('vi-VN')}
                 </p>
                 {user?.role === 'STUDENT' && (
-                    <Button color="primary" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
+                    <Button color="primary" onPress={onOpen} className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
                         Mua ngay
                     </Button>
                 )}
@@ -60,6 +71,41 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                     </div>
                 </div>
             </div>
+            <Modal size="xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {onClose => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Phương thức thanh toán</ModalHeader>
+                            <ModalBody>
+                                <Select isRequired label="Ngân hàng" defaultSelectedKeys={['ncb']} className="w-full">
+                                    <SelectItem key="ncb" value="ncb">
+                                        Ngân hàng quốc dân (NCB)
+                                    </SelectItem>
+                                    <SelectItem key="us" value="us">
+                                        Ngân hàng đầu tư và phát triển nông thân (Agribank)
+                                    </SelectItem>
+                                </Select>
+                                <Select isRequired label="Quốc gia" defaultSelectedKeys={['vn']} className="w-full">
+                                    <SelectItem key="vn" value="vn">
+                                        VietNam (VN)
+                                    </SelectItem>
+                                    <SelectItem key="us" value="us">
+                                        United States (US)
+                                    </SelectItem>
+                                </Select>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Hủy bỏ
+                                </Button>
+                                <Button color="primary" onPress={onClose}>
+                                    Xác nhận
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 };
