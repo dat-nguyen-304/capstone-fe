@@ -1,9 +1,10 @@
 'use client';
 
-import { Button } from '@nextui-org/react';
 import Image from 'next/image';
 import { AiOutlineMenu } from 'react-icons/ai';
-
+import { UniqueIdentifier } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 interface VideoSortItemProps {
     videoItem: {
         id: number;
@@ -13,7 +14,7 @@ interface VideoSortItemProps {
         totalLike: number;
         thumbnail: string;
     };
-    index: number;
+    index: UniqueIdentifier;
 }
 
 const floatToTime = (durationFloat: number): string => {
@@ -30,8 +31,22 @@ const floatToTime = (durationFloat: number): string => {
 };
 
 const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+        id: index,
+        data: {
+            type: 'item'
+        }
+    });
     return (
-        <li className="flex p-1 sm:p-4 rounded-xl border-2 items-center my-1">
+        <li
+            className="flex p-1 sm:p-4 rounded-xl border-2 items-center my-1 bg-gray-100"
+            ref={setNodeRef}
+            {...attributes}
+            style={{
+                transition,
+                transform: CSS.Translate.toString(transform)
+            }}
+        >
             <Image
                 src={'/video-number/blue.svg'}
                 width={40}
@@ -52,12 +67,15 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                 </div>
             </div>
             <div className="ml-auto mr-1">
-                <div className="block sm:hidden">
+                <div className="block sm:hidden" {...listeners}>
                     <AiOutlineMenu />
                 </div>
-                <Button size="sm" variant="faded" className="hidden sm:flex">
+                <div
+                    className="border-1 border-gray-400 bg-gray-100 py-2 px-4 rounded-xl hidden sm:flex"
+                    {...listeners}
+                >
                     <AiOutlineMenu />
-                </Button>
+                </div>
             </div>
         </li>
     );
