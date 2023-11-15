@@ -119,7 +119,7 @@ const Videos: React.FC<VideosProps> = () => {
         data: videosData,
         isPreviousData
     } = useQuery({
-        queryKey: ['coursesApproveAdmin', { page, rowsPerPage, updateState }],
+        queryKey: ['videosApproveAdmin', { page, rowsPerPage, updateState }],
         queryFn: () => videoApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
     });
 
@@ -135,6 +135,7 @@ const Videos: React.FC<VideosProps> = () => {
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
+            onLoading();
             const res = await videoApi.changeVideoStatus({
                 id,
                 verifyStatus

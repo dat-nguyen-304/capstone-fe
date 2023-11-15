@@ -1,6 +1,6 @@
-import { ChangeCourseStatus, CourseCardType } from '@/types';
+import { ChangeCourseStatus, CourseCardType, CreateCourse } from '@/types';
 import axiosClient from './axios-client';
-
+import axiosFormData from './axios-form';
 export const courseApi = {
     getAll: async (page: number) => {
         const res = await axiosClient.get(`/courses?page=${page}&size=20&sortType=ASC`);
@@ -22,5 +22,8 @@ export const courseApi = {
     },
     changeCourseStatus: async (payload: ChangeCourseStatus) => {
         return await axiosClient.post('/courses/admin/verify-course', payload);
+    },
+    createCourse: async (payload: any) => {
+        return await axiosFormData.post('/courses/teacher/create', payload);
     }
 };

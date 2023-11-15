@@ -21,6 +21,7 @@ import { studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import { useConfirmModal } from '@/hooks';
+import { StudentType } from '@/types';
 interface MyQuizProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -40,53 +41,13 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const students = [
-    {
-        id: 1,
-        name: 'Nguyễn Văn A',
-        combination: 'A00 A01',
-        createdAt: '02/11/2023',
-        userStatus: 'active'
-    },
-    {
-        id: 2,
-        name: 'Nguyễn Văn A',
-        combination: 'A00 A01',
-        createdAt: '02/11/2023',
-        userStatus: 'active'
-    },
-    {
-        id: 3,
-        name: 'Nguyễn Văn A',
-        combination: 'A00 A01',
-        createdAt: '02/11/2023',
-        userStatus: 'active'
-    },
-    {
-        id: 4,
-        name: 'Nguyễn Văn A',
-        combination: 'A00 A01',
-        createdAt: '02/11/2023',
-        userStatus: 'unActive'
-    },
-    {
-        id: 5,
-        name: 'Nguyễn Văn A',
-        combination: 'A00 A01',
-        createdAt: '02/11/2023',
-        userStatus: 'active'
-    }
-];
-
-type Student = (typeof students)[0];
-
 const MyQuiz: React.FC<MyQuizProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         // new Set(['id', 'fullName', 'email', 'targets?.[0]?.name', 'createdAt', 'userStatus', 'action'])
         new Set(['id', 'fullName', 'email', 'userStatus', 'action'])
     );
-    const [students, setStudents] = useState<Student[]>([]);
+    const [students, setStudents] = useState<StudentType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
@@ -114,27 +75,37 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
 
     const handleStatusChange = async (userId: number, userStatus: string) => {
         try {
+            onLoading();
             const res = await userApi.changeUserStatus({
                 userId,
                 userStatus
             });
             if (!res.data.code) {
-                onType('success');
                 if (userStatus == 'ENABLE') {
-                    onContent('Tài khoản đã được kích hoạt thành công');
+                    onSuccess({
+                        title: 'Duyệt thành công',
+                        content: 'Tài khoản đã được kích hoạt thành công'
+                    });
                 } else if (userStatus == 'DISABLE') {
-                    onContent('Tài khoản đã được vô hiệu thành công');
+                    onSuccess({
+                        title: 'Đã vô hiệu',
+                        content: 'Tài khoản đã được vô hiệu thành công'
+                    });
                 } else {
-                    onContent('Tài khoản đã được cấm thành công');
+                    onSuccess({
+                        title: 'Đã cấm',
+                        content: 'Tài khoản đã được cấm thành công'
+                    });
                 }
-                onActiveFn(onClose);
+
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
-            onType('danger');
-            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            onActiveFn(onClose);
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
             console.error('Error changing user status', error);
         }
     };
@@ -159,24 +130,33 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType, onActiveFn, onClose } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
 
     const onApproveOpen = (id: number, action: string) => {
-        onTitle('Xác nhận duyệt');
         if (action == 'ENABLE') {
-            onContent('Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         } else if (action == 'DISABLE') {
-            onContent('Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         } else {
-            onContent('Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         }
-        onType('warning');
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
-    const renderCell = useCallback((student: Student, columnKey: Key) => {
-        const cellValue = student[columnKey as keyof Student];
+    const renderCell = useCallback((student: StudentType, columnKey: Key) => {
+        const cellValue = student[columnKey as keyof StudentType];
 
         switch (columnKey) {
             case 'fullName':

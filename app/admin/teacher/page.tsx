@@ -120,22 +120,30 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 userStatus
             });
             if (!res.data.code) {
-                onType('success');
                 if (userStatus == 'ENABLE') {
-                    onContent('Tài khoản đã được kích hoạt thành công');
+                    onSuccess({
+                        title: 'Duyệt thành công',
+                        content: 'Tài khoản đã được kích hoạt thành công'
+                    });
                 } else if (userStatus == 'DISABLE') {
-                    onContent('Tài khoản đã được vô hiệu thành công');
+                    onSuccess({
+                        title: 'Đã vô hiệu',
+                        content: 'Tài khoản đã được vô hiệu thành công'
+                    });
                 } else {
-                    onContent('Tài khoản đã được cấm thành công');
+                    onSuccess({
+                        title: 'Đã cấm',
+                        content: 'Tài khoản đã được cấm thành công'
+                    });
                 }
-                onActiveFn(onClose);
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
-            onType('danger');
-            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            onActiveFn(onClose);
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
             console.error('Error changing user status', error);
         }
     };
@@ -160,20 +168,29 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType, onActiveFn, onClose } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
 
     const onApproveOpen = (id: number, action: string) => {
-        onTitle('Xác nhận duyệt');
         if (action == 'ENABLE') {
-            onContent('Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         } else if (action == 'DISABLE') {
-            onContent('Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         } else {
-            onContent('Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?');
+            onWarning({
+                title: 'Xác nhận duyệt',
+                content: 'Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?',
+                activeFn: () => handleStatusChange(id, action)
+            });
         }
-        onType('warning');
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
     const renderCell = useCallback((teacher: Teacher, columnKey: Key) => {

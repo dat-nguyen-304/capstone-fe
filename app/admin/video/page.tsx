@@ -147,7 +147,7 @@ const Videos: React.FC<VideosProps> = () => {
         isPreviousData
     } = useQuery({
         queryKey: [
-            'coursesAdmin',
+            'videosAdmin',
             { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
         ],
         queryFn: () => videoApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
@@ -163,6 +163,7 @@ const Videos: React.FC<VideosProps> = () => {
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
+            onLoading();
             const res = await videoApi.changeVideoStatus({
                 id,
                 verifyStatus
@@ -170,20 +171,26 @@ const Videos: React.FC<VideosProps> = () => {
             console.log(res);
 
             if (!res.data.code) {
-                onType('success');
                 if (verifyStatus == 'ACCEPTED') {
-                    onContent('Video đã được duyệt thành công');
+                    onSuccess({
+                        title: 'Duyệt thành công',
+                        content: 'Video đã được duyệt thành công'
+                    });
                 } else if (verifyStatus == 'REJECT') {
-                    onContent('Video không được phê duyệt thành công');
+                    onSuccess({
+                        title: 'Đã từ chối',
+                        content: 'Đã từ chối video thành công'
+                    });
                 }
-                onActiveFn(onClose);
+
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
-            onType('danger');
-            onContent('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            onActiveFn(onClose);
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
             console.error('Error changing video status', error);
         }
     };
@@ -208,22 +215,24 @@ const Videos: React.FC<VideosProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType, onClose, onActiveFn } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
 
     const onApproveOpen = (id: number, action: string) => {
-        onTitle('Xác nhận duyệt');
-        onContent('Video sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?');
-        onType('warning');
+        onWarning({
+            title: 'Xác nhận duyệt',
+            content: 'Video sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, action)
+        });
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
     const onDeclineOpen = (id: number, action: string) => {
-        onTitle('Xác nhận từ chối');
-        onContent('Video sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?');
-        onType('danger');
+        onDanger({
+            title: 'Xác nhận từ chối',
+            content: 'Video sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, action)
+        });
         onOpen();
-        onActiveFn(() => handleStatusChange(id, action));
     };
 
     const renderCell = useCallback((video: Video, columnKey: Key) => {

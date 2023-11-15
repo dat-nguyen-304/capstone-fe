@@ -15,3 +15,14 @@ export type ChangeCourseStatus = {
     id: number;
     verifyStatus: string;
 };
+
+export type CreateCourse = {
+    courseRequest: {
+        description: string;
+        name: string;
+        price: number;
+        subject: string;
+        levelId: number;
+        topic: [];
+    };
+};

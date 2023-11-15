@@ -105,12 +105,14 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, []);
 
-    const { onOpen, onTitle, onContent, onType } = useConfirmModal();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useConfirmModal();
 
     const onDeactivateOpen = () => {
-        onTitle('Xác nhận vô hiệu hóa');
-        onContent('Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?');
-        onType('danger');
+        onDanger({
+            title: 'Xác nhận vô hiệu hóa',
+            content: 'Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?'
+            // activeFn: () => handleStatusChange(id, action)
+        });
         onOpen();
     };
 
