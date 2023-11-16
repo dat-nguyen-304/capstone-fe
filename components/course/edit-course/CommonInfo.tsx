@@ -23,9 +23,10 @@ interface CommonInfoProps {
         description: string;
         price: number;
     };
+    videoOrders: { videoId: number; videoOrder: number }[];
 }
 
-const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo }) => {
+const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll
@@ -66,6 +67,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo }) => {
 
             console.log(courseRequest);
             console.log(uploadedFiles[0]);
+            console.log(videoOrders);
 
             const formDataPayload = new FormData();
             formDataPayload.append(
@@ -75,10 +77,18 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo }) => {
             if (uploadedFiles[0]) {
                 formDataPayload.append('thumbnail', uploadedFiles[0]);
             }
+            if (!videoOrders) {
+                formDataPayload.append('videoOrders', new Blob([JSON.stringify(null)], { type: 'application/json' }));
+            } else {
+                formDataPayload.append(
+                    'videoOrders',
+                    new Blob([JSON.stringify(videoOrders)], { type: 'application/json' })
+                );
+            }
 
             const response = await courseApi.updateCourse(formDataPayload);
             if (response) {
-                console.log('Course created successfully:', response);
+                console.log('Course update successfully:', response);
             }
             // router.push('/teacher/course/my-course');
             // Handle the response as needed

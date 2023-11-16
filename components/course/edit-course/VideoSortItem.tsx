@@ -37,6 +37,7 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
             type: 'item'
         }
     });
+
     return (
         <li
             className="flex p-1 sm:p-4 rounded-xl border-2 items-center my-1 bg-gray-100"

@@ -46,7 +46,7 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                             <VideoCard isTeacherVideo={true} key={videoItem?.id} video={videoItem} />
                         ))
                     ) : (
-                        <></>
+                        <>Danh Sách Video Trống</>
                     )}
                 </div>
                 {totalPage && (

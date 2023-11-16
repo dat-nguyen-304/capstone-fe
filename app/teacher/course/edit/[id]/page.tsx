@@ -7,13 +7,16 @@ import CourseContent from '@/components/course/edit-course/CouseContent';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useState } from 'react';
 interface EditCourseProps {
     params: { id: number };
 }
+
 const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['editCourse'],
-        queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
+        queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
+        staleTime: 20000
     });
 
     console.log(data);
@@ -31,6 +34,23 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         totalVideo: data?.courseResponse?.totalVideo,
         listVideo: data?.videoResponse
     };
+
+    // const arrays = data?.videoResponse.map((video: any, index: number) => {
+    //     return {
+    //         ...video,
+    //         index: index + 1
+    //     };
+    // });
+
+    const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number }[]>(
+        data?.videoResponse
+            ? data?.videoResponse.map((video: any, index: number) => ({
+                  videoId: video.id,
+                  videoOrder: index + 1
+              }))
+            : []
+    );
+
     if (!data) return <Loader />;
     return (
         <div className="w-[98%] sm:w-full lg:w-[90%] mx-auto">
@@ -42,10 +62,10 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
             </div>
             <Tabs variant="underlined" aria-label="Tabs variants" className="mt-4">
                 <Tab key="common" title="Thông tin chung" className="p-0">
-                    <CommonInfo commonInfo={commonInfo} />
+                    <CommonInfo commonInfo={commonInfo} videoOrders={videoOrders} />
                 </Tab>
                 <Tab key="content" title="Nội dung">
-                    <CourseContent courseContent={courseContent} />
+                    <CourseContent courseContent={courseContent} setVideoOrders={setVideoOrders} />
                 </Tab>
             </Tabs>
         </div>

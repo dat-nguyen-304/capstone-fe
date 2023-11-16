@@ -39,9 +39,10 @@ interface CourseContentProps {
         totalVideo: number;
         listVideo: VideoItem[];
     };
+    setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number }[]>>;
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ courseContent }) => {
+const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders }) => {
     const arrays = courseContent?.listVideo.map((video, index) => {
         return {
             ...video,
@@ -71,6 +72,12 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent }) => {
             const activeIndex = items.findIndex(({ index }) => index === active.id);
             const overIndex = items.findIndex(({ index }) => index === over.id);
             setItems(arrayMove(items, activeIndex, overIndex));
+
+            const updatedVideoOrders = arrayMove(items, activeIndex, overIndex).map((video, index) => ({
+                videoId: video.id,
+                videoOrder: index + 1
+            }));
+            setVideoOrders(updatedVideoOrders);
         }
         setActiveItem(null);
     }
