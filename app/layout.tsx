@@ -21,7 +21,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
                     <NextUiProvider>
                         {children}
                         <CustomModal />
-                        <ReportModal />
                     </NextUiProvider>
                 </AntdProvider>
             </ReactQueryProvider>

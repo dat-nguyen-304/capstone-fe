@@ -8,8 +8,9 @@ export const metadata = {
 
 const PracticeQuizLayout = ({ children, params }: { children: React.ReactNode; params: { id: number } }) => (
     <div className="mb-16">
-        <DoTestHeader type="quiz" id={params.id} />
-        {children}
+        <DoTestHeader type="quiz" id={params.id}>
+            {children}
+        </DoTestHeader>
     </div>
 );
 

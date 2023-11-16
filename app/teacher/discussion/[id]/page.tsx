@@ -2,7 +2,9 @@
 
 import PostTitle from '@/components/discussion/PostTitle';
 import { InputFormula } from '@/components/form-input/InputFormula';
+import { ReportModal } from '@/components/modal';
 import CommentItem from '@/components/video/CommentItem';
+import { useReportModal } from '@/hooks';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,6 +25,8 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         }
     });
 
+    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -37,6 +41,12 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         maxFiles: 1,
         multiple: false
     });
+
+    const openReportModal = () => {
+        onContentType('discussion');
+        onOpen();
+    };
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
@@ -44,8 +54,8 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </Link>
-                <Button size="sm" color="danger">
-                    Báo cáo vi phạm
+                <Button size="sm" color="danger" onClick={openReportModal}>
+                    Báo cáo
                 </Button>
             </div>
             <PostTitle title="Bàn luận về abcxyz" from="teacher" />
@@ -111,6 +121,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <Button className="w-full">Xem thêm</Button>
                 </Card>
             </div>
+            <ReportModal />
         </div>
     );
 };

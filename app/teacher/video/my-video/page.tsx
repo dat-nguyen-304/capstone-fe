@@ -40,7 +40,7 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 {totalRow && <p className="mt-6 text-sm font-semibold">Tìm thấy {totalRow} kết quả</p>}
-                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     {videos.length ? (
                         videos.map((videoItem: VideoCardType) => (
                             <VideoCard isTeacherVideo={true} key={videoItem?.id} video={videoItem} />

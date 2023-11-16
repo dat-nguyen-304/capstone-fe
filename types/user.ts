@@ -1,5 +1,5 @@
 export type CommonUser = {
-    role: string;
+    role: 'STUDENT' | 'TEACHER' | 'ADMIN';
     email: string;
     fullName: string;
     avatar: string;

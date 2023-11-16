@@ -21,8 +21,7 @@ const Quiz: React.FC<QuizProps> = ({}) => {
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     return (
-        <>
-            <VideoHeader />
+        <VideoHeader>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -82,7 +81,7 @@ const Quiz: React.FC<QuizProps> = ({}) => {
                     </Drawer>
                 </div>
             </div>
-        </>
+        </VideoHeader>
     );
 };
 

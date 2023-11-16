@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Gallery, Item } from 'react-photoswipe-gallery';
 import 'photoswipe/dist/photoswipe.css';
+import { useReportModal } from '@/hooks';
 
 interface CommentItemProps {}
 
@@ -17,6 +18,13 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
     const [showSubComment, setShowSubComment] = useState<boolean>(false);
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+
+    const openReportModal = () => {
+        onContentType('comment');
+        onOpen();
+    };
+
     return (
         <li className="flex gap-4 group mb-6">
             <div>
@@ -43,6 +51,7 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
                     </span>
                     <p className="text-xs sm:text-sm">Phản hồi</p>
                     <Tooltip
+                        onClick={openReportModal}
                         placement="right"
                         content={
                             <div className="p-1 cursor-pointer">
