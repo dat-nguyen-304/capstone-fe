@@ -49,7 +49,6 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
         queryKey: ['topics', { page, rowsPerPage, updateState }],
         queryFn: () => discussionApi.getAll(page - 1, rowsPerPage)
     });
-    console.log(topicsData);
     useEffect(() => {
         if (topicsData?.data) {
             setTopics(topicsData.data);

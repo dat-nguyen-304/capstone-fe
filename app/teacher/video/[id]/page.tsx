@@ -90,9 +90,9 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <div className="mt-8 px-0 sm:px-4">
                             <h3 className="font-semibold text-lg">Bình luận</h3>
                             <ul className="mt-6 px-0 sm:px-4">
+                                {/* <CommentItem />
                                 <CommentItem />
-                                <CommentItem />
-                                <CommentItem />
+                                <CommentItem /> */}
                             </ul>
                             <Button className="w-full">Xem thêm</Button>
                         </div>

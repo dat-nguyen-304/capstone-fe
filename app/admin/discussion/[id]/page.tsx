@@ -9,6 +9,14 @@ import { BsArrowLeft } from 'react-icons/bs';
 interface PostDetailProps {}
 
 const PostDetail: React.FC<PostDetailProps> = ({}) => {
+    const postContent = {
+        id: 1,
+        title: 'Bàn luận về abcxyz',
+        content: 'string',
+        image: undefined,
+        owner: true,
+        auth: 'Jane Doe'
+    };
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
@@ -17,7 +25,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <span>Quay lại</span>
                 </Link>
             </div>
-            <PostTitle title="Bàn luận về abcxyz" from="admin" />
+            <PostTitle postContent={postContent} from="admin" />
             <div className="w-full mt-12">
                 <Select
                     size="sm"
@@ -36,12 +44,12 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                 </Select>
                 <Card className="mt-8 p-8">
                     <ul>
+                        {/* <CommentItem />
                         <CommentItem />
                         <CommentItem />
                         <CommentItem />
                         <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
+                        <CommentItem /> */}
                     </ul>
                     <Button className="w-full">Xem thêm</Button>
                 </Card>

@@ -69,9 +69,9 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
                                     <ul className="px-0 sm:px-4">
+                                        {/* <CommentItem />
                                         <CommentItem />
-                                        <CommentItem />
-                                        <CommentItem />
+                                        <CommentItem /> */}
                                     </ul>
                                     <Button className="w-full">Xem thêm</Button>
                                 </Tab>

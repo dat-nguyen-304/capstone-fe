@@ -9,3 +9,5 @@ export * from './course';
 export * from './topic';
 export * from './video';
 export * from './transaction';
+export * from './comment';
+export * from './discussion';

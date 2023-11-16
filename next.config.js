@@ -9,7 +9,8 @@ const nextConfig = {
             'www.ninjatropic.com',
             'dienbientv.vn',
             'cdn2.hoc247.vn',
-            'res.cloudinary.com'
+            'res.cloudinary.com',
+            'images.unsplash.com'
         ]
     }
 };

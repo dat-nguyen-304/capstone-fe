@@ -43,7 +43,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalVideo: data?.courseResponse?.totalVideo,
         listVideo: data?.videoResponse
     };
-    console.log(data);
 
     if (!data) return <Loader />;
     return (
