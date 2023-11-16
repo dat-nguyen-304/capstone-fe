@@ -46,7 +46,14 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         onContentType('discussion');
         onOpen();
     };
-
+    const postContent = {
+        id: 1,
+        title: 'Bàn luận về abcxyz',
+        content: 'string',
+        image: undefined,
+        owner: true,
+        auth: 'Jane Doe'
+    };
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
@@ -58,7 +65,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     Báo cáo
                 </Button>
             </div>
-            <PostTitle title="Bàn luận về abcxyz" from="teacher" />
+            <PostTitle postContent={postContent} from="teacher" />
             <div className="flex gap-4 items-center">
                 <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                     <div {...getRootProps()}>
@@ -111,12 +118,12 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                 </Select>
                 <Card className="mt-8 p-8">
                     <ul>
+                        {/* <CommentItem />
                         <CommentItem />
                         <CommentItem />
                         <CommentItem />
                         <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
+                        <CommentItem /> */}
                     </ul>
                     <Button className="w-full">Xem thêm</Button>
                 </Card>

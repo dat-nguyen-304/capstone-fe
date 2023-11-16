@@ -72,9 +72,9 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
                 <h3 className="text-lg font-bold mb-2">Bình luận</h3>
                 <ul className="px-0 sm:px-4">
+                    {/* <CommentItem />
                     <CommentItem />
-                    <CommentItem />
-                    <CommentItem />
+                    <CommentItem /> */}
                 </ul>
                 <Button className="w-full">Xem thêm</Button>
             </div>

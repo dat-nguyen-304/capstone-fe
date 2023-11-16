@@ -11,10 +11,14 @@ import Image from 'next/image';
 import { Gallery, Item } from 'react-photoswipe-gallery';
 import 'photoswipe/dist/photoswipe.css';
 import { useReportModal } from '@/hooks';
+import { CommentCardType } from '@/types';
+import HTMLReactParser from 'html-react-parser';
 
-interface CommentItemProps {}
+interface CommentItemProps {
+    commentInfo: CommentCardType;
+}
 
-const CommentItem: React.FC<CommentItemProps> = ({}) => {
+const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
     const [showSubComment, setShowSubComment] = useState<boolean>(false);
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
@@ -32,17 +36,23 @@ const CommentItem: React.FC<CommentItemProps> = ({}) => {
             </div>
             <div className="w-full">
                 <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
-                    <h4 className="font-semibold text-sm sm:text-base">Nguyễn Văn An</h4>
+                    <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerEmail}</h4>
                     <div className="my-2">
                         <Gallery>
                             <Item original="/banner/slide-1.png" width="1024" height="768">
                                 {({ open }) => (
-                                    <Image onClick={open} src="/banner/slide-1.png" width={100} height={80} alt="" />
+                                    <Image
+                                        onClick={open}
+                                        src={commentInfo?.imageUrl || '/banner/slide-1.png'}
+                                        width={100}
+                                        height={80}
+                                        alt=""
+                                    />
                                 )}
                             </Item>
                         </Gallery>
                     </div>
-                    <p className="text-xs sm:text-sm"> {defaultContent}</p>
+                    <p className="text-xs sm:text-sm"> {HTMLReactParser(String(commentInfo?.content))}</p>
                 </div>
                 <div className="mt-1 flex gap-4 items-center">
                     <span className="flex items-center gap-2">

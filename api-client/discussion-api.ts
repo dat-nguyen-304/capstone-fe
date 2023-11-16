@@ -1,37 +1,35 @@
-import { ChangeVideoStatus, CreateTopic } from '@/types';
+import { ChangeVideoStatus, CreateComment, CreateTopic } from '@/types';
 import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
+import { CreateDiscussion, UpdateDiscussion } from '@/types/discussion';
 
 export const discussionApi = {
     getAll: async (page: number, size: number) => {
         const res = await axiosClient.get(`/discussion/topics?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
-    getByTopicId: async (courseId: number, page: number, size: number) => {
-        const res = await axiosClient.get(`/videos?courseId=${courseId}&page=${page}&size=${size}&sortType=ASC`);
-        return res.data;
-    },
     createTopic: async (payload: CreateTopic) => {
         return await axiosClient.post('/discussion/topics', payload);
     },
-    getVideoDetailById: async (videoId: number) => {
-        const res = await axiosClient.get(`/videos/${videoId}`);
+    getAllOfConversation: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/discussion/conversations?&page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
-    getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
-        const res = await axiosClient.get(
-            `/videos/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`
-        );
+    createDiscussion: async (payload: CreateDiscussion) => {
+        return await axiosClient.post('/discussion/conversations', payload);
+    },
+    getDiscussionById: async (discussionId: number) => {
+        const res = await axiosClient.get(`/discussion/conversations/${discussionId}`);
         return res.data;
     },
-    changeVideoStatus: async (payload: ChangeVideoStatus) => {
-        return await axiosClient.post('/videos/admin/verify-video', payload);
+    createComment: async (payload: CreateComment) => {
+        return await axiosClient.post('/discussion/comments', payload);
     },
-    getVideoDetailByIdForAdminAndTeacher: async (videoId: number) => {
-        const res = await axiosClient.get(`/videos/teacher/${videoId}`);
+    getCommentsByDiscussionId: async (discussionId: number) => {
+        const res = await axiosClient.get(`/discussion/conversations/${discussionId}/comments`);
         return res.data;
     },
-    updateVideo: async (payload: any) => {
-        return await axiosFormData.put('/videos/update', payload);
+    updateDiscussion: async (payload: UpdateDiscussion, conversationId: number) => {
+        return await axiosClient.put(`/discussion/conversations/${conversationId}`, payload);
     }
 };
