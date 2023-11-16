@@ -11,25 +11,26 @@ import Loader from '../Loader';
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const handleReload = async () => {
-            if (!currentUser.user && user) setUser(null);
-            else
+            if (!currentUser.user && user) {
+                setUser(null);
+                setIsLoading(false);
+            } else if (!currentUser.user) {
                 try {
-                    if (!currentUser.user) {
-                        setIsLoading(true);
-                        const userSession = await handleUserReload();
-                        if (userSession) currentUser.onChangeUser(userSession as SafeUser);
-                        setUser(userSession);
-                        setIsLoading(false);
-                    }
+                    setIsLoading(true);
+                    const userSession = await handleUserReload();
+                    if (userSession) currentUser.onChangeUser(userSession as SafeUser);
+                    setUser(userSession);
+                    setIsLoading(false);
                 } catch (error) {
                     currentUser.onChangeUser(null);
                     setUser(null);
                     setIsLoading(false);
                 }
+            } else setIsLoading(false);
         };
         handleReload();
     }, [currentUser.user]);

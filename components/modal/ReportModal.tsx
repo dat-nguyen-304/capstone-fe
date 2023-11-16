@@ -28,6 +28,9 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
 
     const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
         onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
         maxFiles: 1,
         multiple: false
     });
@@ -57,33 +60,34 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
                             Khác
                         </SelectItem>
                     </Select>
-                    <div className="relative group h-[100px] w-[160px] my-4 border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
-                        <div {...getRootProps()} className="">
-                            <input {...getInputProps()} name="avatar" />
-                            {file ? (
-                                <>
-                                    <div className="">
-                                        <Image
-                                            className="object-cover w-full h-[100px]"
-                                            key={file.path}
-                                            src={URL.createObjectURL(file)}
-                                            alt={file.path as string}
-                                            width={240}
-                                            height={240}
-                                        />
-                                    </div>
-                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
-                                        <RiImageEditLine size={40} />
-                                        <span className="text-sm">Cập nhật ảnh</span>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="flex flex-col justify-center items-center">
-                                    <RiImageAddLine size={40} />
-                                    <span className="text-sm">Tải ảnh</span>
+                    <div
+                        {...getRootProps()}
+                        className="relative group h-[100px] w-[160px] my-4 border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer"
+                    >
+                        <input {...getInputProps()} name="avatar" />
+                        {file ? (
+                            <>
+                                <div className="">
+                                    <Image
+                                        className="object-cover w-full h-[100px]"
+                                        key={file.path}
+                                        src={URL.createObjectURL(file)}
+                                        alt={file.path as string}
+                                        width={240}
+                                        height={240}
+                                    />
                                 </div>
-                            )}
-                        </div>
+                                <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                    <RiImageEditLine size={40} />
+                                    <span className="text-sm">Cập nhật ảnh</span>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center">
+                                <RiImageAddLine size={40} />
+                                <span className="text-sm">Tải ảnh</span>
+                            </div>
+                        )}
                     </div>
                     <Textarea isRequired label="Mô tả" placeholder="" />
                 </ModalBody>
@@ -92,7 +96,7 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
                         Hủy bỏ
                     </Button>
                     <Button color="primary" onPress={onClose}>
-                        Đồng ý
+                        Gửi
                     </Button>
                 </ModalFooter>
             </ModalContent>

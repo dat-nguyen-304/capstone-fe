@@ -53,10 +53,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any>) 
                     });
                     return (res as NextApiResponse).status(200).json({ userSession, code: 0 });
                 } catch (error) {
-                    (res as NextApiResponse).status(500);
+                    return (res as NextApiResponse).status(500);
                 }
-
-                resolve(true);
             });
         };
 

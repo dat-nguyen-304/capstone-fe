@@ -14,6 +14,7 @@ import VideoList from '@/components/video/VideoList';
 import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
+import { ReportModal } from '@/components/modal';
 
 interface VideoProps {
     params: { id: number };
@@ -36,8 +37,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     });
     if (!data) return <Loader />;
     return (
-        <>
-            <VideoHeader />
+        <VideoHeader>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -92,8 +92,9 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <VideoList isOnDrawer={true} video={data?.videoItemResponses} />
                     </Drawer>
                 </div>
+                <ReportModal />
             </div>
-        </>
+        </VideoHeader>
     );
 };
 

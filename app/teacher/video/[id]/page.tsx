@@ -10,6 +10,7 @@ import { BiSolidLike, BiSolidPencil } from 'react-icons/bi';
 import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
+import { ReportModal } from '@/components/modal';
 interface VideoProps {
     params: { id: number };
 }
@@ -98,6 +99,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                     </div>
                 </div>
             </div>
+            <ReportModal />
         </>
     );
 };

@@ -2,6 +2,7 @@
 
 import PostTitle from '@/components/discussion/PostTitle';
 import { InputFormula } from '@/components/form-input/InputFormula';
+import { ReportModal } from '@/components/modal';
 import CommentItem from '@/components/video/CommentItem';
 import { useReportModal, useUser } from '@/hooks';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
@@ -16,7 +17,6 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 interface PostDetailProps {}
 
 const PostDetail: React.FC<PostDetailProps> = ({}) => {
-    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
     const currentUser = useUser();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
@@ -25,6 +25,8 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
             description: ''
         }
     });
+
+    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
@@ -41,7 +43,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         multiple: false
     });
 
-    const reportDiscussion = () => {
+    const openReportModal = () => {
         onContentType('discussion');
         onOpen();
     };
@@ -54,7 +56,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <span>Quay lại</span>
                 </Link>
                 {currentUser.user && (
-                    <Button size="sm" color="danger" onClick={reportDiscussion}>
+                    <Button size="sm" color="danger" onClick={openReportModal}>
                         Báo cáo
                     </Button>
                 )}
@@ -125,6 +127,7 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                     <Button className="w-full">Xem thêm</Button>
                 </Card>
             </div>
+            <ReportModal />
         </div>
     );
 };
