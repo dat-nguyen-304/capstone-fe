@@ -50,7 +50,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
                         <></>
                     )}
                 </div>
-                {totalPage && (
+                {totalPage && totalPage > 1 && (
                     <div className="flex justify-center my-8">
                         <Pagination page={page} total={totalPage} onChange={value => scrollToTop(value)} showControls />
                     </div>

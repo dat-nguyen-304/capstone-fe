@@ -34,7 +34,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
     getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <BarChartOutlined />),
-    getItem(<Link href="/teacher/profile">Cập nhật hồ sơ</Link>, '2', <IdcardOutlined />),
+    getItem(<Link href="/teacher/edit-profile">Cập nhật hồ sơ</Link>, '2', <IdcardOutlined />),
     getItem('Video', 'sub1', <PlaySquareOutlined />, [
         getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
         getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4')

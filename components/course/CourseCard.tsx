@@ -1,8 +1,17 @@
 import { CourseCardType } from '@/types';
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip, ChipProps } from '@nextui-org/react';
 import { Progress, Rate } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
+
+const statusColorMap: Record<string, ChipProps['color']> = {
+    AVAILABLE: 'success',
+    REJECT: 'danger',
+    BANNED: 'danger',
+    WAITING: 'primary',
+    UPDATING: 'primary',
+    UNAVAILABLE: 'warning'
+};
 
 interface CourseCardProps {
     isMyCourse?: boolean;
@@ -49,6 +58,26 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                             <p className="mt-1 text-[#333] font-bold text-base">
                                 ₫ {course.price.toLocaleString('vi-VN')}
                             </p>
+                        )}
+                        {isTeacherCourse && (
+                            <Chip
+                                className="capitalize border-none p-0 mt-3 ml-[-2px] text-default-600 text-xs"
+                                color={statusColorMap[course?.status as string]}
+                                size="sm"
+                                variant="dot"
+                            >
+                                {course?.status === 'AVAILABLE'
+                                    ? 'Hoạt động'
+                                    : course?.status === 'WAITING'
+                                    ? 'Chờ xác thực'
+                                    : course?.status === 'REJECT'
+                                    ? 'Đã từ chối'
+                                    : course?.status === 'BANNED'
+                                    ? 'Đã Xóa'
+                                    : course?.status === 'UPDATING'
+                                    ? 'Chờ cập nhật'
+                                    : 'Vô hiệu'}
+                            </Chip>
                         )}
                     </CardBody>
                 </Link>

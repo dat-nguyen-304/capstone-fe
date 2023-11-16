@@ -29,7 +29,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full"
+                className="w-full rounded-xl"
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">₫ {editCourse?.price}</p>

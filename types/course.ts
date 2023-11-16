@@ -14,6 +14,7 @@ export type CourseCardType = {
     subject: string;
     level: string;
     price: number;
+    status?: 'AVAILABLE' | 'WAITING' | 'REJECT' | 'BANNED' | 'UPDATING' | 'DISABLE';
 };
 
 export type ChangeCourseStatus = {

@@ -5,6 +5,7 @@ export type VideoCardType = {
     duration: number;
     like: number;
     createDate: string;
+    status: string;
     videoStatus: string;
 };
 

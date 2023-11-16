@@ -1,6 +1,5 @@
 import { VideoCardType } from '@/types';
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
-import { Progress, Rate } from 'antd';
+import { Card, CardBody, CardHeader, Chip, ChipProps } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BiSolidLike } from 'react-icons/bi';
@@ -9,6 +8,15 @@ interface VideoCardProps {
     isTeacherVideo?: boolean;
     video: VideoCardType;
 }
+
+const statusColorMap: Record<string, ChipProps['color']> = {
+    AVAILABLE: 'success',
+    REJECT: 'danger',
+    BANNED: 'danger',
+    WAITING: 'primary',
+    UPDATING: 'primary',
+    UNAVAILABLE: 'warning'
+};
 
 const floatToTime = (durationFloat: number): string => {
     const totalSeconds = Math.round(durationFloat * 3600);
@@ -53,6 +61,26 @@ const VideoCard: React.FC<VideoCardProps> = ({ isTeacherVideo, video }) => {
                                 <BiSolidLike className="text-sm text-blue-300 ml-2" />
                             </span>
                         </div>
+                        {isTeacherVideo && (
+                            <Chip
+                                className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
+                                color={statusColorMap[video?.status as string]}
+                                size="sm"
+                                variant="dot"
+                            >
+                                {video?.status === 'AVAILABLE'
+                                    ? 'Hoạt động'
+                                    : video?.status === 'WAITING'
+                                    ? 'Chờ xác thực'
+                                    : video?.status === 'REJECT'
+                                    ? 'Đã từ chối'
+                                    : video?.status === 'BANNED'
+                                    ? 'Đã Xóa'
+                                    : video?.status === 'UPDATING'
+                                    ? 'Chờ cập nhật'
+                                    : 'Vô hiệu'}
+                            </Chip>
+                        )}
                     </CardBody>
                 </Link>
             </Card>

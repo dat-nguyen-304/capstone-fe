@@ -1,5 +1,7 @@
 'use client';
+import { User } from '@nextui-org/react';
 import { Rate } from 'antd';
+import Link from 'next/link';
 
 interface CourseInfoProps {
     courseInfo: {
@@ -38,10 +40,19 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
             <div className="flex items-baseline my-2">
                 <span className="text-base mr-2 font-bold">{courseInfo?.rating}</span>
                 <Rate disabled allowHalf defaultValue={courseInfo?.rating} className="!text-xs" />
-                <span className="text-xs ml-2">{courseInfo?.numberOfRate}</span>
-                <span className="text-sm ml-2">{courseInfo?.totalStudent}</span>
+                <span className="text-xs ml-2">({courseInfo?.numberOfRate})</span>
+                <span className="text-sm ml-2">{courseInfo?.totalStudent} học sinh đã tham gia</span>
             </div>
-            <p className="my-2 text-sm">Được tạo bởi {courseInfo?.teacherName}</p>
+            <div className="my-2 text-sm flex items-center">
+                Được tạo bởi:
+                <User
+                    as={Link}
+                    href="/"
+                    avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+                    className="ml-2 cursor-pointer"
+                    name={courseInfo.teacherName}
+                />
+            </div>
             <p className="my-2 text-sm">Cập nhật gần đây nhất {formattedDate}</p>
             <p className="mt-8 text-sm">{courseInfo?.description}</p>
         </>

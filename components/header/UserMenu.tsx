@@ -39,8 +39,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                         <p className="font-semibold">Xin chào</p>
                         <p className="font-semibold">{currentUser.fullName}</p>
                     </DropdownItem>
-                    <DropdownItem as={Link} href="/profile" key="profile">
-                        Hồ sơ
+                    <DropdownItem as={Link} href="/edit-profile" key="profile">
+                        Chỉnh sửa hồ sơ
                     </DropdownItem>
                     <DropdownItem as={Link} href="/transaction" key="transaction">
                         Lịch sử giao dịch
@@ -48,7 +48,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                     <DropdownItem as={Link} href="/change-password" key="change-password">
                         Đổi mật khẩu
                     </DropdownItem>
-
                     <DropdownItem onClick={handleLogout} key="logout" color="danger">
                         Đăng xuất
                     </DropdownItem>

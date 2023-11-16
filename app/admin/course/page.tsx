@@ -252,9 +252,9 @@ const Courses: React.FC<CoursesProps> = () => {
                             : cellValue === 'WAITING'
                             ? 'Chờ xác thực'
                             : cellValue === 'REJECT'
-                            ? 'Bị từ chối'
+                            ? 'Đã từ chối'
                             : cellValue === 'BANNED'
-                            ? 'Bị Xóa'
+                            ? 'Đã Xóa'
                             : cellValue === 'UPDATING'
                             ? 'Chờ cập nhật'
                             : 'Vô hiệu'}
