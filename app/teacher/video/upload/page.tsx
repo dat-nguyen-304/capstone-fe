@@ -42,8 +42,9 @@ const UploadVideo: React.FC = () => {
         queryKey: ['coursesList'],
         queryFn: () => courseApi.getAllOfTeacher(currentUser.user?.email as string, 0, 100)
     });
-    console.log(coursesData);
+
     const [selectedCourse, setSelectedCourse] = useState<number>();
+    const [selectedStatusVideo, setSelectedStatusVideo] = useState<string>('PUBLIC');
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
@@ -107,16 +108,16 @@ const UploadVideo: React.FC = () => {
             //     topic: topicsArray
             // };
             const videoRequest = {
-                name: 'Video Khóa Học Cấp Tốc',
-                courseId: 1,
-                description: 'Video Tiếng Anh',
-                videoStatus: 'PRIVATE',
+                name: formData.name,
+                courseId: selectedCourse,
+                description: formData.description,
+                videoStatus: selectedStatusVideo,
                 order: 0
             };
 
-            console.log(videoRequest);
-            console.log(uploadedImageFile);
-            console.log(uploadedVideoFile);
+            // console.log(videoRequest);
+            // console.log(uploadedImageFile);
+            // console.log(uploadedVideoFile);
 
             const formDataPayload = new FormData();
             formDataPayload.append(
@@ -136,7 +137,6 @@ const UploadVideo: React.FC = () => {
             if (response) {
                 router.push('/teacher/video/my-video');
             }
-            // Handle the response as needed
         } catch (error) {
             console.error('Error creating course:', error);
             // Handle error
@@ -261,12 +261,13 @@ const UploadVideo: React.FC = () => {
                                     label="Trạng thái video"
                                     color="primary"
                                     variant="bordered"
-                                    defaultSelectedKeys={['1']}
+                                    defaultSelectedKeys={['PUBLIC']}
+                                    onChange={event => setSelectedStatusVideo(event?.target?.value)}
                                 >
-                                    <SelectItem key={1} value={'PUBLIC'}>
+                                    <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
                                         Công Khai
                                     </SelectItem>
-                                    <SelectItem key={2} value={'PRIVATE'}>
+                                    <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
                                         Riêng Tư
                                     </SelectItem>
                                 </Select>

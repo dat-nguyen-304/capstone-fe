@@ -3,7 +3,7 @@ import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
 export const courseApi = {
     getAll: async (page: number) => {
-        const res = await axiosClient.get(`/courses?page=${page}&size=20&sortType=ASC`);
+        const res = await axiosClient.get(`/courses/user?page=${page}&size=20&sortType=ASC`);
         return res.data;
     },
     getCourseById: async (courseId: number) => {
