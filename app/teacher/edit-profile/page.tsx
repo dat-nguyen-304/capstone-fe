@@ -16,7 +16,8 @@ import { Subject } from '@/types';
 const Profile: React.FC = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
     const [values, setValues] = useState<Selection>(new Set(['1']));
     const { control, handleSubmit, setError } = useForm({

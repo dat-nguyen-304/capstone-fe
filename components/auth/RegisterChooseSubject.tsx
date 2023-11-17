@@ -24,7 +24,8 @@ const RegisterChooseSubject: React.FC<RegisterChooseSubjectProps> = ({
 }) => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
 
     const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7];

@@ -11,7 +11,8 @@ interface SubjectFilterProps {}
 const SubjectFilter: React.FC<SubjectFilterProps> = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
     return (
         <CheckboxGroup size="sm" label="" className="mb-4">

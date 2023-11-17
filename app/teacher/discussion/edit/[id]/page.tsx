@@ -25,7 +25,8 @@ const PostList: React.FC<PostsProps> = ({}) => {
     });
     const { data } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);

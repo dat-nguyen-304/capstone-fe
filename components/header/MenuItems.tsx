@@ -40,9 +40,9 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                         </div>
                     </div>
                 </NavbarItem>
-                <NavbarItem key="check-level" isActive={false} className="font-medium text-sm">
-                    <Link color="foreground" href="/check-level">
-                        Kiểm tra năng lực
+                <NavbarItem key="suggestion" isActive={false} className="font-medium text-sm">
+                    <Link color="foreground" href="/suggestion">
+                        Gợi ý khóa học
                     </Link>
                 </NavbarItem>
                 <NavbarItem key="practice" isActive={true} className="font-medium text-sm">

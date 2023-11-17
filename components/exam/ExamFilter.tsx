@@ -15,7 +15,8 @@ interface ExamFilterProps {
 const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSubject }) => {
     const { data } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
     const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7];
     return (

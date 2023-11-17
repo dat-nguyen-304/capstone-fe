@@ -29,7 +29,8 @@ interface CommonInfoProps {
 const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
     const [levelId, setLevelId] = useState(1);
     const { control, handleSubmit, setError } = useForm({

@@ -62,7 +62,8 @@ const CreateCourse: React.FC = () => {
     const router = useRouter();
     const { data: subjectsData, isLoading } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
 
     const { data: topicsData } = useQuery({
@@ -148,7 +149,7 @@ const CreateCourse: React.FC = () => {
                         <div className="h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} name="avatar" />
-                                {uploadedFiles.length ? (
+                                {uploadedFiles.length > 0 ? (
                                     <div className="group relative">
                                         <Image
                                             className="object-cover w-full h-[240px]"

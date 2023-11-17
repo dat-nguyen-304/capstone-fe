@@ -86,7 +86,8 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     const { user } = useUser();
     const { data } = useQuery({
         queryKey: ['subjects'],
-        queryFn: subjectApi.getAll
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
     });
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
