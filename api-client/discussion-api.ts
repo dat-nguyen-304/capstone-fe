@@ -15,15 +15,15 @@ export const discussionApi = {
         const res = await axiosClient.get(`/discussion/conversations?&page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
-    createDiscussion: async (payload: CreateDiscussion) => {
-        return await axiosClient.post('/discussion/conversations', payload);
+    createDiscussion: async (payload: any) => {
+        return await axiosFormData.post('/discussion/conversations', payload);
     },
     getDiscussionById: async (discussionId: number) => {
         const res = await axiosClient.get(`/discussion/conversations/${discussionId}`);
         return res.data;
     },
-    createComment: async (payload: CreateComment) => {
-        return await axiosClient.post('/discussion/comments', payload);
+    createComment: async (payload: any, discussionId: number) => {
+        return await axiosFormData.post(`/discussion/comments/${discussionId}`, payload);
     },
     getCommentsByDiscussionId: async (discussionId: number) => {
         const res = await axiosClient.get(`/discussion/conversations/${discussionId}/comments`);
@@ -31,5 +31,12 @@ export const discussionApi = {
     },
     updateDiscussion: async (payload: UpdateDiscussion, conversationId: number) => {
         return await axiosClient.put(`/discussion/conversations/${conversationId}`, payload);
+    },
+    getAllMyDiscussion: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/discussion/conversations/my?page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
+    },
+    discussionReact: async (discussionId: number) => {
+        return await axiosClient.post(`/discussion/conversation/react/${discussionId}`);
     }
 };

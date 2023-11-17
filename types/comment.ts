@@ -15,4 +15,5 @@ export type CommentCardType = {
     ownerEmail: boolean;
     reactCount: number;
     reacted: false;
+    ownerFullName: string;
 };

@@ -20,7 +20,7 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 interface ReportModalProps {}
 
 export const ReportModal: React.FC<ReportModalProps> = () => {
-    const { isOpen, onOpen, onClose, file, onFile } = useReportModal();
+    const { isOpen, onOpen, onClose, file, onFile, onReportType } = useReportModal();
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         onFile(acceptedFiles[0]);
@@ -43,11 +43,18 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
                     <div className="flex justify-center">
                         <Image src="/modal/danger.png" alt="" width={80} height={80} />
                     </div>
-                    <Select isRequired label="Phân lọai lỗi" className="w-full">
+                    <Select
+                        isRequired
+                        label="Phân lọai lỗi"
+                        className="w-full"
+                        onChange={e =>
+                            onReportType(e.target.value as 'integrity' | 'academic' | 'technical' | 'opinion' | 'other')
+                        }
+                    >
                         <SelectItem key="integrity" value="integrity">
                             Vi phạm chuẩn mực
                         </SelectItem>
-                        <SelectItem key="academy" value="academy" onClick={onOpen}>
+                        <SelectItem key="academic" value="academic" onClick={onOpen}>
                             Lỗi học thuật
                         </SelectItem>
                         <SelectItem key="technical" value="technical">

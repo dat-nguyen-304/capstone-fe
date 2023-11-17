@@ -25,70 +25,17 @@ interface PostListProps {}
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÁC GIẢ', uid: 'ownerEmail', sortable: true },
+    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
-    { name: 'CHỦ ĐỀ', uid: 'topicId', sortable: true },
+    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
 
-const posts = [
-    {
-        id: 1,
-        author: 'Tony Reichert',
-        title: 'Ngẫng mặt hận đời',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    },
-    {
-        id: 2,
-        author: 'Tony Reichert',
-        title: 'Management',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    },
-    {
-        id: 3,
-        author: 'Tony Reichert',
-        title: 'Management',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    },
-    {
-        id: 4,
-        author: 'Tony Reichert',
-        title: 'Management',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    },
-    {
-        id: 5,
-        author: 'Tony Reichert',
-        title: 'Management',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    },
-    {
-        id: 6,
-        author: 'Tony Reichert',
-        title: 'Management',
-        subject: 'Toán',
-        react: '29',
-        createdAt: '23/12/2023 19:19:19'
-    }
-];
-
-type Post = (typeof posts)[0];
-
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['ownerEmail', 'title', 'topicId', 'createTime', 'action'])
+        new Set(['ownerFullName', 'title', 'topicName', 'createTime', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -133,8 +80,8 @@ const PostList: React.FC<PostListProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
-    const renderCell = useCallback((post: Post, columnKey: Key) => {
-        const cellValue = post[columnKey as keyof Post];
+    const renderCell = useCallback((post: DiscussionType, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof DiscussionType];
 
         switch (columnKey) {
             case 'createTime':
@@ -143,7 +90,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
                 const formattedDate = new Intl.DateTimeFormat('en-GB', {
                     year: 'numeric',
                     month: 'numeric',
-                    day: 'numeric'
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false
                 })?.format(dateValue);
 
                 return formattedDate;
@@ -215,7 +166,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                         </div>
                     </div>
                     <div className="sm:flex justify-between items-center">
-                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {posts.length} kết quả</span>
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
                         <label className="flex items-center text-default-400 text-xs sm:text-sm">
                             Số kết quả mỗi trang:
                             <select

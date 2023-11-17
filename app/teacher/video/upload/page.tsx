@@ -27,9 +27,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Course } from '@/types';
 import Loader from '@/components/Loader';
 import { FaQuestionCircle } from 'react-icons/fa';
-
+import { useRouter } from 'next/navigation';
 const UploadVideo: React.FC = () => {
     const currentUser = useUser();
+    const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -132,9 +133,9 @@ const UploadVideo: React.FC = () => {
 
             const response = await videoApi.createVideo(formDataPayload);
             console.log('Course created successfully:', response);
-            // if (response) {
-            //     router.push('/teacher/course/my-course');
-            // }
+            if (response) {
+                router.push('/teacher/video/my-video');
+            }
             // Handle the response as needed
         } catch (error) {
             console.error('Error creating course:', error);

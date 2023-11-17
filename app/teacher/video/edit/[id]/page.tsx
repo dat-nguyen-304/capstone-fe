@@ -13,17 +13,17 @@ import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
-
+import { useRouter } from 'next/navigation';
 interface UploadVideoProps {
     params: { id: number };
 }
 
 const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
+    const router = useRouter();
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
         queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
     });
-    console.log(data);
 
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
@@ -75,11 +75,11 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                 formDataPayload.append('thumbnail', uploadedImageFile);
             }
 
-            // const response = await videoApi.createVideo(formDataPayload);
-            // console.log('Course created successfully:', response);
-            // if (response) {
-            //     router.push('/teacher/course/my-course');
-            // }
+            const response = await videoApi.updateVideo(formDataPayload);
+            console.log('Course created successfully:', response);
+            if (response) {
+                router.push('/teacher/video/my-video');
+            }
             // Handle the response as needed
         } catch (error) {
             console.error('Error creating course:', error);
@@ -137,7 +137,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                                 label="Trạng Thái Video"
                                 color="primary"
                                 variant="bordered"
-                                defaultSelectedKeys={data?.videoStatus == 'PRIVATE' ? ['PRIVATE'] : ['PUBLIC']}
+                                defaultSelectedKeys={data?.videoStatus == 'PRIVATE' ? ['PRIVATE'] : ['PRIVATE']}
                             >
                                 <SelectItem key={0} value={'PUBLIC'}>
                                     Công Khai

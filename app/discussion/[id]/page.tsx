@@ -36,7 +36,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     });
 
     const currentUser = useUser();
-    const { control, handleSubmit, setError } = useForm({
+    const { control, handleSubmit, setError, reset } = useForm({
         defaultValues: {
             title: '',
             course: '',
@@ -45,7 +45,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     });
 
-    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+    const { isOpen, onOpen, onClose, onContentType, reportType, description, onReportType, onDescription, onFile } =
+        useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
@@ -64,12 +65,16 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
 
     const onSubmit = async (formData: any) => {
         try {
-            const response = await discussionApi.createComment({
-                conversationId: params?.id,
-                content: formData.response
-            });
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('content', formData.response);
+            formDataWithImage.append('commentParentId', '-1');
+            if (uploadedFiles.length > 0) {
+                formDataWithImage.append('image', uploadedFiles[0]); // assuming 'image' is the field name expected by the server
+            }
+            const response = await discussionApi.createComment(formDataWithImage, discussionData?.id);
             if (response) {
-                formData.response = '';
+                reset();
+                setUploadedFiles([]);
                 setUpdateState(prev => !prev);
             }
 
@@ -88,9 +93,10 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         id: discussionData?.id,
         title: discussionData?.title,
         content: discussionData?.content,
-        image: discussionData?.image,
-        owner: currentUser?.user?.email == discussionData?.ownerEmail,
-        auth: discussionData?.ownerEmail
+        image: discussionData?.imageUrl,
+        owner: discussionData?.owner,
+        auth: discussionData?.ownerFullName,
+        like: discussionData?.reactCount
     };
     if (!discussionData) return <Loader />;
     return (
@@ -100,7 +106,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </Link>
-                {currentUser.user && currentUser?.user?.email !== discussionData?.ownerEmail && (
+                {currentUser.user && currentUser?.user?.fullName !== discussionData?.ownerFullName && (
                     <Button size="sm" color="danger" onClick={openReportModal}>
                         Báo cáo
                     </Button>
@@ -108,7 +114,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
             </div>
 
             <PostTitle postContent={postContent} from="student" />
-            {currentUser?.user?.email !== discussionData?.ownerEmail && (
+            {currentUser?.user?.fullName !== discussionData?.ownerFullName && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex gap-4 items-center">
                         <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">

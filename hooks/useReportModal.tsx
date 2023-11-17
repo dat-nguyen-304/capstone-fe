@@ -5,9 +5,9 @@ interface ReportModalStore {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    reportType: 'integrity' | 'academy' | 'technical' | 'opinion' | 'other';
+    reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other';
     contentType: 'comment' | 'discussion' | 'exam' | 'quiz' | 'video';
-    onReportType: (reportType: 'integrity' | 'academy' | 'technical' | 'opinion' | 'other') => void;
+    onReportType: (reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other') => void;
     onContentType: (contentType: 'comment' | 'discussion' | 'exam' | 'quiz' | 'video') => void;
     description: string;
     onDescription: (description: string) => void;
@@ -23,7 +23,7 @@ export const useReportModal = create<ReportModalStore>(set => ({
     onClose: () => set({ isOpen: false }),
     reportType: 'integrity',
     contentType: 'comment',
-    onReportType: (reportType: 'integrity' | 'academy' | 'technical' | 'opinion' | 'other') => set({ reportType }),
+    onReportType: (reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other') => set({ reportType }),
     onContentType: (contentType: 'comment' | 'discussion' | 'exam' | 'quiz' | 'video') => set({ contentType }),
     description: '',
     onDescription: (description: string) => set({ description }),

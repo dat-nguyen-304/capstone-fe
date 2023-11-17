@@ -12,6 +12,7 @@ export type DiscussionType = {
     ownerEmail: string;
     reacted: string;
     owner: string;
+    status: string;
 };
 
 export type CreateDiscussion = {

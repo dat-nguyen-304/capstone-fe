@@ -27,7 +27,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
             content: ''
         }
     });
-    const [selectedTopic, setSelectedTopic] = useState<Number>();
+    const [selectedTopic, setSelectedTopic] = useState<Number>(1);
     const { data } = useQuery({
         queryKey: ['topics'],
         queryFn: () => discussionApi.getAll(0, 100)
@@ -50,11 +50,14 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
 
     const onSubmit = async (formData: any) => {
         try {
-            const response = await discussionApi.createDiscussion({
-                title: formData.title,
-                topicId: Number(selectedTopic),
-                content: formData.content
-            });
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('title', formData.title);
+            formDataWithImage.append('topicId', selectedTopic.toString());
+            formDataWithImage.append('content', formData.content);
+            if (uploadedFiles.length > 0) {
+                formDataWithImage.append('image', uploadedFiles[0]); // assuming 'image' is the field name expected by the server
+            }
+            const response = await discussionApi.createDiscussion(formDataWithImage);
             if (response) {
                 router.push('/discussion');
             }
@@ -72,7 +75,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
 
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
                 <h3 className="font-bold text-xl">Tạo bài viết</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
@@ -91,6 +94,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                         variant="bordered"
                         size="sm"
                         className="max-w-xs"
+                        defaultSelectedKeys={[`${selectedTopic}`]}
                         onChange={event => setSelectedTopic(Number(event.target.value))}
                     >
                         {(topic: TopicType) => (

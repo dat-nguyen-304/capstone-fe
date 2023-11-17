@@ -34,9 +34,9 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
     const [selectedTopic, setSelectedTopic] = useState<Number>(editDiscussion?.topicId);
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
-            title: editDiscussion?.title,
+            title: editDiscussion?.title || '',
             course: '',
-            content: editDiscussion?.content
+            content: editDiscussion?.content || ''
         }
     });
 

@@ -15,7 +15,8 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         content: 'string',
         image: undefined,
         owner: true,
-        auth: 'Jane Doe'
+        auth: 'Jane Doe',
+        like: 10
     };
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">

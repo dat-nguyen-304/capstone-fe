@@ -8,6 +8,7 @@ import { Gallery, Item } from 'react-photoswipe-gallery';
 import 'photoswipe/dist/photoswipe.css';
 import Link from 'next/link';
 import HTMLReactParser from 'html-react-parser';
+import { discussionApi } from '@/api-client';
 
 interface PostTitleProps {
     postContent: {
@@ -17,11 +18,23 @@ interface PostTitleProps {
         image?: string;
         owner?: boolean;
         auth: string;
+        like: number;
     };
     from: 'student' | 'teacher' | 'admin';
 }
 
 const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
+    const handleLikeClick = async () => {
+        try {
+            // Assuming postContent.id is the discussionId
+            const response = await discussionApi.discussionReact(postContent.id);
+            // Handle the response as needed
+            console.log('API response:', response);
+        } catch (error) {
+            // Handle errors
+            console.error('Error reacting to discussion:', error);
+        }
+    };
     return (
         <div className={`my-8 grid sm:grid-cols-10 rounded-xl ${postContent.title ? 'bg-blue-50' : ''}`}>
             <div className="hidden sm:block p-4 border-1 border-l-blue-500 border-t-blue-500 border-b-blue-500 col-span-2 rounded-s-xl">
@@ -63,24 +76,29 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
                 </div>
                 <div className="absolute flex items-center gap-2 bottom-2 right-4">
                     {postContent?.owner ? (
-                        <Button
-                            as={Link}
-                            href={`${
-                                from === 'student'
-                                    ? '/discussion/edit/' + postContent?.id
-                                    : '/teacher/discussion/edit/' + postContent?.id
-                            }`}
-                            size="sm"
-                            variant="light"
-                            className="text-yellow-500"
-                        >
-                            <span className="text-sm">Chỉnh sửa</span>
-                            <BiSolidPencil className="cursor-pointer " />
-                        </Button>
-                    ) : null}
+                        <>
+                            <Button
+                                as={Link}
+                                href={`${
+                                    from === 'student'
+                                        ? '/discussion/edit/' + postContent?.id
+                                        : '/teacher/discussion/edit/' + postContent?.id
+                                }`}
+                                size="sm"
+                                variant="light"
+                                className="text-yellow-500"
+                            >
+                                <span className="text-sm">Chỉnh sửa</span>
+                                <BiSolidPencil className="cursor-pointer " />
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <AiOutlineLike className="cursor-pointer text-blue-500" onClick={handleLikeClick} />
+                        </>
+                    )}
 
-                    <AiOutlineLike className="cursor-pointer text-blue-500" />
-                    <span className="text-sm text-blue-500">4</span>
+                    <span className="text-sm text-blue-500">{postContent?.like}</span>
                 </div>
             </div>
         </div>

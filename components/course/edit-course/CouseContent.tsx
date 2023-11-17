@@ -43,7 +43,7 @@ interface CourseContentProps {
 }
 
 const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders }) => {
-    const arrays = courseContent?.listVideo.map((video, index) => {
+    const arrays = courseContent?.listVideo?.map((video, index) => {
         return {
             ...video,
             index: index + 1
