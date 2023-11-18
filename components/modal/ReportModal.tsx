@@ -20,7 +20,7 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 interface ReportModalProps {}
 
 export const ReportModal: React.FC<ReportModalProps> = () => {
-    const { isOpen, onOpen, onClose, file, onFile, onReportType } = useReportModal();
+    const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription, activeFn } = useReportModal();
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         onFile(acceptedFiles[0]);
@@ -96,13 +96,18 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
                             </div>
                         )}
                     </div>
-                    <Textarea isRequired label="Mô tả" placeholder="" />
+                    <Textarea
+                        isRequired
+                        label="Mô tả"
+                        placeholder=""
+                        onChange={event => onDescription(event.target.value)}
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button color="danger" variant="light" onPress={onClose}>
                         Hủy bỏ
                     </Button>
-                    <Button color="primary" onPress={onClose}>
+                    <Button color="primary" onPress={activeFn}>
                         Gửi
                     </Button>
                 </ModalFooter>

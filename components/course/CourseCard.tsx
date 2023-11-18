@@ -37,7 +37,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                         </b>
                         <p className="mt-2 text-sm text-black">{course.teacherName}</p>
                         <div className="flex items-baseline mt-1">
-                            <span className="text-base mr-2 font-bold text-black">{course.rating}</span>
+                            <span className="text-base mr-2 font-bold text-black">{course.rating.toFixed(1)}</span>
                             <Rate disabled allowHalf defaultValue={course.rating} className="!text-xs" />
                             <span className="text-xs ml-2 text-black">({course.numberOfRate})</span>
                         </div>

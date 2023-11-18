@@ -19,9 +19,31 @@ interface PostTitleProps {
         owner?: boolean;
         auth: string;
         like: number;
+        avatar: string;
+        createTime: string;
     };
     from: 'student' | 'teacher' | 'admin';
 }
+const calculateTimeDifference = (postTime: any) => {
+    const currentTime = new Date().getTime();
+    const postDateTime = new Date(postTime).getTime();
+    const timeDifference = currentTime - postDateTime;
+
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+        return `${days} ngày trước`;
+    } else if (hours > 0) {
+        return `${hours} giờ trước`;
+    } else if (minutes > 0) {
+        return `${minutes} phút trước`;
+    } else {
+        return 'Vừa xong';
+    }
+};
 
 const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
     const handleLikeClick = async () => {
@@ -39,10 +61,10 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
         <div className={`my-8 grid sm:grid-cols-10 rounded-xl ${postContent.title ? 'bg-blue-50' : ''}`}>
             <div className="hidden sm:block p-4 border-1 border-l-blue-500 border-t-blue-500 border-b-blue-500 col-span-2 rounded-s-xl">
                 <User
-                    name={'Jane Doe'}
-                    description="2 giờ trước"
+                    name={postContent?.auth || 'Jane Doe'}
+                    description={calculateTimeDifference(postContent?.createTime) || '2 giờ trước'}
                     avatarProps={{
-                        src: 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                        src: `${postContent.avatar}` || 'https://i.pravatar.cc/150?u=a04258114e29026702d'
                     }}
                 />
             </div>

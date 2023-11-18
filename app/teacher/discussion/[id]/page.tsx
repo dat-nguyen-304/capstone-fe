@@ -53,7 +53,9 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
         image: undefined,
         owner: true,
         auth: 'Jane Doe',
-        like: 10
+        like: 10,
+        avatar: 'https://i.pravatar.cc/150?u=a04258114e29026702d',
+        createTime: '2023-11-18T13:24:49.191096'
     };
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">

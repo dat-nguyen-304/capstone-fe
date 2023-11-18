@@ -55,7 +55,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
             }
             const response = await discussionApi.createDiscussion(formDataWithImage);
             if (response) {
-                router.push('/my-post');
+                router.push('/teacher/discussion/my-post');
             }
             // console.log(formData.title);
             // console.log(formData.content);

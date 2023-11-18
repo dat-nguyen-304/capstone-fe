@@ -38,5 +38,8 @@ export const discussionApi = {
     },
     discussionReact: async (discussionId: number) => {
         return await axiosClient.post(`/discussion/conversation/react/${discussionId}`);
+    },
+    createConversationReport: async (payload: any, discussionId: number) => {
+        return await axiosFormData.post(`/discussion/report/conversations/${discussionId}`, payload);
     }
 };

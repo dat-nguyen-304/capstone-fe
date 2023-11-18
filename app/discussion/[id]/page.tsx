@@ -45,8 +45,18 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     });
 
-    const { isOpen, onOpen, onClose, onContentType, reportType, description, onReportType, onDescription, onFile } =
-        useReportModal();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        onContentType,
+        reportType,
+        description,
+        onReportType,
+        onDescription,
+        onFile,
+        file
+    } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
@@ -85,6 +95,28 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     };
 
+    const onSubmitReport = async (formData: any) => {
+        try {
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('reportMsg', description);
+            formDataWithImage.append('reportType', reportType);
+            if (file) {
+                formDataWithImage.append('image', file); // assuming 'image' is the field name expected by the server
+            }
+            console.log(description);
+            console.log(reportType);
+            console.log(discussionData?.id);
+            console.log(file);
+
+            // const response = await discussionApi.createConversationReport(formDataWithImage, discussionData?.id);
+
+            // console.log(params?.id);
+            // console.log(formData.response);
+        } catch (error) {
+            console.error('Error creating course:', error);
+        }
+    };
+
     const openReportModal = () => {
         onContentType('discussion');
         onOpen();
@@ -96,7 +128,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         image: discussionData?.imageUrl,
         owner: discussionData?.owner,
         auth: discussionData?.ownerFullName,
-        like: discussionData?.reactCount
+        like: discussionData?.reactCount,
+        avatar: discussionData?.ownerAvatar,
+        createTime: discussionData?.createTime
     };
     if (!discussionData) return <Loader />;
     return (

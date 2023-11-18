@@ -38,7 +38,7 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
                 {courseInfo?.subject} - {courseInfo?.level}
             </h3>
             <div className="flex items-baseline my-2">
-                <span className="text-base mr-2 font-bold">{courseInfo?.rating}</span>
+                <span className="text-base mr-2 font-bold">{courseInfo?.rating?.toFixed(1)}</span>
                 <Rate disabled allowHalf defaultValue={courseInfo?.rating} className="!text-xs" />
                 <span className="text-xs ml-2">({courseInfo?.numberOfRate})</span>
                 <span className="text-sm ml-2">{courseInfo?.totalStudent} học sinh đã tham gia</span>

@@ -11,3 +11,4 @@ export * from './video';
 export * from './transaction';
 export * from './comment';
 export * from './discussion';
+export * from './exam';
