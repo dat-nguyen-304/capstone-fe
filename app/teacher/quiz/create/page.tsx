@@ -65,7 +65,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             <Button onClick={onOpen} color="primary" className="mt-8">
                 Thêm câu hỏi
             </Button>
-            <AddQuestionModal isOpen={isOpen} onClose={onClose} />
+            {/* <AddQuestionModal isOpen={isOpen} onClose={onClose} /> */}
             <div>
                 <ul></ul>
                 <Button className="w-full mt-16 font-semibold" color="primary" size="lg">

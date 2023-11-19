@@ -55,8 +55,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const courseContent = {
         id: data?.id,
         totalVideo: data?.courseResponse?.totalVideo,
-        listVideo: data?.videoResponse
+        listVideo: data?.courseVideoResponses
     };
+    console.log(data);
+
     if (!data) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">

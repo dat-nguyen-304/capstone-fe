@@ -35,14 +35,14 @@ const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
                     </div>
                 </div>
                 <ul className="mt-8">
+                    {/* <TestReviewItem />
                     <TestReviewItem />
                     <TestReviewItem />
                     <TestReviewItem />
                     <TestReviewItem />
                     <TestReviewItem />
                     <TestReviewItem />
-                    <TestReviewItem />
-                    <TestReviewItem />
+                    <TestReviewItem /> */}
                 </ul>
             </div>
         </>

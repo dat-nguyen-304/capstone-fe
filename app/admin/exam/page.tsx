@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -19,72 +19,81 @@ import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useCustomModal } from '@/hooks';
+import { examApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import { ExamCardType } from '@/types';
+import { Spin } from 'antd';
 
 interface ExamsProps {}
-
+function getSubjectName(subjectCode: string) {
+    switch (subjectCode) {
+        case 'MATHEMATICS':
+            return 'Toán học';
+        case 'ENGLISH':
+            return 'Tiếng anh';
+        case 'PHYSICS':
+            return 'Vật lí';
+        case 'CHEMISTRY':
+            return 'Hóa học';
+        case 'BIOLOGY':
+            return 'Sinh học';
+        case 'HISTORY':
+            return 'Lịch sử';
+        case 'GEOGRAPHY':
+            return 'Địa lý';
+        default:
+            return null;
+    }
+}
 const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger'
+    ENABLE: 'success',
+    DISABLE: 'danger',
+    DELETED: 'danger',
+    BANNED: 'danger'
 };
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'ĐÃ TẠO', uid: 'createdAt', sortable: true },
+    { name: 'ĐÃ TẠO', uid: 'createTime', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const exams = [
-    {
-        id: 1,
-        name: 'Luyện tập Abcxyz',
-        subject: 'Toán học',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 2,
-        name: 'Luyện tập Abcxyz',
-        subject: 'Toán học',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 3,
-        name: 'Luyện tập Abcxyz',
-        subject: 'Toán học',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 4,
-        name: 'Luyện tập Abcxyz',
-        subject: 'Toán học',
-        createdAt: '02/11/2023',
-        status: 'unActive'
-    },
-    {
-        id: 5,
-        name: 'Luyện tập Abcxyz',
-        subject: 'Toán học',
-        createdAt: '02/11/2023',
-        status: 'active'
-    }
-];
-
-type Exam = (typeof exams)[0];
-
 const Exams: React.FC<ExamsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'subject', 'createdAt', 'status', 'action'])
+        new Set(['id', 'name', 'subject', 'createTime', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+
+    const [exams, setExams] = useState<any[]>([]);
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const { status, error, data, isPreviousData } = useQuery({
+        queryKey: ['exams', { page, rowsPerPage }],
+        // keepPreviousData: true,
+        queryFn: () => examApi.getAll('ALL', page - 1, rowsPerPage)
+    });
+    useEffect(() => {
+        if (data?.data) {
+            setExams(data.data);
+            setTotalPage(data.totalPage);
+            setTotalRow(data.totalRow);
+        }
+    }, [data]);
+    const scrollToTop = (value: number) => {
+        setPage(value);
+        window.scrollTo({
+            top: 0
+        });
+    };
+
+    console.log(exams);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -117,8 +126,8 @@ const Exams: React.FC<ExamsProps> = () => {
         onOpen();
     };
 
-    const renderCell = useCallback((exam: Exam, columnKey: Key) => {
-        const cellValue = exam[columnKey as keyof Exam];
+    const renderCell = useCallback((exam: any, columnKey: Key) => {
+        const cellValue = exam[columnKey as keyof any];
 
         switch (columnKey) {
             case 'status':
@@ -129,7 +138,7 @@ const Exams: React.FC<ExamsProps> = () => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'active' ? 'Hoạt động' : 'Vô hiệu'}
+                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
                     </Chip>
                 );
             case 'action':
@@ -141,11 +150,11 @@ const Exams: React.FC<ExamsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem color="primary" as={Link} href="/admin/exam/1">
+                            <DropdownMenu aria-label="Table Columns">
+                                <DropdownItem color="primary" as={Link} href={`/admin/exam/${exam?.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" as={Link} href="/admin/exam/edit/1">
+                                <DropdownItem color="warning" as={Link} href={`/admin/exam/edit/${exam?.id}`}>
                                     Chỉnh sửa
                                 </DropdownItem>
                                 <DropdownItem color="danger" onClick={onDeactivateOpen}>
@@ -155,6 +164,18 @@ const Exams: React.FC<ExamsProps> = () => {
                         </Dropdown>
                     </div>
                 );
+            case 'createTime':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                })?.format(dateValue);
+
+                return formattedDate;
+            case 'subject':
+                return getSubjectName(cellValue);
             default:
                 return cellValue;
         }
@@ -162,90 +183,100 @@ const Exams: React.FC<ExamsProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách bài tập</h3>
-            <div className="flex flex-col gap-4 mt-8">
-                <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        size="sm"
-                        startContent={<BsSearch className="text-default-300" />}
-                        value={filterValue}
-                        variant="bordered"
-                        onClear={() => setFilterValue('')}
-                        onValueChange={onSearchChange}
-                    />
-                    <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
-                                </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Cột
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map(column => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="flex flex-col gap-4 mt-8">
+                    <div className="flex justify-between gap-3 items-end">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1"
+                            placeholder="Tìm kiếm..."
+                            size="sm"
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={filterValue}
+                            variant="bordered"
+                            onClear={() => setFilterValue('')}
+                            onValueChange={onSearchChange}
+                        />
+                        <div className="flex gap-3">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="flat"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="multiple"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    <DropdownItem key="active" className="capitalize">
+                                        {capitalize('hoạt động')}
                                     </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                                    <DropdownItem key="unActive" className="capitalize">
+                                        {capitalize('vô hiệu hóa')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="flat"
+                                    >
+                                        Cột
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={visibleColumns}
+                                    selectionMode="multiple"
+                                    onSelectionChange={setVisibleColumns}
+                                >
+                                    {columns.map(column => (
+                                        <DropdownItem key={column.uid} className="capitalize">
+                                            {capitalize(column.name)}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <div className="sm:flex justify-between items-center">
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                            Số kết quả mỗi trang:
+                            <select
+                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                onChange={onRowsPerPageChange}
+                            >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
-                <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {exams.length} kết quả</span>
-                    <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                        Số kết quả mỗi trang:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <TableContent
-                renderCell={renderCell}
-                headerColumns={headerColumns}
-                items={exams}
-                page={page}
-                setPage={setPage}
-                sortDescriptor={sortDescriptor}
-                setSortDescriptor={setSortDescriptor}
-                totalPage={2}
-            />
+                <TableContent
+                    renderCell={renderCell}
+                    headerColumns={headerColumns}
+                    items={exams || []}
+                    page={page}
+                    setPage={setPage}
+                    sortDescriptor={sortDescriptor}
+                    setSortDescriptor={setSortDescriptor}
+                    totalPage={totalPage || 1}
+                />
+            </Spin>
         </div>
     );
 };

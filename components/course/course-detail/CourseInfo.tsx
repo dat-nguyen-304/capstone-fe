@@ -24,6 +24,7 @@ const formatDate = (dateString: string) => {
 
 const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
     const dateValue = courseInfo?.updateDate ? new Date(courseInfo?.updateDate) : new Date();
+    console.log(courseInfo);
 
     const formattedDate = new Intl.DateTimeFormat('en-GB', {
         year: 'numeric',

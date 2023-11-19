@@ -66,7 +66,7 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
-                    ₫ {buyCourse?.price.toLocaleString('vi-VN')}
+                    ₫ {buyCourse?.price?.toLocaleString('vi-VN')}
                 </p>
                 {user?.role === 'STUDENT' && (
                     <Button color="primary" onPress={onOpen} className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">

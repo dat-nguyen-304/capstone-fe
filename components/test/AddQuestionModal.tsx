@@ -1,15 +1,28 @@
 'use client';
+import { examApi } from '@/api-client';
 import { InputFormula } from '@/components/form-input/InputFormula';
-import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import {
+    Button,
+    Chip,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem
+} from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface AddQuestionModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onAddQuestion: (question: any) => void;
 }
 
-const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose }) => {
+const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, onAddQuestion }) => {
     const [answerList, setAnswerList] = useState<{ name: string; content: string; isCorrect: boolean }[]>([
         {
             name: 'A',
@@ -32,6 +45,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose }) 
             isCorrect: false
         }
     ]);
+    const [level, setLevel] = useState<string>('EASY');
     const { control, handleSubmit, setError, reset } = useForm({
         defaultValues: {
             name: '',
@@ -40,6 +54,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose }) 
             resultContent: ''
         }
     });
+    const { data: topicsData } = useQuery({
+        queryKey: ['topicsExam'],
+        queryFn: () => examApi.examinationTopics(0, 100)
+    });
+    console.log(topicsData);
 
     const changeCorrectAnswer = (id: number) => {
         const newAnswerList = answerList.map(answer => {
@@ -53,7 +72,18 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose }) 
     };
 
     const onSubmit = (values: any) => {
-        console.log(values);
+        // console.log(values);
+        const question = {
+            questionContent: values.questionContent,
+            resultContent: values.resultContent,
+            answerList: answerList.map(answer => ({ content: values[answer.name], isCorrect: answer.isCorrect }))
+        };
+
+        // Call the onAddQuestion function to pass the question to CreateQuiz
+        onAddQuestion(question);
+
+        // Close the modal
+        onClose();
     };
 
     return (
@@ -61,10 +91,48 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose }) 
             <ModalContent>
                 {onClose => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1 text-blue-500">Thêm câu hỏi 1</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1 text-blue-500">Thêm câu hỏi</ModalHeader>
                         <ModalBody className="max-h-[60vh] overflow-auto">
                             <div className="mt-2 ">
                                 <div>
+                                    <div className="col-span-10 sm:grid grid-cols-2 gap-4 my-5">
+                                        <Select
+                                            label="Mức độ"
+                                            color="primary"
+                                            variant="bordered"
+                                            labelPlacement="outside"
+                                            defaultSelectedKeys={['EASY']}
+                                            onChange={event => setLevel(String(event.target.value))}
+                                        >
+                                            <SelectItem key={'EASY'} value={'EASY'}>
+                                                Cơ bản
+                                            </SelectItem>
+                                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
+                                                Trung bình
+                                            </SelectItem>
+                                            <SelectItem key={'HARD'} value={'HARD'}>
+                                                Nâng cao
+                                            </SelectItem>
+                                        </Select>
+                                        <Select
+                                            label="Chủ đề"
+                                            color="primary"
+                                            isRequired
+                                            variant="bordered"
+                                            labelPlacement="outside"
+                                            defaultSelectedKeys={['EASY']}
+                                        >
+                                            <SelectItem key={'EASY'} value={'EASY'}>
+                                                Cơ bản
+                                            </SelectItem>
+                                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
+                                                Trung bình
+                                            </SelectItem>
+                                            <SelectItem key={'HARD'} value={'HARD'}>
+                                                Nâng cao
+                                            </SelectItem>
+                                        </Select>
+                                    </div>
                                     <div>
                                         <label>Nội dung câu hỏi</label>
                                         <InputFormula
