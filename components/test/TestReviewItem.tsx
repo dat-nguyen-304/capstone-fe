@@ -2,10 +2,11 @@
 
 import { QuestionType } from '@/types';
 import { Accordion, AccordionItem, Chip, Radio, RadioGroup } from '@nextui-org/react';
+import HTMLReactParser from 'html-react-parser';
 
 interface TestReviewItemProps {
     index: number;
-    questions: QuestionType;
+    questions: QuestionType | any;
 }
 
 const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => {
@@ -19,7 +20,7 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => 
                     <Chip color="primary" variant="flat" size="sm">
                         Câu {index + 1}
                     </Chip>{' '}
-                    {questions?.statement}
+                    <span className="inline-block">{HTMLReactParser(questions?.statement)}</span>
                 </span>
             </span>
             {questions?.answerList?.map((answerList: any, index: number) => (
@@ -35,7 +36,7 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => 
                     >
                         <div className="ml-2">
                             <span className="font-bold mr-3">{String.fromCharCode(65 + index)}.</span>
-                            <span>{answerList}</span>
+                            <span className="inline-block">{HTMLReactParser(answerList)}</span>
                         </div>
                     </Radio>
                 </RadioGroup>
@@ -43,7 +44,7 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => 
             <div className="mt-4 mb-8">
                 <Accordion isCompact variant="bordered">
                     <AccordionItem key="1" aria-label="Accordion 1" title="Xem lời giải" className="text-sm">
-                        {questions?.explanation}
+                        {HTMLReactParser(questions?.explanation)}
                     </AccordionItem>
                 </Accordion>
             </div>

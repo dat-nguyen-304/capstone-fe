@@ -1,4 +1,4 @@
-import { ChangeVideoStatus, CreateComment, CreateTopic } from '@/types';
+import { ChangeVideoStatus, CreateComment } from '@/types';
 import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
 import { CreateDiscussion, UpdateDiscussion } from '@/types/discussion';
@@ -20,5 +20,14 @@ export const examApi = {
     },
     createExam: async (payload: any) => {
         return await axiosClient.post('/examination/exams', payload);
+    },
+    updateExam: async (examId: number, payload: any) => {
+        return await axiosClient.put(`/examination/exams/${examId}`, payload);
+    },
+    submitExam: async (examId: number, payload: any) => {
+        return await axiosClient.put(`/examination/exams/submission/${examId}`, payload);
+    },
+    createAttempt: async (examId: number) => {
+        return await axiosClient.post(`/examination/exams/submission/${examId}`);
     }
 };

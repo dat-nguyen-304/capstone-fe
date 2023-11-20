@@ -4,7 +4,7 @@ import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
-import { CreateTopic, Subject } from '@/types';
+import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { InputFormula } from '@/components/form-input/InputFormula';
@@ -28,7 +28,7 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
         }
     });
 
-    const onSubmit = async (formData: CreateTopic) => {
+    const onSubmit = async (formData: CreateTopicObject) => {
         try {
             const response = await discussionApi.createTopic({
                 name: formData.name,

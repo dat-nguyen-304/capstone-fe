@@ -76,7 +76,7 @@ const ExamItem: React.FC<ExamItemProps> = ({ exam }) => {
                         <span className="text-xs sm:text-sm">900</span>
                     </div>
                 </div>
-                <Button variant="bordered" className="mt-2" onClick={() => handleDoExam(1)}>
+                <Button variant="bordered" className="mt-2" onClick={() => handleDoExam(exam?.id)}>
                     Làm ngay
                 </Button>
             </Card>

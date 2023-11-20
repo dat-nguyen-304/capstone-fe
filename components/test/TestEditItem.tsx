@@ -1,56 +1,90 @@
 'use client';
 
-import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup } from '@nextui-org/react';
+import { QuestionType } from '@/types';
+import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup, useDisclosure } from '@nextui-org/react';
+import HTMLReactParser from 'html-react-parser';
+import AddQuestionModal from './AddQuestionModal';
+import { useState } from 'react';
 
-interface TestEditItemProps {}
-
-const TestEditItem: React.FC<TestEditItemProps> = ({}) => {
-    const defaultContent =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
-
+interface TestEditItemProps {
+    index: number;
+    questions: QuestionType | any;
+    onEdit: (index: number, editedQuestion: any) => void;
+    subjectId: number;
+}
+const getSubjectNameById = (id: number): string => {
+    if (id == 1) {
+        return 'MATHEMATICS';
+    } else if (id == 2) {
+        return 'PHYSICS';
+    } else if (id == 3) {
+        return 'CHEMISTRY';
+    } else if (id == 4) {
+        return 'ENGLISH';
+    } else if (id == 5) {
+        return 'BIOLOGY';
+    } else if (id == 6) {
+        return 'HISTORY';
+    } else if (id == 7) {
+        return 'GEOGRAPHY';
+    } else {
+        return '';
+    }
+};
+const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index, onEdit }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [editIndex, setEditIndex] = useState<number | undefined>();
+    const [editQuestion, setEditQuestion] = useState<any | null>(null);
+    const handleAddQuestion = (question: any) => {};
+    const handleEditOpen = (index: number) => {
+        setEditIndex(index);
+        setEditQuestion(questions);
+        onOpen(); // Open the modal
+    };
     return (
         <li className="mt-4">
             <span className="font-semibold text-sm">
                 <div className="flex items-center gap-4">
                     <Chip color="primary" variant="flat" size="md">
-                        Câu 1
+                        Câu {index + 1}
                     </Chip>
-                    <Button color="warning" size="sm">
+                    <Button color="warning" size="sm" onClick={() => handleEditOpen(index)}>
                         Chỉnh sửa
                     </Button>
                 </div>
-                <p className="mt-2">{defaultContent}</p>
+                <span>{HTMLReactParser(questions?.statement)}</span>
             </span>
-            <RadioGroup value="london" className="mt-2">
-                <Radio size="sm" value="buenos-aires">
-                    <div className="ml-2">
-                        <span className="font-bold mr-3">A.</span>
-                        <span>{defaultContent}</span>
-                    </div>
-                </Radio>
-                <Radio size="sm" value="sydney">
-                    <div className="ml-2 rounded-md">
-                        <span className="font-bold mr-3">B.</span>
-                        {defaultContent}
-                    </div>
-                </Radio>
-                <Radio size="sm" value="san-francisco">
-                    <div className="ml-2">
-                        <span className="font-bold mr-3">C.</span>
-                        {defaultContent}
-                    </div>
-                </Radio>
-                <Radio size="sm" value="london">
-                    <div className="ml-2 bg-green-100 rounded-md">
-                        <span className="font-bold mr-3">D.</span>
-                        {defaultContent}
-                    </div>
-                </Radio>
-            </RadioGroup>
+            <AddQuestionModal
+                isOpen={isOpen}
+                onClose={onClose}
+                onAddQuestion={handleAddQuestion}
+                subject={getSubjectNameById(subjectId)}
+                editIndex={editIndex}
+                editQuestion={editQuestion}
+                onEditQuestion={onEdit}
+            />
+            {questions?.answerList?.map((answerList: any, index: number) => (
+                <RadioGroup key={index} value={questions?.correctAnswer} className="mt-2">
+                    <Radio
+                        size="sm"
+                        value={String.fromCharCode(65 + index)}
+                        className={`ml-2 ${
+                            String.fromCharCode(65 + index) === questions?.correctAnswer
+                                ? 'bg-green-100 rounded-md'
+                                : ''
+                        }`}
+                    >
+                        <div className="ml-2">
+                            <span className="font-bold mr-3">{String.fromCharCode(65 + index)}.</span>
+                            <span className="inline-block">{HTMLReactParser(answerList)}</span>
+                        </div>
+                    </Radio>
+                </RadioGroup>
+            ))}
             <div className="mt-4 mb-8">
                 <Accordion isCompact variant="bordered">
                     <AccordionItem key="1" aria-label="Accordion 1" title="Xem lời giải" className="text-sm">
-                        {defaultContent}
+                        {HTMLReactParser(questions?.explanation)}
                     </AccordionItem>
                 </Accordion>
             </div>

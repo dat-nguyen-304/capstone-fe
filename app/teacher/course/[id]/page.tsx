@@ -36,28 +36,28 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     console.log(data);
 
     const courseInfo = {
-        courseName: data?.courseResponse?.courseName as string,
-        subject: data?.courseResponse?.subject,
-        level: data?.courseResponse?.level,
-        teacherName: data?.courseResponse?.teacherName,
-        numberOfRate: data?.courseResponse?.numberOfRate,
-        rating: data?.courseResponse?.rating,
+        courseName: data?.name as string,
+        subject: data?.subject,
+        level: data?.level,
+        teacherName: data?.teacherName,
+        numberOfRate: data?.numberOfRate,
+        rating: data?.rating,
         totalStudent: data?.totalStudent,
         description: data?.description,
-        updateDate: data?.createDate
+        updateDate: data?.updateDate
     };
     const editCourse = {
         id: data?.id,
-        thumbnail: data?.courseResponse?.thumbnial,
-        price: data?.courseResponse?.price,
-        subject: data?.courseResponse?.subject,
-        level: data?.courseResponse?.level,
-        totalVideo: data?.courseResponse?.totalVideo
+        thumbnail: data?.thumbnail,
+        price: data?.price,
+        subject: data?.subject,
+        level: data?.level,
+        totalVideo: data?.totalVideo
     };
     const courseContent = {
         id: data?.id,
-        totalVideo: data?.courseResponse?.totalVideo,
-        listVideo: data?.videoResponse
+        totalVideo: data?.totalVideo,
+        listVideo: data?.courseVideoResponses
     };
     const { isOpen, onOpen, onClose } = useDisclosure();
     if (!data) return <Loader />;

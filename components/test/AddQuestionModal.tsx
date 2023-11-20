@@ -1,6 +1,7 @@
 'use client';
 import { examApi } from '@/api-client';
 import { InputFormula } from '@/components/form-input/InputFormula';
+import { Topic } from '@/types';
 import {
     Button,
     Chip,
@@ -13,16 +14,29 @@ import {
     SelectItem
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import HTMLReactParser from 'html-react-parser';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface AddQuestionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAddQuestion: (question: any) => void;
+    onAddQuestion: (question: any) => void | null;
+    onEditQuestion: (question: any, index: number) => void | null;
+    editIndex?: number | undefined;
+    editQuestion?: any | null;
+    subject: string;
 }
 
-const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, onAddQuestion }) => {
+const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
+    isOpen,
+    onClose,
+    onAddQuestion,
+    onEditQuestion,
+    editIndex,
+    editQuestion,
+    subject
+}) => {
     const [answerList, setAnswerList] = useState<{ name: string; content: string; isCorrect: boolean }[]>([
         {
             name: 'A',
@@ -46,19 +60,43 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
         }
     ]);
     const [level, setLevel] = useState<string>('EASY');
-    const { control, handleSubmit, setError, reset } = useForm({
+    const [selectTopic, setSelectTopic] = useState<number>();
+    const { control, handleSubmit, setError, reset, setValue, getValues } = useForm({
         defaultValues: {
             name: '',
             course: '',
             questionContent: '',
-            resultContent: ''
+            resultContent: '',
+            A: '',
+            B: '',
+            C: '',
+            D: ''
         }
     });
     const { data: topicsData } = useQuery({
-        queryKey: ['topicsExam'],
+        queryKey: ['topicsExam', subject],
         queryFn: () => examApi.examinationTopics(0, 100)
     });
-    console.log(topicsData);
+
+    useEffect(() => {
+        if (editQuestion) {
+            setValue('questionContent', editQuestion?.statement);
+            setValue('resultContent', editQuestion?.explanation);
+            setLevel(editQuestion?.level);
+            setSelectTopic(editQuestion?.topicId);
+            const correctAnswer = editQuestion?.correctAnswer;
+            editQuestion.answerList.forEach((answerHtml: any, index: any) => {
+                const fieldName = String.fromCharCode(65 + index) as 'A' | 'B' | 'C' | 'D';
+                setValue(fieldName, answerHtml);
+            });
+            setAnswerList(prevList => {
+                return prevList.map((answer, index) => ({
+                    ...answer,
+                    isCorrect: correctAnswer === String.fromCharCode(65 + index)
+                }));
+            });
+        }
+    }, [editQuestion]);
 
     const changeCorrectAnswer = (id: number) => {
         const newAnswerList = answerList.map(answer => {
@@ -68,19 +106,27 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
             };
         });
         newAnswerList[id].isCorrect = true;
+
         setAnswerList(newAnswerList);
     };
 
     const onSubmit = (values: any) => {
-        // console.log(values);
+        const correctAnswerIndex = answerList.findIndex(answer => answer.isCorrect);
+        const correctAnswerLetter = ['A', 'B', 'C', 'D'][correctAnswerIndex];
         const question = {
-            questionContent: values.questionContent,
-            resultContent: values.resultContent,
-            answerList: answerList.map(answer => ({ content: values[answer.name], isCorrect: answer.isCorrect }))
+            statement: values.questionContent,
+            explanation: values.resultContent,
+            answerList: answerList.map((answer, index) => values[answer.name]),
+            topicId: selectTopic || 1,
+            correctAnswer: correctAnswerLetter,
+            level: level
         };
 
-        // Call the onAddQuestion function to pass the question to CreateQuiz
-        onAddQuestion(question);
+        if (editIndex !== undefined) {
+            onEditQuestion(question, editIndex);
+        } else {
+            onAddQuestion(question);
+        }
 
         // Close the modal
         onClose();
@@ -101,7 +147,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
                                             color="primary"
                                             variant="bordered"
                                             labelPlacement="outside"
-                                            defaultSelectedKeys={['EASY']}
+                                            defaultSelectedKeys={editQuestion ? [`${editQuestion?.level}`] : ['EASY']}
                                             onChange={event => setLevel(String(event.target.value))}
                                         >
                                             <SelectItem key={'EASY'} value={'EASY'}>
@@ -120,17 +166,16 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
                                             isRequired
                                             variant="bordered"
                                             labelPlacement="outside"
-                                            defaultSelectedKeys={['EASY']}
+                                            defaultSelectedKeys={
+                                                editQuestion?.topicId ? [`${editQuestion?.topicId}`] : ['1']
+                                            }
+                                            onChange={event => setSelectTopic(Number(event.target.value))}
                                         >
-                                            <SelectItem key={'EASY'} value={'EASY'}>
-                                                Cơ bản
-                                            </SelectItem>
-                                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
-                                                Trung bình
-                                            </SelectItem>
-                                            <SelectItem key={'HARD'} value={'HARD'}>
-                                                Nâng cao
-                                            </SelectItem>
+                                            {topicsData?.data?.map((topic: Topic) => (
+                                                <SelectItem key={topic?.id} value={topic?.id}>
+                                                    {topic?.name}
+                                                </SelectItem>
+                                            ))}
                                         </Select>
                                     </div>
                                     <div>
@@ -178,7 +223,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
                                                     <InputFormula
                                                         name={answer.name}
                                                         control={control}
-                                                        value="123"
+                                                        value={editQuestion ? editQuestion.answerList[id] : ''}
                                                         placeholder={`Đáp án ${answer.name}`}
                                                     />
                                                 </div>
@@ -192,8 +237,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ isOpen, onClose, on
                             <Button color="danger" variant="light" onClick={() => reset()}>
                                 Đặt lại
                             </Button>
-                            <Button color="primary" onClick={handleSubmit(onSubmit)}>
-                                Thêm câu hỏi
+                            <Button color={editQuestion ? 'warning' : 'primary'} onClick={handleSubmit(onSubmit)}>
+                                {editQuestion ? 'Lưu câu hỏi' : '  Thêm câu hỏi'}
                             </Button>
                         </ModalFooter>
                     </>

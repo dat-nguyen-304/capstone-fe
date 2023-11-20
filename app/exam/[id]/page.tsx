@@ -11,9 +11,11 @@ import CommentItem from '@/components/video/CommentItem';
 import TestResultLine from '@/components/test/TestResultLine';
 import StudentLayout from '@/components/header/StudentLayout';
 
-interface ExamDetailProps {}
+interface ExamDetailProps {
+    params: { id: number };
+}
 
-const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
+const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     return (
         <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
@@ -54,7 +56,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({}) => {
                         <span className="text-sm sm:text-base">Đã làm 1 lần</span>
                         <Button
                             as={Link}
-                            href="/exam/1/practice"
+                            href={`/exam/${params.id}/practice`}
                             size="sm"
                             color="primary"
                             className="flex items-center gap-4"

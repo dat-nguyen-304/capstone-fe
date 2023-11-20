@@ -66,7 +66,7 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
                         className="hidden sm:block"
                     />
                     <span className="text-sm max-w-[120px] sm:max-w-[300px] xl:max-w-[600px] truncate">
-                        Bài kiểm tra abcxyz Bài kiểm tra abcxyz Bài kiểm tra abcxyz Bài kiểm tra abcxyz
+                        Bài kiểm tra
                     </span>
                 </div>
                 <div className="">

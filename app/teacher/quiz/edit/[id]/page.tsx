@@ -58,13 +58,13 @@ const EditQuiz: React.FC<EditQuizProps> = () => {
             </div>
             <div>
                 <ul className="mt-8">
+                    {/* <TestEditItem />
                     <TestEditItem />
                     <TestEditItem />
                     <TestEditItem />
                     <TestEditItem />
                     <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
+                    <TestEditItem /> */}
                 </ul>
                 <Button variant="bordered" className="w-full font-semibold" color="primary" size="lg">
                     Thêm câu hỏi

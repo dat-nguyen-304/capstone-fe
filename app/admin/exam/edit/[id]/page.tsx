@@ -1,79 +1,291 @@
 'use client';
 
+import { examApi, subjectApi } from '@/api-client';
+import Loader from '@/components/Loader';
 import { InputText } from '@/components/form-input';
+import AddQuestionModal from '@/components/test/AddQuestionModal';
 import TestEditItem from '@/components/test/TestEditItem';
+import { Subject } from '@/types';
 // import EditExamItem from '@/components/quiz/EditExamItem';
-import { Button, Select, SelectItem } from '@nextui-org/react';
+import { Button, Select, SelectItem, useDisclosure } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-interface EditExamProps {}
-
-const EditExam: React.FC<EditExamProps> = () => {
-    const { control, handleSubmit, setError } = useForm({
-        defaultValues: {
-            name: '',
-            course: '',
-            description: ''
-        }
+import { useRouter } from 'next/navigation';
+interface EditExamProps {
+    params: { id: number };
+}
+const getSubjectIdByName = (subjectName: string): number => {
+    if (subjectName == 'MATHEMATICS') {
+        return 1;
+    } else if (subjectName == 'PHYSICS') {
+        return 2;
+    } else if (subjectName == 'CHEMISTRY') {
+        return 3;
+    } else if (subjectName == 'ENGLISH') {
+        return 4;
+    } else if (subjectName == 'BIOLOGY') {
+        return 5;
+    } else if (subjectName == 'HISTORY') {
+        return 6;
+    } else if (subjectName == 'GEOGRAPHY') {
+        return 7;
+    } else {
+        return 0;
+    }
+};
+const getSubjectNameById = (id: number): string => {
+    if (id == 1) {
+        return 'MATHEMATICS';
+    } else if (id == 2) {
+        return 'PHYSICS';
+    } else if (id == 3) {
+        return 'CHEMISTRY';
+    } else if (id == 4) {
+        return 'ENGLISH';
+    } else if (id == 5) {
+        return 'BIOLOGY';
+    } else if (id == 6) {
+        return 'HISTORY';
+    } else if (id == 7) {
+        return 'GEOGRAPHY';
+    } else {
+        return '';
+    }
+};
+const EditExam: React.FC<EditExamProps> = ({ params }) => {
+    const router = useRouter();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [level, setLevel] = useState<string>('EASY');
+    const [examType, setExamType] = useState<string>('PUBLIC_EXAM');
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [editIndex, setEditIndex] = useState<number | undefined>();
+    const [editQuestion, setEditQuestion] = useState<any | null>(null);
+    const [selectedSubject, setSelectedSubject] = useState<number>(1);
+    const { data: examDetail, isLoading } = useQuery<any>({
+        queryKey: ['exam-detail'],
+        queryFn: () => examApi.getExamById(params?.id)
+    });
+    const {
+        status,
+        error,
+        data: subjectsData,
+        isPreviousData
+    } = useQuery({
+        queryKey: ['subjects'],
+        queryFn: () => subjectApi.getAll(),
+        staleTime: Infinity
     });
 
+    const { control, handleSubmit, setError, setValue } = useForm({
+        defaultValues: {
+            name: examDetail?.name || '',
+            course: '',
+            description: examDetail?.description || '',
+            duration: examDetail?.duration || ''
+        }
+    });
+    console.log(examDetail);
+    console.log(questions);
+    useEffect(() => {
+        if (examDetail) {
+            const formattedQuestions = examDetail?.questionList?.map((question: any) => ({
+                statement: question?.statement,
+                explanation: question?.explanation,
+                topicId: question?.topic?.id, // Assuming `topic` is an object with an `id` property
+                answerList: question?.answerList,
+                correctAnswer: question?.correctAnswer,
+                level: question?.level
+            }));
+
+            setQuestions(formattedQuestions);
+            setValue('name', examDetail?.name);
+            setValue('description', examDetail?.description);
+            setValue('duration', examDetail?.duration);
+            setLevel(examDetail?.level);
+            setSelectedSubject(getSubjectIdByName(examDetail?.subject));
+        }
+    }, [examDetail]);
+    const handleEditQuestion = (editedQuestion: any, index: number) => {
+        setQuestions(prevQuestions => {
+            const updatedQuestions = [...prevQuestions];
+            updatedQuestions[index] = editedQuestion;
+            return updatedQuestions;
+        });
+    };
+    const handlePopUpAddQuestion = () => {
+        setEditIndex(undefined);
+        setEditQuestion(null);
+        onOpen();
+    };
+    const handleAddQuestion = (question: any) => {
+        // Add the new question to the list
+        setQuestions(prevQuestions => [...prevQuestions, question]);
+    };
+    const handleDeleteQuestion = (index: number) => {
+        // Delete the question at the specified index
+        setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+    };
+    const updateExam = async (formData: any) => {
+        try {
+            const payload = {
+                name: formData?.name,
+                description: formData?.description || 'Miêu Tả',
+                duration: Number(formData?.duration || 60),
+                courseId: -1,
+                subject: getSubjectNameById(selectedSubject),
+                level: level,
+                examType: examType,
+                questionList: questions.map(({ id, ...rest }) => rest)
+            };
+            console.log(payload);
+
+            // Call the API to update the exam
+            const response = await examApi.updateExam(params?.id, payload);
+            console.log(response);
+
+            if (response) {
+                router.push('/admin/exam');
+            }
+        } catch (error) {
+            // Handle any errors that occur during the API call
+            console.error('Error creating exam:', error);
+            // You can also show a user-friendly error message
+        }
+    };
+
+    if (!subjectsData) return <Loader />;
+    if (!examDetail) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <div className="flex justify-between items-center">
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
-                <Button as={Link} href="/admin/exam" size="sm">
-                    Quay lại
-                </Button>
-            </div>
-            <div className="sm:grid grid-cols-6 my-4 gap-2">
-                <div className="my-4 col-span-6 lg:col-span-3">
-                    <InputText isRequired variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
+            <form onSubmit={handleSubmit(updateExam)}>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
+                    <Button as={Link} href="/admin/exam" size="sm">
+                        Quay lại
+                    </Button>
                 </div>
-                <div className=" my-4 col-span-3 lg:col-span-3">
-                    <Select
-                        isRequired
-                        size="sm"
-                        label="Môn học"
-                        color="primary"
+                <div className="sm:grid grid-cols-6 my-4 gap-2">
+                    <div className="my-4 col-span-6 lg:col-span-3">
+                        <InputText
+                            isRequired
+                            variant="bordered"
+                            name="name"
+                            size="sm"
+                            label="Tiêu đề"
+                            control={control}
+                        />
+                    </div>
+                    <div className=" my-4 col-span-3 lg:col-span-3">
+                        <Select
+                            isRequired
+                            size="sm"
+                            label="Môn học"
+                            color="primary"
+                            variant="bordered"
+                            defaultSelectedKeys={[`${getSubjectIdByName(examDetail?.subject)}`]}
+                        >
+                            {subjectsData.map((subject: Subject) => (
+                                <SelectItem key={subject.id} value={subject.id}>
+                                    {subject.name}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
+                    <div className="col-span-6 sm:grid grid-cols-3 gap-4">
+                        <div className="col-span-1 mt-1">
+                            <InputText
+                                isRequired
+                                variant="bordered"
+                                name="duration"
+                                size="sm"
+                                label="Thời gian"
+                                control={control}
+                            />
+                        </div>
+
+                        <Select
+                            label="Mức độ"
+                            color="primary"
+                            variant="bordered"
+                            labelPlacement="outside"
+                            defaultSelectedKeys={[`${examDetail?.level}`]}
+                            onChange={event => setLevel(String(event.target.value))}
+                        >
+                            <SelectItem key={'EASY'} value={'EASY'}>
+                                Cơ bản
+                            </SelectItem>
+                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
+                                Trung bình
+                            </SelectItem>
+                            <SelectItem key={'HARD'} value={'HARD'}>
+                                Nâng cao
+                            </SelectItem>
+                        </Select>
+                        <Select
+                            label="Thể loại kiểm tra"
+                            color="primary"
+                            variant="bordered"
+                            labelPlacement="outside"
+                            defaultSelectedKeys={[`${examDetail?.examType}`]}
+                            onChange={event => setExamType(String(event.target.value))}
+                        >
+                            <SelectItem key={'PUBLIC_EXAM'} value={'PUBLIC_EXAM'}>
+                                Bài Kiểm Tra
+                            </SelectItem>
+                            <SelectItem key={'ENTRANCE_EXAM'} value={'ENTRANCE_EXAM'}>
+                                Bài Thi Đầu Vào
+                            </SelectItem>
+                        </Select>
+                    </div>
+                </div>
+                <AddQuestionModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    onAddQuestion={handleAddQuestion}
+                    subject={getSubjectNameById(selectedSubject)}
+                    editIndex={editIndex}
+                    editQuestion={editQuestion}
+                    onEditQuestion={handleEditQuestion}
+                />
+                <div>
+                    <ul className="mt-8">
+                        {questions?.map((question, index) => (
+                            <div key={index}>
+                                <TestEditItem
+                                    questions={question}
+                                    index={index}
+                                    onEdit={handleEditQuestion}
+                                    subjectId={selectedSubject}
+                                />
+                                {/* Add a delete button for each question */}
+                                <Button
+                                    onClick={() => handleDeleteQuestion(index)}
+                                    className="my-2"
+                                    color="danger"
+                                    size="sm"
+                                    variant="bordered"
+                                >
+                                    Xóa câu hỏi
+                                </Button>
+                            </div>
+                        ))}
+                    </ul>
+                    <Button
                         variant="bordered"
-                        defaultSelectedKeys={['0']}
+                        onClick={handlePopUpAddQuestion}
+                        className="w-full font-semibold"
+                        color="primary"
+                        size="lg"
                     >
-                        <SelectItem key={0} value={0}>
-                            Mặc định
-                        </SelectItem>
-                        <SelectItem key={1} value={1}>
-                            Đánh giá cao nhất
-                        </SelectItem>
-                        <SelectItem key={2} value={2}>
-                            Giá mua cao nhất
-                        </SelectItem>
-                        <SelectItem key={3} value={3}>
-                            Giá mua thấp nhất
-                        </SelectItem>
-                        <SelectItem key={4} value={4}>
-                            Nhiều đánh giá nhất
-                        </SelectItem>
-                    </Select>
+                        Thêm câu hỏi
+                    </Button>
                 </div>
-            </div>
-            <div>
-                <ul className="mt-8">
-                    <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
-                    <TestEditItem />
-                </ul>
-                <Button variant="bordered" className="w-full font-semibold" color="primary" size="lg">
-                    Thêm câu hỏi
+                <Button color="primary" type="submit" className="mt-12">
+                    Xác nhận thay đổi
                 </Button>
-            </div>
-            <Button color="primary" className="mt-12">
-                Xác nhận thay đổi
-            </Button>
+            </form>
         </div>
     );
 };

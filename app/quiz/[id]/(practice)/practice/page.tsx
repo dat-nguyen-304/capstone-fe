@@ -12,12 +12,12 @@ const DoQuiz: React.FC<DoQuizProps> = ({}) => {
             <div className="xl:grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[80px] xl:mt-[60px]">
                 <div className="col-span-7 mt-4">
                     <ul>
+                        {/* <DoTestItem />
                         <DoTestItem />
                         <DoTestItem />
                         <DoTestItem />
                         <DoTestItem />
-                        <DoTestItem />
-                        <DoTestItem />
+                        <DoTestItem /> */}
                     </ul>
                 </div>
                 <div className="col-span-3 my-4">

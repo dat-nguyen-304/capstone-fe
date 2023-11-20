@@ -1,4 +1,4 @@
-import { ChangeVideoStatus, CreateComment, CreateTopic } from '@/types';
+import { ChangeVideoStatus, CreateComment, CreateTopicObject } from '@/types';
 import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
 import { CreateDiscussion, UpdateDiscussion } from '@/types/discussion';
@@ -8,7 +8,7 @@ export const discussionApi = {
         const res = await axiosClient.get(`/discussion/topics?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
-    createTopic: async (payload: CreateTopic) => {
+    createTopic: async (payload: CreateTopicObject) => {
         return await axiosClient.post('/discussion/topics', payload);
     },
     getAllOfConversation: async (page: number, size: number) => {

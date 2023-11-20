@@ -7,7 +7,7 @@ export type TopicType = {
     name: string;
     description: string;
 };
-export type CreateTopic = {
+export type CreateTopicObject = {
     name: string;
     description: string;
 };
