@@ -234,7 +234,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary" as={Link} href="/teacher/quiz/1">
+                                <DropdownItem color="primary" as={Link} href="/admin/profile/teacher/1">
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
@@ -277,7 +277,6 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
-                            size="sm"
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
                             variant="bordered"
@@ -290,7 +289,8 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Trạng Thái
                                     </Button>
@@ -325,7 +325,8 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Cột
                                     </Button>

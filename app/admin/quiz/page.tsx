@@ -223,7 +223,12 @@ const Quizzes: React.FC<VideosProps> = () => {
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
                                     Trạng thái
                                 </Button>
                             </DropdownTrigger>

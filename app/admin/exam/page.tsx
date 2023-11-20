@@ -190,7 +190,6 @@ const Exams: React.FC<ExamsProps> = () => {
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
-                            size="sm"
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
                             variant="bordered"
@@ -203,7 +202,8 @@ const Exams: React.FC<ExamsProps> = () => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Trạng thái
                                     </Button>
@@ -229,7 +229,8 @@ const Exams: React.FC<ExamsProps> = () => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Cột
                                     </Button>

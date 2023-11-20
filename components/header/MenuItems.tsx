@@ -12,7 +12,7 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
     let content;
     if (user?.role === 'STUDENT') {
         content = (
-            <NavbarContent className="hidden md:flex gap-8" justify="center">
+            <NavbarContent className="hidden md:flex gap-8 text-left" justify="center">
                 <NavbarItem key="homepage" isActive={true} className="font-medium text-sm">
                     <Link color="foreground" href="/">
                         Trang chủ
@@ -107,8 +107,8 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                         Khóa học
                     </Link>
                 </NavbarItem>
-                <NavbarItem key="check-level" isActive={false} className="font-medium text-sm">
-                    <Link color="foreground" href="/check-level">
+                <NavbarItem key="suggestion" isActive={false} className="font-medium text-sm">
+                    <Link color="foreground" href="/suggestion">
                         Đánh giá năng lực
                     </Link>
                 </NavbarItem>

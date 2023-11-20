@@ -11,7 +11,7 @@ interface CourseRevenueModalProps {
 
 const CourseRevenueModal: React.FC<CourseRevenueModalProps> = ({ isOpen, onOpen, onClose }) => {
     return (
-        <Modal size="5xl" isOpen={isOpen} onClose={onClose}>
+        <Modal size="5xl" isOpen={isOpen} onClose={onClose} className="!sm:mt-6 sm:mb-4">
             <ModalContent>
                 {onClose => (
                     <>

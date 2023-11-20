@@ -122,7 +122,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tất cả bài viết</h3>
+            <h3 className="text-xl font-semibold mt-4 sm:mt-0">Tất cả bài viết</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="flex justify-between gap-3 items-end">
@@ -130,10 +130,10 @@ const PostList: React.FC<PostListProps> = ({}) => {
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
-                            size="sm"
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
                             variant="bordered"
+                            color="primary"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
@@ -143,7 +143,34 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Chủ đề
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={visibleColumns}
+                                    selectionMode="multiple"
+                                    onSelectionChange={setVisibleColumns}
+                                >
+                                    {columns.map(column => (
+                                        <DropdownItem key={column.uid} className="capitalize">
+                                            {capitalize(column.name)}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Cột
                                     </Button>

@@ -8,6 +8,7 @@ import { Card, Skeleton } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi } from '@/api-client';
 import { horizontal } from '@/animations';
+import { createSkeletonArray } from '@/utils';
 
 interface RegisterChooseSubjectProps {
     subjectIds: number[];
@@ -28,7 +29,7 @@ const RegisterChooseSubject: React.FC<RegisterChooseSubjectProps> = ({
         staleTime: Infinity
     });
 
-    const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7];
+    const skeletonArray = createSkeletonArray(7);
 
     const handleNextStep = () => {
         if (subjectIds.length) nextStep();

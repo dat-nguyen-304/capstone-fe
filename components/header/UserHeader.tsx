@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen}>
+        <Navbar className="shadow-sm header-bg bg-white shadow-md" onMenuOpenChange={setIsMenuOpen}>
             <Logo isMenuOpen={isMenuOpen} />
 
             <MenuItems />

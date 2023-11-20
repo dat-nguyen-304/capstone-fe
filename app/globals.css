@@ -103,3 +103,25 @@ nav header {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
 }
+
+.background-xl {
+     background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/background.webp');
+    /* background-image: url('/bg-light.png');
+    background-size: contain;
+    background-repeat: no-repeat; */
+}
+
+.footer-bg {
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/footer-background.png');
+    background-size: contain;
+    background-position: bottom;
+    background-repeat: no-repeat;
+}
+
+.header-bg {
+    background-image: url('/footer-background.webp');
+    background-size: contain;
+    background-position: bottom;
+    background-color: #fff;
+    text-align: center;
+}

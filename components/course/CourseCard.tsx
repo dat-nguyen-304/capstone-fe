@@ -31,7 +31,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                     <CardHeader className="overflow-visible p-0">
                         <Image height={216} width={384} alt="" className="rounded-xl" src={course?.thumbnial} />
                     </CardHeader>
-                    <CardBody className="text-small justify-between">
+                    <CardBody className="text-small justify-between !p-4">
                         <b className="text-[15px] h-[40px] font-semibold truncate2line text-black">
                             {course.courseName}
                         </b>

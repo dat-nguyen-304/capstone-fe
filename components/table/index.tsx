@@ -94,19 +94,18 @@ const TableContent: React.FC<AppProps> = ({
                     )}
                 </TableBody>
             </Table>
-            <div className="py-2 px-2 flex justify-between items-center">
-                <Pagination
-                    showControls
-                    classNames={{
-                        cursor: 'bg-foreground text-background'
-                    }}
-                    color="default"
-                    page={page}
-                    total={totalPage}
-                    variant="light"
-                    onChange={setPage}
-                />
-            </div>
+            {totalPage && totalPage > 1 && (
+                <div className="mt-2 py-2 px-2 mt-2 flex justify-between items-center">
+                    <Pagination
+                        showControls
+                        color="primary"
+                        page={page}
+                        total={totalPage}
+                        variant="light"
+                        onChange={setPage}
+                    />
+                </div>
+            )}
         </div>
     );
 };

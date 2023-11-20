@@ -7,6 +7,7 @@ import { combinationApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Skeleton, Tooltip } from '@nextui-org/react';
 import { horizontal } from '@/animations';
+import { createSkeletonArray } from '@/utils';
 
 interface RegisterChooseCombinationProps {
     combinationIds: number[];
@@ -26,7 +27,7 @@ const RegisterChooseCombination: React.FC<RegisterChooseCombinationProps> = ({
         queryFn: combinationApi.getAll
     });
 
-    const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+    const skeletonArray = createSkeletonArray(16);
 
     const handleNextStep = () => {
         if (combinationIds.length) nextStep();

@@ -8,7 +8,9 @@ import { useUser } from '@/hooks';
 import { VideoCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { Pagination } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination } from '@nextui-org/react';
+import { BsChevronDown, BsSearch } from 'react-icons/bs';
+import { capitalize } from '@/components/table/utils';
 interface MyVideoProps {}
 
 const MyVideo: React.FC<MyVideoProps> = ({}) => {
@@ -29,6 +31,34 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
             setTotalRow(data.totalRow);
         }
     }, [data]);
+
+    const statusArr = [
+        {
+            value: 'AVAILABLE',
+            name: 'Hoạt động'
+        },
+        {
+            value: 'REJECT',
+            name: 'Đã từ chối'
+        },
+        {
+            value: 'BANNED',
+            name: 'Đã cấm'
+        },
+        {
+            value: 'WAITING',
+            name: 'Chờ phê duyệt'
+        },
+        {
+            value: 'UPDATING',
+            name: 'Chờ cập nhật'
+        },
+        {
+            value: 'UNAVAILABLE',
+            name: 'Vô hiệu'
+        }
+    ];
+
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -41,7 +71,75 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                {totalRow && <p className="mt-6 text-sm font-semibold">Tìm thấy {totalRow} kết quả</p>}
+                <div className="mt-8 flex justify-between gap-3 items-end">
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[50%] border-1"
+                        placeholder="Tìm kiếm..."
+                        size="sm"
+                        color="primary"
+                        startContent={<BsSearch className="text-default-300" />}
+                        // value={filterValue}
+                        variant="bordered"
+                        onClear={() => {}}
+                        // onValueChange={onSearchChange}
+                    />
+                    <div className="flex gap-3">
+                        <Dropdown>
+                            <DropdownTrigger className="flex">
+                                <Button
+                                    color="primary"
+                                    variant="bordered"
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                >
+                                    Khóa học
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                // selectedKeys={() => {}}
+                                selectionMode="single"
+                                onSelectionChange={() => {}}
+                            >
+                                {statusArr.map(statusItem => (
+                                    <DropdownItem key={statusItem.value} className="capitalize">
+                                        {capitalize(statusItem.name)}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown>
+                            <DropdownTrigger className="flex">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    color="primary"
+                                    variant="bordered"
+                                >
+                                    Trạng thái
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                // selectedKeys={() => {}}
+                                selectionMode="single"
+                                onSelectionChange={() => {}}
+                            >
+                                {statusArr.map(statusItem => (
+                                    <DropdownItem key={statusItem.value} className="capitalize">
+                                        {capitalize(statusItem.name)}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </div>
+                {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     {videos.length ? (
                         videos.map((videoItem: VideoCardType) => (

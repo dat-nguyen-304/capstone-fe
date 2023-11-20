@@ -15,8 +15,13 @@ import {
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import HTMLReactParser from 'html-react-parser';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
+import Image from 'next/image';
+import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
+import { FaCheck } from 'react-icons/fa6';
+import { RxCross2 } from 'react-icons/rx';
 
 interface AddQuestionModalProps {
     isOpen: boolean;
@@ -110,6 +115,21 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         setAnswerList(newAnswerList);
     };
 
+    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
+
+    const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+        setUploadedFiles(acceptedFiles);
+    }, []);
+
+    const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
+        onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
+        maxFiles: 1,
+        multiple: false
+    });
+
     const onSubmit = (values: any) => {
         const correctAnswerIndex = answerList.findIndex(answer => answer.isCorrect);
         const correctAnswerLetter = ['A', 'B', 'C', 'D'][correctAnswerIndex];
@@ -144,6 +164,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                     <div className="col-span-10 sm:grid grid-cols-2 gap-4 my-5">
                                         <Select
                                             label="Mức độ"
+                                            isRequired
                                             color="primary"
                                             variant="bordered"
                                             labelPlacement="outside"
@@ -180,11 +201,41 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                     </div>
                                     <div>
                                         <label>Nội dung câu hỏi</label>
-                                        <InputFormula
-                                            name="questionContent"
-                                            control={control}
-                                            placeholder="Nội dung câu hỏi..."
-                                        />
+                                        <div>
+                                            <div className="mt-4 mb-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
+                                                <div {...getRootProps()}>
+                                                    <input {...getInputProps()} name="avatar" />
+                                                    {uploadedFiles.length > 0 ? (
+                                                        <div className="group relative">
+                                                            <Image
+                                                                className="object-cover w-full h-[120px]"
+                                                                key={uploadedFiles[0].path}
+                                                                src={URL.createObjectURL(uploadedFiles[0])}
+                                                                alt={uploadedFiles[0].path as string}
+                                                                width={240}
+                                                                height={240}
+                                                            />
+                                                            <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                                                <RiImageEditLine size={40} />
+                                                                <span className="text-sm">Cập nhật ảnh minh họa</span>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-col justify-center items-center">
+                                                            <RiImageAddLine size={40} />
+                                                            <span className="text-sm">Tải lên ảnh minh họa</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex-[1]">
+                                                <InputFormula
+                                                    name="questionContent"
+                                                    control={control}
+                                                    placeholder="Nội dung câu hỏi..."
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="mt-16">
                                         <label>Nội dung lời giải</label>
@@ -206,16 +257,20 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                                         </div>
                                                         <div className="flex items-center">
                                                             {answer.isCorrect ? (
-                                                                <Chip color="success">Đúng </Chip>
+                                                                <Chip color="success">
+                                                                    <FaCheck className="text-white" />
+                                                                </Chip>
                                                             ) : (
-                                                                <div>
+                                                                <div className="flex items-center">
                                                                     <button
                                                                         onClick={() => changeCorrectAnswer(id)}
-                                                                        className="text-sm text-green-500 mr-2"
+                                                                        className=" text-sm text-green-500 mr-2"
                                                                     >
-                                                                        [Đúng]
+                                                                        <FaCheck />
                                                                     </button>
-                                                                    <Chip color="danger">Sai</Chip>
+                                                                    <Chip color="danger">
+                                                                        <RxCross2 />
+                                                                    </Chip>
                                                                 </div>
                                                             )}
                                                         </div>

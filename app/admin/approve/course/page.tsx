@@ -258,7 +258,6 @@ const Courses: React.FC<CoursesProps> = () => {
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
-                            size="sm"
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
                             variant="bordered"
@@ -271,7 +270,8 @@ const Courses: React.FC<CoursesProps> = () => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Cột
                                     </Button>

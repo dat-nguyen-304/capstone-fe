@@ -150,7 +150,6 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                             isClearable
                             className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
                             placeholder="Tìm kiếm..."
-                            size="sm"
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
                             variant="bordered"
@@ -163,7 +162,8 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Môn học
                                     </Button>
@@ -188,7 +188,8 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
-                                        variant="flat"
+                                        variant="bordered"
+                                        color="primary"
                                     >
                                         Cột
                                     </Button>

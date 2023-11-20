@@ -170,6 +170,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         size="sm"
                         startContent={<BsSearch className="text-default-300" />}
                         value={filterValue}
+                        color="primary"
                         variant="bordered"
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}
@@ -177,7 +178,12 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
                                     Trạng thái
                                 </Button>
                             </DropdownTrigger>
@@ -199,7 +205,12 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
                                     Cột
                                 </Button>
                             </DropdownTrigger>

@@ -37,25 +37,34 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     };
 
     return (
-        <div className="w-[90%] mx-auto mt-8">
-            <CourseFilter />
-            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                {totalRow && <p className="mt-6 text-sm font-semibold">Tìm thấy {totalRow} kết quả</p>}
-                <div className="min-h-[300px] mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
-                    {courses.length ? (
-                        courses.map((courseItem: CourseCardType) => (
-                            <CourseCard key={courseItem.id} course={courseItem} />
-                        ))
-                    ) : (
-                        <></>
+        <div className="background-xl">
+            <div className="w-[90%] 2xl:w-[85%] 3xl:w-[90%] mx-auto pt-8">
+                <CourseFilter />
+                <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                    {totalRow && (
+                        <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>
                     )}
-                </div>
-                {totalPage && totalPage > 1 && (
-                    <div className="flex justify-center my-8">
-                        <Pagination page={page} total={totalPage} onChange={value => scrollToTop(value)} showControls />
+                    <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
+                        {courses.length ? (
+                            courses.map((courseItem: CourseCardType) => (
+                                <CourseCard key={courseItem.id} course={courseItem} />
+                            ))
+                        ) : (
+                            <></>
+                        )}
                     </div>
-                )}
-            </Spin>
+                    {totalPage && totalPage > 1 && (
+                        <div className="flex justify-center mb-16">
+                            <Pagination
+                                page={page}
+                                total={totalPage}
+                                onChange={value => scrollToTop(value)}
+                                showControls
+                            />
+                        </div>
+                    )}
+                </Spin>
+            </div>
         </div>
     );
 };

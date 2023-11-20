@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Checkbox, Select, SelectItem, Selection } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem, Selection, Skeleton } from '@nextui-org/react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useQuery } from '@tanstack/react-query';
@@ -14,62 +14,14 @@ import Loader from '@/components/Loader';
 import { InputNumber } from '@/components/form-input/InputNumber';
 import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
-const getObjectSubjectById = (id: number): object => {
-    if (id == 1) {
-        return {
-            name: 'Toán học',
-            id: 1
-        };
-    } else if (id == 2) {
-        return {
-            name: 'Vật lí',
-            id: 2
-        };
-    } else if (id == 3) {
-        return {
-            name: 'Hóa học',
-            id: 3
-        };
-    } else if (id == 4) {
-        return {
-            name: 'Tiếng anh',
-            id: 4
-        };
-    } else if (id == 5) {
-        return {
-            name: 'Sinh học',
-            id: 5
-        };
-    } else if (id == 6) {
-        return {
-            name: 'Lịch sử',
-            id: 6
-        };
-    } else if (id == 7) {
-        return { name: 'Địa lý', id: 7 };
-    } else {
-        return {
-            name: '',
-            id: 0
-        };
-    }
-};
+import { createSkeletonArray } from '@/utils';
+
 const CreateCourse: React.FC = () => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
     const [values, setValues] = useState<Selection>(new Set(['1']));
-    const [selectedTopics, setSelectedTopics] = useState<string>('');
+    const [topicStates, setTopicStates] = useState<(Topic & { isSelected: boolean })[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
     const [levelId, setLevelId] = useState(1);
-    const router = useRouter();
-    const { data: subjectsData, isLoading } = useQuery({
-        queryKey: ['subjects'],
-        queryFn: subjectApi.getAll,
-        staleTime: Infinity
-    });
-
-    const { data: topicsData } = useQuery({
-        queryKey: ['topics', selectedSubject],
-        queryFn: () => (selectedSubject !== 0 ? topicApi.getTopicsBySubject(selectedSubject) : [])
-    });
 
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
@@ -80,7 +32,38 @@ const CreateCourse: React.FC = () => {
         }
     });
 
-    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
+    const router = useRouter();
+    const { data: subjectsData, isLoading } = useQuery({
+        queryKey: ['subjects'],
+        queryFn: subjectApi.getAll,
+        staleTime: Infinity
+    });
+
+    const { data: topics } = useQuery({
+        queryKey: ['topics', selectedSubject],
+        queryFn: () => (selectedSubject !== 0 ? topicApi.getTopicsBySubject(selectedSubject) : [])
+    });
+
+    useEffect(() => {
+        if (topics) {
+            const newTopics = topics.map(topic => {
+                return {
+                    ...topic,
+                    isSelected: false
+                };
+            });
+            setTopicStates(newTopics);
+        }
+    }, [topics]);
+
+    const getObjectSubjectById = (id: number) => {
+        const foundedSubject = subjectsData?.find(subject => subject.id === id);
+        if (foundedSubject) {
+            const { id, name } = foundedSubject;
+            return { id, name };
+        }
+        return null;
+    };
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         setUploadedFiles(acceptedFiles);
@@ -95,23 +78,34 @@ const CreateCourse: React.FC = () => {
         multiple: false
     });
 
+    const addTopic = (topic: Topic) => {
+        const newTopicStates = [...topicStates];
+        setTopicStates(
+            newTopicStates.map(t => {
+                return topic.id === t.id ? { ...t, isSelected: !t.isSelected } : t;
+            })
+        );
+    };
+
+    const skeletonArray = createSkeletonArray(20);
+
     const onSubmit = async (formData: any) => {
         try {
-            const phrases = selectedTopics.split(',');
-            const topicsArray = phrases
-                .map(phrase => phrase.trim())
-                .map(topicName => {
-                    const topic = topicsData?.find(t => t.name === topicName);
-                    return topic ? { name: topic.name, id: topic.id } : null;
+            const selectedTopics = topicStates
+                .filter(topic => {
+                    return topic.isSelected;
                 })
-                .filter(Boolean);
+                .map(topic => {
+                    return { id: topic.id, name: topic.name };
+                });
+
             const courseRequest = {
                 description: formData.description,
                 name: formData.name,
                 price: formData.price,
                 subject: getObjectSubjectById(selectedSubject),
                 levelId: levelId,
-                topic: topicsArray
+                topic: selectedTopics
             };
 
             console.log(courseRequest);
@@ -137,7 +131,6 @@ const CreateCourse: React.FC = () => {
     };
 
     if (!subjectsData) return <Loader />;
-    if (!topicsData) return <Loader />;
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
@@ -178,39 +171,17 @@ const CreateCourse: React.FC = () => {
                             <InputText
                                 variant="bordered"
                                 name="name"
+                                color="primary"
                                 labelPlacement="outside"
                                 label="Tên khóa học"
                                 control={control}
                             />
                         </div>
                         <div className="col-span-2 sm:grid grid-cols-2 gap-4">
-                            <div className="col-span-1 mt-1">
-                                <InputNumber control={control} label="Giá" name="price" />
-                            </div>
-                            <div className="col-span-1 mt-12 md:mt-8">
-                                <Select
-                                    isRequired
-                                    label="Chọn chủ đề môn học"
-                                    color="primary"
-                                    variant="bordered"
-                                    labelPlacement="outside"
-                                    selectionMode="multiple"
-                                    // defaultSelectedKeys={[String(topicSelected)]}
-                                    value={selectedTopics}
-                                    onChange={value => setSelectedTopics(value.target.value)}
-                                >
-                                    {topicsData?.map((topic: Topic) => (
-                                        <SelectItem key={topic?.name} value={topic?.id}>
-                                            {topic?.name}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
-                            </div>
-                        </div>
-                        <div className="col-span-2 sm:grid grid-cols-2 gap-4">
                             <div className="col-span-1 mt-12 md:mt-8">
                                 <Select
                                     label="Chọn môn học"
+                                    isRequired
                                     color="primary"
                                     variant="bordered"
                                     labelPlacement="outside"
@@ -226,6 +197,7 @@ const CreateCourse: React.FC = () => {
                                     ))}
                                 </Select>
                             </div>
+
                             <div className="col-span-1 mt-12 md:mt-8">
                                 <Select
                                     label="Mức độ"
@@ -247,9 +219,41 @@ const CreateCourse: React.FC = () => {
                                 </Select>
                             </div>
                         </div>
+                        <div className="col-span-2 sm:grid grid-cols-2 gap-4">
+                            <div className="col-span-2">
+                                <InputNumber control={control} label="Giá" name="price" />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="mt-4">
+                <div className="mt-8">
+                    <label className="font-semibold">Chủ đề khóa học</label>
+                    {topics ? (
+                        <ul className="mt-4 flex gap-2 flex-wrap">
+                            {topicStates.map(topic => (
+                                <li
+                                    key={topic.id}
+                                    onClick={() => addTopic(topic)}
+                                    className={`${
+                                        topic.isSelected ? 'bg-blue-200 border-blue-700' : 'border-gray-400'
+                                    } border-2 rounded-lg py-1 px-2 cursor-pointer`}
+                                >
+                                    {topic.name}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="flex gap-3 mt-8 flex-wrap">
+                            {skeletonArray.map(i => (
+                                <Skeleton key={i} isLoaded={false} className="rounded-lg">
+                                    <li className="w-[60px] sm:w-[80px] h-[32px] rounded-lg px-2 py-2 sm:py-4 sm:px-4"></li>
+                                </Skeleton>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="mt-8">
                     <label className="font-semibold">Mô tả</label>
                     <InputDescription name="description" control={control} />
                 </div>

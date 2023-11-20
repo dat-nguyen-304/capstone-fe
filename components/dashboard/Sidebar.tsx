@@ -119,11 +119,9 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                     </div>
                 </Header>
                 <Content className={collapsed ? 'sm:ml-[80px] transition-all' : 'sm:ml-[200px] transition-all '}>
-                    <div className="p-1 sm:p-[24px] min-h-[360px] mt-[60px]" style={{ background: colorBgContainer }}>
-                        {children}
-                    </div>
+                    <div className="p-1 sm:p-[24px] min-h-[84vh] mt-[60px] bg-white">{children}</div>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>CEPA ©2023</Footer>
+                <Footer className="header-bg">CEPA ©2023</Footer>
             </Layout>
         </Layout>
     );
