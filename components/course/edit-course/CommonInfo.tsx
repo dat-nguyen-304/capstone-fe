@@ -14,6 +14,7 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { courseApi } from '@/api-client';
+import { useRouter } from 'next/navigation';
 interface CommonInfoProps {
     commonInfo?: {
         id: number;
@@ -27,6 +28,7 @@ interface CommonInfoProps {
 }
 
 const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
+    const router = useRouter();
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -90,8 +92,8 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
             const response = await courseApi.updateCourse(formDataPayload);
             if (response) {
                 console.log('Course update successfully:', response);
+                router.push('/teacher/course/my-course');
             }
-            // router.push('/teacher/course/my-course');
             // Handle the response as needed
         } catch (error) {
             console.error('Error creating course:', error);

@@ -49,7 +49,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, isTeacherCour
             </div>
             <ul className="max-h-[500px] overflow-y-scroll mt-8">
                 {courseContent?.listVideo?.map((videoItem, index) => (
-                    <VideoItem key={index} videoItem={videoItem} index={index} />
+                    <VideoItem key={index} videoItem={videoItem} index={index} isTeacherVideo={isTeacherCourse} />
                 ))}
             </ul>
         </>

@@ -8,7 +8,7 @@ export const videoApi = {
         return res.data;
     },
     getVideoDetailById: async (videoId: number) => {
-        const res = await axiosClient.get(`/videos/${videoId}`);
+        const res = await axiosClient.get(`/videos/user/${videoId}`);
         return res.data;
     },
     getAllOfTeacher: async (email: string, commentStatus: string, page: number, size: number) => {

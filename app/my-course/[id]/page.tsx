@@ -7,7 +7,7 @@ import WriteFeedback from '@/components/course/course-detail/WriteFeedback';
 import CourseImage from '@/components/course/course-detail/CourseImage';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi } from '@/api-client';
+import { courseApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 
@@ -27,39 +27,57 @@ const CourseInfoTest = {
         'Khóa học lập trình C++ từ cơ bản tới nâng cao dành cho người mới bắt đầu. Mục tiêu của khóa học này nhằm giúp các bạn nắm được các khái niệm căn cơ của lập trình, giúp các bạn có nền tảng vững chắc để chinh phục con đường trở thành một lập trình viên.'
 };
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
-    const { data, isLoading } = useQuery<any>({
+    const { data: courseData, isLoading } = useQuery<any>({
         queryKey: ['my-course-detail'],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
+    const { data: feebackData } = useQuery<any>({
+        queryKey: ['feedbacks'],
+        queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
+    });
 
     const courseInfo = {
-        courseName: data?.name as string,
-        subject: data?.subject,
-        level: data?.level,
-        teacherName: data?.teacherName,
-        numberOfRate: data?.numberOfRate,
-        rating: data?.rating,
-        totalStudent: data?.totalStudent,
-        description: data?.description,
-        updateDate: data?.updateDate
+        courseName: courseData?.name as string,
+        subject: courseData?.subject,
+        level: courseData?.level,
+        teacherName: courseData?.teacherName,
+        numberOfRate: courseData?.numberOfRate,
+        rating: courseData?.rating,
+        totalStudent: courseData?.totalStudent,
+        description: courseData?.description,
+        updateDate: courseData?.updateDate
     };
     const courseImage = {
-        id: data?.id,
-        thumbnail: data?.thumbnail,
-        price: data?.price,
-        subject: data?.subject,
-        level: data?.level,
-        totalVideo: data?.totalVideo
+        id: courseData?.id,
+        thumbnail: courseData?.thumbnail,
+        price: courseData?.price,
+        subject: courseData?.subject,
+        level: courseData?.level,
+        totalVideo: courseData?.totalVideo
     };
 
     const courseContent = {
-        id: data?.id,
-        totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        id: courseData?.id,
+        totalVideo: courseData?.totalVideo,
+        listVideo: courseData?.courseVideoResponses
     };
-    console.log(data);
-
-    if (!data) return <Loader />;
+    console.log(courseData);
+    console.log(feebackData);
+    const handleFeedbackSubmission = async (feedback: { rating: number; comment: string }) => {
+        try {
+            const ratingCourse = {
+                courseId: Number(params?.id),
+                rating: feedback.rating,
+                content: feedback.comment
+            };
+            const res = await ratingCourseApi.createRating(ratingCourse);
+            console.log(res);
+            // console.log(ratingCourse);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    };
+    if (!courseData) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">
             <Link href="/my-course" className="mt-4 flex items-center gap-2 text-sm">
@@ -70,7 +88,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
                     <CourseContent isMyCourse={true} courseContent={courseContent} />
-                    <WriteFeedback />
+                    <WriteFeedback onSubmit={handleFeedbackSubmission} />
                     <Feedback />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">

@@ -22,17 +22,17 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     console.log(data);
     const commonInfo = {
         id: data?.id,
-        name: data?.courseResponse?.courseName,
-        thumbnail: data?.courseResponse?.thumbnial,
-        level: data?.courseResponse?.level,
+        name: data?.name,
+        thumbnail: data?.thumbnail,
+        level: data?.level,
         description: data?.description,
-        price: data?.courseResponse?.price
+        price: data?.price
     };
     const courseContent = {
-        teacherName: data?.courseResponse?.teacherName,
-        courseName: data?.courseResponse?.courseName,
-        totalVideo: data?.courseResponse?.totalVideo,
-        listVideo: data?.videoResponse
+        teacherName: data?.teacherName,
+        courseName: data?.courseName,
+        totalVideo: data?.totalVideo,
+        listVideo: data?.courseVideoResponses
     };
 
     // const arrays = data?.videoResponse.map((video: any, index: number) => {
@@ -44,7 +44,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
 
     const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number }[]>(
         data?.videoResponse
-            ? data?.videoResponse.map((video: any, index: number) => ({
+            ? data?.courseVideoResponses.map((video: any, index: number) => ({
                   videoId: video.id,
                   videoOrder: index + 1
               }))
@@ -56,7 +56,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         <div className="w-[98%] sm:w-full lg:w-[90%] mx-auto">
             <div className="mt-4 sm:mt-0 flex justify-between">
                 <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa khóa học</h3>
-                <Button size="sm" as={Link} href="/teacher/course/1">
+                <Button size="sm" as={Link} href={`/teacher/course/${params.id}`}>
                     Quay lại
                 </Button>
             </div>

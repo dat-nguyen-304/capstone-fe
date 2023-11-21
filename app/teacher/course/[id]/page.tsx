@@ -71,7 +71,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
             <div className="relative grid grid-cols-10 gap-2 mt-4 mb-16">
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
-                    <CourseContent courseContent={courseContent} />
+                    <CourseContent courseContent={courseContent} isTeacherCourse={true} />
                     <Feedback />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">

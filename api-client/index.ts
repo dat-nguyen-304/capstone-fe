@@ -10,3 +10,4 @@ export * from './video-api';
 export * from './transaction-api';
 export * from './discussion-api';
 export * from './exam-api';
+export * from './ratings-api';
