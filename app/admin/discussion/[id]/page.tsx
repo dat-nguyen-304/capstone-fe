@@ -1,25 +1,48 @@
 'use client';
 
+import { discussionApi } from '@/api-client';
+import Loader from '@/components/Loader';
 import PostTitle from '@/components/discussion/PostTitle';
 import CommentItem from '@/components/video/CommentItem';
+import { CommentCardType } from '@/types';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 
-interface PostDetailProps {}
+interface PostDetailProps {
+    params: { id: number };
+}
 
-const PostDetail: React.FC<PostDetailProps> = ({}) => {
+const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
+    const { data: discussionData } = useQuery({
+        queryKey: ['discussionDetail'],
+        queryFn: () => discussionApi.getDiscussionById(params?.id)
+    });
+
+    const { data: commentsData } = useQuery({
+        queryKey: ['commentsByDiscussion'],
+        queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
+    });
+
     const postContent = {
-        id: 1,
-        title: 'Bàn luận về abcxyz',
-        content: 'string',
-        image: undefined,
-        owner: true,
-        auth: 'Jane Doe',
-        like: 10,
-        avatar: 'https://i.pravatar.cc/150?u=a04258114e29026702d',
-        createTime: '2023-11-18T13:24:49.191096'
+        id: discussionData?.id,
+        title: discussionData?.title,
+        content: discussionData?.content,
+        image: discussionData?.imageUrl,
+        owner: discussionData?.owner,
+        auth: discussionData?.ownerFullName,
+        like: discussionData?.reactCount,
+        avatar: discussionData?.ownerAvatar,
+        createTime: discussionData?.createTime
     };
+    const commonInfo = {
+        id: 1,
+        ownerFullName: 'Nguyễn Văn A',
+        imageUrl: '/banner/slide-1.png',
+        content: 'Nội dung rất hay'
+    };
+    if (!discussionData) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
@@ -47,14 +70,17 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
                 </Select>
                 <Card className="mt-8 p-8">
                     <ul>
-                        {/* <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem /> */}
+                        {commentsData?.data?.length ? (
+                            commentsData?.data?.map((commentInfo: CommentCardType) => (
+                                <CommentItem key={commentInfo?.id} commentInfo={commentInfo} />
+                            ))
+                        ) : (
+                            <>
+                                <CommentItem commentInfo={commonInfo} />
+                            </>
+                        )}
                     </ul>
-                    <Button className="w-full">Xem thêm</Button>
+                    {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
             </div>
         </div>

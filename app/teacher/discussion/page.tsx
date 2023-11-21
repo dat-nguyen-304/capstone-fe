@@ -25,9 +25,9 @@ interface PostListProps {}
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
+    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
-    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
@@ -35,7 +35,7 @@ const columns = [
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['ownerFullName', 'title', 'topicName', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);

@@ -132,6 +132,12 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
+    const commonInfo = {
+        id: 1,
+        ownerFullName: 'Nguyễn Văn A',
+        imageUrl: '/banner/slide-1.png',
+        content: 'Nội dung rất hay'
+    };
     if (!discussionData) return <Loader />;
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
@@ -210,7 +216,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                                 <CommentItem key={commentInfo?.id} commentInfo={commentInfo} />
                             ))
                         ) : (
-                            <></>
+                            <>
+                                <CommentItem commentInfo={commonInfo} />
+                            </>
                         )}
                         {/* <CommentItem />
                         <CommentItem />
@@ -219,7 +227,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                         <CommentItem />
                         <CommentItem /> */}
                     </ul>
-                    <Button className="w-full">Xem thêm</Button>
+                    {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
             </div>
             <ReportModal />

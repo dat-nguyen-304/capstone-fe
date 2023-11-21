@@ -15,7 +15,7 @@ import { CommentCardType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
 
 interface CommentItemProps {
-    commentInfo: CommentCardType;
+    commentInfo: CommentCardType | any;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {

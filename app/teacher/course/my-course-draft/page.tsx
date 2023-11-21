@@ -12,18 +12,18 @@ import { useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 
-interface MyCourseProps {}
+interface MyCourseDraftProps {}
 
-const MyCourse: React.FC<MyCourseProps> = ({}) => {
+const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['courses', { page }],
+        queryKey: ['coursesDraft', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacher(page - 1, 20)
+        queryFn: () => courseApi.getAllOfTeacherDraft(page - 1, 20)
     });
 
     useEffect(() => {
@@ -48,6 +48,10 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             name: 'Đã cấm'
         },
         {
+            value: 'DRAFT',
+            name: 'Bản nháp'
+        },
+        {
             value: 'WAITING',
             name: 'Chờ phê duyệt'
         },
@@ -70,7 +74,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học của tôi</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học nháp</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 flex justify-between gap-3 items-end">
                     <Input
@@ -160,4 +164,4 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
     );
 };
 
-export default MyCourse;
+export default MyCourseDraft;

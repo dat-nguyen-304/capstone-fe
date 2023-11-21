@@ -2,7 +2,7 @@
 
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
+import { examApi, subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
@@ -16,9 +16,11 @@ import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { discussionApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
-interface CreateTopicProps {}
+interface CreateExamTopicProps {}
 
-const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
+const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
+    const [level, setLevel] = useState<string>('EASY');
+    const [subject, setSubject] = useState<string>('MATHEMATICS');
     const { user } = useUser();
     const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
@@ -30,12 +32,14 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
 
     const onSubmit = async (formData: CreateTopicObject) => {
         try {
-            const response = await discussionApi.createTopic({
+            const response = await examApi.createTopicExam({
                 name: formData.name,
-                description: formData.description
+                description: formData.description,
+                subject: subject,
+                level: level
             });
             if (!response.data.code) {
-                router.push('/admin/topic');
+                router.push('/admin/exam-topic');
             }
         } catch (error) {
             console.error('Error creating course:', error);
@@ -47,7 +51,7 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Tạo chủ đề</h3>
+                <h3 className="font-bold text-xl">Tạo chủ đề thi</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="name"
@@ -58,6 +62,54 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
                         variant="bordered"
                         control={control}
                     />
+                    <Select
+                        label="Môn học"
+                        color="primary"
+                        variant="bordered"
+                        labelPlacement="outside"
+                        defaultSelectedKeys={['MATHEMATICS']}
+                        onChange={event => setSubject(String(event.target.value))}
+                    >
+                        <SelectItem key={'MATHEMATICS'} value={'MATHEMATICS'}>
+                            Toán học
+                        </SelectItem>
+                        <SelectItem key={'PHYSICS'} value={'PHYSICS'}>
+                            Vật lý
+                        </SelectItem>
+                        <SelectItem key={'CHEMISTRY'} value={'CHEMISTRY'}>
+                            Hóa học
+                        </SelectItem>
+                        <SelectItem key={'ENGLISH'} value={'ENGLISH'}>
+                            Tiếng anh
+                        </SelectItem>
+                        <SelectItem key={'BIOLOGY'} value={'BIOLOGY'}>
+                            Sinh học
+                        </SelectItem>
+                        <SelectItem key={'HISTORY'} value={'HISTORY'}>
+                            Lịch sử
+                        </SelectItem>
+                        <SelectItem key={'GEOGRAPHY'} value={'GEOGRAPHY'}>
+                            Địa lý
+                        </SelectItem>
+                    </Select>
+                    <Select
+                        label="Mức độ"
+                        color="primary"
+                        variant="bordered"
+                        labelPlacement="outside"
+                        defaultSelectedKeys={['EASY']}
+                        onChange={event => setLevel(String(event.target.value))}
+                    >
+                        <SelectItem key={'EASY'} value={'EASY'}>
+                            Cơ bản
+                        </SelectItem>
+                        <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
+                            Trung bình
+                        </SelectItem>
+                        <SelectItem key={'HARD'} value={'HARD'}>
+                            Nâng cao
+                        </SelectItem>
+                    </Select>
                 </div>
                 <div className="mt-6">
                     <label className="text-sm font-semibold">Nội dung bài viết</label>
@@ -76,11 +128,11 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
                     </label>
                 </div>
                 <Button color="primary" type="submit">
-                    Tạo bài viết
+                    Tạo bài chủ đề thi
                 </Button>
             </form>
         </div>
     );
 };
 
-export default CreateTopic;
+export default CreateExamTopic;

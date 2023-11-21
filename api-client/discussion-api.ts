@@ -8,8 +8,18 @@ export const discussionApi = {
         const res = await axiosClient.get(`/discussion/topics?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
+    getTopicById: async (topicId: number) => {
+        const res = await axiosClient.get(`/discussion/topics/${topicId}`);
+        return res.data;
+    },
     createTopic: async (payload: CreateTopicObject) => {
         return await axiosClient.post('/discussion/topics', payload);
+    },
+    updateTopic: async (payload: CreateTopicObject, topicId: number) => {
+        return await axiosClient.put(`/discussion/topics/${topicId}`, payload);
+    },
+    deleteTopic: async (topicId: number) => {
+        return await axiosClient.delete(`/discussion/topics/${topicId}`);
     },
     getAllOfConversation: async (page: number, size: number) => {
         const res = await axiosClient.get(`/discussion/conversations?&page=${page}&size=${size}&sortType=ASC`);

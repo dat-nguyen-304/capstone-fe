@@ -24,10 +24,9 @@ import { Spin } from 'antd';
 interface PostListProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÁC GIẢ', uid: 'ownerEmail', sortable: true },
+    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
+    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
-    { name: 'CHỦ ĐỀ', uid: 'topicId', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
@@ -35,7 +34,7 @@ const columns = [
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'ownerEmail', 'title', 'topicId', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -81,10 +80,26 @@ const PostList: React.FC<PostListProps> = ({}) => {
         }
     }, []);
 
-    const renderCell = useCallback((post: DiscussionType, columnKey: Key) => {
-        const cellValue = post[columnKey as keyof DiscussionType];
+    const renderCell = useCallback((post: any, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'ownerFullName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: post.ownerAvatar ? post.ownerAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {post.ownerFullName}
+                    </User>
+                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -94,8 +109,8 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem as={Link} href="/admin/discussion/2">
+                            <DropdownMenu aria-label="Options">
+                                <DropdownItem as={Link} href={`/admin/discussion/${post?.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
                             </DropdownMenu>
@@ -108,7 +123,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
                 const formattedDate = new Intl.DateTimeFormat('en-GB', {
                     year: 'numeric',
                     month: 'numeric',
-                    day: 'numeric'
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false
                 })?.format(dateValue);
 
                 return formattedDate;

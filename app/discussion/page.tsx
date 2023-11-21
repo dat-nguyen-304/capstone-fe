@@ -25,9 +25,9 @@ interface PostListProps {}
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
+    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
-    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
@@ -35,7 +35,7 @@ const columns = [
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['ownerFullName', 'title', 'topicName', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -80,10 +80,26 @@ const PostList: React.FC<PostListProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
-    const renderCell = useCallback((post: DiscussionType, columnKey: Key) => {
-        const cellValue = post[columnKey as keyof DiscussionType];
+    const renderCell = useCallback((post: any, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'ownerFullName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: post.ownerAvatar ? post.ownerAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {post.ownerFullName}
+                    </User>
+                );
             case 'createTime':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
 

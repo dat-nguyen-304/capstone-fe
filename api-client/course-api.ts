@@ -10,8 +10,12 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;
     },
-    getAllOfTeacher: async (email: string, page: number, size: number) => {
-        const res = await axiosClient.get(`/courses/teacher?email=${email}&page=${page}&size=${size}&sortType=ASC`);
+    getAllOfTeacher: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/courses/teacher?page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
+    },
+    getAllOfTeacherDraft: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/courses/teacher/waiting-list?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
     getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {

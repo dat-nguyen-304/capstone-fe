@@ -121,7 +121,7 @@ const CreateCourse: React.FC = () => {
             const response = await courseApi.createCourse(formDataPayload);
             if (response) {
                 console.log('Course created successfully:', response);
-                router.push('/teacher/course/my-course');
+                router.push('/teacher/course/my-course-draft');
             }
             // Handle the response as needed
         } catch (error) {

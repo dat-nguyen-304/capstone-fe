@@ -29,5 +29,22 @@ export const examApi = {
     },
     createAttempt: async (examId: number) => {
         return await axiosClient.post(`/examination/exams/submission/${examId}`);
+    },
+    getAllTopic: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/examination/topics?page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
+    },
+    getTopicExamById: async (topicId: number) => {
+        const res = await axiosClient.get(`/examination/topics/${topicId}`);
+        return res.data;
+    },
+    createTopicExam: async (payload: any) => {
+        return await axiosClient.post('/examination/topics', payload);
+    },
+    updateTopicExam: async (payload: any, topicId: number) => {
+        return await axiosClient.put(`/examination/topics/${topicId}`, payload);
+    },
+    deleteTopicExam: async (topicId: number) => {
+        return await axiosClient.delete(`/examination/topics/${topicId}`);
     }
 };

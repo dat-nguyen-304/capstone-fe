@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useUser } from '@/hooks';
@@ -23,33 +23,49 @@ interface EditTopicProps {
 const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
-    const { control, handleSubmit, setError } = useForm({
+    const { data: discussionTopic, isLoading } = useQuery({
+        queryKey: ['topicDetail'],
+        queryFn: () => discussionApi.getTopicById(params?.id)
+    });
+    console.log(discussionTopic);
+
+    const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
             name: '',
             description: ''
         }
     });
 
+    useEffect(() => {
+        if (discussionTopic) {
+            setValue('name', discussionTopic?.name);
+            setValue('description', discussionTopic?.description);
+        }
+    }, [discussionTopic]);
+
     const onSubmit = async (formData: CreateTopicObject) => {
         try {
-            const response = await discussionApi.createTopic({
-                name: formData.name,
-                description: formData.description
-            });
-            if (response) {
+            const response = await discussionApi.updateTopic(
+                {
+                    name: formData.name,
+                    description: formData.description
+                },
+                params?.id
+            );
+            if (!response.data.code) {
                 router.push('/admin/topic');
             }
         } catch (error) {
             console.error('Error creating course:', error);
         }
     };
-
+    if (!discussionTopic) return <Loader />;
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Tạo chủ đề</h3>
+                <h3 className="font-bold text-xl">Chỉnh sửa chủ đề</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="name"
@@ -78,7 +94,7 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
                     </label>
                 </div>
                 <Button color="primary" type="submit">
-                    Tạo bài viết
+                    Chỉnh sửa chủ đề
                 </Button>
             </form>
         </div>

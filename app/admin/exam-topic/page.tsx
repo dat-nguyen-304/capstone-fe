@@ -4,6 +4,8 @@ import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'rea
 import { useCustomModal } from '@/hooks';
 import {
     Button,
+    Chip,
+    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -17,24 +19,50 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { discussionApi } from '@/api-client';
+import { discussionApi, examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { TopicType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
 import { Spin } from 'antd';
-interface TopicListProps {}
+interface ExamTopicListProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'Mô Tả', uid: 'description', sortable: true },
+    { name: 'Môn Học', uid: 'subject', sortable: true },
+    { name: 'Trạng Thái', uid: 'status', sortable: true },
     { name: 'THAO TÁC', uid: 'action' }
 ];
 
-const TopicList: React.FC<TopicListProps> = ({}) => {
+const statusColorMap: Record<string, ChipProps['color']> = {
+    ENABLE: 'success',
+    DISABLE: 'danger',
+    DELETED: 'danger',
+    BANNED: 'danger'
+};
+function getSubjectName(subjectCode: string) {
+    switch (subjectCode) {
+        case 'MATHEMATICS':
+            return 'Toán học';
+        case 'ENGLISH':
+            return 'Tiếng anh';
+        case 'PHYSICS':
+            return 'Vật lí';
+        case 'CHEMISTRY':
+            return 'Hóa học';
+        case 'BIOLOGY':
+            return 'Sinh học';
+        case 'HISTORY':
+            return 'Lịch sử';
+        case 'GEOGRAPHY':
+            return 'Địa lý';
+        default:
+            return null;
+    }
+}
+const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const [filterValue, setFilterValue] = useState('');
-    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['id', 'name', 'description', 'action']));
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['name', 'subject', 'status', 'action']));
     const [topics, setTopics] = useState<TopicType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -48,9 +76,11 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
         data: topicsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['topics', { page, rowsPerPage, updateState }],
-        queryFn: () => discussionApi.getAll(page - 1, rowsPerPage)
+        queryKey: ['exam-topics', { page, rowsPerPage, updateState }],
+        queryFn: () => examApi.getAllTopic(page - 1, rowsPerPage)
     });
+    console.log(topicsData);
+
     useEffect(() => {
         if (topicsData?.data) {
             setTopics(topicsData.data);
@@ -62,7 +92,7 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
     const handleStatusChange = async (id: number) => {
         try {
             onLoading();
-            const res = await discussionApi.deleteTopic(id);
+            const res = await examApi.deleteTopicExam(id);
             if (!res.data.code) {
                 onSuccess({
                     title: 'Đã xóa chủ đề thành công',
@@ -107,14 +137,21 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
         }
     }, []);
 
-    const renderCell = useCallback((post: TopicType, columnKey: Key) => {
-        const cellValue = post[columnKey as keyof TopicType];
+    const renderCell = useCallback((post: any, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
-            case 'description':
-                const formatDescription = HTMLReactParser(post.description) as string;
-                return formatDescription;
-            //     return HTMLReactParser(post.description);
+            case 'status':
+                return (
+                    <Chip
+                        className="capitalize border-none gap-1 text-default-600"
+                        color={statusColorMap[post.status]}
+                        size="sm"
+                        variant="dot"
+                    >
+                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
+                    </Chip>
+                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -124,17 +161,28 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options">
-                                <DropdownItem color="warning" as={Link} href={`/admin/topic/edit/${post.id}`}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['editDis', 'delDis']}>
+                                <DropdownItem
+                                    color="warning"
+                                    key={post.status === 'DELETED' ? 'editDis' : 'edit'}
+                                    as={Link}
+                                    href={`/admin/exam-topic/edit/${post.id}`}
+                                >
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onDeclineOpen(post?.id)}>
+                                <DropdownItem
+                                    color="danger"
+                                    key={post.status === 'DELETED' ? 'delDis' : 'delete'}
+                                    onClick={() => onDeclineOpen(post?.id)}
+                                >
                                     Xóa chủ đề
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 );
+            case 'subject':
+                return getSubjectName(cellValue);
             default:
                 return cellValue;
         }
@@ -142,7 +190,7 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chủ đề thảo luận</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chủ đề thi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="flex justify-between gap-3 items-end">
@@ -215,4 +263,4 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
     );
 };
 
-export default TopicList;
+export default ExamTopicList;

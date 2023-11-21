@@ -46,19 +46,21 @@ const items: MenuItem[] = [
     ]),
     getItem('Đề thi', 'sub3', <CalculatorOutlined />, [
         getItem(<Link href="/admin/exam">Tất cả đề thi</Link>, '7'),
-        getItem(<Link href="/admin/exam/create">Tạo đề thi</Link>, '8')
+        getItem(<Link href="/admin/exam/create">Tạo đề thi</Link>, '8'),
+        getItem(<Link href="/admin/exam-topic">Tất cả chủ đề thi</Link>, '9'),
+        getItem(<Link href="/admin/exam-topic/create">Tạo chủ đề thi</Link>, '10')
     ]),
     getItem('Phê duyệt', 'sub4', <CheckCircleOutlined />, [
-        getItem(<Link href="/admin/approve/course">Khóa học</Link>, '9'),
-        getItem(<Link href="/admin/approve/video">Video</Link>, '10')
+        getItem(<Link href="/admin/approve/course">Khóa học</Link>, '11'),
+        getItem(<Link href="/admin/approve/video">Video</Link>, '12')
     ]),
-    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '11', <LineChartOutlined />),
-    getItem(<Link href="/admin/report">Xử lý vi phạm</Link>, '12', <StopOutlined />),
+    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '13', <LineChartOutlined />),
+    getItem(<Link href="/admin/report">Xử lý vi phạm</Link>, '14', <StopOutlined />),
     // getItem(<Link href="/admin/discussion">Thảo luận</Link>, '13', <CommentOutlined />),
     getItem('Thảo luận', 'sub5', <CommentOutlined />, [
-        getItem(<Link href="/admin/discussion">Danh sách thảo luận</Link>, '13'),
-        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '14'),
-        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '15')
+        getItem(<Link href="/admin/discussion">Danh sách thảo luận</Link>, '15'),
+        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '16'),
+        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '17')
     ]),
     getItem(
         <div className="relative">
@@ -67,7 +69,7 @@ const items: MenuItem[] = [
                 10
             </Chip>
         </div>,
-        '16',
+        '18',
         <BellOutlined />
     )
 ];

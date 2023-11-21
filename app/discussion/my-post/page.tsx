@@ -31,10 +31,10 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
+    // { name: 'ID', uid: 'id', sortable: true },
+    { name: 'Chủ Đề', uid: 'topicName', sortable: true },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
-    { name: 'Chủ Đề', uid: 'topicName', sortable: true },
     { name: 'TƯƠNG TÁC', uid: 'reactCount' },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'TRẠNG THÁI', uid: 'status' },
@@ -45,7 +45,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
     const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'title', 'topicName', 'reactCount', 'ownerFullName', 'createTime', 'status', 'action'])
+        new Set(['topicName', 'title', 'reactCount', 'ownerFullName', 'createTime', 'status', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -91,22 +91,26 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         }
     }, []);
 
-    const renderCell = useCallback((post: DiscussionType, columnKey: Key) => {
-        const cellValue = post[columnKey as keyof DiscussionType];
+    const renderCell = useCallback((post: any, columnKey: Key) => {
+        const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
-            // case 'author':
-            //     return (
-            //         <User
-            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-            //             classNames={{
-            //                 description: 'text-default-500'
-            //             }}
-            //             name={cellValue}
-            //         >
-            //             {post.author}
-            //         </User>
-            //     );
+            case 'ownerFullName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: post.ownerAvatar ? post.ownerAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {post.ownerFullName}
+                    </User>
+                );
             case 'status':
                 return (
                     <Chip

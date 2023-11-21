@@ -41,18 +41,19 @@ const items: MenuItem[] = [
     ]),
     getItem('Khóa học', 'sub2', <AuditOutlined />, [
         getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '5'),
-        getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '6')
+        getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '6'),
+        getItem(<Link href="/teacher/course/my-course-draft">Khóa học vừa tạo</Link>, '7')
     ]),
     getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
-        getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '7'),
-        getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '8')
+        getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '8'),
+        getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '9')
     ]),
     getItem('Thảo luận', 'sub4', <CommentOutlined />, [
-        getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '9'),
-        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '10'),
-        getItem(<Link href="/teacher/discussion/my-post">Bài viết của tôi</Link>, '11')
+        getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '10'),
+        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '11'),
+        getItem(<Link href="/teacher/discussion/my-post">Bài viết của tôi</Link>, '12')
     ]),
-    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '12', <LineChartOutlined />),
+    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '13', <LineChartOutlined />),
     getItem(
         <div className="relative">
             <Link href="/teacher/notification">Thông báo</Link>
@@ -60,7 +61,7 @@ const items: MenuItem[] = [
                 10
             </Chip>
         </div>,
-        '13',
+        '14',
         <BellOutlined />
     )
 ];

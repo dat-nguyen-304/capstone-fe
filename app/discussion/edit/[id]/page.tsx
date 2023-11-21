@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useUser } from '@/hooks';
@@ -32,14 +32,20 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
         queryFn: () => discussionApi.getAll(0, 100)
     });
     const [selectedTopic, setSelectedTopic] = useState<Number>(editDiscussion?.topicId);
-    const { control, handleSubmit, setError } = useForm({
+    const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
             title: editDiscussion?.title || '',
             course: '',
             content: editDiscussion?.content || ''
         }
     });
-
+    useEffect(() => {
+        if (editDiscussion) {
+            setValue('title', editDiscussion?.title);
+            setValue('content', editDiscussion?.content);
+            setSelectedTopic(editDiscussion?.topicId);
+        }
+    }, [editDiscussion]);
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {

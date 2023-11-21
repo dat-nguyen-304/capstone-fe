@@ -40,7 +40,7 @@ const UploadVideo: React.FC = () => {
     });
     const { data: coursesData, isLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(currentUser.user?.email as string, 0, 100)
+        queryFn: () => courseApi.getAllOfTeacher(0, 100)
     });
 
     const [selectedCourse, setSelectedCourse] = useState<number>();
