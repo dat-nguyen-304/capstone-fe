@@ -5,6 +5,10 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { UniqueIdentifier } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
+import Link from 'next/link';
+import { useCustomModal } from '@/hooks';
 interface VideoSortItemProps {
     videoItem: {
         id: number;
@@ -37,6 +41,15 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
             type: 'item'
         }
     });
+    const { onOpen, onDanger } = useCustomModal();
+
+    const removeVideo = () => {
+        onDanger({
+            title: 'Xác nhận xóa video',
+            content: 'Bạn sẽ không nhìn thấy video sau khi xóa. Bạn chắc chứ?'
+        });
+        onOpen();
+    };
 
     return (
         <li
@@ -61,13 +74,13 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                     {floatToTime(videoItem?.duration)}
                 </span>
             </div>
-            <div className="max-w-[60%] flex flex-col justify-between ml-1 sm:ml-4">
+            <div className="max-w-[50%] flex flex-col justify-between ml-1 sm:ml-4">
                 <h3 className="font-semibold truncate text-xs sm:text-sm">{videoItem?.name}</h3>
                 <div>
                     <span className="text-xs"> 7 ngày trước</span>
                 </div>
             </div>
-            <div className="ml-auto mr-1">
+            <div className="ml-auto flex items-center gap-2">
                 <div className="block sm:hidden" {...listeners}>
                     <AiOutlineMenu />
                 </div>
@@ -76,6 +89,26 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                     {...listeners}
                 >
                     <AiOutlineMenu />
+                </div>
+                <div>
+                    <Dropdown className="bg-background border-1 border-default-200">
+                        <DropdownTrigger>
+                            <Button isIconOnly radius="full" size="sm" variant="light">
+                                <BsThreeDotsVertical className="text-default-400" />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Table Columns">
+                            <DropdownItem color="primary" as={Link} href={`/teacher/video/${videoItem.id}`}>
+                                Xem chi tiết
+                            </DropdownItem>
+                            <DropdownItem color="warning" as={Link} href={`/teacher/video/edit/${videoItem.id}`}>
+                                Chỉnh sửa
+                            </DropdownItem>
+                            <DropdownItem color="danger" onClick={removeVideo}>
+                                Xóa
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
             </div>
         </li>

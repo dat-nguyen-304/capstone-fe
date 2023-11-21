@@ -6,7 +6,7 @@ import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { InputNumber } from '@/components/form-input/InputNumber';
 import { Subject } from '@/types';
-import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import { Button, Checkbox, Input, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useCallback, useState } from 'react';
@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { courseApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 interface CommonInfoProps {
     commonInfo?: {
         id: number;
@@ -43,6 +44,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
             price: commonInfo?.price
         }
     });
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -59,46 +61,51 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     });
 
     const onSubmit = async (formData: any) => {
-        try {
-            const courseRequest = {
-                courseId: commonInfo?.id,
-                description: formData.description,
-                name: formData.name,
-                price: Number(formData.price),
-                levelId: levelId
-            };
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else
+            try {
+                const courseRequest = {
+                    courseId: commonInfo?.id,
+                    description: formData.description,
+                    name: formData.name,
+                    price: Number(formData.price),
+                    levelId: levelId
+                };
 
-            console.log(courseRequest);
-            console.log(uploadedFiles[0]);
-            console.log(videoOrders);
+                console.log(courseRequest);
+                console.log(uploadedFiles[0]);
+                console.log(videoOrders);
 
-            const formDataPayload = new FormData();
-            formDataPayload.append(
-                'courseRequest',
-                new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
-            );
-            if (uploadedFiles[0]) {
-                formDataPayload.append('thumbnail', uploadedFiles[0]);
-            }
-            if (!videoOrders) {
-                formDataPayload.append('videoOrders', new Blob([JSON.stringify(null)], { type: 'application/json' }));
-            } else {
+                const formDataPayload = new FormData();
                 formDataPayload.append(
-                    'videoOrders',
-                    new Blob([JSON.stringify(videoOrders)], { type: 'application/json' })
+                    'courseRequest',
+                    new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
                 );
-            }
+                if (uploadedFiles[0]) {
+                    formDataPayload.append('thumbnail', uploadedFiles[0]);
+                }
+                if (!videoOrders) {
+                    formDataPayload.append(
+                        'videoOrders',
+                        new Blob([JSON.stringify(null)], { type: 'application/json' })
+                    );
+                } else {
+                    formDataPayload.append(
+                        'videoOrders',
+                        new Blob([JSON.stringify(videoOrders)], { type: 'application/json' })
+                    );
+                }
 
-            const response = await courseApi.updateCourse(formDataPayload);
-            if (response) {
-                console.log('Course update successfully:', response);
-                router.push('/teacher/course/my-course');
+                const response = await courseApi.updateCourse(formDataPayload);
+                if (response) {
+                    console.log('Course update successfully:', response);
+                    router.push('/teacher/course/my-course');
+                }
+                // Handle the response as needed
+            } catch (error) {
+                console.error('Error creating course:', error);
+                // Handle error
             }
-            // Handle the response as needed
-        } catch (error) {
-            console.error('Error creating course:', error);
-            // Handle error
-        }
     };
 
     if (!data) return <Loader />;
@@ -144,28 +151,23 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                                 labelPlacement="outside"
                                 label="Tên khóa học"
                                 control={control}
-                                // value={commonInfo?.name}
+                                color="primary"
                             />
                         </div>
-                        <div className="col-span-2 mt-4">
+                        <div className="col-span-2">
                             <InputNumber control={control} label="Giá" name="price" />
                         </div>
                         <div className="col-span-2 sm:grid grid-cols-2 gap-4">
-                            {/* <div className="col-span-1 mt-12 md:mt-8">
-                            <Select
-                                label="Chọn môn học"
-                                color="primary"
-                                variant="bordered"
-                                labelPlacement="outside"
-                                defaultSelectedKeys={['1']}
-                            >
-                                {data.map((subject: Subject) => (
-                                    <SelectItem key={subject.id} value={subject.id}>
-                                        {subject.name}
-                                    </SelectItem>
-                                ))}
-                            </Select>
-                        </div> */}
+                            <div className="col-span-1 mt-12 md:mt-8">
+                                <Input
+                                    color="primary"
+                                    disabled
+                                    name="name"
+                                    labelPlacement="outside"
+                                    label="Môn học"
+                                    value="Toán học"
+                                />
+                            </div>
                             <div className="col-span-1 mt-12 md:mt-8">
                                 <Select
                                     label="Mức độ"
@@ -201,7 +203,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                 </div>
                 <div className="flex items-start mb-8 mt-20 sm:mt-16">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
@@ -211,8 +213,8 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         .
                     </label>
                 </div>
-                <Button type="submit" color="primary">
-                    Xác nhận thay đổi
+                <Button color="primary" onClick={onSubmit}>
+                    Lưu thay đổi
                 </Button>
             </form>
         </>

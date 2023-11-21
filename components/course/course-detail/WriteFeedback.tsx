@@ -44,7 +44,12 @@ const WriteFeedback: React.FC<WriteFeedbackProps> = ({ onSubmit }) => {
                 onChange={handleCommentChange}
             />
             <div className="flex justify-end">
-                <Button className="mt-4" disabled={comment == '' ? true : false} onClick={handleSubmit}>
+                <Button
+                    className="mt-4"
+                    disabled={!comment}
+                    color={comment === '' ? 'default' : 'primary'}
+                    onClick={handleSubmit}
+                >
                     Bình luận
                 </Button>
             </div>

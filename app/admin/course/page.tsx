@@ -23,17 +23,9 @@ import Loader from '@/components/Loader';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
 import { useCustomModal } from '@/hooks';
+import { courseStatusColorMap } from '@/utils';
 
 interface CoursesProps {}
-
-const statusColorMap: Record<string, ChipProps['color']> = {
-    AVAILABLE: 'success',
-    REJECT: 'danger',
-    BANNED: 'danger',
-    WAITING: 'primary',
-    UPDATING: 'primary',
-    UNAVAILABLE: 'warning'
-};
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
@@ -243,7 +235,7 @@ const Courses: React.FC<CoursesProps> = () => {
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[course.status]}
+                        color={courseStatusColorMap[course.status]}
                         size="sm"
                         variant="dot"
                     >
@@ -270,7 +262,7 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
+                                <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
@@ -319,6 +311,7 @@ const Courses: React.FC<CoursesProps> = () => {
                             placeholder="Tìm kiếm..."
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
+                            color="primary"
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}

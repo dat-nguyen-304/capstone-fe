@@ -53,7 +53,13 @@ const Profile: React.FC = () => {
                     <div>
                         <div className="2xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold">Họ và tên</p>
-                            <Input name="Họ và tên" variant="underlined" size="sm" className="max-w-xs" />
+                            <Input
+                                name="Họ và tên"
+                                color="primary"
+                                variant="underlined"
+                                size="sm"
+                                className="max-w-xs"
+                            />
                         </div>
                         <div className="2xl:flex items-center mt-8 2xl:mt-4">
                             <p className="w-[160px] font-semibold">Giáo viên môn</p>

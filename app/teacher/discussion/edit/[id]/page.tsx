@@ -56,6 +56,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
                     label="Tên tiêu đề"
                     size="sm"
                     className="w-[100%] max-w-[360px] mb-2 sm:mb-0"
+                    color="primary"
                     variant="bordered"
                     control={control}
                 />

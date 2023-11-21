@@ -216,6 +216,7 @@ const Quizzes: React.FC<VideosProps> = () => {
                         size="sm"
                         startContent={<BsSearch className="text-default-300" />}
                         value={filterValue}
+                        color="primary"
                         variant="bordered"
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}

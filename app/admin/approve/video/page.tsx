@@ -207,6 +207,8 @@ const Videos: React.FC<VideosProps> = () => {
         const cellValue = video[columnKey as keyof Video];
 
         switch (columnKey) {
+            case 'rating':
+                return (cellValue as number).toFixed(1);
             case 'teacher':
                 return (
                     <User
@@ -233,9 +235,7 @@ const Videos: React.FC<VideosProps> = () => {
                                 <DropdownItem color="danger" onClick={() => onDeclineOpen(video?.id, 'REJECT')}>
                                     Từ chối
                                 </DropdownItem>
-                                <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
-                                    Xem chi tiết
-                                </DropdownItem>
+                                <DropdownItem color="primary">Xem chi tiết</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -268,6 +268,7 @@ const Videos: React.FC<VideosProps> = () => {
                             placeholder="Tìm kiếm..."
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
+                            color="primary"
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}

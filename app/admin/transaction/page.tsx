@@ -173,6 +173,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         size="sm"
                         startContent={<BsSearch className="text-default-300" />}
                         value={filterValue}
+                        color="primary"
                         variant="bordered"
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}

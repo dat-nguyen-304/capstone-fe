@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import VideoHeader from '@/components/header/VideoHeader';
-import { Button, Tab, Tabs } from '@nextui-org/react';
+import { Button, Tab, Tabs, Textarea } from '@nextui-org/react';
 import CommentItem from '@/components/video/CommentItem';
 import { useState } from 'react';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
@@ -15,6 +15,7 @@ import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
+import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoProps {
     params: { id: number };
@@ -23,19 +24,26 @@ interface VideoProps {
 const Video: React.FC<VideoProps> = ({ params }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [openVideoList, setOpenVideoList] = useState(false);
+    const [comment, setComment] = useState<string>('');
+    const [currentTime, setCurrentTime] = useState('');
+    const [isLike, setIsLike] = useState(false);
+
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
     };
-    const [currentTime, setCurrentTime] = useState('');
+
     const handleProgress = (progress: OnProgressProps) => {
         const timeString = convertSeconds(progress.playedSeconds);
         setCurrentTime(timeString);
     };
+
     const { data, isLoading } = useQuery<any>({
         queryKey: ['video-detail', params?.id],
         queryFn: () => videoApi.getVideoDetailById(params?.id)
     });
+
     if (!data) return <Loader />;
+
     return (
         <VideoHeader>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
@@ -50,7 +58,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                 controls={true}
                                 onPlay={() => setIsPlaying(true)}
                                 onPause={() => setIsPlaying(false)}
-                                // url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
                                 url={
                                     data?.url ||
                                     'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
@@ -58,7 +65,16 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                 onProgress={progress => handleProgress(progress)}
                             />
                         </div>
-                        <h3 className="mt-4 text-xl font-semibold">{data?.name}</h3>
+                        <div className="mt-4 flex items-center">
+                            <h3 className="text-xl flex-[1] font-semibold">{data?.name}</h3>
+                            <div className="flex items-center gap-2">
+                                <BiSolidLike
+                                    onClick={() => setIsLike(!isLike)}
+                                    className={`text-xl ${isLike ? 'text-blue-500' : 'text-gray-500'} `}
+                                />
+                                <span>12</span>
+                            </div>
+                        </div>
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học
                         </Button>
@@ -68,6 +84,22 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                     <Note currentTime={currentTime} />
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
+                                    <Textarea
+                                        variant="underlined"
+                                        labelPlacement="outside"
+                                        placeholder="Viết bình luận"
+                                        value={comment}
+                                        onChange={e => setComment(e.target.value)}
+                                    />
+                                    <div className="flex justify-end">
+                                        <Button
+                                            disabled={!comment}
+                                            color={comment === '' ? 'default' : 'primary'}
+                                            className="my-4"
+                                        >
+                                            Bình luận
+                                        </Button>
+                                    </div>
                                     <ul className="px-0 sm:px-4">
                                         {/* <CommentItem />
                                         <CommentItem />

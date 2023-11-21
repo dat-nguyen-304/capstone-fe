@@ -133,6 +133,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                             placeholder="Tìm kiếm..."
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
+                            color="primary"
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}

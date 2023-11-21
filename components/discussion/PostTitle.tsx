@@ -81,11 +81,11 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
                     <h4 className="font-semibold text-base mb-2">{postContent.title}</h4>
                     <div className="my-2">
                         <Gallery>
-                            <Item original="/banner/slide-1.png" width="1024" height="768">
+                            <Item original={postContent?.image as string} width="1024" height="768">
                                 {({ open }) => (
                                     <Image
                                         onClick={open}
-                                        src={postContent?.image || '/banner/slide-1.png'}
+                                        src={postContent?.image as string}
                                         width={100}
                                         height={80}
                                         alt=""

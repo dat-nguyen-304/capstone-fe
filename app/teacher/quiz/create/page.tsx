@@ -22,7 +22,15 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
             <div className="sm:grid grid-cols-6 my-4 gap-2">
                 <div className="my-4 col-span-6 lg:col-span-3">
-                    <InputText isRequired variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
+                    <InputText
+                        isRequired
+                        variant="bordered"
+                        name="name"
+                        color="primary"
+                        size="sm"
+                        label="Tiêu đề"
+                        control={control}
+                    />
                 </div>
                 <div className=" my-4 col-span-3 lg:col-span-3">
                     <Select

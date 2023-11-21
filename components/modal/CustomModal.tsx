@@ -31,9 +31,14 @@ export const CustomModal: React.FC<CustomModalProps> = () => {
                 );
             case 'danger':
                 return (
-                    <Button color="primary" onPress={activeFn}>
-                        Đóng
-                    </Button>
+                    <>
+                        <Button className="bg-white" variant="bordered" onPress={activeFn}>
+                            Đóng
+                        </Button>
+                        <Button color="primary" onPress={activeFn}>
+                            Xác nhận
+                        </Button>
+                    </>
                 );
             case 'loading':
                 return <></>;

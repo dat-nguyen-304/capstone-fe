@@ -27,7 +27,15 @@ const EditQuiz: React.FC<EditQuizProps> = () => {
             </div>
             <div className="sm:grid grid-cols-6 my-4 gap-2">
                 <div className="my-4 col-span-6 lg:col-span-3">
-                    <InputText isRequired variant="bordered" name="name" size="sm" label="Tiêu đề" control={control} />
+                    <InputText
+                        isRequired
+                        color="primary"
+                        variant="bordered"
+                        name="name"
+                        size="sm"
+                        label="Tiêu đề"
+                        control={control}
+                    />
                 </div>
                 <div className=" my-4 col-span-3 lg:col-span-3">
                     <Select

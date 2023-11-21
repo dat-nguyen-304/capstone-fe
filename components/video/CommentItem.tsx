@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, Button, Tooltip } from '@nextui-org/react';
+import { Avatar, Button, Textarea, Tooltip } from '@nextui-org/react';
 import { AiOutlineLike } from 'react-icons/ai';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { CiFlag1 } from 'react-icons/ci';
@@ -13,6 +13,7 @@ import 'photoswipe/dist/photoswipe.css';
 import { useReportModal } from '@/hooks';
 import { CommentCardType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
+import { IoMdSend } from 'react-icons/io';
 
 interface CommentItemProps {
     commentInfo: CommentCardType | any;
@@ -20,8 +21,7 @@ interface CommentItemProps {
 
 const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
     const [showSubComment, setShowSubComment] = useState<boolean>(false);
-    const defaultContent =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+    const [showWriteResponse, setShowWriteResponse] = useState<boolean>(false);
     const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
 
     const openReportModal = () => {
@@ -59,7 +59,9 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
                         <AiOutlineLike />
                         <span className="text-xs sm:text-sm">7</span>
                     </span>
-                    <p className="text-xs sm:text-sm">Phản hồi</p>
+                    <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
+                        Phản hồi
+                    </Button>
                     <Tooltip
                         onClick={openReportModal}
                         placement="right"
@@ -76,11 +78,25 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
                         </button>
                     </Tooltip>
                 </div>
-                <div className="mt-2">
+                <div className="">
                     <Button variant="light" onClick={() => setShowSubComment(!showSubComment)}>
                         {showSubComment ? <BsChevronUp /> : <BsChevronDown />}
                         <span className="text-xs sm:text-sm">4 Phản hồi</span>
                     </Button>
+                    {showWriteResponse && (
+                        <div className="flex items-end gap-2">
+                            <Textarea
+                                variant="bordered"
+                                color="primary"
+                                labelPlacement="outside"
+                                placeholder="Viết phản hồi của bạn"
+                                className="mt-2"
+                            />
+                            <Button className="ml-[-78px] mb-2" color="primary" variant="light" size="sm">
+                                <IoMdSend size={20} />
+                            </Button>
+                        </div>
+                    )}
                     {showSubComment && (
                         <ul className="mt-2">
                             <SubCommentItem />

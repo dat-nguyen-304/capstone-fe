@@ -106,6 +106,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
                                     variant="underlined"
                                     size="sm"
                                     className="max-w-xs"
+                                    color="primary"
                                     value={studentData?.data?.fullName}
                                 />
                             </div>

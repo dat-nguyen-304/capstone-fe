@@ -225,7 +225,7 @@ const Courses: React.FC<CoursesProps> = () => {
                                 <DropdownItem color="danger" onClick={() => onDeclineOpen(course?.id, 'REJECT')}>
                                     Từ chối
                                 </DropdownItem>
-                                <DropdownItem color="primary" as={Link} href="/admin/preview/course/1">
+                                <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
                             </DropdownMenu>
@@ -260,6 +260,7 @@ const Courses: React.FC<CoursesProps> = () => {
                             placeholder="Tìm kiếm..."
                             startContent={<BsSearch className="text-default-300" />}
                             value={filterValue}
+                            color="primary"
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}

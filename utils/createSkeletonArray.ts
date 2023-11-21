@@ -4,4 +4,4 @@ export const createSkeletonArray = (q: number) => {
         arr.push(i);
     }
     return arr;
-}
+};

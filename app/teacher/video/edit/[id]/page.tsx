@@ -129,7 +129,14 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                     </div>
                     <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
                         <div className="col-span-1 my-4 sm:my-0">
-                            <InputText variant="bordered" name="name" size="sm" label="Tên Video" control={control} />
+                            <InputText
+                                color="primary"
+                                variant="bordered"
+                                name="name"
+                                size="sm"
+                                label="Tên Video"
+                                control={control}
+                            />
                         </div>
                         <div className="col-span-1 my-4 sm:my-0">
                             <Select

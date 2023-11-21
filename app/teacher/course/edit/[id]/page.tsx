@@ -56,6 +56,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         <div className="w-[98%] sm:w-full lg:w-[90%] mx-auto">
             <div className="mt-4 sm:mt-0 flex justify-between">
                 <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa khóa học</h3>
+
                 <Button size="sm" as={Link} href={`/teacher/course/${params.id}`}>
                     Quay lại
                 </Button>

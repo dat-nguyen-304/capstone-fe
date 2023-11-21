@@ -4,7 +4,9 @@ import './globals.css';
 import ReactQueryProvider from '@/components/provider/ReactQueryProvider';
 import AntdProvider from '@/components/provider/AntdProvider';
 import NextUiProvider from '@/components/provider/NextUiProvider';
-import { CustomModal, ReportModal } from '@/components/modal';
+import { CustomModal } from '@/components/modal';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Mulish({ subsets: ['latin'] });
 
@@ -21,6 +23,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
                     <NextUiProvider>
                         {children}
                         <CustomModal />
+                        <ToastContainer />
                     </NextUiProvider>
                 </AntdProvider>
             </ReactQueryProvider>

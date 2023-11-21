@@ -105,7 +105,7 @@ nav header {
 }
 
 .background-xl {
-     background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/background.webp');
+    //background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/background.webp');
     /* background-image: url('/bg-light.png');
     background-size: contain;
     background-repeat: no-repeat; */
@@ -124,4 +124,8 @@ nav header {
     background-position: bottom;
     background-color: #fff;
     text-align: center;
+}
+
+.Toastify__toast-body {
+    font-size: 14px;
 }

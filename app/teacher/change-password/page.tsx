@@ -64,6 +64,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
                         className="my-4"
                         label="Mật khẩu cũ"
                         variant="bordered"
+                        color="primary"
                     />
                     <InputPassword
                         name="newPassword"
@@ -71,6 +72,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
                         className="my-4"
                         label="Mật khẩu mới"
                         variant="bordered"
+                        color="primary"
                     />
                     <InputPassword
                         name="confirmPassword"
@@ -78,6 +80,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
                         className="my-4"
                         label="Xác nhận mật khẩu"
                         variant="bordered"
+                        color="primary"
                     />
                     {errorMessage && <p className="my-4 text-red-500 text-xs sm:text-sm">{errorMessage}</p>}
                     {successMessage && <p className="my-4 text-green-700 text-xs sm:text-sm">{successMessage}</p>}
