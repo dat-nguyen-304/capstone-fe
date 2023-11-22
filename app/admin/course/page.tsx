@@ -231,6 +231,9 @@ const Courses: React.FC<CoursesProps> = () => {
                         name={cellValue}
                     />
                 );
+            case 'rating':
+                const ratingValue = parseFloat(course?.rating || '0');
+                return ratingValue.toFixed(1);
             case 'status':
                 return (
                     <Chip

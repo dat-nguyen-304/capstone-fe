@@ -25,7 +25,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['exams', { page }],
         // keepPreviousData: true,
-        queryFn: () => examApi.getAll('ALL', page - 1, 20)
+        queryFn: () => examApi.getAll('PUBLIC_EXAM', page - 1, 20)
     });
     useEffect(() => {
         if (data?.data) {

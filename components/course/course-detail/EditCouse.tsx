@@ -7,6 +7,7 @@ import { TfiVideoClapper } from 'react-icons/tfi';
 import { FaBookReader } from 'react-icons/fa';
 import Link from 'next/link';
 import { BiSolidPencil } from 'react-icons/bi';
+import { FaTrash } from 'react-icons/fa';
 import { courseStatusColorMap } from '@/utils';
 
 interface EditCourseProps {
@@ -23,6 +24,8 @@ interface EditCourseProps {
 }
 
 const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
+    console.log(editCourse);
+
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -44,6 +47,12 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 >
                     Chỉnh sửa <BiSolidPencil />
                 </Button>
+                {editCourse?.status != 'AVAILABLE' ? (
+                    <Button color="danger" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black">
+                        Xóa khóa học <FaTrash />
+                    </Button>
+                ) : null}
+
                 <Button
                     color="primary"
                     className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
@@ -85,6 +94,8 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                                 ? 'Đã Xóa'
                                 : editCourse?.status === 'UPDATING'
                                 ? 'Chờ cập nhật'
+                                : editCourse?.status === 'DRAFT'
+                                ? 'Bản nháp'
                                 : 'Vô hiệu'}
                         </Chip>
                     </div>

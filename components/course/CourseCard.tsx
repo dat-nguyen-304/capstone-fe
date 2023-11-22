@@ -9,6 +9,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     REJECT: 'danger',
     BANNED: 'danger',
     WAITING: 'primary',
+    DRAFT: 'primary',
     UPDATING: 'primary',
     UNAVAILABLE: 'warning'
 };
@@ -16,12 +17,14 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 interface CourseCardProps {
     isMyCourse?: boolean;
     isTeacherCourse?: boolean;
+    isTeacherCourseDraft?: boolean;
     course: CourseCardType;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, course }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, isTeacherCourseDraft, course }) => {
     let detailPage = '';
     if (isTeacherCourse) detailPage = `/teacher/course/${course?.id}`;
+    else if (isTeacherCourseDraft) detailPage = `/teacher/course/my-course-draft/${course?.id}`;
     else if (isMyCourse) detailPage = `/my-course/${course?.id}`;
     else detailPage = `/course/${course?.id}`;
     return (
@@ -76,6 +79,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, co
                                     ? 'Đã Xóa'
                                     : course?.status === 'UPDATING'
                                     ? 'Chờ cập nhật'
+                                    : course?.status === 'DRAFT'
+                                    ? 'Bản nháp'
                                     : 'Vô hiệu'}
                             </Chip>
                         )}

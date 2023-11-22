@@ -37,6 +37,7 @@ interface CourseContentProps {
         teacherName: string;
         courseName: string;
         totalVideo: number;
+        thumbnail: string;
         listVideo: VideoItem[];
     };
     setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number }[]>>;

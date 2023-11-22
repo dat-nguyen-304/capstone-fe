@@ -85,7 +85,7 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                     <AiOutlineMenu />
                 </div>
                 <div
-                    className="border-1 border-gray-400 bg-gray-100 py-2 px-4 rounded-xl hidden sm:flex"
+                    className="block border-1 border-gray-400 bg-gray-100 py-2 px-4 rounded-xl hidden sm:flex"
                     {...listeners}
                 >
                     <AiOutlineMenu />

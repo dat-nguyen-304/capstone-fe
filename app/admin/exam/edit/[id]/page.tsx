@@ -206,24 +206,6 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                         </div>
 
                         <Select
-                            label="Mức độ"
-                            color="primary"
-                            variant="bordered"
-                            labelPlacement="outside"
-                            defaultSelectedKeys={[`${examDetail?.level}`]}
-                            onChange={event => setLevel(String(event.target.value))}
-                        >
-                            <SelectItem key={'EASY'} value={'EASY'}>
-                                Cơ bản
-                            </SelectItem>
-                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
-                                Trung bình
-                            </SelectItem>
-                            <SelectItem key={'HARD'} value={'HARD'}>
-                                Nâng cao
-                            </SelectItem>
-                        </Select>
-                        <Select
                             label="Thể loại kiểm tra"
                             color="primary"
                             variant="bordered"

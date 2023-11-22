@@ -31,7 +31,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryKey: ['my-course-detail'],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
-    const { data: feebackData } = useQuery<any>({
+    const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacks'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
@@ -62,12 +62,12 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         listVideo: courseData?.courseVideoResponses
     };
     console.log(courseData);
-    console.log(feebackData);
+    console.log(feedbacksData);
     const handleFeedbackSubmission = async (feedback: { rating: number; comment: string }) => {
         try {
             const ratingCourse = {
                 courseId: Number(params?.id),
-                rating: feedback.rating,
+                rating: Number(feedback.rating),
                 content: feedback.comment
             };
             const res = await ratingCourseApi.createRating(ratingCourse);
@@ -89,7 +89,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                     <CourseInfo courseInfo={courseInfo} />
                     <CourseContent isMyCourse={true} courseContent={courseContent} />
                     <WriteFeedback onSubmit={handleFeedbackSubmission} />
-                    <Feedback />
+                    <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
                     <CourseImage courseImage={courseImage} />

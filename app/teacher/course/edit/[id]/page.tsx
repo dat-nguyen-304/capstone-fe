@@ -6,6 +6,7 @@ import CommonInfo from '@/components/course/edit-course/CommonInfo';
 import CourseContent from '@/components/course/edit-course/CouseContent';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
+import { Spin } from 'antd';
 import Link from 'next/link';
 import { useState } from 'react';
 interface EditCourseProps {
@@ -13,7 +14,7 @@ interface EditCourseProps {
 }
 
 const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
-    const { data, isLoading } = useQuery<any>({
+    const { data, isLoading, status } = useQuery<any>({
         queryKey: ['editCourse'],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
         staleTime: 20000
@@ -26,13 +27,15 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         thumbnail: data?.thumbnail,
         level: data?.level,
         description: data?.description,
-        price: data?.price
+        price: data?.price,
+        subject: data?.subject
     };
     const courseContent = {
         teacherName: data?.teacherName,
         courseName: data?.courseName,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        listVideo: data?.courseVideoResponses,
+        thumbnail: data?.thumbnail
     };
 
     // const arrays = data?.videoResponse.map((video: any, index: number) => {

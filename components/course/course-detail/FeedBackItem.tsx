@@ -3,9 +3,11 @@
 import { Avatar } from '@nextui-org/react';
 import { Rate } from 'antd';
 
-interface FeedbackItemProps {}
+interface FeedbackItemProps {
+    feedbackInfo: any;
+}
 
-const FeedbackItem: React.FC<FeedbackItemProps> = ({}) => {
+const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedbackInfo }) => {
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     return (
@@ -14,13 +16,21 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({}) => {
                 <div className="p-2 flex">
                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" className="w-12 h-12" />
                     <div className="ml-4">
-                        <p className="text-sm font-semibold">Nguyễn Văn A</p>
-                        <Rate className="!text-xs sm:text-base" disabled defaultValue={5} />
+                        <p className="text-sm font-semibold">
+                            {feedbackInfo?.fullname ? feedbackInfo?.fullname : 'Nguyễn Văn A'}
+                        </p>
+                        <Rate
+                            className="!text-xs sm:text-base"
+                            disabled
+                            defaultValue={feedbackInfo?.rate ? feedbackInfo?.rate : 5}
+                        />
                     </div>
                 </div>
                 <p className="font-light text-sm">22/10/2023</p>
             </div>
-            <div className="p-2 text-sm text-justify">{defaultContent}</div>
+            <div className="p-2 text-sm text-justify">
+                {feedbackInfo?.content ? feedbackInfo?.content : defaultContent}
+            </div>
         </li>
     );
 };

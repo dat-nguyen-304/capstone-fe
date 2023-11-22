@@ -70,14 +70,14 @@ const Exams: React.FC<ExamsProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
-
+    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['exams', { page, rowsPerPage }],
+        queryKey: ['exams', { page, rowsPerPage, updateState }],
         // keepPreviousData: true,
-        queryFn: () => examApi.getAll('ALL', page - 1, rowsPerPage)
+        queryFn: () => examApi.getAllByAdmin(page - 1, rowsPerPage)
     });
     useEffect(() => {
         if (data?.data) {
@@ -117,11 +117,32 @@ const Exams: React.FC<ExamsProps> = () => {
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
-    const onDeactivateOpen = () => {
+    const handleStatusChange = async (id: number) => {
+        try {
+            onLoading();
+            const res = await examApi.deleteExam(id);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Đã xóa bài thi thành công',
+                    content: 'Bài thi đã được xóa thành công'
+                });
+                setUpdateState(prev => !prev);
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onDeactivateOpen = (id: number) => {
         onDanger({
             title: 'Xác nhận vô hiệu hóa',
-            content: 'Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?'
-            // activeFn: () => handleStatusChange(id, action)
+            content: 'Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id)
         });
         onOpen();
     };
@@ -157,7 +178,7 @@ const Exams: React.FC<ExamsProps> = () => {
                                 <DropdownItem color="warning" as={Link} href={`/admin/exam/edit/${exam?.id}`}>
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={onDeactivateOpen}>
+                                <DropdownItem color="danger" onClick={() => onDeactivateOpen(exam?.id)}>
                                     Vô hiệu hóa
                                 </DropdownItem>
                             </DropdownMenu>
@@ -182,7 +203,7 @@ const Exams: React.FC<ExamsProps> = () => {
     }, []);
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách bài tập</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách bài thi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="flex justify-between gap-3 items-end">

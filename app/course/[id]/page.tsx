@@ -6,7 +6,7 @@ import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi } from '@/api-client';
+import { courseApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 interface CourseDetailProps {
@@ -17,6 +17,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
         queryFn: () => courseApi.getCourseById(params?.id)
+    });
+    const { data: feedbacksData } = useQuery<any>({
+        queryKey: ['feedbacksCourse'],
+        queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
     console.log(data);
 
@@ -56,7 +60,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
                     <CourseContent courseContent={courseContent} />
-                    <Feedback />
+                    <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
                     <BuyCourse buyCourse={buyCourse} />

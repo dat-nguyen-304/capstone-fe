@@ -11,7 +11,7 @@ import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
 import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
-import { videoApi } from '@/api-client';
+import { commentsVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
@@ -27,7 +27,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [comment, setComment] = useState<string>('');
     const [currentTime, setCurrentTime] = useState('');
     const [isLike, setIsLike] = useState(false);
-
+    const [updateState, setUpdateState] = useState<Boolean>(false);
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
     };
@@ -41,7 +41,42 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['video-detail', params?.id],
         queryFn: () => videoApi.getVideoDetailById(params?.id)
     });
+    const { data: commentsData } = useQuery<any>({
+        queryKey: ['commentsVideo', updateState],
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
+    });
+    console.log(commentsData);
 
+    const handleFeedbackSubmission = async () => {
+        try {
+            const commentVideo = {
+                videoId: Number(params?.id),
+                commentContent: comment
+            };
+            console.log(commentVideo);
+            const res = await commentsVideoApi.createCommentVideo(commentVideo);
+            console.log(res);
+            setComment('');
+            setUpdateState(prev => !prev);
+            // console.log(ratingCourse);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    };
+    const mapCommentToCommonInfo = (commentData: any) => {
+        return {
+            id: commentData.id,
+            ownerFullName: commentData.useName || 'Nguyễn Văn A',
+            imageUrl: commentData.imageUrl || '/banner/slide-1.png',
+            content: commentData.comment || 'Nội dung rất hay'
+        };
+    };
+    const commonInfo = {
+        id: 1,
+        ownerFullName: 'Nguyễn Văn A',
+        imageUrl: '/banner/slide-1.png',
+        content: 'Nội dung rất hay'
+    };
     if (!data) return <Loader />;
 
     return (
@@ -96,16 +131,29 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                             disabled={!comment}
                                             color={comment === '' ? 'default' : 'primary'}
                                             className="my-4"
+                                            onClick={handleFeedbackSubmission}
                                         >
                                             Bình luận
                                         </Button>
                                     </div>
                                     <ul className="px-0 sm:px-4">
+                                        {commentsData?.data?.length ? (
+                                            commentsData?.data?.map((commentInfo: any, index: number) => (
+                                                <CommentItem
+                                                    key={index}
+                                                    commentInfo={mapCommentToCommonInfo(commentInfo)}
+                                                />
+                                            ))
+                                        ) : (
+                                            <>
+                                                <CommentItem commentInfo={commonInfo} />
+                                            </>
+                                        )}
+
                                         {/* <CommentItem />
-                                        <CommentItem />
                                         <CommentItem /> */}
                                     </ul>
-                                    <Button className="w-full">Xem thêm</Button>
+                                    {/* <Button className="w-full">Xem thêm</Button> */}
                                 </Tab>
                             </Tabs>
                         </div>

@@ -32,14 +32,14 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
     return (
         <li className="flex gap-4 group mb-6">
             <div>
-                <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+                <Avatar src={commentInfo?.ownerAvatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c'} />
             </div>
             <div className="w-full">
                 <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
                     <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerFullName}</h4>
                     <div className="my-2">
                         <Gallery>
-                            <Item original="/banner/slide-1.png" width="1024" height="768">
+                            <Item original={commentInfo?.imageUrl || '/banner/slide-1.png'} width="1024" height="768">
                                 {({ open }) => (
                                     <Image
                                         onClick={open}

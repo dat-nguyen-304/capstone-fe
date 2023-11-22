@@ -1,6 +1,7 @@
 'use client';
 import { User } from '@nextui-org/react';
 import { Rate } from 'antd';
+import HTMLReactParser from 'html-react-parser';
 import Link from 'next/link';
 
 interface CourseInfoProps {
@@ -55,7 +56,7 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
                 />
             </div>
             <p className="my-2 text-sm">Cập nhật gần đây nhất {formattedDate}</p>
-            <p className="mt-8 text-sm">{courseInfo?.description}</p>
+            <div className="mt-8 text-sm">{HTMLReactParser(courseInfo?.description)}</div>
         </>
     );
 };

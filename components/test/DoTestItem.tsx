@@ -17,6 +17,7 @@ const DoTestItem: React.FC<DoTestItemProps> = ({ questions, index, onAnswer }) =
     const handleAnswer = (selection: string) => {
         onAnswer(index, selection);
     };
+
     return (
         <li className="mt-4">
             <span className="font-semibold text-sm flex items-center">
@@ -25,11 +26,11 @@ const DoTestItem: React.FC<DoTestItemProps> = ({ questions, index, onAnswer }) =
                     <Chip color="primary" variant="flat" size="sm">
                         Câu {index + 1}
                     </Chip>{' '}
-                    <span className="inline-block">{HTMLReactParser(questions?.statement)}</span>
+                    <span className="inline-block">{HTMLReactParser(questions?.question?.statement)}</span>
                 </span>
             </span>
             <RadioGroup className="mt-2">
-                {questions?.answerList?.map((answerList: any, index: number) => (
+                {questions?.question?.answerList?.map((answerList: any, index: number) => (
                     <Radio
                         key={index}
                         size="sm"

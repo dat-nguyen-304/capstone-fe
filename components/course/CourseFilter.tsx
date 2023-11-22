@@ -6,10 +6,13 @@ import { FaUsersLine } from 'react-icons/fa6';
 import FilterDrawer from './FilterDrawer';
 import { useState } from 'react';
 
-interface CourseFilterProps {}
+interface CourseFilterProps {
+    onSearch: (searchTerm: string) => void;
+}
 
-const CourseFilter: React.FC<CourseFilterProps> = () => {
+const CourseFilter: React.FC<CourseFilterProps> = ({ onSearch }) => {
     const [openDrawer, setOpenDrawer] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const showDrawer = () => {
         setOpenDrawer(true);
@@ -17,6 +20,9 @@ const CourseFilter: React.FC<CourseFilterProps> = () => {
 
     const onClose = () => {
         setOpenDrawer(false);
+    };
+    const handleSearch = () => {
+        onSearch(searchTerm);
     };
     return (
         <div className="md:flex items-center gap-8 flex-wrap">
@@ -27,8 +33,14 @@ const CourseFilter: React.FC<CourseFilterProps> = () => {
                 <FilterDrawer onClose={onClose} open={openDrawer} />
             </div>
             <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
-                <Input color="primary" variant="bordered" placeholder="Nhập từ khóa" className="flex-[1]" />
-                <Button color="primary" className="">
+                <Input
+                    color="primary"
+                    variant="bordered"
+                    placeholder="Nhập từ khóa"
+                    className="flex-[1]"
+                    onChange={e => setSearchTerm(e.target.value)}
+                />
+                <Button color="primary" className="" onClick={handleSearch}>
                     Tìm kiếm
                 </Button>
             </div>

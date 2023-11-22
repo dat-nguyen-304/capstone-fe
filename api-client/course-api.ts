@@ -6,6 +6,10 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/user?page=${page}&size=20&sortType=ASC`);
         return res.data;
     },
+    searchCourse: async (searchTerm: string, page: number) => {
+        const res = await axiosClient.get(`/courses/search?searchTerm=${searchTerm}&page=${page}&size=20&sortType=ASC`);
+        return res.data;
+    },
     getCourseById: async (courseId: number) => {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;
@@ -32,6 +36,10 @@ export const courseApi = {
     },
     getCourseByIdForAdminAndTeacher: async (courseId: number) => {
         const res = await axiosClient.get(`/courses/detail/teacher?id=${courseId}`);
+        return res.data;
+    },
+    getCourseDraftById: async (courseDraftId: number) => {
+        const res = await axiosClient.get(`/courses/detail/draft?id=${courseDraftId}`);
         return res.data;
     },
     updateCourse: async (payload: any) => {

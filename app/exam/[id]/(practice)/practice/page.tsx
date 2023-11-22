@@ -37,16 +37,23 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
     const [remainingTime, setRemainingTime] = useState<number | null>(null);
     const [examSubmitted, setExamSubmitted] = useState(false);
     const [selectedAnswers, setSelectedAnswers] = useState<{ questionId: number; selection: string }[]>([]);
-    const { data, isLoading, status } = useQuery<any>({
-        queryKey: ['exam-detail'],
-        queryFn: () => examApi.getExamById(params?.id)
-    });
+    // const { data, isLoading, status } = useQuery<any>({
+    //     queryKey: ['exam-detail'],
+    //     queryFn: () => examApi.getExamById(params?.id)
+    // });
 
     useEffect(() => {
         const createAttempt = async () => {
             try {
                 const res = await examApi.createAttempt(params?.id);
                 console.log(res);
+                const data = res.data;
+                if (data) {
+                    setQuestions(data?.selectionList);
+                    setTotalQuestion(data?.selectionList?.length);
+                    const durationInSeconds = (data?.duration || 60) * 60;
+                    setRemainingTime(durationInSeconds);
+                }
                 // Handle the response if needed
             } catch (error) {
                 // Handle error
@@ -58,14 +65,14 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
         }
     }, [params?.id]);
 
-    useEffect(() => {
-        if (data) {
-            setQuestions(data?.questionList);
-            setTotalQuestion(data?.questionList?.length);
-            const durationInSeconds = (data?.duration || 0) * 60;
-            setRemainingTime(durationInSeconds);
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data) {
+    //         setQuestions(data?.questionList);
+    //         setTotalQuestion(data?.questionList?.length);
+    //         const durationInSeconds = (data?.duration || 0) * 60;
+    //         setRemainingTime(durationInSeconds);
+    //     }
+    // }, [data]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -83,7 +90,8 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
 
     const handleAnswer = (index: number, selection: string) => {
         const updatedAnswers = [...selectedAnswers];
-        const questionId = questions[index]?.id; // Assuming there's a questionId property in your data
+        const questionId = questions[index]?.question?.id; // Assuming there's a questionId property in your data
+
         const existingAnswerIndex = updatedAnswers.findIndex(answer => answer.questionId === questionId);
 
         if (existingAnswerIndex !== -1) {
@@ -110,7 +118,7 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
                 router?.push(`/exam/${params?.id}`);
             }
         } catch (error) {
-            // Handle error
+            console.log(error);
         }
     };
 
@@ -120,8 +128,8 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                     <div className="col-span-7 mt-4">
                         <ul>
-                            {data?.questionList?.length ? (
-                                data?.questionList?.map((questions: QuestionType, index: number) => (
+                            {totalQuestion ? (
+                                questions?.map((questions: any, index: number) => (
                                     <DoTestItem
                                         key={index}
                                         questions={questions}
@@ -176,7 +184,7 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
                                 className="mt-2"
                                 color="primary"
                                 onClick={handleSubmitExam}
-                                disabled={examSubmitted}
+                                // disabled={examSubmitted}
                             >
                                 {/* <Link href="/exam/1">Nộp bài</Link> */}
                                 Nộp bài

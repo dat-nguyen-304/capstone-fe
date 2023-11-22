@@ -2,33 +2,31 @@
 
 import React, { useEffect, useState } from 'react';
 
-import CourseCard from '@/components/course/CourseCard';
-import { courseApi } from '@/api-client';
-import { CourseCardType } from '@/types';
+import VideoCard from '@/components/video/VideoCard';
+import { videoApi } from '@/api-client';
+import { useUser } from '@/hooks';
+import { VideoCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination } from '@nextui-org/react';
-import { useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
+interface MyVideoDraftProps {}
 
-interface MyCourseDraftProps {}
-
-const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
-    const [courses, setCourses] = useState<CourseCardType[]>([]);
+const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
+    const [videos, setVideos] = useState<VideoCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['coursesDraft', { page }],
+        queryKey: ['my-videos-draft', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacherDraft(page - 1, 20)
+        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20)
     });
-
     useEffect(() => {
         if (data?.data) {
-            setCourses(data.data);
+            setVideos(data.data);
             setTotalPage(data.totalPage);
             setTotalRow(data.totalRow);
         }
@@ -46,10 +44,6 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
         {
             value: 'BANNED',
             name: 'Đã cấm'
-        },
-        {
-            value: 'DRAFT',
-            name: 'Bản nháp'
         },
         {
             value: 'WAITING',
@@ -71,10 +65,11 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             top: 0
         });
     };
+    console.log(videos);
 
     return (
-        <div className="w-[98%] xl:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học nháp</h3>
+        <div className="w-[98%] lg:w-[90%] mx-auto">
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video nháp</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 flex justify-between gap-3 items-end">
                     <Input
@@ -98,7 +93,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                                     endContent={<BsChevronDown className="text-small" />}
                                     size="sm"
                                 >
-                                    Môn học
+                                    Khóa học
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -145,13 +140,13 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                     </div>
                 </div>
                 {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
-                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                    {courses.length ? (
-                        courses.map((courseItem: CourseCardType) => (
-                            <CourseCard key={courseItem.id} course={courseItem} isTeacherCourseDraft={true} />
+                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                    {videos.length ? (
+                        videos.map((videoItem: VideoCardType) => (
+                            <VideoCard isTeacherVideo={true} key={videoItem?.id} video={videoItem} />
                         ))
                     ) : (
-                        <></>
+                        <>Danh Sách Video Trống</>
                     )}
                 </div>
                 {totalPage && totalPage > 1 && (
@@ -164,4 +159,4 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     );
 };
 
-export default MyCourseDraft;
+export default MyVideoDraft;

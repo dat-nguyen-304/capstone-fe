@@ -17,14 +17,16 @@ import { courseApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 interface CommonInfoProps {
-    commonInfo?: {
-        id: number;
-        name: string;
-        thumbnail: string;
-        level: string;
-        description: string;
-        price: number;
-    };
+    commonInfo?:
+        | {
+              id: number;
+              name: string;
+              thumbnail: string;
+              level: string;
+              description: string;
+              price: number;
+          }
+        | any;
     videoOrders: { videoId: number; videoOrder: number }[];
 }
 
@@ -45,6 +47,17 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         }
     });
     const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+
+    const getSubjectIdByName = (subjectName: string) => {
+        const foundedSubject = data?.find(subject => subject.name === subjectName);
+
+        if (foundedSubject) {
+            const { id, name } = foundedSubject;
+            return id;
+        }
+        return 1;
+    };
+
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {

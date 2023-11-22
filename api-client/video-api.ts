@@ -17,6 +17,10 @@ export const videoApi = {
         );
         return res.data;
     },
+    getAllOfTeacherDraft: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/videos/admin/draft-list?page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
+    },
     getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
         const res = await axiosClient.get(
             `/videos/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`

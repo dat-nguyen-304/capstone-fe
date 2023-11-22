@@ -9,7 +9,7 @@ import Feedback from '@/components/course/course-detail/Feedback';
 import { useDisclosure } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi } from '@/api-client';
+import { courseApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 interface CourseDetailProps {
     params: { id: number };
@@ -32,6 +32,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
+    });
+    const { data: feedbacksData } = useQuery<any>({
+        queryKey: ['feedbacksCourseTeacher'],
+        queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
     console.log(data);
 
@@ -73,7 +77,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
                     <CourseContent courseContent={courseContent} isTeacherCourse={true} />
-                    <Feedback />
+                    <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
                     <EditCourse onOpen={onOpen} editCourse={editCourse} />
