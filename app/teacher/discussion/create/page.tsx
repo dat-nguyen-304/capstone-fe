@@ -85,7 +85,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
                     <Select
                         isRequired
                         items={data?.data}
-                        label="Chọn môn"
+                        label="Chọn chủ đề"
                         variant="bordered"
                         size="sm"
                         className="max-w-xs"

@@ -70,13 +70,15 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
             top: 0
         });
     };
-    console.log(examData);
-    console.log(examsSubmission);
+
     if (!examData) return <Loader />;
     return (
         <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
-                <div onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm">
+                <div
+                    onClick={() => router.push('/exam')}
+                    className="mb-4 flex items-center gap-2 text-sm cursor-pointer"
+                >
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </div>

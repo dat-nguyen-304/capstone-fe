@@ -25,8 +25,17 @@ export const discussionApi = {
         const res = await axiosClient.get(`/discussion/conversations?&page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
+    getConversationsByTopicId: async (topicId: number, page: number, size: number) => {
+        const res = await axiosClient.get(
+            `/discussion/topics/${topicId}/conversations?&page=${page}&size=${size}&sortType=ASC`
+        );
+        return res.data;
+    },
     createDiscussion: async (payload: any) => {
         return await axiosFormData.post('/discussion/conversations', payload);
+    },
+    deleteDiscussion: async (discussionId: number) => {
+        return await axiosClient.delete(`/discussion/conversations/${discussionId}`);
     },
     getDiscussionById: async (discussionId: number) => {
         const res = await axiosClient.get(`/discussion/conversations/${discussionId}`);
@@ -51,5 +60,11 @@ export const discussionApi = {
     },
     createConversationReport: async (payload: any, discussionId: number) => {
         return await axiosFormData.post(`/discussion/report/conversations/${discussionId}`, payload);
+    },
+    commentReact: async (commentId: number) => {
+        return await axiosClient.put(`/discussion/comments/react/${commentId}`);
+    },
+    createCommentReport: async (payload: any, commentId: number) => {
+        return await axiosFormData.post(`/discussion/report/comments/${commentId}`, payload);
     }
 };

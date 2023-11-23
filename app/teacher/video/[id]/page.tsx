@@ -20,9 +20,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['video-teacher-detail', params?.id],
         queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
     });
-    console.log(params?.id);
-    console.log(data);
 
+    const onSubmitReport = async () => {};
     if (!data) return <Loader />;
     return (
         <>
@@ -99,7 +98,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                     </div>
                 </div>
             </div>
-            <ReportModal />
+            <ReportModal onReport={onSubmitReport} />
         </>
     );
 };

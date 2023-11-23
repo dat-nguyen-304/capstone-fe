@@ -25,7 +25,7 @@ interface PostDetailProps {
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
     const [updateState, setUpdateState] = useState<Boolean>(false);
-
+    const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const { data: discussionData } = useQuery({
         queryKey: ['discussionDetail'],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
@@ -46,7 +46,20 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     });
 
-    const { onOpen, onContentType, reportType, description, file } = useReportModal();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        onContentType,
+        reportType,
+        description,
+        contentType,
+        onReportType,
+        onDescription,
+        onFile,
+        file,
+        onActiveFn
+    } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
@@ -82,13 +95,33 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     };
 
-    const onSubmitReport = async (formData: any) => {
+    const onSubmitReport = async () => {
         try {
             const formDataWithImage = new FormData();
             formDataWithImage.append('reportMsg', description);
-            formDataWithImage.append('reportType', reportType);
+            formDataWithImage.append('reportType', reportType.toUpperCase());
             if (file) {
                 formDataWithImage.append('image', file); // assuming 'image' is the field name expected by the server
+            }
+            if (contentType == 'discussion') {
+                const response = await discussionApi.createConversationReport(formDataWithImage, discussionData?.id);
+
+                if (response) {
+                    onDescription('');
+                    onReportType('integrity');
+                    onFile(null);
+                    onClose();
+                }
+            } else if (contentType == 'comment') {
+                if (reportCommentId) {
+                    const response = await discussionApi.createCommentReport(formDataWithImage, reportCommentId);
+                    if (response) {
+                        onDescription('');
+                        onReportType('integrity');
+                        onFile(null);
+                        onClose();
+                    }
+                }
             }
         } catch (error) {
             console.error('Error creating course:', error);
@@ -98,12 +131,13 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const openReportModal = () => {
         onContentType('discussion');
         onOpen();
+        // onActiveFn(() => onSubmitReport(description, reportType, file));
     };
     const postContent = {
         id: discussionData?.id,
         title: discussionData?.title,
         content: discussionData?.content,
-        image: discussionData?.imageUrl,
+        imageUrl: discussionData?.imageUrl,
         owner: discussionData?.owner,
         auth: discussionData?.ownerFullName,
         like: discussionData?.reactCount,
@@ -190,7 +224,11 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     <ul>
                         {commentsData?.data?.length ? (
                             commentsData?.data?.map((commentInfo: CommentCardType) => (
-                                <CommentItem key={commentInfo?.id} commentInfo={commentInfo} />
+                                <CommentItem
+                                    key={commentInfo?.id}
+                                    commentInfo={commentInfo}
+                                    onCommentId={setReportCommentId}
+                                />
                             ))
                         ) : (
                             <>
@@ -207,7 +245,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
             </div>
-            <ReportModal />
+            <ReportModal onReport={onSubmitReport} />
         </div>
     );
 };

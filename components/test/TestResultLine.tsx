@@ -13,9 +13,6 @@ interface TestResultItemProps {
 const TestResultLine: React.FC<TestResultItemProps> = ({ type, examsSubmissionInfo, index, examId }) => {
     const finishTime = examsSubmissionInfo ? new Date(examsSubmissionInfo?.finishTime) : new Date();
 
-    // Increase the 'finishTime' by 7 hours
-    finishTime.setHours(finishTime.getHours() + 7);
-
     // Get the user's time zone
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

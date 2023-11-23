@@ -17,9 +17,11 @@ import { useCallback } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 
-interface ReportModalProps {}
+interface ReportModalProps {
+    onReport: () => void;
+}
 
-export const ReportModal: React.FC<ReportModalProps> = () => {
+export const ReportModal: React.FC<ReportModalProps> = ({ onReport }) => {
     const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription, activeFn } = useReportModal();
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -107,7 +109,7 @@ export const ReportModal: React.FC<ReportModalProps> = () => {
                     <Button color="danger" variant="light" onPress={onClose}>
                         Hủy bỏ
                     </Button>
-                    <Button color="primary" onPress={activeFn}>
+                    <Button color="primary" onClick={onReport}>
                         Gửi
                     </Button>
                 </ModalFooter>

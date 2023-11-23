@@ -75,6 +75,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         ownerFullName: 'Nguyễn Văn A',
         content: 'Nội dung rất hay'
     };
+    const onSubmitReport = async () => {};
     if (!data) return <Loader />;
 
     return (
@@ -170,7 +171,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <VideoList isOnDrawer={true} video={data?.videoItemResponses} />
                     </Drawer>
                 </div>
-                <ReportModal />
+                <ReportModal onReport={onSubmitReport} />
             </div>
         </VideoHeader>
     );

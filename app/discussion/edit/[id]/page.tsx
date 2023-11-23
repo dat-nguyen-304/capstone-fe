@@ -29,7 +29,8 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
     });
     const { data: topicsData } = useQuery({
         queryKey: ['topics'],
-        queryFn: () => discussionApi.getAll(0, 100)
+        queryFn: () => discussionApi.getAll(0, 100),
+        staleTime: Infinity
     });
     const [selectedTopic, setSelectedTopic] = useState<Number>(editDiscussion?.topicId);
     const { control, handleSubmit, setError, setValue } = useForm({
@@ -128,6 +129,21 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                                         key={uploadedFiles[0].path}
                                         src={URL.createObjectURL(uploadedFiles[0])}
                                         alt={uploadedFiles[0].path as string}
+                                        width={160}
+                                        height={100}
+                                    />
+                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                        <RiImageEditLine size={28} />
+                                        <span className="text-sm">Cập nhật ảnh</span>
+                                    </div>
+                                </div>
+                            ) : editDiscussion?.imageUrl ? (
+                                <div className="group relative">
+                                    <Image
+                                        className="object-cover w-full h-[100px]"
+                                        key={editDiscussion?.imageUrl}
+                                        src={editDiscussion?.imageUrl}
+                                        alt={editDiscussion?.imageUrl as string}
                                         width={160}
                                         height={100}
                                     />

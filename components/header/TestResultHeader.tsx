@@ -51,7 +51,7 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
         onContentType('discussion');
         onOpen();
     };
-
+    const onSubmitReport = async () => {};
     if (isLoading) return <Loader />;
 
     if (user?.role !== 'STUDENT') return <NotFound />;
@@ -79,7 +79,7 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
                         Quay lại
                     </Button>
                 </div>
-                <ReportModal />
+                <ReportModal onReport={onSubmitReport} />
             </div>
             {children}
         </>

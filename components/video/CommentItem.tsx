@@ -14,20 +14,57 @@ import { useReportModal } from '@/hooks';
 import { CommentCardType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
 import { IoMdSend } from 'react-icons/io';
+import { boolean } from 'yup';
+import { discussionApi } from '@/api-client';
 
 interface CommentItemProps {
     commentInfo: CommentCardType | any;
+    onCommentId?: (commentId: number) => void;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) => {
     const [showSubComment, setShowSubComment] = useState<boolean>(false);
     const [showWriteResponse, setShowWriteResponse] = useState<boolean>(false);
+    const [responseComment, setResponseComment] = useState<string>('');
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
 
+    const onSubmit = async () => {
+        try {
+            setSubmitting(true);
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('content', responseComment);
+            formDataWithImage.append('commentParentId', commentInfo?.id);
+            const response = await discussionApi.createComment(formDataWithImage, commentInfo?.conversationId);
+            if (response) {
+                setResponseComment('');
+                setShowWriteResponse(false);
+
+                setSubmitting(false);
+            }
+        } catch (error) {
+            console.error('Error creating course:', error);
+        }
+    };
+    const handleLikeClick = async () => {
+        try {
+            // Assuming postContent.id is the discussionId
+            const response = await discussionApi.commentReact(commentInfo?.id);
+            // Handle the response as needed
+            console.log('API response:', response);
+        } catch (error) {
+            // Handle errors
+            console.error('Error reacting to discussion:', error);
+        }
+    };
     const openReportModal = () => {
+        if (onCommentId) {
+            onCommentId(commentInfo?.id);
+        }
         onContentType('comment');
         onOpen();
     };
+    console.log(commentInfo);
 
     return (
         <li className="flex gap-4 group mb-6">
@@ -62,33 +99,46 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
                 </div>
                 <div className="mt-1 flex gap-4 items-center">
                     <span className="flex items-center gap-2">
-                        <AiOutlineLike />
-                        <span className="text-xs sm:text-sm">7</span>
+                        <AiOutlineLike
+                            className={`${
+                                !commentInfo?.reacted && !commentInfo?.owner ? 'cursor-pointer text-blue-500' : ''
+                            }`}
+                            onClick={handleLikeClick}
+                        />
+
+                        <span className="text-xs sm:text-sm">{commentInfo?.reactCount}</span>
                     </span>
-                    <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
-                        Phản hồi
-                    </Button>
-                    <Tooltip
-                        onClick={openReportModal}
-                        placement="right"
-                        content={
-                            <div className="p-1 cursor-pointer">
-                                <span className="flex items-center gap-2">
-                                    <CiFlag1 /> Báo cáo vi phạm
-                                </span>
-                            </div>
-                        }
-                    >
-                        <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
-                            <BiDotsHorizontalRounded />
-                        </button>
-                    </Tooltip>
+                    {commentInfo?.owner !== true ? (
+                        <>
+                            <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
+                                Phản hồi
+                            </Button>
+                            <Tooltip
+                                onClick={openReportModal}
+                                placement="right"
+                                content={
+                                    <div className="p-1 cursor-pointer">
+                                        <span className="flex items-center gap-2">
+                                            <CiFlag1 /> Báo cáo vi phạm
+                                        </span>
+                                    </div>
+                                }
+                            >
+                                <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
+                                    <BiDotsHorizontalRounded />
+                                </button>
+                            </Tooltip>
+                        </>
+                    ) : null}
                 </div>
                 <div className="">
-                    <Button variant="light" onClick={() => setShowSubComment(!showSubComment)}>
-                        {showSubComment ? <BsChevronUp /> : <BsChevronDown />}
-                        <span className="text-xs sm:text-sm">4 Phản hồi</span>
-                    </Button>
+                    {commentInfo?.subComments?.length ? (
+                        <Button variant="light" onClick={() => setShowSubComment(!showSubComment)}>
+                            {showSubComment ? <BsChevronUp /> : <BsChevronDown />}
+                            <span className="text-xs sm:text-sm">{commentInfo?.subComments?.length} Phản hồi</span>
+                        </Button>
+                    ) : null}
+
                     {showWriteResponse && (
                         <div className="flex items-end gap-2">
                             <Textarea
@@ -97,18 +147,29 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
                                 labelPlacement="outside"
                                 placeholder="Viết phản hồi của bạn"
                                 className="mt-2"
+                                onChange={event => setResponseComment(event?.target?.value)}
                             />
-                            <Button className="ml-[-78px] mb-2" color="primary" variant="light" size="sm">
+                            <Button
+                                className="ml-[-78px] mb-2"
+                                color={responseComment == '' || submitting ? 'default' : 'primary'}
+                                variant="light"
+                                size="sm"
+                                disabled={responseComment == '' || submitting}
+                                onClick={onSubmit}
+                            >
                                 <IoMdSend size={20} />
                             </Button>
                         </div>
                     )}
-                    {showSubComment && (
-                        <ul className="mt-2">
-                            <SubCommentItem />
-                            <SubCommentItem />
-                        </ul>
-                    )}
+                    <ul className="mt-2">
+                        {commentInfo?.subComments && showSubComment
+                            ? commentInfo?.subComments?.map((subCommentInfo: any, index: number) => (
+                                  <SubCommentItem key={index} subCommentInfo={subCommentInfo} />
+                              ))
+                            : null}
+                    </ul>
+                    {/* <SubCommentItem />
+                            <SubCommentItem /> */}
                 </div>
             </div>
         </li>

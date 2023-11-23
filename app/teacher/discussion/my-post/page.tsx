@@ -20,12 +20,13 @@ import { DiscussionType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { Spin } from 'antd';
-
+import { useCustomModal } from '@/hooks';
 interface MyPostListProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',
-    DISABLE: 'danger'
+    DISABLE: 'danger',
+    DELETED: 'danger'
 };
 
 const columns = [
@@ -57,7 +58,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         data: discussionsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['my-discussions', { page, rowsPerPage, updateState }],
+        queryKey: ['my-teacher-discussions', { page, rowsPerPage, updateState }],
         queryFn: () => discussionApi.getAllMyDiscussion(page - 1, rowsPerPage)
     });
     useEffect(() => {
@@ -67,6 +68,35 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
             setTotalRow(discussionsData.totalRow);
         }
     }, [discussionsData]);
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const handleStatusChange = async (id: number) => {
+        try {
+            onLoading();
+            const res = await discussionApi.deleteDiscussion(id);
+            if (!res?.data?.code) {
+                onSuccess({
+                    title: 'Đã xóa bài thảo luận thành công',
+                    content: 'Bài thảo luận đã được xóa thành công'
+                });
+                setUpdateState(prev => !prev);
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+    const onDeactivateOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận xóa thảo luận',
+            content: 'Bài thảo luận này sẽ không được hiện thị sau khi bị xóa. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id)
+        });
+        onOpen();
+    };
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -77,6 +107,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
+    console.log(discussionsData);
 
     const onSearchChange = useCallback((value?: string) => {
         if (value) {
@@ -111,7 +142,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'ENABLE' ? 'Hoạt động' : 'Vô hiệu'}
+                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô hiệu'}
                     </Chip>
                 );
             case 'action':
@@ -123,11 +154,30 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Table Columns">
-                                <DropdownItem as={Link} href={`/teacher/discussion/${post.id}`}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'delDis']}>
+                                <DropdownItem
+                                    color="primary"
+                                    key={post.status === 'DELETED' ? 'viewDis' : 'view'}
+                                    as={Link}
+                                    href={`/teacher/discussion/${post.id}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                <DropdownItem
+                                    color="warning"
+                                    key={post.status === 'DELETED' ? 'editDis' : 'edit'}
+                                    as={Link}
+                                    href={`/teacher/discussion/edit/${post?.id}`}
+                                >
+                                    Chỉnh sửa
+                                </DropdownItem>
+                                <DropdownItem
+                                    color="danger"
+                                    key={post.status === 'DELETED' ? 'delDis' : 'delete'}
+                                    onClick={() => onDeactivateOpen(post?.id)}
+                                >
+                                    Xóa thảo luận
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

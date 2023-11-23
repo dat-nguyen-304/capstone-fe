@@ -15,7 +15,7 @@ interface PostTitleProps {
         id: number;
         title: string;
         content: string;
-        image?: string;
+        imageUrl?: string;
         owner?: boolean;
         auth: string;
         like: number;
@@ -49,7 +49,7 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
     const handleLikeClick = async () => {
         try {
             // Assuming postContent.id is the discussionId
-            const response = await discussionApi.discussionReact(postContent.id);
+            const response = await discussionApi.discussionReact(postContent?.id);
             // Handle the response as needed
             console.log('API response:', response);
         } catch (error) {
@@ -64,7 +64,9 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
                     name={postContent?.auth || 'Jane Doe'}
                     description={calculateTimeDifference(postContent?.createTime) || '2 giờ trước'}
                     avatarProps={{
-                        src: `${postContent.avatar}` || 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                        src: `${
+                            postContent.avatar ? postContent?.avatar : 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                        }`
                     }}
                 />
             </div>
@@ -73,19 +75,25 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
                     name={'Jane Doe'}
                     description="2 giờ trước"
                     avatarProps={{
-                        src: 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                        src: `${
+                            postContent.avatar ? postContent?.avatar : 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                        }`
                     }}
                     className="sm:hidden"
                 />
                 <div>
-                    <h4 className="font-semibold text-base mb-2">{postContent.title}</h4>
+                    <h4 className="font-semibold text-base mb-2">{postContent?.title}</h4>
                     <div className="my-2">
                         <Gallery>
-                            <Item original={postContent?.image as string} width="1024" height="768">
+                            <Item
+                                original={(postContent?.imageUrl as string) || '/banner/slide-1.png'}
+                                width="1024"
+                                height="768"
+                            >
                                 {({ open }) => (
                                     <Image
                                         onClick={open}
-                                        src={postContent?.image as string}
+                                        src={(postContent?.imageUrl as string) || '/banner/slide-1.png'}
                                         width={100}
                                         height={80}
                                         alt=""

@@ -49,7 +49,7 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
         onContentType('discussion');
         onOpen();
     };
-
+    const onSubmitReport = async () => {};
     if (isLoading) return <Loader />;
 
     if (user?.role !== 'STUDENT') return <NotFound />;
@@ -77,7 +77,7 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
                         Thoát
                     </Button>
                 </div>
-                <ReportModal />
+                <ReportModal onReport={onSubmitReport} />
             </div>
             {children}
         </>

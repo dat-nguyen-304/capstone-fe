@@ -27,16 +27,28 @@ const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
     { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
+    { name: 'Vai Trò', uid: 'ownerRole', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
 
+function getRole(role: string) {
+    const roleNames: { [key: string]: string | null } = {
+        STUDENT: 'Học sinh',
+        TEACHER: 'Giáo viên',
+        ADMIN: 'Quản trị viên'
+    };
+
+    return roleNames[role] || null;
+}
+
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'ownerRole', 'title', 'createTime', 'action'])
     );
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['-1']));
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -44,15 +56,41 @@ const PostList: React.FC<PostListProps> = ({}) => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [selectedTopic, setSelectedTopic] = useState<Number>(1);
     const {
         status,
         error,
         data: discussionsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['discussions', { page, rowsPerPage, updateState }],
-        queryFn: () => discussionApi.getAllOfConversation(page - 1, rowsPerPage)
+        queryKey: [
+            'discussions',
+            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as number }
+        ],
+        queryFn: () => {
+            // Check if statusFilter is -1
+            if (Array.from(statusFilter)[0] === '-1') {
+                return discussionApi.getAllOfConversation(page - 1, rowsPerPage);
+            } else {
+                // If not -1, get the topicId from statusFilter
+                const topicId = Array.from(statusFilter)[0] as number;
+                return discussionApi.getConversationsByTopicId(topicId, page - 1, rowsPerPage);
+            }
+        }
     });
+
+    const { data: topicsData } = useQuery({
+        queryKey: ['topics'],
+        queryFn: () => discussionApi.getAll(0, 100)
+    });
+
+    const topicsOptions = useMemo(() => {
+        if (!topicsData) return [];
+        const allOption = { id: -1, name: 'ALL', status: 'ENABLE' };
+        const topicOptions = Array.isArray(topicsData?.data) ? [allOption, ...topicsData?.data] : [allOption];
+        return topicOptions;
+    }, [topicsData]);
+
     useEffect(() => {
         if (discussionsData?.data) {
             setDiscussions(discussionsData.data);
@@ -66,6 +104,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
         return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
+    console.log(statusFilter);
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
@@ -80,6 +119,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
+
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];
 
@@ -100,6 +140,8 @@ const PostList: React.FC<PostListProps> = ({}) => {
                         {post.ownerFullName}
                     </User>
                 );
+            case 'ownerRole':
+                return getRole(cellValue);
             case 'createTime':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
 
@@ -124,7 +166,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Table Columns">
-                                <DropdownItem as={Link} href={`/discussion/${post.id}`}>
+                                <DropdownItem color="primary" as={Link} href={`/discussion/${post.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
                             </DropdownMenu>
@@ -168,13 +210,13 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
+                                    closeOnSelect={true}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
+                                    {topicsOptions.map((column: any, index: number) => (
+                                        <DropdownItem key={column?.id} className="capitalize">
                                             {capitalize(column.name)}
                                         </DropdownItem>
                                     ))}
