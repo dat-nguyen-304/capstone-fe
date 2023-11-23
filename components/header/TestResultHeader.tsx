@@ -66,7 +66,7 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
                         className="hidden sm:block"
                     />
                     <span className="text-sm max-w-[120px] sm:max-w-[300px] xl:max-w-[600px] truncate">
-                        Bài kiểm tra abcxyz Bài kiểm tra abcxyz Bài kiểm tra abcxyz Bài kiểm tra abcxyz
+                        Kết Quả Bài Kiểm Tra
                     </span>
                 </div>
                 <div className="">

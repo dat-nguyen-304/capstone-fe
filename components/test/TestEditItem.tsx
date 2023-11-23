@@ -74,7 +74,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                                 : ''
                         }`}
                     >
-                        <div className="ml-2">
+                        <div className="ml-2" suppressContentEditableWarning={true}>
                             <span className="font-bold mr-3">{String.fromCharCode(65 + index)}.</span>
                             <span className="inline-block">{HTMLReactParser(answerList)}</span>
                         </div>
@@ -84,7 +84,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
             <div className="mt-4 mb-8">
                 <Accordion isCompact variant="bordered">
                     <AccordionItem key="1" aria-label="Accordion 1" title="Xem lời giải" className="text-sm">
-                        {HTMLReactParser(questions?.explanation)}
+                        <>{HTMLReactParser(questions?.explanation)}</>
                     </AccordionItem>
                 </Accordion>
             </div>

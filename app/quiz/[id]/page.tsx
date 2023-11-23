@@ -58,9 +58,9 @@ const Quiz: React.FC<QuizProps> = ({}) => {
                                     <span>Làm lại</span>
                                 </Button>
                             </li>
+                            {/* <TestResultLine type="quiz" />
                             <TestResultLine type="quiz" />
-                            <TestResultLine type="quiz" />
-                            <TestResultLine type="quiz" />
+                            <TestResultLine type="quiz" /> */}
                         </ul>
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học

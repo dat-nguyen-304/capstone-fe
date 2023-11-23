@@ -1,25 +1,59 @@
 'use client';
 
+import { examApi } from '@/api-client';
+import Loader from '@/components/Loader';
 import TestResultItem from '@/components/test/TestResultItem';
 import { Button } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 
-interface ResultExamProps {}
+interface ResultExamProps {
+    params: {
+        id: number;
+        assignmentId: number;
+    };
+}
 
-const ResultExam: React.FC<ResultExamProps> = ({}) => {
+const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [totalQuestion, setTotalQuestion] = useState<number>();
+    const {
+        data: examSubmissionData,
+        isLoading,
+        status
+    } = useQuery<any>({
+        queryKey: ['exam-submission-info'],
+        queryFn: () => examApi.getExamSubmissionById(params?.assignmentId)
+    });
+    console.log(examSubmissionData);
+    useEffect(() => {
+        if (examSubmissionData) {
+            setQuestions(examSubmissionData?.selectionList);
+            setTotalQuestion(examSubmissionData?.selectionList?.length);
+        }
+    }, [examSubmissionData]);
+    if (!examSubmissionData) return <Loader />;
     return (
         <>
             <div className="xl:grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[80px] xl:mt-[60px]">
-                <div className="col-span-7 mt-4">
+                <div className="col-span-7 mt-4" suppressContentEditableWarning={true}>
                     <ul>
+                        {totalQuestion ? (
+                            questions?.map((questions: any, index: number) => (
+                                <TestResultItem key={index} questions={questions} index={index} />
+                            ))
+                        ) : (
+                            <>Empty List Question</>
+                        )}
+                        {/* <TestResultItem />
                         <TestResultItem />
                         <TestResultItem />
                         <TestResultItem />
                         <TestResultItem />
                         <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem />
+                        <TestResultItem /> */}
                     </ul>
                 </div>
                 <div className="col-span-3 my-4">
@@ -38,39 +72,25 @@ const ResultExam: React.FC<ResultExamProps> = ({}) => {
                             </span>
                         </div>
                         <ul className="flex gap-2 flex-wrap mt-2">
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                1
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
-                            <li className="flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-blue-500 border-1">
-                                10
-                            </li>
+                            {totalQuestion &&
+                                Array.from({ length: totalQuestion }).map((_, index) => (
+                                    <li
+                                        key={index}
+                                        className={`flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-1 ${
+                                            questions[index]?.selectedAnswer ===
+                                            questions[index]?.question?.correctAnswer
+                                                ? 'bg-green-500  text-white'
+                                                : questions[index]?.selectedAnswer === null
+                                                ? 'bg-gray-500  text-white'
+                                                : 'bg-red-500 text-white'
+                                        }`}
+                                    >
+                                        {index + 1}
+                                    </li>
+                                ))}
                         </ul>
                         <Button className="mt-4" size="sm" variant="bordered" color="primary">
-                            <Link href="/exam/1" className="flex items-center">
+                            <Link href={`/exam/${params?.id}`} className="flex items-center">
                                 <BsArrowLeft />
                                 <span className="ml-1">Quay lại</span>
                             </Link>

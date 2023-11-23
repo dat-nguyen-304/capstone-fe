@@ -69,5 +69,15 @@ export const examApi = {
     },
     deleteTopicExam: async (topicId: number) => {
         return await axiosClient.delete(`/examination/topics/${topicId}`);
+    },
+    getExamSubmissionByExamId: async (examId: number, page: number, size: number) => {
+        const res = await axiosClient.get(
+            `/examination/exams/${examId}/submissions?page=${page}&size=${size}&sortType=DESC`
+        );
+        return res.data;
+    },
+    getExamSubmissionById: async (submissionId: number) => {
+        const res = await axiosClient.get(`/examination/exams/submission/${submissionId}`);
+        return res.data;
     }
 };

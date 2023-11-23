@@ -35,15 +35,13 @@ export function InputFormula({ name, control, placeholder }: InputFormulaProps) 
     };
 
     return (
-        <>
-            <ReactQuill
-                modules={_module}
-                className="h-[100px] mt-2"
-                theme="snow"
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-            />
-        </>
+        <ReactQuill
+            modules={_module}
+            className="h-[100px] mt-2"
+            theme="snow"
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+        />
     );
 }

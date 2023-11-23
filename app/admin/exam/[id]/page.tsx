@@ -21,7 +21,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
 
     return (
         <>
-            <div className="w-[90%] mx-auto">
+            <div className="w-[90%] mx-auto" suppressContentEditableWarning={true}>
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">{data?.name}</h3>
@@ -47,7 +47,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                             </Button>
                         </div>
                     </div>
-                    <ul className="mt-8">
+                    <ul className="mt-8" suppressContentEditableWarning>
                         {data?.questionList?.length ? (
                             data?.questionList?.map((questions: QuestionType, index: number) => (
                                 <TestReviewItem key={index} questions={questions} index={index} />

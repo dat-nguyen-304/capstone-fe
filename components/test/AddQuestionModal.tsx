@@ -228,7 +228,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="flex-[1]">
+                                            <div className="flex-[1]" suppressContentEditableWarning={true}>
                                                 <InputFormula
                                                     name="questionContent"
                                                     control={control}
@@ -237,7 +237,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="mt-16">
+                                    <div className="mt-16" suppressContentEditableWarning={true}>
                                         <label>Nội dung lời giải</label>
                                         <InputFormula
                                             name="resultContent"
@@ -247,7 +247,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                     </div>
                                 </div>
                                 <div className="w-full border-t-2 mt-20 border-blue-500 border-dashed">
-                                    <div className=" mt-[-2rem]">
+                                    <div className=" mt-[-2rem]" suppressContentEditableWarning={true}>
                                         {answerList.map((answer, id) => (
                                             <div key={answer.name} className="flex items-center gap-2">
                                                 <div className="flex-[1] mt-16">
