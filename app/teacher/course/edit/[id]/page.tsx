@@ -8,12 +8,14 @@ import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 interface EditCourseProps {
     params: { id: number };
 }
 
 const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
+    const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
         queryKey: ['editCourse'],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
@@ -38,13 +40,6 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         thumbnail: data?.thumbnail
     };
 
-    // const arrays = data?.videoResponse.map((video: any, index: number) => {
-    //     return {
-    //         ...video,
-    //         index: index + 1
-    //     };
-    // });
-
     const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number }[]>(
         data?.videoResponse
             ? data?.courseVideoResponses.map((video: any, index: number) => ({
@@ -60,7 +55,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
             <div className="mt-4 sm:mt-0 flex justify-between">
                 <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa khóa học</h3>
 
-                <Button size="sm" as={Link} href={`/teacher/course/${params.id}`}>
+                <Button size="sm" onClick={() => router.back()}>
                     Quay lại
                 </Button>
             </div>

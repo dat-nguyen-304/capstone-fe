@@ -3,10 +3,12 @@
 import TestReviewItem from '@/components/test/TestReviewItem';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface QuizDetailProps {}
 
 const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
+    const router = useRouter();
     return (
         <>
             <div className="w-[90%] mx-auto">
@@ -23,9 +25,8 @@ const QuizDetail: React.FC<QuizDetailProps> = ({}) => {
                             Chỉnh sửa
                         </Button>
                         <Button
-                            as={Link}
+                            onClick={() => router.back()}
                             size="sm"
-                            href="/teacher/quiz"
                             className="!text-red hover:!text-red"
                             color="danger"
                             variant="bordered"

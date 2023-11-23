@@ -35,23 +35,29 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo }) => {
                 <Avatar src={commentInfo?.ownerAvatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c'} />
             </div>
             <div className="w-full">
-                <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
+                <div className="bg-gray-100 pt-2 pb-4 px-4 rounded-xl">
                     <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerFullName}</h4>
-                    <div className="my-2">
-                        <Gallery>
-                            <Item original={commentInfo?.imageUrl || '/banner/slide-1.png'} width="1024" height="768">
-                                {({ open }) => (
-                                    <Image
-                                        onClick={open}
-                                        src={commentInfo?.imageUrl || '/banner/slide-1.png'}
-                                        width={100}
-                                        height={80}
-                                        alt=""
-                                    />
-                                )}
-                            </Item>
-                        </Gallery>
-                    </div>
+                    {commentInfo.imageUrl && (
+                        <div className="my-2">
+                            <Gallery>
+                                <Item
+                                    original={commentInfo.imageUrl || '/banner/slide-1.png'}
+                                    width="1024"
+                                    height="768"
+                                >
+                                    {({ open }) => (
+                                        <Image
+                                            onClick={open}
+                                            src={commentInfo.imageUrl || '/banner/slide-1.png'}
+                                            width={100}
+                                            height={80}
+                                            alt=""
+                                        />
+                                    )}
+                                </Item>
+                            </Gallery>
+                        </div>
+                    )}
                     <div className="text-xs sm:text-sm"> {HTMLReactParser(String(commentInfo?.content))}</div>
                 </div>
                 <div className="mt-1 flex gap-4 items-center">

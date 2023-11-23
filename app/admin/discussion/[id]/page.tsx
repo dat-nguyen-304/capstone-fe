@@ -5,9 +5,10 @@ import Loader from '@/components/Loader';
 import PostTitle from '@/components/discussion/PostTitle';
 import CommentItem from '@/components/video/CommentItem';
 import { CommentCardType } from '@/types';
-import { Button, Card, Select, SelectItem } from '@nextui-org/react';
+import { Card, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BsArrowLeft } from 'react-icons/bs';
 
 interface PostDetailProps {
@@ -15,6 +16,7 @@ interface PostDetailProps {
 }
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
+    const router = useRouter();
     const { data: discussionData } = useQuery({
         queryKey: ['discussionDetail'],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
@@ -46,10 +48,10 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
-                <Link href="/admin/discussion" className="flex items-center gap-2 text-sm">
+                <div onClick={() => router.back()} className="flex items-center gap-2 text-sm cursor-pointer">
                     <BsArrowLeft />
                     <span>Quay lại</span>
-                </Link>
+                </div>
             </div>
             <PostTitle postContent={postContent} from="admin" />
             <div className="w-full mt-12">

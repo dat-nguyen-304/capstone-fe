@@ -14,6 +14,7 @@ import { examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface ExamDetailProps {
     params: { id: number };
@@ -34,6 +35,7 @@ function getSubjectName(subjectCode: string) {
 }
 
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
+    const router = useRouter();
     const [submissions, setSubmissions] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
@@ -74,10 +76,10 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     return (
         <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
-                <Link href="/exam" className="mb-4 flex items-center gap-2 text-sm">
+                <div onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm">
                     <BsArrowLeft />
                     <span>Quay lại</span>
-                </Link>
+                </div>
                 <h3 className="text-2xl font-bold mb-2 truncate2line">{examData?.name}</h3>
                 <div className="mt-8">
                     <div className="sm:flex gap-2 md:gap-4 items-center ">

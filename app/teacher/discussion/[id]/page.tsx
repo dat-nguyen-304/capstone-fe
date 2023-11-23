@@ -3,11 +3,10 @@
 import PostTitle from '@/components/discussion/PostTitle';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import { ReportModal } from '@/components/modal';
-import CommentItem from '@/components/video/CommentItem';
 import { useReportModal } from '@/hooks';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
@@ -17,6 +16,7 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 interface PostDetailProps {}
 
 const PostDetail: React.FC<PostDetailProps> = ({}) => {
+    const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -60,10 +60,10 @@ const PostDetail: React.FC<PostDetailProps> = ({}) => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto mb-8">
             <div className="flex justify-between items-center">
-                <Link href="/teacher/discussion" className="flex items-center gap-2 text-sm">
+                <div onClick={() => router.back()} className="flex items-center gap-2 text-sm cursor-pointer">
                     <BsArrowLeft />
                     <span>Quay lại</span>
-                </Link>
+                </div>
                 <Button size="sm" color="danger" onClick={openReportModal}>
                     Báo cáo
                 </Button>

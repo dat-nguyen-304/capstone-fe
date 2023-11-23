@@ -32,7 +32,7 @@ export const CustomModal: React.FC<CustomModalProps> = () => {
             case 'danger':
                 return (
                     <>
-                        <Button className="bg-white" variant="bordered" onPress={activeFn}>
+                        <Button className="bg-white" variant="bordered" onPress={onClose}>
                             Đóng
                         </Button>
                         <Button color="primary" onPress={activeFn}>

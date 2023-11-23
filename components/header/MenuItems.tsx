@@ -112,9 +112,9 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                         Đánh giá năng lực
                     </Link>
                 </NavbarItem>
-                <NavbarItem key="exam" isActive={false} className="font-medium text-sm">
-                    <Link color="foreground" href="/exam">
-                        Luyện đề
+                <NavbarItem key="suggestion" isActive={false} className="font-medium text-sm">
+                    <Link color="foreground" href="/suggestion">
+                        Gợi ý khóa học
                     </Link>
                 </NavbarItem>
                 <NavbarItem key="discussion" isActive={false} className="font-medium text-sm">

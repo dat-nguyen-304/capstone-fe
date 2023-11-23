@@ -10,6 +10,7 @@ import { SafeUser } from '@/types';
 import { handleUserReload } from '@/utils/handleUserReload';
 import { useEffect, useState } from 'react';
 import { ReportModal } from '../modal';
+import { useRouter } from 'next/navigation';
 
 interface TestResultHeaderProps {
     type: 'quiz' | 'exam';
@@ -19,9 +20,10 @@ interface TestResultHeaderProps {
 
 const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children }) => {
     const currentUser = useUser();
+    const router = useRouter();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+    const { onOpen, onContentType } = useReportModal();
 
     useEffect(() => {
         const handleReload = async () => {
@@ -73,7 +75,7 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
                     <Button size="sm" className="mr-4" color="danger" variant="solid" onClick={openReportModal}>
                         Báo cáo
                     </Button>
-                    <Button as={Link} href={type === 'quiz' ? `/quiz/${id}` : `/exam/${id}`} size="sm">
+                    <Button onClick={() => router.back()} size="sm">
                         Quay lại
                     </Button>
                 </div>

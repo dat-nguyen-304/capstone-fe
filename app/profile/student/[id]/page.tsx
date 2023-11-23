@@ -1,8 +1,7 @@
 'use client';
 
-import { Button, Card } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
 import Image from 'next/image';
-import { IoIosLogOut } from 'react-icons/io';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 interface StudentProfileProps {}

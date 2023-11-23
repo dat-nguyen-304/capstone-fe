@@ -2,12 +2,13 @@
 
 import TestResultItem from '@/components/test/TestResultItem';
 import { Button } from '@nextui-org/react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BsArrowLeft } from 'react-icons/bs';
 
 interface ResultQuizProps {}
 
 const ResultQuiz: React.FC<ResultQuizProps> = ({}) => {
+    const router = useRouter();
     return (
         <>
             <div className="xl:grid grid-cols-10 gap-8 w-[90%] mx-auto relative mt-[80px] xl:mt-[60px]">
@@ -69,11 +70,15 @@ const ResultQuiz: React.FC<ResultQuizProps> = ({}) => {
                                 10
                             </li>
                         </ul>
-                        <Button className="mt-4" size="sm" variant="bordered" color="primary">
-                            <Link href="/quiz/1" className="flex items-center">
-                                <BsArrowLeft />
-                                <span className="ml-1">Quay lại</span>
-                            </Link>
+                        <Button
+                            onClick={() => router.back()}
+                            className="mt-4"
+                            size="sm"
+                            variant="bordered"
+                            color="primary"
+                        >
+                            <BsArrowLeft />
+                            <span className="ml-1">Quay lại</span>
                         </Button>
                     </div>
                 </div>

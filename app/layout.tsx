@@ -7,6 +7,7 @@ import NextUiProvider from '@/components/provider/NextUiProvider';
 import { CustomModal } from '@/components/modal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { InputModal } from '@/components/modal/InputModal';
 
 const inter = Mulish({ subsets: ['latin'] });
 

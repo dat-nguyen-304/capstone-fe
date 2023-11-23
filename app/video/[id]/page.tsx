@@ -67,14 +67,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         return {
             id: commentData.id,
             ownerFullName: commentData.useName || 'Nguyễn Văn A',
-            imageUrl: commentData.imageUrl || '/banner/slide-1.png',
             content: commentData.comment || 'Nội dung rất hay'
         };
     };
     const commonInfo = {
         id: 1,
         ownerFullName: 'Nguyễn Văn A',
-        imageUrl: '/banner/slide-1.png',
         content: 'Nội dung rất hay'
     };
     if (!data) return <Loader />;

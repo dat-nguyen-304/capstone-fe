@@ -9,7 +9,7 @@ export type CommentCardType = {
     content: string;
     conversationId: number;
     createTime: string;
-    imageUrl: string;
+    imageUrl?: string;
     lastUpdateTime: string;
     owner: boolean;
     ownerEmail: boolean;

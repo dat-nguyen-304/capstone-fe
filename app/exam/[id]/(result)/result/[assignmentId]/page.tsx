@@ -5,7 +5,7 @@ import Loader from '@/components/Loader';
 import TestResultItem from '@/components/test/TestResultItem';
 import { Button } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 
@@ -17,6 +17,7 @@ interface ResultExamProps {
 }
 
 const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
+    const router = useRouter();
     const [questions, setQuestions] = useState<any[]>([]);
     const [totalQuestion, setTotalQuestion] = useState<number>();
     const {
@@ -89,11 +90,17 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                                     </li>
                                 ))}
                         </ul>
-                        <Button className="mt-4" size="sm" variant="bordered" color="primary">
-                            <Link href={`/exam/${params?.id}`} className="flex items-center">
+                        <Button
+                            onClick={() => router.back()}
+                            className="mt-4"
+                            size="sm"
+                            variant="bordered"
+                            color="primary"
+                        >
+                            <div className="flex items-center">
                                 <BsArrowLeft />
                                 <span className="ml-1">Quay lại</span>
-                            </Link>
+                            </div>
                         </Button>
                     </div>
                 </div>

@@ -21,6 +21,7 @@ import NotFound from '@/app/not-found';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '@/components/Loader';
 import { Chip } from '@nextui-org/react';
+import { InputModal } from '@/components/modal/InputModal';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -58,7 +59,7 @@ const items: MenuItem[] = [
     getItem(<Link href="/admin/report">Xử lý vi phạm</Link>, '14', <StopOutlined />),
     // getItem(<Link href="/admin/discussion">Thảo luận</Link>, '13', <CommentOutlined />),
     getItem('Thảo luận', 'sub5', <CommentOutlined />, [
-        getItem(<Link href="/admin/discussion">Danh sách thảo luận</Link>, '15'),
+        getItem(<Link href="/admin/discussion">Tất cả bài viết</Link>, '15'),
         getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '16'),
         getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '17')
     ]),
@@ -97,6 +98,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <Sidebar user={user as SafeUser} items={items}>
             {children}
+            <InputModal />
         </Sidebar>
     );
 };

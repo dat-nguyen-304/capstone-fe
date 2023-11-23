@@ -7,12 +7,14 @@ import { Button } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface ExamDetailProps {
     params: { id: number };
 }
 
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
+    const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
         queryKey: ['exam-detail'],
         queryFn: () => examApi.getExamById(params?.id)
@@ -36,12 +38,11 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                 Chỉnh sửa
                             </Button>
                             <Button
-                                as={Link}
                                 size="sm"
-                                href="/admin/exam"
                                 className="!text-red hover:!text-red"
                                 color="danger"
                                 variant="bordered"
+                                onClick={() => router.back()}
                             >
                                 Quay lại
                             </Button>

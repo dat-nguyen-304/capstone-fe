@@ -3,7 +3,6 @@
 import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
-    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -17,20 +16,14 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useInputModal } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { courseApi } from '@/api-client';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
+import { toast } from 'react-toastify';
 
 interface CoursesProps {}
-
-const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger',
-    updating: 'primary',
-    waiting: 'warning'
-};
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
@@ -43,55 +36,15 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const courses = [
-    {
-        id: 1,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023'
-    },
-    {
-        id: 2,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023'
-    },
-    {
-        id: 3,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023'
-    },
-    {
-        id: 4,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023'
-    },
-    {
-        id: 5,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023'
-    }
-];
-
-type Course = (typeof courses)[0];
+type Course = {
+    id: number;
+    courseName: string;
+    teacherName: string;
+    subject: string;
+    level: string;
+    createdAt: string;
+    updatedAt: string;
+};
 
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
@@ -124,10 +77,14 @@ const Courses: React.FC<CoursesProps> = () => {
     }, [coursesData]);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, onActiveFn } = useInputModal();
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
+        let toastLoading;
         try {
-            onLoading();
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const res = await courseApi.changeCourseStatus({
                 id,
                 verifyStatus
@@ -135,24 +92,16 @@ const Courses: React.FC<CoursesProps> = () => {
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {
-                    onSuccess({
-                        title: 'Duyệt thành công',
-                        content: 'Khóa học đã được duyệt thành công'
-                    });
+                    toast.success('Khóa học đã được duyệt thành công');
                 } else if (verifyStatus == 'REJECT') {
-                    onSuccess({
-                        title: 'Đã từ chối',
-                        content: 'Đã từ chối khóa học thành công'
-                    });
+                    toast.success('Đã từ chối khóa học thành công');
                 }
+                toast.dismiss(toastLoading);
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
-            // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
-            });
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error changing user status', error);
         }
     };
@@ -190,7 +139,11 @@ const Courses: React.FC<CoursesProps> = () => {
         onDanger({
             title: 'Xác nhận từ chối',
             content: 'Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, action)
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+                onActiveFn(() => handleStatusChange(id, action));
+            }
         });
         onOpen();
     };

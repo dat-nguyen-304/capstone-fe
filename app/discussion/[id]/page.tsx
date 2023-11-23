@@ -11,7 +11,7 @@ import { CommentCardType } from '@/types/comment';
 import { Button, Card, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
@@ -23,6 +23,7 @@ interface PostDetailProps {
 }
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
+    const router = useRouter();
     const [updateState, setUpdateState] = useState<Boolean>(false);
 
     const { data: discussionData } = useQuery({
@@ -45,18 +46,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         }
     });
 
-    const {
-        isOpen,
-        onOpen,
-        onClose,
-        onContentType,
-        reportType,
-        description,
-        onReportType,
-        onDescription,
-        onFile,
-        file
-    } = useReportModal();
+    const { onOpen, onContentType, reportType, description, file } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
@@ -87,9 +77,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 setUploadedFiles([]);
                 setUpdateState(prev => !prev);
             }
-
-            // console.log(params?.id);
-            // console.log(formData.response);
         } catch (error) {
             console.error('Error creating course:', error);
         }
@@ -103,15 +90,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
             if (file) {
                 formDataWithImage.append('image', file); // assuming 'image' is the field name expected by the server
             }
-            console.log(description);
-            console.log(reportType);
-            console.log(discussionData?.id);
-            console.log(file);
-
-            // const response = await discussionApi.createConversationReport(formDataWithImage, discussionData?.id);
-
-            // console.log(params?.id);
-            // console.log(formData.response);
         } catch (error) {
             console.error('Error creating course:', error);
         }
@@ -135,17 +113,16 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const commonInfo = {
         id: 1,
         ownerFullName: 'Nguyễn Văn A',
-        imageUrl: '/banner/slide-1.png',
         content: 'Nội dung rất hay'
     };
     if (!discussionData) return <Loader />;
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <div className="flex justify-between items-center mt-2">
-                <Link href="/discussion" className="flex items-center gap-2 text-sm">
+                <div onClick={() => router.back()} className="flex items-center gap-2 text-sm cursor-pointer">
                     <BsArrowLeft />
                     <span>Quay lại</span>
-                </Link>
+                </div>
                 {currentUser.user && currentUser?.user?.fullName !== discussionData?.ownerFullName && (
                     <Button size="sm" color="danger" onClick={openReportModal}>
                         Báo cáo

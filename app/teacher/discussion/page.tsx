@@ -147,7 +147,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Cột
+                                        Chủ đề
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu

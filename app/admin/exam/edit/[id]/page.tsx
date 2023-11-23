@@ -86,8 +86,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             duration: examDetail?.duration || ''
         }
     });
-    console.log(examDetail);
-    console.log(questions);
+
     useEffect(() => {
         if (examDetail) {
             const formattedQuestions = examDetail?.questionList?.map((question: any) => ({
@@ -162,7 +161,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             <form onSubmit={handleSubmit(updateExam)}>
                 <div className="flex justify-between items-center">
                     <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
-                    <Button as={Link} href="/admin/exam" size="sm">
+                    <Button onClick={() => router.back()} size="sm">
                         Quay lại
                     </Button>
                 </div>

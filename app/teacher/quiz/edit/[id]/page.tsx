@@ -1,14 +1,14 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import TestEditItem from '@/components/test/TestEditItem';
 import { Button, Select, SelectItem } from '@nextui-org/react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 interface EditQuizProps {}
 
 const EditQuiz: React.FC<EditQuizProps> = () => {
+    const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -21,7 +21,7 @@ const EditQuiz: React.FC<EditQuizProps> = () => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <div className="flex justify-between items-center">
                 <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài tập</h3>
-                <Button as={Link} href="/teacher/quiz" size="sm">
+                <Button onClick={() => router.back()} size="sm">
                     Quay lại
                 </Button>
             </div>
