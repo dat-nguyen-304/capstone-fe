@@ -12,3 +12,4 @@ export * from './discussion-api';
 export * from './exam-api';
 export * from './ratings-api';
 export * from './comments-api';
+export * from './react-video-api';

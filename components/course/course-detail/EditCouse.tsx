@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { BiSolidPencil } from 'react-icons/bi';
 import { FaTrash } from 'react-icons/fa';
 import { courseStatusColorMap } from '@/utils';
+import { courseApi } from '@/api-client';
 
 interface EditCourseProps {
     onOpen: () => void;
@@ -25,7 +26,17 @@ interface EditCourseProps {
 
 const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
     console.log(editCourse);
+    const handleVerifyCourse = async () => {
+        try {
+            const courseId = editCourse?.id;
 
+            const response = await courseApi.TeacherSendVerifyCourse([courseId]);
+
+            console.log(response);
+        } catch (error) {
+            console.error('Error verifying course:', error);
+        }
+    };
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -39,6 +50,15 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
                     ₫ {editCourse?.price.toLocaleString('vi-VN')}{' '}
                 </p>
+                {editCourse?.status == 'DRAFT' || editCourse?.status == 'UPDATING' ? (
+                    <Button
+                        color="success"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
+                        onClick={handleVerifyCourse}
+                    >
+                        Duyệt khóa học
+                    </Button>
+                ) : null}
                 <Button
                     as={Link}
                     href={`/teacher/course/edit/${editCourse?.id}`}
@@ -47,7 +67,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 >
                     Chỉnh sửa <BiSolidPencil />
                 </Button>
-                {editCourse?.status != 'AVAILABLE' ? (
+                {editCourse?.status != 'AVAILABLE' && editCourse?.status != 'DRAFT' ? (
                     <Button color="danger" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black">
                         Xóa khóa học <FaTrash />
                     </Button>

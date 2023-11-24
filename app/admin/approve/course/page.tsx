@@ -65,7 +65,7 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData
     } = useQuery({
         queryKey: ['coursesApproveAdmin', { page, rowsPerPage, updateState }],
-        queryFn: () => courseApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
+        queryFn: () => courseApi.getCoursesVerifyListAdmin(page - 1, rowsPerPage)
     });
 
     useEffect(() => {
@@ -75,18 +75,24 @@ const Courses: React.FC<CoursesProps> = () => {
             setTotalRow(coursesData.totalRow);
         }
     }, [coursesData]);
+    console.log(coursesData);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, onActiveFn } = useInputModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, onActiveFn, description } = useInputModal();
 
-    const handleStatusChange = async (id: number, verifyStatus: string) => {
+    const handleStatusChange = async (id: number, reason: string, verifyStatus: string) => {
         let toastLoading;
         try {
             onClose();
             onInputClose();
             toastLoading = toast.loading('Đang xử lí yêu cầu');
+            console.log(id);
+            console.log(verifyStatus);
+            console.log(description);
+            toast.dismiss(toastLoading);
             const res = await courseApi.changeCourseStatus({
                 id,
+                reason,
                 verifyStatus
             });
 
@@ -105,6 +111,7 @@ const Courses: React.FC<CoursesProps> = () => {
             console.error('Error changing user status', error);
         }
     };
+    // console.log(description);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -126,23 +133,23 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const onApproveOpen = (id: number, action: string) => {
+    const onApproveOpen = (id: number, reason: string, action: string) => {
         onWarning({
             title: 'Xác nhận duyệt',
             content: 'Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, action)
+            activeFn: () => handleStatusChange(id, reason, action)
         });
         onOpen();
     };
 
-    const onDeclineOpen = (id: number, action: string) => {
+    const onDeclineOpen = (id: number, reason: string, action: string) => {
         onDanger({
             title: 'Xác nhận từ chối',
             content: 'Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
             activeFn: () => {
                 onClose();
                 onInputOpen();
-                onActiveFn(() => handleStatusChange(id, action));
+                onActiveFn(() => handleStatusChange(id, reason, action));
             }
         });
         onOpen();
@@ -172,10 +179,16 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options">
-                                <DropdownItem color="success" onClick={() => onApproveOpen(course?.id, 'ACCEPTED')}>
+                                <DropdownItem
+                                    color="success"
+                                    onClick={() => onApproveOpen(course?.id, 'Khóa học phù hợp', 'ACCEPTED')}
+                                >
                                     Duyệt
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onDeclineOpen(course?.id, 'REJECT')}>
+                                <DropdownItem
+                                    color="danger"
+                                    onClick={() => onDeclineOpen(course?.id, 'Khóa học không phù hợp', 'REJECT')}
+                                >
                                     Từ chối
                                 </DropdownItem>
                                 <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>

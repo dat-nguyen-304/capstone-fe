@@ -10,17 +10,21 @@ import { SafeUser } from '@/types';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '../Loader';
 import NotFound from '@/app/not-found';
-
+import { useRouter } from 'next/navigation';
 interface VideoHeaderProps {
     children: React.ReactNode;
+    id?: number;
 }
 
-const VideoHeader: React.FC<VideoHeaderProps> = ({ children }) => {
+const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
-
+    const router = useRouter();
+    const goBack = () => {
+        router.back();
+    };
     useEffect(() => {
         const handleReload = async () => {
             if (!currentUser.user && user) {
@@ -56,11 +60,11 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children }) => {
         <>
             <div className="h-[60px] bg-blue-400 flex items-center justify-between px-2 sm:px-8">
                 <div className="flex items-center gap-4">
-                    <Link href="/course/1">
-                        <Button className="text-sm p-0" size="sm">
-                            <BsArrowLeft />
-                        </Button>
-                    </Link>
+                    {/* <Link href={`/course/${id || '1'}`}> */}
+                    <Button className="text-sm p-0" size="sm" onClick={() => goBack()}>
+                        <BsArrowLeft />
+                    </Button>
+                    {/* </Link> */}
                     <Image
                         src="https://intaadvising.gatech.edu/wp-content/uploads/2020/11/cepa.png"
                         width={60}

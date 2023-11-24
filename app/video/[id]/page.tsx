@@ -4,14 +4,14 @@ import dynamic from 'next/dynamic';
 import VideoHeader from '@/components/header/VideoHeader';
 import { Button, Tab, Tabs, Textarea } from '@nextui-org/react';
 import CommentItem from '@/components/video/CommentItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { OnProgressProps } from 'react-player/base';
 import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
 import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
-import { commentsVideoApi, videoApi } from '@/api-client';
+import { commentsVideoApi, reactVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
@@ -27,6 +27,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [comment, setComment] = useState<string>('');
     const [currentTime, setCurrentTime] = useState('');
     const [isLike, setIsLike] = useState(false);
+    const [numberLike, setNumberLike] = useState<number>(0);
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
@@ -45,7 +46,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['commentsVideo', updateState],
         queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
     });
-    console.log(commentsData);
+    useEffect(() => {
+        if (data) {
+            setIsLike(data?.reactStatus ? true : false);
+            setNumberLike(data?.like);
+        }
+    }, [data]);
 
     const handleFeedbackSubmission = async () => {
         try {
@@ -58,6 +64,29 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             console.log(res);
             setComment('');
             setUpdateState(prev => !prev);
+            // console.log(ratingCourse);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    };
+    const onSubmitLike = async () => {
+        try {
+            const reactVideo = {
+                videoId: Number(params?.id),
+                status: isLike ? 'DISLIKE' : 'LIKE'
+            };
+
+            const res = await reactVideoApi.reactVideo(reactVideo);
+            if (res) {
+                setIsLike(!isLike);
+                if (!isLike) {
+                    setNumberLike(prev => prev + 1);
+                } else {
+                    setNumberLike(prev => prev - 1);
+                }
+            }
+            // console.log(res);
+
             // console.log(ratingCourse);
         } catch (error) {
             console.error('Error submitting feedback:', error);
@@ -103,10 +132,10 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                             <h3 className="text-xl flex-[1] font-semibold">{data?.name}</h3>
                             <div className="flex items-center gap-2">
                                 <BiSolidLike
-                                    onClick={() => setIsLike(!isLike)}
-                                    className={`text-xl ${isLike ? 'text-blue-500' : 'text-gray-500'} `}
+                                    onClick={() => onSubmitLike()}
+                                    className={`text-xl cursor-pointer ${isLike ? 'text-blue-500' : 'text-gray-500'} `}
                                 />
-                                <span>12</span>
+                                <span>{numberLike}</span>
                             </div>
                         </div>
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>

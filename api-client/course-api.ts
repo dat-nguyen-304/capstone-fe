@@ -28,7 +28,7 @@ export const courseApi = {
         );
         return res.data;
     },
-    changeCourseStatus: async (payload: ChangeCourseStatus) => {
+    changeCourseStatus: async (payload: any) => {
         return await axiosClient.post('/courses/admin/verify-course', payload);
     },
     createCourse: async (payload: any) => {
@@ -39,7 +39,7 @@ export const courseApi = {
         return res.data;
     },
     getCourseDraftById: async (courseDraftId: number) => {
-        const res = await axiosClient.get(`/courses/detail/draft?id=${courseDraftId}`);
+        const res = await axiosClient.get(`/courses/admin/detail/draft?id=${courseDraftId}`);
         return res.data;
     },
     updateCourse: async (payload: any) => {
@@ -47,6 +47,13 @@ export const courseApi = {
     },
     getEnrollCourse: async (page: number) => {
         const res = await axiosClient.get(`/enroll-course?page=${page}&size=20&sortType=ASC`);
+        return res.data;
+    },
+    TeacherSendVerifyCourse: async (payload: any) => {
+        return await axiosClient.put('/courses/teacher/send-verify-request', payload);
+    },
+    getCoursesVerifyListAdmin: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/courses/admin/verify-list?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     }
 };
