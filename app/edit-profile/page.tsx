@@ -16,7 +16,7 @@ interface StudentProfileProps {}
 const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
     const { user } = useUser();
     const { data: studentData } = useQuery({
-        queryKey: ['student-profile'],
+        queryKey: ['student-detail'],
         queryFn: () => studentApi.getStudent()
     });
 

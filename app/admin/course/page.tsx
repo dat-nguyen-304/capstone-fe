@@ -289,7 +289,6 @@ const Courses: React.FC<CoursesProps> = () => {
             case 'createdDate':
             case 'updateDate':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
-
                 const formattedDate = new Intl.DateTimeFormat('en-GB', {
                     year: 'numeric',
                     month: 'numeric',

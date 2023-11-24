@@ -59,9 +59,7 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({ isOpen, onOpen, 
         if (founded) toast.error('Vui lòng điền đúng thông tin');
         else {
             const res = await studentApi.addTarget({
-                studentCombinationTarget: {
-                    combinationId: combination?.id
-                },
+                combinationId: combination?.id,
                 studentTargetRequest: subjectTarget
             });
             console.log({ res });

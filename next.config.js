@@ -10,7 +10,8 @@ const nextConfig = {
             'dienbientv.vn',
             'cdn2.hoc247.vn',
             'res.cloudinary.com',
-            'images.unsplash.com'
+            'images.unsplash.com',
+            'hoc247.vn'
         ]
     }
 };

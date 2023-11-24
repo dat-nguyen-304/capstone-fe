@@ -47,7 +47,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     });
 
     const {
-        isOpen,
         onOpen,
         onClose,
         onContentType,
@@ -57,8 +56,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         onReportType,
         onDescription,
         onFile,
-        file,
-        onActiveFn
+        file
     } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
@@ -131,7 +129,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const openReportModal = () => {
         onContentType('discussion');
         onOpen();
-        // onActiveFn(() => onSubmitReport(description, reportType, file));
     };
     const postContent = {
         id: discussionData?.id,

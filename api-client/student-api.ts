@@ -4,6 +4,9 @@ export const studentApi = {
     getStudent: async () => {
         return await axiosClient.get(`/student/detail`);
     },
+    getPublicStudent: async (email: string) => {
+        return await axiosClient.get(`/student/public/detail/${email}`);
+    },
     getAll: async (page: number, size: number, status: string) => {
         const { data: students } = await axiosClient.get(
             `/student?page=${page}&size=${size}&sortType=ASC&userStatus=${status}`

@@ -7,5 +7,8 @@ export const teacherApi = {
             `/teacher?page=${page}&size=${size}&sortType=ASC&userStatus=${status}`
         );
         return teachers;
+    },
+    getPublicTeacher: async (email: string) => {
+        return await axiosClient.get(`/teacher/detail/user?email=${email}`);
     }
 };

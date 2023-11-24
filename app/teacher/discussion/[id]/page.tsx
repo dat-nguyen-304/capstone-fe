@@ -44,7 +44,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     });
 
     const {
-        isOpen,
         onOpen,
         onClose,
         onContentType,
@@ -54,8 +53,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         onReportType,
         onDescription,
         onFile,
-        file,
-        onActiveFn
+        file
     } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);

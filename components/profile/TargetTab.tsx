@@ -13,7 +13,12 @@ interface TargetTabProps {
 }
 
 const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
-    const [subjectTarget, setSubjectTarget] = useState<any[3]>([{}, {}, {}]);
+    const [subjectTarget, setSubjectTarget] = useState<any[3]>(
+        target.subjectTargetResponses.map((subject: any) => ({
+            subjectId: subject.subjectId,
+            grade: subject.grade
+        }))
+    );
 
     const setTargetObject = (index: number, subjectId: number, value: string) => {
         const grade = Number(value);
@@ -33,14 +38,33 @@ const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
     };
 
     const onSubmit = async () => {
-        const founded = subjectTarget.find((target: any) => target.isValid === false);
-        if (founded) toast.error('Vui lòng điền đúng thông tin');
-        else {
-            const res = await studentApi.updateTarget({
-                targetId: target.id,
-                studentSubjectTargetRequests: subjectTarget
-            });
-            console.log({ res });
+        let toastLoading;
+        try {
+            toastLoading = toast.loading('Đang cập nhật');
+            const founded = subjectTarget.find((subject: any) => subject.isValid === false);
+            if (founded) toast.error('Vui lòng điền đúng thông tin');
+            else {
+                const subjectTargetBody = subjectTarget.map((subject: any) => ({
+                    subjectId: subject.subjectId,
+                    grade: subject.grade
+                }));
+                console.log({
+                    hello: {
+                        targetId: target.id,
+                        studentSubjectTargetRequests: subjectTargetBody
+                    }
+                });
+                const res = await studentApi.updateTarget({
+                    targetId: target.id,
+                    studentSubjectTargetRequests: subjectTarget
+                });
+                console.log({ res });
+                toast.dismiss(toastLoading);
+                toast.success('Cập nhật thành công');
+            }
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc. Vui lòng thử lại sau ít phút.');
         }
     };
 

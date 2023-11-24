@@ -22,6 +22,7 @@ import { courseApi } from '@/api-client';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
 import { toast } from 'react-toastify';
+import { InputModal } from '@/components/modal/InputModal';
 
 interface CoursesProps {}
 
@@ -58,6 +59,7 @@ const Courses: React.FC<CoursesProps> = () => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
@@ -65,7 +67,7 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData
     } = useQuery({
         queryKey: ['coursesApproveAdmin', { page, rowsPerPage, updateState }],
-        queryFn: () => courseApi.getCoursesVerifyListAdmin(page - 1, rowsPerPage)
+        queryFn: () => courseApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
     });
 
     useEffect(() => {
@@ -75,24 +77,20 @@ const Courses: React.FC<CoursesProps> = () => {
             setTotalRow(coursesData.totalRow);
         }
     }, [coursesData]);
-    console.log(coursesData);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, onActiveFn, description } = useInputModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
-    const handleStatusChange = async (id: number, reason: string, verifyStatus: string) => {
+    const handleStatusChange = async (id: number, verifyStatus: string) => {
         let toastLoading;
+        console.log({ description, id, verifyStatus });
         try {
             onClose();
             onInputClose();
             toastLoading = toast.loading('Đang xử lí yêu cầu');
-            console.log(id);
-            console.log(verifyStatus);
-            console.log(description);
-            toast.dismiss(toastLoading);
             const res = await courseApi.changeCourseStatus({
                 id,
-                reason,
+                reason: description,
                 verifyStatus
             });
 
@@ -111,7 +109,6 @@ const Courses: React.FC<CoursesProps> = () => {
             console.error('Error changing user status', error);
         }
     };
-    // console.log(description);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -133,25 +130,25 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
-    const onApproveOpen = (id: number, reason: string, action: string) => {
+    const onApproveOpen = (id: number) => {
         onWarning({
             title: 'Xác nhận duyệt',
             content: 'Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, reason, action)
+            activeFn: () => handleStatusChange(id, 'ACCEPTED')
         });
         onOpen();
     };
 
-    const onDeclineOpen = (id: number, reason: string, action: string) => {
+    const onDeclineOpen = (id: number) => {
         onDanger({
             title: 'Xác nhận từ chối',
             content: 'Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
             activeFn: () => {
                 onClose();
                 onInputOpen();
-                onActiveFn(() => handleStatusChange(id, reason, action));
             }
         });
+        setDeclineId(id);
         onOpen();
     };
 
@@ -179,16 +176,10 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options">
-                                <DropdownItem
-                                    color="success"
-                                    onClick={() => onApproveOpen(course?.id, 'Khóa học phù hợp', 'ACCEPTED')}
-                                >
+                                <DropdownItem color="success" onClick={() => onApproveOpen(course?.id)}>
                                     Duyệt
                                 </DropdownItem>
-                                <DropdownItem
-                                    color="danger"
-                                    onClick={() => onDeclineOpen(course?.id, 'Khóa học không phù hợp', 'REJECT')}
-                                >
+                                <DropdownItem color="danger" onClick={() => onDeclineOpen(course?.id)}>
                                     Từ chối
                                 </DropdownItem>
                                 <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
@@ -286,6 +277,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handleStatusChange(declineId as number, 'REJECT')} />
         </div>
     );
 };

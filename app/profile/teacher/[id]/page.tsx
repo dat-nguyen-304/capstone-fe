@@ -1,49 +1,94 @@
 'use client';
 
-import { Card, Chip, Tab, Tabs } from '@nextui-org/react';
+import { teacherApi } from '@/api-client';
+import Loader from '@/components/Loader';
+import { Button, Card, Chip, Tab, Tabs } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { BsArrowLeft } from 'react-icons/bs';
 import { MdVerified } from 'react-icons/md';
-interface StudentProfileProps {}
+interface StudentProfileProps {
+    params: { id: string };
+}
 
-const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
+const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
+    const router = useRouter();
+    const { data } = useQuery({
+        queryKey: ['teacher-public-detail'],
+        queryFn: () => teacherApi.getPublicTeacher(params.id)
+    });
+
+    if (!data) return <Loader />;
+
+    const teacherData = data.data;
+
     return (
-        <Card className="w-[94%] xl:w-[90%] my-4 p-8 mx-auto min-h-[360px]">
-            <div className=" md:flex items-start gap-8">
-                <div className="col-span-4 xl:col-span-3 rounded-xl">
-                    <Image src="/student.png" width={100} height={100} alt="" className="border-1 rounded-full" />
-                </div>
-                <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
-                    <h3 className="text-base sm:text-lg font-bold flex items-center gap-2">
-                        Nguyễn Văn An <MdVerified color="#0de298" />
-                    </h3>
-                    <div>
-                        <div className="xl:flex items-center mt-4 sm:mt-8 xl:mt-4 gap-4">
-                            <p className="text-sm sm:text-base font-semibold">Giáo viên môn</p>
-                            <div className="flex gap-2 mt-2 sm:mt-0">
-                                <Chip color="primary">Toán học</Chip>
-                                <Chip color="primary">Vật lí</Chip>
+        <div className="w-[94%] xl:w-[90%] my-4 mx-auto ">
+            <Button
+                variant="light"
+                className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
+                onClick={() => router.back()}
+            >
+                <BsArrowLeft />
+                <span>Quay lại</span>
+            </Button>
+
+            <Card className="p-8 my-4 min-h-[360px]">
+                <div className=" md:flex items-start gap-8">
+                    <div className="col-span-4 xl:col-span-3 rounded-xl">
+                        <Image
+                            src={teacherData.url || '/student.png'}
+                            width={100}
+                            height={100}
+                            alt=""
+                            className="border-1 rounded-full"
+                        />
+                    </div>
+                    <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
+                        <h3 className="text-base text-[#444] sm:text-lg font-bold flex items-center gap-2">
+                            {teacherData.fullName}
+                            {/* <MdVerified color="#0de298" /> */}
+                        </h3>
+                        <div>
+                            <div className="xl:flex items-center mt-4 gap-4">
+                                <p className="text-sm text-[#444] sm:text-base font-semibold">Giáo viên môn</p>
+                                <div className="flex gap-2 mt-2 xl:mt-0">
+                                    {teacherData.subject.map((s: string) => (
+                                        <Chip key={s} color="primary">
+                                            {s}
+                                        </Chip>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                        <div className="xl:flex items-center mt-4 sm:mt-8">
-                            <p className="text-sm sm:text-base font-semibold">Ngày tham gia: 22/12/2023</p>
+                            <div className="xl:flex items-center mt-4">
+                                <p className="text-sm text-[#444] sm:text-base font-semibold">
+                                    <span className="mr-2">Ngày tham gia:</span>
+                                    {new Intl.DateTimeFormat('en-GB', {
+                                        year: 'numeric',
+                                        month: 'numeric',
+                                        day: 'numeric'
+                                    })?.format(teacherData.createDate || new Date())}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <Tabs variant="underlined" aria-label="Tabs variants" className="mt-4">
-                    <Tab key="description" title="Lời giới thiệu" className="p-0">
-                        Abcxyz
-                    </Tab>
-                    <Tab key="course" title="Khóa học">
-                        khóa học
-                    </Tab>
-                    <Tab key="video" title="Video">
-                        video
-                    </Tab>
-                </Tabs>
-            </div>
-        </Card>
+                <div>
+                    <Tabs color="primary" variant="underlined" aria-label="Tabs variants" className="mt-4">
+                        <Tab key="description" title="Lời giới thiệu" className="p-0">
+                            Abcxyz
+                        </Tab>
+                        <Tab key="course" title="Khóa học">
+                            khóa học
+                        </Tab>
+                        <Tab key="video" title="Video">
+                            video
+                        </Tab>
+                    </Tabs>
+                </div>
+            </Card>
+        </div>
     );
 };
 

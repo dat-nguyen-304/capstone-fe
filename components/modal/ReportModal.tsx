@@ -22,7 +22,7 @@ interface ReportModalProps {
 }
 
 export const ReportModal: React.FC<ReportModalProps> = ({ onReport }) => {
-    const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription, activeFn } = useReportModal();
+    const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription } = useReportModal();
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         onFile(acceptedFiles[0]);

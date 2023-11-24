@@ -98,7 +98,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <Sidebar user={user as SafeUser} items={items}>
             {children}
-            <InputModal />
         </Sidebar>
     );
 };

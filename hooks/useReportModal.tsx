@@ -13,8 +13,6 @@ interface ReportModalStore {
     onDescription: (description: string) => void;
     file: FileWithPath | null;
     onFile: (file: FileWithPath | null) => void;
-    activeFn: () => void;
-    onActiveFn: (activeFn: () => void) => void;
 }
 
 export const useReportModal = create<ReportModalStore>(set => ({
@@ -28,7 +26,5 @@ export const useReportModal = create<ReportModalStore>(set => ({
     description: '',
     onDescription: (description: string) => set({ description }),
     file: null,
-    onFile: (file: FileWithPath | null) => set({ file }),
-    activeFn: () => {},
-    onActiveFn: (activeFn: () => void) => set({ activeFn })
+    onFile: (file: FileWithPath | null) => set({ file })
 }));
