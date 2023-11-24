@@ -6,7 +6,8 @@ export type VideoCardType = {
     like: number;
     createDate: string;
     status: string;
-    videoStatus: string;
+    videoStatus: 'PUBLIC' | 'PRIVATE';
+    isAccess: boolean;
 };
 
 export type ChangeVideoStatus = {

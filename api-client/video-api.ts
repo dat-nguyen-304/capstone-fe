@@ -39,5 +39,9 @@ export const videoApi = {
     },
     updateVideo: async (payload: any) => {
         return await axiosFormData.put('/videos/update', payload);
+    },
+    getVideoForPublicProfile: async (email: string, page: number, size: number) => {
+        const res = await axiosClient.get(`/videos/user?email=${email}&page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
     }
 };

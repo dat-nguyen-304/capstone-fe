@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                 onCollapse={value => setCollapsed(value)}
                 style={{
                     overflow: 'auto',
-                    height: '94vh',
+                    height: '95vh',
                     position: 'fixed',
                     left: 0,
                     top: 0,

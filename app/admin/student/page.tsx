@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import { useCustomModal } from '@/hooks';
 import { StudentType } from '@/types';
-interface MyQuizProps {}
+interface StudentsProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',
@@ -41,7 +41,7 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const MyQuiz: React.FC<MyQuizProps> = () => {
+const Students: React.FC<StudentsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         // new Set(['id', 'fullName', 'email', 'targets?.[0]?.name', 'createdAt', 'userStatus', 'action'])
@@ -342,4 +342,4 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     );
 };
 
-export default MyQuiz;
+export default Students;

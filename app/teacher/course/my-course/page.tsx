@@ -144,7 +144,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     {courses.length ? (
                         courses.map((courseItem: CourseCardType) => (
-                            <CourseCard key={courseItem.id} course={courseItem} isTeacherCourse={true} />
+                            <CourseCard key={courseItem.id} course={courseItem} type="teacher-course" />
                         ))
                     ) : (
                         <></>

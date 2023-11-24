@@ -7,8 +7,7 @@ import { FaComments } from 'react-icons/fa';
 import { RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
-    isMyVideo?: boolean;
-    isTeacherVideo?: boolean;
+    type?: 'teacher-video';
     videoItem: {
         id: number;
         name: string;
@@ -32,10 +31,9 @@ const floatToTime = (durationFloat: number): string => {
     return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, isMyVideo, isTeacherVideo }) => {
+const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type }) => {
     let detailPage = '';
-    if (isTeacherVideo) detailPage = `/teacher/video/${videoItem?.id}`;
-    else if (isMyVideo) detailPage = `/my-course/${videoItem?.id}`;
+    if (type === 'teacher-video') detailPage = `/teacher/video/${videoItem?.id}`;
     else detailPage = `/video/${videoItem?.id}`;
     return (
         <li className="relative w-[85%] sm:w-[90%] mx-auto mb-4 py-4 bg-white rounded-xl shadow-lg">

@@ -3,7 +3,7 @@
 import { courseApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import CommonInfo from '@/components/course/edit-course/CommonInfo';
-import CourseContent from '@/components/course/edit-course/CouseContent';
+import CourseContent from '@/components/course/edit-course/CourseContent';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';

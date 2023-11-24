@@ -25,10 +25,17 @@ interface EditCourseProps {
 }
 
 const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
-    console.log(editCourse);
+    let status = '';
+    if (editCourse.status === 'AVAILABLE') status = 'Hoạt động';
+    else if (editCourse.status === 'WAITING') status = 'Chờ xác thực';
+    else if (editCourse.status === 'REJECT') status = 'Đã từ chối';
+    else if (editCourse.status === 'BANNED') status = 'Đã Xóa';
+    else if (editCourse.status === 'UPDATING') status = 'Chờ cập nhật';
+    else if (editCourse.status === 'DRAFT') status = 'Bản nháp';
+    else status = 'Vô hiệu';
     const handleVerifyCourse = async () => {
         try {
-            const courseId = editCourse?.id;
+            const courseId = editCourse.id;
 
             const response = await courseApi.TeacherSendVerifyCourse([courseId]);
 
@@ -40,7 +47,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
-                src={editCourse?.thumbnail || '/banner/slide-1.png'}
+                src={editCourse.thumbnail || '/banner/slide-1.png'}
                 width={600}
                 height={300}
                 alt=""
@@ -48,9 +55,9 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
-                    ₫ {editCourse?.price.toLocaleString('vi-VN')}{' '}
+                    ₫ {editCourse.price.toLocaleString('vi-VN')}{' '}
                 </p>
-                {editCourse?.status == 'DRAFT' || editCourse?.status == 'UPDATING' ? (
+                {editCourse.status === 'DRAFT' || editCourse.status === 'UPDATING' ? (
                     <Button
                         color="success"
                         className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
@@ -61,62 +68,52 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 ) : null}
                 <Button
                     as={Link}
-                    href={`/teacher/course/edit/${editCourse?.id}`}
+                    href={`/teacher/course/edit/${editCourse.id}`}
                     color="warning"
                     className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
                 >
                     Chỉnh sửa <BiSolidPencil />
                 </Button>
-                {editCourse?.status != 'AVAILABLE' && editCourse?.status != 'DRAFT' ? (
+                {editCourse.status != 'AVAILABLE' && editCourse.status != 'DRAFT' ? (
                     <Button color="danger" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black">
                         Xóa khóa học <FaTrash />
                     </Button>
                 ) : null}
 
-                <Button
-                    color="primary"
-                    className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
-                    onClick={onOpen}
-                >
-                    Doanh thu <SiGoogleanalytics />
-                </Button>
+                {editCourse.status === 'AVAILABLE' ? (
+                    <Button
+                        color="primary"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
+                        onClick={onOpen}
+                    >
+                        Doanh thu <SiGoogleanalytics />
+                    </Button>
+                ) : null}
 
                 <div className="hidden md:block">
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />
                         <span className="text-sm">
-                            {editCourse?.subject} - {editCourse?.level}
+                            {editCourse.subject} - {editCourse.level}
                         </span>
                     </div>
                     <div className="flex items-center my-4">
                         <TfiVideoClapper className="mr-8" />
-                        <span className="text-sm">{editCourse?.totalVideo} bài giảng </span>
+                        <span className="text-sm">{editCourse.totalVideo} bài giảng </span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
                         <span className="text-sm">5 bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
-                        <SiStatuspage className="mr-8" />
+                        <SiStatuspage className="mr-6" />
                         <Chip
                             className="capitalize border-none gap-1 text-default-600"
                             color={courseStatusColorMap[editCourse.status]}
                             size="sm"
                             variant="dot"
                         >
-                            {editCourse?.status === 'AVAILABLE'
-                                ? 'Hoạt động'
-                                : editCourse?.status === 'WAITING'
-                                ? 'Chờ xác thực'
-                                : editCourse?.status === 'REJECT'
-                                ? 'Đã từ chối'
-                                : editCourse?.status === 'BANNED'
-                                ? 'Đã Xóa'
-                                : editCourse?.status === 'UPDATING'
-                                ? 'Chờ cập nhật'
-                                : editCourse?.status === 'DRAFT'
-                                ? 'Bản nháp'
-                                : 'Vô hiệu'}
+                            {status}
                         </Chip>
                     </div>
                 </div>

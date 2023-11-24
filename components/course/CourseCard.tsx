@@ -15,18 +15,25 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 interface CourseCardProps {
-    isMyCourse?: boolean;
-    isTeacherCourse?: boolean;
-    isTeacherCourseDraft?: boolean;
+    type?: 'my-course' | 'teacher-course' | 'teacher-course-draft';
     course: CourseCardType;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, isTeacherCourseDraft, course }) => {
-    let detailPage = '';
-    if (isTeacherCourse) detailPage = `/teacher/course/${course?.id}`;
-    else if (isTeacherCourseDraft) detailPage = `/teacher/course/my-course-draft/${course?.id}`;
-    else if (isMyCourse) detailPage = `/my-course/${course?.id}`;
+const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
+    let detailPage = '',
+        status = '';
+    if (type === 'teacher-course') detailPage = `/teacher/course/${course?.id}`;
+    else if (type === 'teacher-course-draft') detailPage = `/teacher/course/my-course-draft/${course?.id}`;
+    else if (type === 'my-course') detailPage = `/my-course/${course?.id}`;
     else detailPage = `/course/${course?.id}`;
+    if (course.status === 'AVAILABLE') status = 'Hoạt động';
+    else if (course.status === 'WAITING') status = 'Chờ xác thực';
+    else if (course.status === 'REJECT') status = 'Đã từ chối';
+    else if (course.status === 'BANNED') status = 'Đã Xóa';
+    else if (course.status === 'UPDATING') status = 'Chờ cập nhật';
+    else if (course.status === 'DRAFT') status = 'Bản nháp';
+    else status = 'Vô hiệu';
+
     return (
         <div className="flex justify-center w-full">
             <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
@@ -53,7 +60,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, is
                                 {course.level}
                             </span>
                         </div>
-                        {isMyCourse ? (
+                        {type === 'my-course' ? (
                             <div className="w-full mt-2">
                                 <Progress className="w-full" percent={30} />
                             </div>
@@ -62,26 +69,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ isMyCourse, isTeacherCourse, is
                                 ₫ {course.price.toLocaleString('vi-VN')}
                             </p>
                         )}
-                        {isTeacherCourse && (
+                        {(type === 'teacher-course' || type === 'teacher-course-draft') && (
                             <Chip
                                 className="capitalize border-none p-0 mt-3 ml-[-2px] text-default-600 text-xs"
                                 color={statusColorMap[course?.status as string]}
                                 size="sm"
                                 variant="dot"
                             >
-                                {course?.status === 'AVAILABLE'
-                                    ? 'Hoạt động'
-                                    : course?.status === 'WAITING'
-                                    ? 'Chờ xác thực'
-                                    : course?.status === 'REJECT'
-                                    ? 'Đã từ chối'
-                                    : course?.status === 'BANNED'
-                                    ? 'Đã Xóa'
-                                    : course?.status === 'UPDATING'
-                                    ? 'Chờ cập nhật'
-                                    : course?.status === 'DRAFT'
-                                    ? 'Bản nháp'
-                                    : 'Vô hiệu'}
+                                {status}
                             </Chip>
                         )}
                     </CardBody>

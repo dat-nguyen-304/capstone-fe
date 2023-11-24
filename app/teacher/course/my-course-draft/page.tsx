@@ -36,16 +36,8 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
 
     const statusArr = [
         {
-            value: 'AVAILABLE',
-            name: 'Hoạt động'
-        },
-        {
             value: 'REJECT',
             name: 'Đã từ chối'
-        },
-        {
-            value: 'BANNED',
-            name: 'Đã cấm'
         },
         {
             value: 'DRAFT',
@@ -58,10 +50,6 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
         {
             value: 'UPDATING',
             name: 'Chờ cập nhật'
-        },
-        {
-            value: 'UNAVAILABLE',
-            name: 'Vô hiệu'
         }
     ];
 
@@ -74,7 +62,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học nháp</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học vừa tạo</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 flex justify-between gap-3 items-end">
                     <Input
@@ -148,7 +136,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     {courses.length ? (
                         courses.map((courseItem: CourseCardType) => (
-                            <CourseCard key={courseItem.id} course={courseItem} isTeacherCourseDraft={true} />
+                            <CourseCard key={courseItem.id} course={courseItem} type="teacher-course-draft" />
                         ))
                     ) : (
                         <></>

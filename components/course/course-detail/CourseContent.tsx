@@ -4,8 +4,9 @@ import Image from 'next/image';
 import VideoItem from './VideoItem';
 
 interface CourseContentProps {
-    isMyCourse?: boolean;
-    isTeacherCourse?: boolean;
+    // isMyCourse?: boolean;
+    // isTeacherCourse?: boolean;
+    type?: 'my-course' | 'teacher-course';
     courseContent?: {
         id: number;
         totalVideo: number;
@@ -19,7 +20,7 @@ interface CourseContentProps {
     };
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, isTeacherCourse, courseContent }) => {
+const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) => {
     return (
         <>
             <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>
@@ -36,7 +37,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, isTeacherCour
                         <Image src="/video-number/red.svg" width={30} height={30} alt="" />
                     </span>
                 </span>
-                {isMyCourse && (
+                {type === 'my-course' && (
                     <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
                         <span className="mt-2 sm:mt-0 inline-flex items-center">
                             <span>Hoàn thành</span>
@@ -49,7 +50,12 @@ const CourseContent: React.FC<CourseContentProps> = ({ isMyCourse, isTeacherCour
             </div>
             <ul className="max-h-[500px] overflow-y-scroll mt-8">
                 {courseContent?.listVideo?.map((videoItem, index) => (
-                    <VideoItem key={index} videoItem={videoItem} index={index} isTeacherVideo={isTeacherCourse} />
+                    <VideoItem
+                        key={index}
+                        videoItem={videoItem}
+                        index={index}
+                        type={type === 'teacher-course' ? 'teacher-video' : undefined}
+                    />
                 ))}
             </ul>
         </>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoCardProps {
-    isTeacherVideo?: boolean;
+    type?: 'teacher' | 'all';
     video: VideoCardType;
 }
 
@@ -31,10 +31,24 @@ const floatToTime = (durationFloat: number): string => {
     return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoCard: React.FC<VideoCardProps> = ({ isTeacherVideo, video }) => {
-    let detailPage = '';
-    if (isTeacherVideo) detailPage = `/teacher/video/${video?.id}`;
-    else detailPage = '/video/1';
+const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
+    let detailPage = '',
+        teacherStatus = '',
+        profileStatus;
+    if (type === 'teacher') {
+        detailPage = `/teacher/video/${video?.id}`;
+        if (video.status === 'AVAILABLE') teacherStatus = 'Hoạt động';
+        else if (video.status === 'WAITING') teacherStatus = 'Chờ xác thực';
+        else if (video.status === 'REJECT') teacherStatus = 'Đã từ chối';
+        else if (video.status === 'BANNED') teacherStatus = 'Đã xóa';
+        else if (video.status === 'UPDATING') teacherStatus = 'Chờ cập nhật';
+        else teacherStatus = 'Vô hiệu';
+    } else detailPage = `/video/${video.id}`;
+    if (type === 'all') {
+        if (video.videoStatus === 'PUBLIC') profileStatus = 'Xem trước';
+        else if (video.isAccess === true) profileStatus = 'Đã mua';
+        else profileStatus = 'Đang khóa';
+    }
 
     return (
         <div className="flex justify-center w-full">
@@ -61,24 +75,24 @@ const VideoCard: React.FC<VideoCardProps> = ({ isTeacherVideo, video }) => {
                                 <BiSolidLike className="text-sm text-blue-300 ml-2" />
                             </span>
                         </div>
-                        {isTeacherVideo && (
+                        {type === 'teacher' && (
                             <Chip
                                 className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
                                 color={statusColorMap[video?.status as string]}
                                 size="sm"
                                 variant="dot"
                             >
-                                {video?.status === 'AVAILABLE'
-                                    ? 'Hoạt động'
-                                    : video?.status === 'WAITING'
-                                    ? 'Chờ xác thực'
-                                    : video?.status === 'REJECT'
-                                    ? 'Đã từ chối'
-                                    : video?.status === 'BANNED'
-                                    ? 'Đã Xóa'
-                                    : video?.status === 'UPDATING'
-                                    ? 'Chờ cập nhật'
-                                    : 'Vô hiệu'}
+                                {teacherStatus}
+                            </Chip>
+                        )}
+                        {type === 'all' && (
+                            <Chip
+                                className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
+                                color={profileStatus === 'Đang khóa' ? 'danger' : 'success'}
+                                size="sm"
+                                variant="dot"
+                            >
+                                {profileStatus}
                             </Chip>
                         )}
                     </CardBody>

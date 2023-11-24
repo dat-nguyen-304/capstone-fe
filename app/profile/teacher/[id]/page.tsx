@@ -2,6 +2,8 @@
 
 import { teacherApi } from '@/api-client';
 import Loader from '@/components/Loader';
+import CourseTab from '@/components/profile/CourseTab';
+import VideoTab from '@/components/profile/VideoTab';
 import { Button, Card, Chip, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -80,10 +82,10 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                             Abcxyz
                         </Tab>
                         <Tab key="course" title="Khóa học">
-                            khóa học
+                            <CourseTab teacher={params.id} />
                         </Tab>
                         <Tab key="video" title="Video">
-                            video
+                            <VideoTab teacher={params.id} />
                         </Tab>
                     </Tabs>
                 </div>

@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { TeacherType } from '@/types';
 import { Spin } from 'antd';
 import { useCustomModal } from '@/hooks';
-interface MyQuizProps {}
+interface TeachersProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',
@@ -81,7 +81,7 @@ const teachers = [
 
 type Teacher = (typeof teachers)[0];
 
-const MyQuiz: React.FC<MyQuizProps> = () => {
+const Teachers: React.FC<TeachersProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'fullName', 'email', 'subject', 'createdAt', 'status', 'action'])
@@ -379,4 +379,4 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     );
 };
 
-export default MyQuiz;
+export default Teachers;

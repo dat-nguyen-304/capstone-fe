@@ -53,6 +53,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         }
     }, [data]);
 
+    console.log({ data });
+
     const handleFeedbackSubmission = async () => {
         try {
             const commentVideo = {

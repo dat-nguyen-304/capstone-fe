@@ -20,6 +20,14 @@ interface ApproveCourseProps {
 }
 
 const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
+    let status = '';
+    if (approveCourse.status === 'AVAILABLE') status = 'Hoạt động';
+    else if (approveCourse.status === 'WAITING') status = 'Chờ xác thực';
+    else if (approveCourse.status === 'REJECT') status = 'Đã từ chối';
+    else if (approveCourse.status === 'BANNED') status = 'Đã Xóa';
+    else if (approveCourse.status === 'UPDATING') status = 'Chờ cập nhật';
+    else if (approveCourse.status === 'DRAFT') status = 'Bản nháp';
+    else status = 'Vô hiệu';
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -58,24 +66,14 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                         <span className="text-sm">5 bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
-                        <SiStatuspage className="mr-8" />
+                        <SiStatuspage className="mr-6" />
                         <Chip
                             className="capitalize border-none gap-1 text-default-600"
                             color={courseStatusColorMap[approveCourse.status]}
                             size="sm"
                             variant="dot"
                         >
-                            {approveCourse?.status === 'AVAILABLE'
-                                ? 'Hoạt động'
-                                : approveCourse?.status === 'WAITING'
-                                ? 'Chờ xác thực'
-                                : approveCourse?.status === 'REJECT'
-                                ? 'Đã từ chối'
-                                : approveCourse?.status === 'BANNED'
-                                ? 'Đã Xóa'
-                                : approveCourse?.status === 'UPDATING'
-                                ? 'Chờ cập nhật'
-                                : 'Vô hiệu'}
+                            {status}
                         </Chip>
                     </div>
                 </div>

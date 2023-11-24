@@ -43,7 +43,11 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
                 <span className="text-base mr-2 font-bold">{courseInfo?.rating?.toFixed(1)}</span>
                 <Rate disabled allowHalf defaultValue={courseInfo?.rating} className="!text-xs" />
                 <span className="text-xs ml-2">({courseInfo?.numberOfRate})</span>
-                <span className="text-sm ml-2">{courseInfo?.totalStudent} học sinh đã tham gia</span>
+                <span className="text-sm ml-2">
+                    {courseInfo?.totalStudent > 0
+                        ? `${courseInfo?.totalStudent} học sinh đã tham gia`
+                        : 'Chưa có học sinh tham gia'}{' '}
+                </span>
             </div>
             <div className="my-2 text-sm flex items-center">
                 Được tạo bởi:

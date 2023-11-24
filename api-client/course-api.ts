@@ -55,5 +55,11 @@ export const courseApi = {
     getCoursesVerifyListAdmin: async (page: number, size: number) => {
         const res = await axiosClient.get(`/courses/admin/verify-list?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
+    },
+    getCourseForPublicProfile: async (email: string, page: number, size: number) => {
+        const res = await axiosClient.get(
+            `/courses/user/find-by-email?email=${email}&page=${page}&size=${size}&sortType=ASC`
+        );
+        return res.data;
     }
 };
