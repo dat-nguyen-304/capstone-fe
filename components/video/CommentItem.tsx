@@ -64,7 +64,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
         onContentType('comment');
         onOpen();
     };
-    console.log(commentInfo);
 
     return (
         <li className="flex gap-4 group mb-6">
@@ -106,7 +105,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
                             onClick={handleLikeClick}
                         />
 
-                        <span className="text-xs sm:text-sm">{commentInfo?.reactCount}</span>
+                        <span className="text-xs sm:text-sm">{commentInfo?.reactCount || 0}</span>
                     </span>
                     {commentInfo?.owner !== true ? (
                         <>

@@ -68,7 +68,14 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                 ) : null}
                 <Button
                     as={Link}
-                    href={`/teacher/course/edit/${editCourse.id}`}
+                    href={
+                        editCourse?.status == 'DRAFT' ||
+                        editCourse?.status == 'UPDATING' ||
+                        editCourse?.status == 'REJECT' ||
+                        editCourse?.status == 'WAITING'
+                            ? `/teacher/course/my-course-draft/edit/${editCourse?.id}`
+                            : `/teacher/course/edit/${editCourse?.id}`
+                    }
                     color="warning"
                     className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
                 >

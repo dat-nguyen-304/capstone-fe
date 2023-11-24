@@ -22,7 +22,7 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['my-videos', { page }],
         // keepPreviousData: true,
-        queryFn: () => videoApi.getAllOfTeacher(currentUser.user?.email as string, 'ALL', page - 1, 20)
+        queryFn: () => videoApi.getAllOfTeacher('ALL', page - 1, 20, 'id', 'ASC')
     });
     useEffect(() => {
         if (data?.data) {

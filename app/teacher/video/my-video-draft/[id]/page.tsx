@@ -7,43 +7,27 @@ const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 import { BiSolidLike, BiSolidPencil } from 'react-icons/bi';
-import { commentsVideoApi, videoApi } from '@/api-client';
+import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
-interface VideoProps {
+interface VideoDraftProps {
     params: { id: number };
 }
 
-const Video: React.FC<VideoProps> = ({ params }) => {
+const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['video-teacher-detail', params?.id],
-        queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
+        queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
-    const { data: commentsData } = useQuery<any>({
-        queryKey: ['teacherCommentsVideo'],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
-    });
-    const mapCommentToCommonInfo = (commentData: any) => {
-        return {
-            id: commentData.id,
-            ownerFullName: commentData.useName || 'Nguyễn Văn A',
-            content: commentData.comment || 'Nội dung rất hay'
-        };
-    };
-    const commonInfo = {
-        id: 1,
-        ownerFullName: 'Nguyễn Văn A',
-        content: 'Nội dung rất hay',
-        owner: true
-    };
+
     const onSubmitReport = async () => {};
     if (!data) return <Loader />;
     return (
         <>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Button as={Link} size="sm" href="/teacher/video/my-video">
+                    <Button as={Link} size="sm" href="/teacher/video/my-video-draft">
                         <BsArrowLeft />
                     </Button>
                     <p className="text-blue-700 text-xs sm:text-base font-semibold">{data?.name}</p>
@@ -108,17 +92,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                 {/* <CommentItem />
                                 <CommentItem />
                                 <CommentItem /> */}
-                                {commentsData?.data?.length ? (
-                                    commentsData?.data?.map((commentInfo: any, index: number) => (
-                                        <CommentItem key={index} commentInfo={mapCommentToCommonInfo(commentInfo)} />
-                                    ))
-                                ) : (
-                                    <>
-                                        <CommentItem commentInfo={commonInfo} />
-                                    </>
-                                )}
                             </ul>
-                            {/* <Button className="w-full">Xem thêm</Button> */}
+                            <Button className="w-full">Xem thêm</Button>
                         </div>
                     </div>
                 </div>
@@ -128,4 +103,4 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     );
 };
 
-export default Video;
+export default VideoDraft;

@@ -22,7 +22,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['my-videos-draft', { page }],
         // keepPreviousData: true,
-        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20)
+        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20, 'id', 'DESC')
     });
     useEffect(() => {
         if (data?.data) {
@@ -143,7 +143,13 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     {videos.length ? (
                         videos.map((videoItem: VideoCardType) => (
-                            <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
+                            // <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
+                            <VideoCard
+                                type="teacher"
+                                isTeacherVideoDraft={true}
+                                key={videoItem?.id}
+                                video={videoItem}
+                            />
                         ))
                     ) : (
                         <>Danh Sách Video Trống</>

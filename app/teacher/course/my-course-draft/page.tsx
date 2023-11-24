@@ -23,7 +23,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['coursesDraft', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacherDraft(page - 1, 20)
+        queryFn: () => courseApi.getAllOfTeacherDraft(page - 1, 20, 'id', 'DESC')
     });
 
     useEffect(() => {
@@ -59,6 +59,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             top: 0
         });
     };
+    console.log(data?.data);
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">

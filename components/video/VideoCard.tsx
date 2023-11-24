@@ -6,6 +6,8 @@ import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoCardProps {
     type?: 'teacher' | 'all';
+    isTeacherVideo?: boolean;
+    isTeacherVideoDraft?: boolean;
     video: VideoCardType;
 }
 
@@ -31,7 +33,7 @@ const floatToTime = (durationFloat: number): string => {
     return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ type, isTeacherVideo, isTeacherVideoDraft, video }) => {
     let detailPage = '',
         teacherStatus = '',
         profileStatus;
@@ -43,12 +45,18 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         else if (video.status === 'BANNED') teacherStatus = 'Đã xóa';
         else if (video.status === 'UPDATING') teacherStatus = 'Chờ cập nhật';
         else teacherStatus = 'Vô hiệu';
-    } else detailPage = `/video/${video.id}`;
+    } else if (isTeacherVideoDraft) detailPage = `/teacher/video/my-video-draft/${video?.id}`;
+    else detailPage = `/video/${video.id}`;
     if (type === 'all') {
         if (video.videoStatus === 'PUBLIC') profileStatus = 'Xem trước';
         else if (video.isAccess === true) profileStatus = 'Đã mua';
         else profileStatus = 'Đang khóa';
     }
+
+    // let detailPage = '';
+    // if (isTeacherVideo) detailPage = `/teacher/video/${video?.id}`;
+    // else if (isTeacherVideoDraft) detailPage = `/teacher/video/my-video-draft/${video?.id}`;
+    // else detailPage = '/video/1';
 
     return (
         <div className="flex justify-center w-full">

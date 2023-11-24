@@ -18,7 +18,7 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
     const router = useRouter();
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course'],
-        queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
+        queryFn: () => courseApi.getCourseDraftById(params?.id)
     });
     const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacksAdmin'],
@@ -52,6 +52,8 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
         listVideo: data?.courseVideoResponses
     };
 
+    console.log(data);
+
     if (!data) return <Loader />;
 
     return (
@@ -63,8 +65,8 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
             <div className="relative grid grid-cols-10 gap-4 mt-4 mb-16">
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
-                    <CourseContent courseContent={courseContent} type="teacher-course" />
-                    <Feedback feedbacksData={feedbacksData} />
+                    <CourseContent courseContent={courseContent} isAdminReviewCourse={true} />
+                    {/* <Feedback feedbacksData={feedbacksData} /> */}
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
                     <ApproveCourse approveCourse={approveCourse} />

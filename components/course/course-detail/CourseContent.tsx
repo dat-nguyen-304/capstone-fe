@@ -7,6 +7,9 @@ interface CourseContentProps {
     // isMyCourse?: boolean;
     // isTeacherCourse?: boolean;
     type?: 'my-course' | 'teacher-course';
+    isMyCourse?: boolean;
+    isTeacherCourse?: boolean;
+    isAdminReviewCourse?: boolean;
     courseContent?: {
         id: number;
         totalVideo: number;
@@ -20,7 +23,13 @@ interface CourseContentProps {
     };
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) => {
+const CourseContent: React.FC<CourseContentProps> = ({
+    type,
+    isMyCourse,
+    isTeacherCourse,
+    isAdminReviewCourse,
+    courseContent
+}) => {
     return (
         <>
             <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>
@@ -55,6 +64,8 @@ const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) =>
                         videoItem={videoItem}
                         index={index}
                         type={type === 'teacher-course' ? 'teacher-video' : undefined}
+                        isTeacherVideo={isTeacherCourse}
+                        isAdminReviewCourse={isAdminReviewCourse}
                     />
                 ))}
             </ul>

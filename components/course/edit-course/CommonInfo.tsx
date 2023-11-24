@@ -9,7 +9,7 @@ import { Subject } from '@/types';
 import { Button, Checkbox, Input, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
@@ -32,13 +32,16 @@ interface CommonInfoProps {
 
 const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const router = useRouter();
+    const [selectedSubject, setSelectedSubject] = useState<number>(1);
+    const [selectedLevel, setSelectedLevel] = useState<number>(1);
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
+
     const [levelId, setLevelId] = useState(1);
-    const { control, handleSubmit, setError } = useForm({
+    const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
             name: commonInfo?.name,
             course: '',
@@ -47,7 +50,17 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         }
     });
     const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+    useEffect(() => {
+        if (commonInfo) {
+            console.log(getSubjectIdByName(commonInfo?.subject));
 
+            setValue('name', commonInfo?.name);
+            setValue('description', commonInfo?.description);
+            setValue('price', commonInfo?.price);
+            setSelectedSubject(getSubjectIdByName(commonInfo?.subject));
+            setSelectedLevel(commonInfo?.level == 'Cơ bản' ? 1 : commonInfo?.level == 'Trung bình' ? 2 : 3);
+        }
+    }, [commonInfo]);
     const getSubjectIdByName = (subjectName: string) => {
         const foundedSubject = data?.find(subject => subject.name === subjectName);
 
@@ -56,6 +69,17 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
             return id;
         }
         return 1;
+    };
+    console.log(selectedSubject);
+    console.log(selectedLevel);
+
+    const getObjectSubjectById = (id: number) => {
+        const foundedSubject = data?.find(subject => subject.id === id);
+        if (foundedSubject) {
+            const { id, name } = foundedSubject;
+            return { id, name };
+        }
+        return null;
     };
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
@@ -77,23 +101,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
         else
             try {
-                const courseRequest = {
-                    courseId: commonInfo?.id,
-                    description: formData.description,
-                    name: formData.name,
-                    price: Number(formData.price),
-                    levelId: levelId
-                };
-
-                console.log(courseRequest);
-                console.log(uploadedFiles[0]);
-                console.log(videoOrders);
-
                 const formDataPayload = new FormData();
-                formDataPayload.append(
-                    'courseRequest',
-                    new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
-                );
                 if (uploadedFiles[0]) {
                     formDataPayload.append('thumbnail', uploadedFiles[0]);
                 }
@@ -109,11 +117,48 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     );
                 }
 
-                const response = await courseApi.updateCourse(formDataPayload);
-                if (response) {
-                    console.log('Course update successfully:', response);
-                    router.push('/teacher/course/my-course');
+                if (commonInfo?.status == 'DRAFT' || commonInfo?.status == 'REJECT') {
+                    const courseTemporaryUpdateRequest = {
+                        courseId: commonInfo?.id,
+                        description: formData?.description,
+                        name: formData?.name,
+                        price: Number(formData?.price),
+                        levelId: selectedLevel,
+                        subject: getObjectSubjectById(selectedSubject)
+                    };
+                    console.log(courseTemporaryUpdateRequest);
+
+                    formDataPayload.append(
+                        'courseTemporaryUpdateRequest',
+                        new Blob([JSON.stringify(courseTemporaryUpdateRequest)], { type: 'application/json' })
+                    );
+
+                    const response = await courseApi.updateDraftCourse(formDataPayload);
+                    if (response) {
+                        console.log('Course draft update successfully:', response);
+                        router.push('/teacher/course/my-course-draft');
+                    }
+                } else {
+                    const courseRequest = {
+                        courseId: commonInfo?.id,
+                        description: formData.description,
+                        name: formData.name,
+                        price: Number(formData.price),
+                        levelId: levelId
+                    };
+                    console.log(courseRequest);
+                    formDataPayload.append(
+                        'courseRequest',
+                        new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
+                    );
+
+                    const response = await courseApi.updateCourse(formDataPayload);
+                    if (response) {
+                        console.log('Course update successfully:', response);
+                        router.push('/teacher/course/my-course');
+                    }
                 }
+
                 // Handle the response as needed
             } catch (error) {
                 console.error('Error creating course:', error);
@@ -144,13 +189,28 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                                         />
                                         <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
                                             <RiImageEditLine size={40} />
-                                            <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
+                                            <span className="text-sm">Cập nhật ảnh</span>
+                                        </div>
+                                    </div>
+                                ) : commonInfo?.thumbnail ? (
+                                    <div className="group relative">
+                                        <Image
+                                            className="object-cover w-full h-[240px]"
+                                            key={commonInfo?.thumbnail}
+                                            src={commonInfo?.thumbnail}
+                                            alt={commonInfo?.thumbnail as string}
+                                            width={240}
+                                            height={240}
+                                        />
+                                        <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                            <RiImageEditLine size={40} />
+                                            <span className="text-sm">Cập nhật ảnh</span>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col justify-center items-center">
                                         <RiImageAddLine size={40} />
-                                        <span className="text-sm">Tải lên ảnh thu nhỏ</span>
+                                        <span className="text-sm">Thêm ảnh</span>
                                     </div>
                                 )}
                             </div>
@@ -172,14 +232,33 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         </div>
                         <div className="col-span-2 sm:grid grid-cols-2 gap-4">
                             <div className="col-span-1 mt-12 md:mt-8">
-                                <Input
-                                    color="primary"
-                                    disabled
-                                    name="name"
-                                    labelPlacement="outside"
-                                    label="Môn học"
-                                    value="Toán học"
-                                />
+                                {commonInfo?.status == 'DRAFT' || commonInfo?.status == 'REJECT' ? (
+                                    <Select
+                                        label="Chọn môn học"
+                                        isRequired
+                                        color="primary"
+                                        variant="bordered"
+                                        labelPlacement="outside"
+                                        defaultSelectedKeys={[`${getSubjectIdByName(commonInfo?.subject)}`]}
+                                        name="subject"
+                                        onChange={event => setSelectedSubject(Number(event.target.value))}
+                                    >
+                                        {data.map((subject: Subject) => (
+                                            <SelectItem key={subject.id} value={subject.id}>
+                                                {subject.name}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                ) : (
+                                    <Input
+                                        color="primary"
+                                        disabled
+                                        name="name"
+                                        labelPlacement="outside"
+                                        label="Môn học"
+                                        value={commonInfo?.subject}
+                                    />
+                                )}
                             </div>
                             <div className="col-span-1 mt-12 md:mt-8">
                                 <Select
@@ -187,14 +266,16 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                                     color="primary"
                                     variant="bordered"
                                     labelPlacement="outside"
-                                    defaultSelectedKeys={
-                                        commonInfo?.level == 'Nâng cao'
-                                            ? ['3']
-                                            : commonInfo?.level == 'Trung bình'
-                                            ? ['2']
-                                            : ['1']
-                                    }
-                                    onChange={event => setLevelId(Number(event.target.value))}
+                                    defaultSelectedKeys={[
+                                        `${
+                                            commonInfo?.level == 'Nâng cao'
+                                                ? 3
+                                                : commonInfo?.level == 'Trung bình'
+                                                ? 2
+                                                : 1
+                                        }`
+                                    ]}
+                                    onChange={event => setSelectedLevel(Number(event.target.value))}
                                 >
                                     <SelectItem key={1} value={1}>
                                         Cơ bản
@@ -226,7 +307,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         .
                     </label>
                 </div>
-                <Button color="primary" onClick={onSubmit}>
+                <Button color="primary" type="submit">
                     Lưu thay đổi
                 </Button>
             </form>

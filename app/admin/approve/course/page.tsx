@@ -67,7 +67,7 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData
     } = useQuery({
         queryKey: ['coursesApproveAdmin', { page, rowsPerPage, updateState }],
-        queryFn: () => courseApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
+        queryFn: () => courseApi.getCoursesVerifyListAdmin(page - 1, rowsPerPage)
     });
 
     useEffect(() => {
@@ -182,7 +182,7 @@ const Courses: React.FC<CoursesProps> = () => {
                                 <DropdownItem color="danger" onClick={() => onDeclineOpen(course?.id)}>
                                     Từ chối
                                 </DropdownItem>
-                                <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
+                                <DropdownItem color="primary" as={Link} href={`/admin/approve/course/${course.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
                             </DropdownMenu>

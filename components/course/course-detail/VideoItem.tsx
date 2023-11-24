@@ -8,6 +8,9 @@ import { RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
     type?: 'teacher-video';
+    isMyVideo?: boolean;
+    isTeacherVideo?: boolean;
+    isAdminReviewCourse?: boolean;
     videoItem: {
         id: number;
         name: string;
@@ -31,9 +34,11 @@ const floatToTime = (durationFloat: number): string => {
     return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type }) => {
+const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, isMyVideo, isTeacherVideo, isAdminReviewCourse }) => {
     let detailPage = '';
-    if (type === 'teacher-video') detailPage = `/teacher/video/${videoItem?.id}`;
+    if (isTeacherVideo) detailPage = `/teacher/video/${videoItem?.id}`;
+    else if (isMyVideo) detailPage = `/my-course/${videoItem?.id}`;
+    else if (isAdminReviewCourse) detailPage = `/admin/approve/video/${videoItem?.id}`;
     else detailPage = `/video/${videoItem?.id}`;
     return (
         <li className="relative w-[85%] sm:w-[90%] mx-auto mb-4 py-4 bg-white rounded-xl shadow-lg">

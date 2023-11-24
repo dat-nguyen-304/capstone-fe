@@ -28,7 +28,7 @@ import { Course } from '@/types';
 import Loader from '@/components/Loader';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-const UploadVideo: React.FC = () => {
+const UploadVideoNewCourse: React.FC = () => {
     const currentUser = useUser();
     const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
@@ -39,8 +39,8 @@ const UploadVideo: React.FC = () => {
         }
     });
     const { data: coursesData, isLoading } = useQuery({
-        queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100)
+        queryKey: ['coursesDraftList'],
+        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'id', 'ASC')
     });
 
     const [selectedCourse, setSelectedCourse] = useState<number>();
@@ -129,7 +129,7 @@ const UploadVideo: React.FC = () => {
                 formDataPayload.append('material', uploadedAttachedFiles[0]);
             }
 
-            const response = await videoApi.createVideo(formDataPayload);
+            const response = await videoApi.createVideoForNewCourse(formDataPayload);
             console.log('Course created successfully:', response);
             if (response) {
                 router.push('/teacher/video/my-video-draft');
@@ -142,7 +142,7 @@ const UploadVideo: React.FC = () => {
     if (!coursesData) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Đăng tải video</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Đăng tải video mới</h3>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="lg:grid grid-cols-6 gap-2 mt-8">
                     <div className="col-span-1">
@@ -330,4 +330,4 @@ const UploadVideo: React.FC = () => {
     );
 };
 
-export default UploadVideo;
+export default UploadVideoNewCourse;

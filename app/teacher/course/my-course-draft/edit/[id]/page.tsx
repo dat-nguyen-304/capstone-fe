@@ -4,21 +4,22 @@ import { courseApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import CommonInfo from '@/components/course/edit-course/CommonInfo';
 import CourseContent from '@/components/course/edit-course/CourseContent';
+
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-interface EditCourseProps {
+interface EditDraftCourseProps {
     params: { id: number };
 }
 
-const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
+const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
-        queryKey: ['editCourse'],
-        queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
+        queryKey: ['editDraftCourse'],
+        queryFn: () => courseApi.getCourseDraftById(params?.id),
         staleTime: 20000
     });
 
@@ -73,4 +74,4 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     );
 };
 
-export default EditCourse;
+export default EditDraftCourse;

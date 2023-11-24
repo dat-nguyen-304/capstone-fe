@@ -1,7 +1,7 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -29,7 +29,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
     }, []);
-
+    const [selectedVideoStatus, setSelectedVideoStatus] = useState<string>('PUBLIC');
     const { getRootProps: getImageRootProps, getInputProps: getImageInputProps }: DropzoneRootProps = useDropzone({
         onDrop: onImageDrop,
         accept: {
@@ -38,13 +38,22 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
         maxFiles: 1,
         multiple: false
     });
-    const { control, handleSubmit, setError } = useForm({
+    const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
             name: data?.name,
             course: '',
             description: data?.description
         }
     });
+    console.log(data);
+
+    useEffect(() => {
+        if (data) {
+            setValue('name', data?.name);
+            setValue('description', data?.description);
+            setSelectedVideoStatus(data?.videoStatus);
+        }
+    }, [data]);
     const onSubmit = async (formData: any) => {
         try {
             // const videoRequest = {
@@ -56,27 +65,27 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             //     topic: topicsArray
             // };
             const videoRequest = {
-                name: 'Video Khóa Học Cấp Tốc',
+                name: formData?.name,
                 videoId: params?.id,
-                description: 'Video Tiếng Anh',
-                videoStatus: 'PRIVATE'
+                description: formData?.description,
+                videoStatus: selectedVideoStatus
             };
 
             console.log(videoRequest);
-            console.log(uploadedImageFile);
+            // console.log(uploadedImageFile);
 
-            const formDataPayload = new FormData();
-            formDataPayload.append(
-                'videoRequest',
-                new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
-            );
+            // const formDataPayload = new FormData();
+            // formDataPayload.append(
+            //     'videoRequest',
+            //     new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
+            // );
 
-            if (uploadedImageFile) {
-                formDataPayload.append('thumbnail', uploadedImageFile);
-            }
+            // if (uploadedImageFile) {
+            //     formDataPayload.append('thumbnail', uploadedImageFile);
+            // }
 
-            const response = await videoApi.updateVideo(formDataPayload);
-            console.log('Course created successfully:', response);
+            const response = await videoApi.updateVideo(videoRequest);
+
             if (response) {
                 router.push('/teacher/video/my-video');
             }
@@ -119,6 +128,21 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                                         <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
                                     </div>
                                 </div>
+                            ) : data?.thumbnail ? (
+                                <div className="group relative">
+                                    <Image
+                                        className="object-cover w-full h-[120px]"
+                                        key={data?.thumbnail}
+                                        src={data?.thumbnail}
+                                        alt={data?.thumbnail as string}
+                                        width={240}
+                                        height={240}
+                                    />
+                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                        <RiImageEditLine size={40} />
+                                        <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
+                                    </div>
+                                </div>
                             ) : (
                                 <div className="flex flex-col justify-center items-center">
                                     <RiImageAddLine size={40} />
@@ -144,12 +168,13 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                                 label="Trạng Thái Video"
                                 color="primary"
                                 variant="bordered"
-                                defaultSelectedKeys={data?.videoStatus == 'PRIVATE' ? ['PRIVATE'] : ['PRIVATE']}
+                                defaultSelectedKeys={[`${selectedVideoStatus}`]}
+                                onChange={event => setSelectedVideoStatus(String(event.target.value))}
                             >
-                                <SelectItem key={0} value={'PUBLIC'}>
+                                <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
                                     Công Khai
                                 </SelectItem>
-                                <SelectItem key={1} value={'PRIVATE'}>
+                                <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
                                     Riêng Tư
                                 </SelectItem>
                             </Select>

@@ -18,8 +18,10 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/teacher?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
-    getAllOfTeacherDraft: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/courses/teacher/waiting-list?page=${page}&size=${size}&sortType=ASC`);
+    getAllOfTeacherDraft: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/courses/teacher/waiting-list?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
@@ -44,6 +46,9 @@ export const courseApi = {
     },
     updateCourse: async (payload: any) => {
         return await axiosFormData.put('/courses/teacher/update', payload);
+    },
+    updateDraftCourse: async (payload: any) => {
+        return await axiosFormData.put('/courses/teacher/edit-waiting-course', payload);
     },
     getEnrollCourse: async (page: number) => {
         const res = await axiosClient.get(`/enroll-course?page=${page}&size=20&sortType=ASC`);
