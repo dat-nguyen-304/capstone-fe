@@ -8,6 +8,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     AVAILABLE: 'success',
     REJECT: 'danger',
     BANNED: 'danger',
+    DELETED: 'danger',
     WAITING: 'primary',
     DRAFT: 'primary',
     UPDATING: 'primary',
@@ -29,7 +30,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
     if (course.status === 'AVAILABLE') status = 'Hoạt động';
     else if (course.status === 'WAITING') status = 'Chờ xác thực';
     else if (course.status === 'REJECT') status = 'Đã từ chối';
-    else if (course.status === 'BANNED') status = 'Đã Xóa';
+    else if (course.status === 'DELETED') status = 'Đã Xóa';
     else if (course.status === 'UPDATING') status = 'Chờ cập nhật';
     else if (course.status === 'DRAFT') status = 'Bản nháp';
     else status = 'Vô hiệu';

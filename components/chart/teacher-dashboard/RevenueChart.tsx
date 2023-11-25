@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { useQuery } from '@tanstack/react-query';
+import { teacherApi, teacherIncomeApi } from '@/api-client';
 
 const UserData = [
     {
@@ -56,10 +58,20 @@ const UserData = [
         revenue: 450000
     }
 ];
+const formatCurrency = (value: number) => {
+    const formattedValue = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0
+    }).format(value);
 
-interface BarChartProps {}
+    return formattedValue.replace('₫', ' VND');
+};
+interface BarChartProps {
+    courseId?: number | undefined;
+}
 
-const RevenueChart: React.FC<BarChartProps> = () => {
+const RevenueChart: React.FC<BarChartProps> = ({ courseId }) => {
     const [userData, setUserData] = useState({
         labels: UserData.map(data => data.month),
         datasets: [
@@ -72,6 +84,33 @@ const RevenueChart: React.FC<BarChartProps> = () => {
             }
         ]
     });
+    const { data: incomeCourseData, isLoading } = useQuery<any>({
+        queryKey: ['teacher-income-course', courseId],
+        queryFn: () => {
+            if (courseId) {
+                return teacherIncomeApi.getTeacherIncomeByCourse(courseId);
+            } else {
+                return [];
+            }
+        }
+    });
+    console.log(incomeCourseData);
+    useEffect(() => {
+        if (incomeCourseData?.data?.length) {
+            setUserData({
+                labels: incomeCourseData?.data?.map((incomeData: any) => incomeData?.monthOfYear),
+                datasets: [
+                    {
+                        label: 'Doanh thu',
+                        data: incomeCourseData?.data?.map((incomeData: any) => incomeData?.revenue),
+                        backgroundColor: ['#6395fa'],
+                        borderColor: 'black',
+                        borderWidth: 2
+                    }
+                ]
+            });
+        }
+    }, [incomeCourseData]);
 
     return <Bar data={userData} />;
 };

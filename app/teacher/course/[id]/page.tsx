@@ -82,10 +82,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                     <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
-                    <EditCourse onOpen={onOpen} editCourse={editCourse} />
+                    <EditCourse onOpenPopup={onOpen} editCourse={editCourse} />
                 </div>
             </div>
-            <CourseRevenueModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+            <CourseRevenueModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} courseId={params?.id} />
         </div>
     );
 };

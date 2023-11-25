@@ -97,9 +97,11 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     console.log(videoOrders);
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
         else
             try {
+                toastLoading = toast.loading('Đang xử lí yêu cầu');
                 const formDataPayload = new FormData();
                 if (uploadedFiles[0]) {
                     formDataPayload.append('thumbnail', uploadedFiles[0]);
@@ -139,6 +141,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     const response = await courseApi.updateDraftCourse(formDataPayload);
                     if (response) {
                         console.log('Course draft update successfully:', response);
+                        toast.success('Khóa học đã được chỉnh sửa thành công');
                         router.push('/teacher/course/my-course-draft');
                     }
                 } else {
@@ -158,12 +161,15 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     const response = await courseApi.updateCourse(formDataPayload);
                     if (response) {
                         console.log('Course update successfully:', response);
-                        router.push('/teacher/course/my-course');
+                        toast.success('Khóa học đã chỉnh sửa thành công');
+                        router.push('/teacher/course/my-course-draft');
                     }
                 }
-
+                toast.dismiss(toastLoading);
                 // Handle the response as needed
             } catch (error) {
+                toast.dismiss(toastLoading);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
                 console.error('Error creating course:', error);
                 // Handle error
             }

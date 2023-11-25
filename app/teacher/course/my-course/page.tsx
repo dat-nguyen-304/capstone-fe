@@ -44,6 +44,10 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             name: 'Đã từ chối'
         },
         {
+            value: 'DELETED',
+            name: 'Đã xóa'
+        },
+        {
             value: 'BANNED',
             name: 'Đã cấm'
         },

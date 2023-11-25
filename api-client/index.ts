@@ -13,3 +13,4 @@ export * from './exam-api';
 export * from './ratings-api';
 export * from './comments-api';
 export * from './react-video-api';
+export * from './teacher-incomes-api';

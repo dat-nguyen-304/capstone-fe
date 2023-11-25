@@ -10,9 +10,12 @@ import { BiSolidPencil } from 'react-icons/bi';
 import { FaTrash } from 'react-icons/fa';
 import { courseStatusColorMap } from '@/utils';
 import { courseApi } from '@/api-client';
+import { useCustomModal } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
 interface EditCourseProps {
-    onOpen: () => void;
+    onOpenPopup: () => void;
+    type?: 'teacher';
     editCourse: {
         id: number;
         thumbnail: string;
@@ -24,7 +27,8 @@ interface EditCourseProps {
     };
 }
 
-const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
+const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
+    const router = useRouter();
     let status = '';
     if (editCourse.status === 'AVAILABLE') status = 'Hoạt động';
     else if (editCourse.status === 'WAITING') status = 'Chờ xác thực';
@@ -44,6 +48,35 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
             console.error('Error verifying course:', error);
         }
     };
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const handleDeleteCourse = async (courseId: number) => {
+        try {
+            const res = await courseApi.deleteCourse(courseId);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Xóa khóa học',
+                    content: 'Khóa học đã được xóa thành công'
+                });
+                router.push('/teacher/course/my-course');
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+    const onApproveDeleteOpen = (courseId: number) => {
+        onWarning({
+            title: 'Xác nhận xóa',
+            content: 'Video sẽ bị xóa sau khi bạn duyệt, hành động không dược hoàn tác. Bạn chắc chứ?',
+            activeFn: () => handleDeleteCourse(courseId)
+        });
+        onOpen();
+    };
+
     return (
         <div className="sticky top-[70px] mb-8 md:mb-0">
             <Image
@@ -66,23 +99,29 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                         Duyệt khóa học
                     </Button>
                 ) : null}
-                <Button
-                    as={Link}
-                    href={
-                        editCourse?.status == 'DRAFT' ||
-                        editCourse?.status == 'UPDATING' ||
-                        editCourse?.status == 'REJECT' ||
-                        editCourse?.status == 'WAITING'
-                            ? `/teacher/course/my-course-draft/edit/${editCourse?.id}`
-                            : `/teacher/course/edit/${editCourse?.id}`
-                    }
-                    color="warning"
-                    className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
-                >
-                    Chỉnh sửa <BiSolidPencil />
-                </Button>
-                {editCourse.status != 'AVAILABLE' && editCourse.status != 'DRAFT' ? (
-                    <Button color="danger" className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black">
+                {editCourse?.status != 'WAITING' ? (
+                    <Button
+                        as={Link}
+                        href={
+                            editCourse?.status == 'DRAFT' ||
+                            editCourse?.status == 'UPDATING' ||
+                            editCourse?.status == 'REJECT' ||
+                            editCourse?.status == 'WAITING'
+                                ? `/teacher/course/my-course-draft/edit/${editCourse?.id}`
+                                : `/teacher/course/edit/${editCourse?.id}`
+                        }
+                        color="warning"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
+                    >
+                        Chỉnh sửa <BiSolidPencil />
+                    </Button>
+                ) : null}
+                {editCourse.status != 'WAITING' ? (
+                    <Button
+                        color="danger"
+                        onClick={() => onApproveDeleteOpen(editCourse?.id)}
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
+                    >
                         Xóa khóa học <FaTrash />
                     </Button>
                 ) : null}
@@ -91,7 +130,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpen, editCourse }) => {
                     <Button
                         color="primary"
                         className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
-                        onClick={onOpen}
+                        onClick={onOpenPopup}
                     >
                         Doanh thu <SiGoogleanalytics />
                     </Button>
