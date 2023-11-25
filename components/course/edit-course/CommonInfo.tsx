@@ -70,8 +70,6 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         }
         return 1;
     };
-    console.log(selectedSubject);
-    console.log(selectedLevel);
 
     const getObjectSubjectById = (id: number) => {
         const foundedSubject = data?.find(subject => subject.id === id);
@@ -96,6 +94,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         maxFiles: 1,
         multiple: false
     });
+    console.log(videoOrders);
 
     const onSubmit = async (formData: any) => {
         if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
@@ -117,7 +116,11 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     );
                 }
 
-                if (commonInfo?.status == 'DRAFT' || commonInfo?.status == 'REJECT') {
+                if (
+                    commonInfo?.status == 'DRAFT' ||
+                    commonInfo?.status == 'REJECT' ||
+                    commonInfo?.status == 'UPDATING'
+                ) {
                     const courseTemporaryUpdateRequest = {
                         courseId: commonInfo?.id,
                         description: formData?.description,
@@ -132,7 +135,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         'courseTemporaryUpdateRequest',
                         new Blob([JSON.stringify(courseTemporaryUpdateRequest)], { type: 'application/json' })
                     );
-
+                    console.log(videoOrders);
                     const response = await courseApi.updateDraftCourse(formDataPayload);
                     if (response) {
                         console.log('Course draft update successfully:', response);

@@ -66,5 +66,8 @@ export const courseApi = {
             `/courses/user/find-by-email?email=${email}&page=${page}&size=${size}&sortType=ASC`
         );
         return res.data;
+    },
+    deleteCourse: async (courseId: number) => {
+        return await axiosClient.delete(`/courses/teacher?courseId=${courseId}`);
     }
 };

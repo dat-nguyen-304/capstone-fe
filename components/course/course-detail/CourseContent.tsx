@@ -6,7 +6,7 @@ import VideoItem from './VideoItem';
 interface CourseContentProps {
     // isMyCourse?: boolean;
     // isTeacherCourse?: boolean;
-    type?: 'my-course' | 'teacher-course';
+    type?: 'my-course' | 'teacher-course' | 'teacher-course-draft' | 'admin-review' | 'admin-view';
     isMyCourse?: boolean;
     isTeacherCourse?: boolean;
     isAdminReviewCourse?: boolean;
@@ -63,7 +63,19 @@ const CourseContent: React.FC<CourseContentProps> = ({
                         key={index}
                         videoItem={videoItem}
                         index={index}
-                        type={type === 'teacher-course' ? 'teacher-video' : undefined}
+                        type={
+                            type === 'teacher-course'
+                                ? 'teacher-video'
+                                : type === 'teacher-course-draft'
+                                ? 'teacher-video-draft'
+                                : type === 'my-course'
+                                ? 'my-video'
+                                : type === 'admin-review'
+                                ? 'admin-review-video'
+                                : type === 'admin-view'
+                                ? 'admin-view-video'
+                                : undefined
+                        }
                         isTeacherVideo={isTeacherCourse}
                         isAdminReviewCourse={isAdminReviewCourse}
                     />

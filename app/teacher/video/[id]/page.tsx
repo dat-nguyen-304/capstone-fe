@@ -6,16 +6,19 @@ import CommentItem from '@/components/video/CommentItem';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { BiSolidLike, BiSolidPencil } from 'react-icons/bi';
+import { BiSolidLike, BiSolidPencil, BiTrash } from 'react-icons/bi';
 import { commentsVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
+import { useCustomModal } from '@/hooks';
+import { useRouter } from 'next/navigation';
 interface VideoProps {
     params: { id: number };
 }
 
 const Video: React.FC<VideoProps> = ({ params }) => {
+    const route = useRouter();
     const { data, isLoading } = useQuery<any>({
         queryKey: ['video-teacher-detail', params?.id],
         queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
@@ -24,6 +27,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['teacherCommentsVideo'],
         queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
     });
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const mapCommentToCommonInfo = (commentData: any) => {
         return {
             id: commentData.id,
@@ -36,6 +40,34 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         ownerFullName: 'Nguyễn Văn A',
         content: 'Nội dung rất hay',
         owner: true
+    };
+
+    const handleDeleteVideo = async (videoId: number) => {
+        try {
+            const res = await videoApi.deleteVideo(videoId);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Xóa video',
+                    content: 'Video đã được xóa thành công'
+                });
+                route.push('/teacher/video/my-video');
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+    const onApproveDeleteOpen = (videoId: number) => {
+        onWarning({
+            title: 'Xác nhận xóa',
+            content: 'Video sẽ bị xóa sau khi bạn duyệt, hành động không dược hoàn tác. Bạn chắc chứ?',
+            activeFn: () => handleDeleteVideo(videoId)
+        });
+        onOpen();
     };
     const onSubmitReport = async () => {};
     if (!data) return <Loader />;
@@ -65,6 +97,14 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                             className="ml-4 text-black hover:text-black"
                         >
                             Chỉnh sửa <BiSolidPencil />
+                        </Button>
+                        <Button
+                            size="sm"
+                            color="danger"
+                            className="ml-4 text-black hover:text-black"
+                            onClick={() => onApproveDeleteOpen(params?.id)}
+                        >
+                            Xóa video <BiTrash />
                         </Button>
                     </div>
                 </div>

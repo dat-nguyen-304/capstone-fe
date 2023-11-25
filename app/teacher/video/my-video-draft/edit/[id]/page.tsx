@@ -1,8 +1,7 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import React, { useCallback, useState } from 'react';
-import { BiUpArrowAlt } from 'react-icons/bi';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     Button,
@@ -14,42 +13,38 @@ import {
     ModalHeader,
     Select,
     SelectItem,
-    Tooltip,
     useDisclosure
 } from '@nextui-org/react';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
-import { courseApi, videoApi } from '@/api-client';
-import { useUser } from '@/hooks';
+import dynamic from 'next/dynamic';
+import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
-import { Course } from '@/types';
 import Loader from '@/components/Loader';
-import { FaQuestionCircle } from 'react-icons/fa';
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { useRouter } from 'next/navigation';
-const UploadVideoNewCourse: React.FC = () => {
-    const currentUser = useUser();
-    const router = useRouter();
-    const { control, handleSubmit, setError } = useForm({
-        defaultValues: {
-            name: '',
-            course: '',
-            description: ''
-        }
-    });
-    const { data: coursesData, isLoading } = useQuery({
-        queryKey: ['coursesDraftList'],
-        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'id', 'ASC')
-    });
+import { BiUpArrowAlt } from 'react-icons/bi';
+interface UpdateVideoDraftProps {
+    params: { id: number };
+}
 
-    const [selectedCourse, setSelectedCourse] = useState<number>();
-    const [selectedStatusVideo, setSelectedStatusVideo] = useState<string>('PUBLIC');
+const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
+    const router = useRouter();
+    const { data, isLoading } = useQuery<any>({
+        queryKey: ['edit-video-teacher-detail', params?.id],
+        queryFn: () => videoApi.getVideoDraftById(params?.id)
+    });
+    const [uploadedVideoFile, setUploadedVideoFile] = useState<FileWithPath>();
+    const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(null);
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
     }, []);
-
+    const [selectedVideoStatus, setSelectedVideoStatus] = useState<string>('PUBLIC');
     const { getRootProps: getImageRootProps, getInputProps: getImageInputProps }: DropzoneRootProps = useDropzone({
         onDrop: onImageDrop,
         accept: {
@@ -58,10 +53,14 @@ const UploadVideoNewCourse: React.FC = () => {
         maxFiles: 1,
         multiple: false
     });
-
-    const [uploadedVideoFile, setUploadedVideoFile] = useState<FileWithPath>();
-    const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(null);
-
+    const { control, handleSubmit, setError, setValue } = useForm({
+        defaultValues: {
+            name: data?.name,
+            course: '',
+            description: data?.description
+        }
+    });
+    console.log(data);
     const onVideoDrop = useCallback((acceptedFile: FileWithPath[]) => {
         const file = acceptedFile[0];
         setUploadedVideoFile(file);
@@ -77,7 +76,6 @@ const UploadVideoNewCourse: React.FC = () => {
         maxFiles: 1,
         multiple: false
     });
-
     const [uploadedAttachedFiles, setUploadedAttachedFiles] = useState<FileWithPath[]>();
     const [uploadedAttachedUrl, setUploadedAttachedUrl] = useState<string | null>(null);
     const onAttachedDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -94,24 +92,30 @@ const UploadVideoNewCourse: React.FC = () => {
             multiple: true
         }
     );
-
+    useEffect(() => {
+        if (data) {
+            setValue('name', data?.name);
+            setValue('description', data?.description);
+            setSelectedVideoStatus(data?.videoStatus ? data?.videoStatus : 'PUBLIC');
+            setVideoUrl(data?.url);
+            setFileUrl(data?.material);
+        }
+    }, [data]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-
     const onSubmit = async (formData: any) => {
         try {
             const videoRequest = {
-                name: formData.name,
-                courseId: selectedCourse,
-                description: formData.description,
-                videoStatus: selectedStatusVideo,
-                order: 0
+                name: formData?.name,
+                videoTemporaryId: Number(params?.id),
+                description: formData?.description,
+                videoStatus: selectedVideoStatus
             };
 
             console.log(videoRequest);
             console.log(uploadedImageFile);
             console.log(uploadedVideoFile);
             console.log(uploadedAttachedFiles);
-
+            console.log(videoRequest);
             const formDataPayload = new FormData();
             formDataPayload.append(
                 'videoRequest',
@@ -129,22 +133,33 @@ const UploadVideoNewCourse: React.FC = () => {
                 formDataPayload.append('material', uploadedAttachedFiles[0]);
             }
 
-            const response = await videoApi.createVideoForNewCourse(formDataPayload);
-            console.log('Course created successfully:', response);
+            const response = await videoApi.updateVideoDraft(formDataPayload);
+
             if (response) {
                 router.push('/teacher/video/my-video-draft');
             }
+            // Handle the response as needed
         } catch (error) {
             console.error('Error creating course:', error);
             // Handle error
         }
     };
-    if (!coursesData) return <Loader />;
+
+    if (!data) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Đăng tải video mới</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa video</h3>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="lg:grid grid-cols-6 gap-2 mt-8">
+                    {/* <div className="col-span-6">
+                        <ReactPlayer
+                            width="100%"
+                            height="450px"
+                            className="object-contain"
+                            controls={true}
+                            url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
+                        />
+                    </div> */}
                     <div className="col-span-1">
                         <div {...getVideoRootProps()}>
                             <input {...getVideoInputProps()} name="avatar" />
@@ -154,7 +169,7 @@ const UploadVideoNewCourse: React.FC = () => {
                         </div>
                     </div>
                     <div className="col-span-5">
-                        {uploadedVideoFile && uploadedVideoUrl && (
+                        {uploadedVideoFile && uploadedVideoUrl ? (
                             <>
                                 <div className="sm:flex items-center gap-2">
                                     <p className="truncate mt-2 sm:mt-0">Đã tải lên video: {uploadedVideoFile.path}</p>
@@ -195,7 +210,48 @@ const UploadVideoNewCourse: React.FC = () => {
                                     </ModalContent>
                                 </Modal>
                             </>
-                        )}
+                        ) : videoUrl ? (
+                            <>
+                                <div className="sm:flex items-center gap-2">
+                                    <p className="truncate mt-2 sm:mt-0">Video đã tải: </p>
+                                    <Button
+                                        size="sm"
+                                        onClick={onOpen}
+                                        variant="light"
+                                        className="text-sm text-blue-700 underline px-0 hidden sm:block"
+                                    >
+                                        Xem trước
+                                    </Button>
+                                </div>
+                                <div className="block sm:hidden mt-4">
+                                    <video className="w-[98%] mx-auto" controls>
+                                        <source src={videoUrl} type="video/mp4" />
+                                    </video>
+                                </div>
+                                <Modal size="5xl" isOpen={isOpen} onClose={onClose} className="hidden sm:block">
+                                    <ModalContent>
+                                        {onClose => (
+                                            <>
+                                                <ModalHeader className="flex flex-col gap-1">
+                                                    Xem trước video
+                                                </ModalHeader>
+                                                <ModalBody className="flex items-center justify-center">
+                                                    {/* <ReactPlayer url={uploadedVideoUrl} controls /> */}
+                                                    <video className="w-4/5" controls>
+                                                        <source src={videoUrl} type="video/mp4" />
+                                                    </video>
+                                                </ModalBody>
+                                                <ModalFooter>
+                                                    <Button color="danger" variant="light" onPress={onClose}>
+                                                        Đóng
+                                                    </Button>
+                                                </ModalFooter>
+                                            </>
+                                        )}
+                                    </ModalContent>
+                                </Modal>
+                            </>
+                        ) : null}
                     </div>
                     <div className="col-span-2 h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4 mr-0 lg:mr-4">
                         <div {...getImageRootProps()}>
@@ -215,6 +271,21 @@ const UploadVideoNewCourse: React.FC = () => {
                                         <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
                                     </div>
                                 </div>
+                            ) : data?.thumbnail ? (
+                                <div className="group relative">
+                                    <Image
+                                        className="object-cover w-full h-[120px]"
+                                        key={data?.thumbnail}
+                                        src={data?.thumbnail}
+                                        alt={data?.thumbnail as string}
+                                        width={240}
+                                        height={240}
+                                    />
+                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                        <RiImageEditLine size={40} />
+                                        <span className="text-sm">Cập nhật ảnh thu nhỏ</span>
+                                    </div>
+                                </div>
                             ) : (
                                 <div className="flex flex-col justify-center items-center">
                                     <RiImageAddLine size={40} />
@@ -224,9 +295,9 @@ const UploadVideoNewCourse: React.FC = () => {
                         </div>
                     </div>
                     <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
-                        <div className="col-span-2">
+                        <div className="col-span-1 my-4 sm:my-0">
                             <InputText
-                                isRequired
+                                color="primary"
                                 variant="bordered"
                                 name="name"
                                 size="sm"
@@ -234,41 +305,22 @@ const UploadVideoNewCourse: React.FC = () => {
                                 control={control}
                             />
                         </div>
-                        <div className="col-span-2 my-4 sm:grid grid-cols-2 gap-4">
-                            <div className="col-span-1  ">
-                                <Select
-                                    isRequired
-                                    size="sm"
-                                    label="Khóa học"
-                                    color="primary"
-                                    variant="bordered"
-                                    onChange={event => setSelectedCourse(Number(event.target.value))}
-                                >
-                                    {coursesData?.data?.map((course: Course) => (
-                                        <SelectItem key={course?.id} value={course?.id}>
-                                            {course?.courseName}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
-                            </div>
-                            <div className="col-span-1  ">
-                                <Select
-                                    isRequired
-                                    size="sm"
-                                    label="Trạng thái video"
-                                    color="primary"
-                                    variant="bordered"
-                                    defaultSelectedKeys={['PUBLIC']}
-                                    onChange={event => setSelectedStatusVideo(event?.target?.value)}
-                                >
-                                    <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
-                                        Công Khai
-                                    </SelectItem>
-                                    <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
-                                        Riêng Tư
-                                    </SelectItem>
-                                </Select>
-                            </div>
+                        <div className="col-span-1 my-4 sm:my-0">
+                            <Select
+                                size="sm"
+                                label="Trạng Thái Video"
+                                color="primary"
+                                variant="bordered"
+                                defaultSelectedKeys={data?.videoStatus ? [`${data?.videoStatus}`] : ['PUBLIC']}
+                                onChange={event => setSelectedVideoStatus(String(event.target.value))}
+                            >
+                                <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
+                                    Công Khai
+                                </SelectItem>
+                                <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
+                                    Riêng Tư
+                                </SelectItem>
+                            </Select>
                         </div>
                         <div className="col-span-2 my-4">
                             <div {...getAttachedRootProps()}>
@@ -277,7 +329,7 @@ const UploadVideoNewCourse: React.FC = () => {
                                     Tải lên file đính kèm <BiUpArrowAlt size={24} />{' '}
                                 </div>
                             </div>
-                            {uploadedAttachedFiles && (
+                            {uploadedAttachedFiles ? (
                                 <div className="mt-4">
                                     <label className="font-semibold">Đã tải lên file</label>
                                     {uploadedAttachedFiles.map(attachedFile => (
@@ -286,7 +338,12 @@ const UploadVideoNewCourse: React.FC = () => {
                                         </p>
                                     ))}
                                 </div>
-                            )}
+                            ) : fileUrl ? (
+                                <div className="mt-4">
+                                    <label className="font-semibold">Đã tải lên file</label>
+                                    <p className="truncate mt-2">{fileUrl}</p>
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </div>
@@ -294,24 +351,7 @@ const UploadVideoNewCourse: React.FC = () => {
                     <label className="block mt-4 mb-2 font-semibold">Mô tả</label>
                     <InputDescription name="description" control={control} />
                 </div>
-                <div className="flex items-center mb-8 mt-20 sm:mt-16">
-                    <div className="flex items-center h-5">
-                        <Checkbox />
-                    </div>
-                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Video xem trước của khóa học
-                        <Tooltip
-                            placement="right"
-                            content="Học sinh có thể xem video này mà không cần mua khóa học."
-                            className="inline"
-                        >
-                            <Button variant="light" isIconOnly size="sm">
-                                <FaQuestionCircle />
-                            </Button>
-                        </Tooltip>
-                    </label>
-                </div>
-                <div className="flex items-start mb-8 mt-4">
+                <div className="flex items-start mb-8 mt-20 sm:mt-16">
                     <div className="flex items-center h-5">
                         <Checkbox />
                     </div>
@@ -323,11 +363,11 @@ const UploadVideoNewCourse: React.FC = () => {
                     </label>
                 </div>
                 <Button color="primary" type="submit" className="mb-4">
-                    Xác nhận video mới
+                    Xác nhận thay đổi
                 </Button>
             </form>
         </div>
     );
 };
 
-export default UploadVideoNewCourse;
+export default UpdataVideoDraft;

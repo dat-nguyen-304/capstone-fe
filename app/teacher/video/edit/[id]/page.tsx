@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 interface UploadVideoProps {
     params: { id: number };
 }
@@ -30,6 +31,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
         setUploadedImageFile(acceptedFile[0]);
     }, []);
     const [selectedVideoStatus, setSelectedVideoStatus] = useState<string>('PUBLIC');
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const { getRootProps: getImageRootProps, getInputProps: getImageInputProps }: DropzoneRootProps = useDropzone({
         onDrop: onImageDrop,
         accept: {
@@ -52,18 +54,14 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             setValue('name', data?.name);
             setValue('description', data?.description);
             setSelectedVideoStatus(data?.videoStatus);
+            setVideoUrl(data?.url);
         }
     }, [data]);
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
-            // const videoRequest = {
-            //     description: formData.description,
-            //     name: formData.name,
-            //     price: formData.price,
-            //     subject: getSubjectNameById(selectedSubject),
-            //     levelId: levelId,
-            //     topic: topicsArray
-            // };
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+
             const videoRequest = {
                 name: formData?.name,
                 videoId: params?.id,
@@ -72,25 +70,18 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             };
 
             console.log(videoRequest);
-            // console.log(uploadedImageFile);
-
-            // const formDataPayload = new FormData();
-            // formDataPayload.append(
-            //     'videoRequest',
-            //     new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
-            // );
-
-            // if (uploadedImageFile) {
-            //     formDataPayload.append('thumbnail', uploadedImageFile);
-            // }
 
             const response = await videoApi.updateVideo(videoRequest);
 
             if (response) {
-                router.push('/teacher/video/my-video');
+                toast.success('Video đã được chỉnh sửa thành công');
+                router.push('/teacher/video/my-video-draft');
             }
+            toast.dismiss(toastLoading);
             // Handle the response as needed
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
         }
@@ -107,7 +98,11 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                             height="450px"
                             className="object-contain"
                             controls={true}
-                            url="https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5"
+                            url={
+                                videoUrl
+                                    ? videoUrl
+                                    : 'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
+                            }
                         />
                     </div>
                     <div className="col-span-2 h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4 mr-0 lg:mr-4">

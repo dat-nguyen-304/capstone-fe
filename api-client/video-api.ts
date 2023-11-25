@@ -3,8 +3,10 @@ import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
 
 export const videoApi = {
-    getByCourseId: async (courseId: number, page: number, size: number) => {
-        const res = await axiosClient.get(`/videos?courseId=${courseId}&page=${page}&size=${size}&sortType=ASC`);
+    getByCourseId: async (courseId: number, page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/videos?courseId=${courseId}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getVideoDetailById: async (videoId: number) => {
@@ -42,9 +44,6 @@ export const videoApi = {
         const res = await axiosClient.get(`/videos/teacher/${videoId}`);
         return res.data;
     },
-    updateVideoDraft: async (payload: any) => {
-        return await axiosFormData.put('/videos/update', payload);
-    },
     getVideoForPublicProfile: async (email: string, page: number, size: number) => {
         const res = await axiosClient.get(`/videos/user?email=${email}&page=${page}&size=${size}&sortType=ASC`);
         return res.data;
@@ -52,8 +51,17 @@ export const videoApi = {
     updateVideo: async (payload: any) => {
         return await axiosClient.put('/videos/teacher/update-content', payload);
     },
+    updateVideoDraft: async (payload: any) => {
+        return await axiosFormData.put('/videos/teacher/edit-temporary-video', payload);
+    },
     getVideoDraftById: async (videoDraftId: number) => {
         const res = await axiosClient.get(`/videos/teacher/temporary/${videoDraftId}`);
         return res.data;
+    },
+    deleteVideo: async (videoId: number) => {
+        return await axiosClient.delete(`/videos?videoId=${videoId}`);
+    },
+    deleteVideoDraft: async (videoId: number) => {
+        return await axiosClient.delete(`/videos/temporary-video?videoId=${videoId}`);
     }
 };

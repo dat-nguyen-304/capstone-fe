@@ -15,6 +15,7 @@ import { InputNumber } from '@/components/form-input/InputNumber';
 import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
 import { createSkeletonArray } from '@/utils';
+import { toast } from 'react-toastify';
 
 const CreateCourse: React.FC = () => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
@@ -90,7 +91,9 @@ const CreateCourse: React.FC = () => {
     const skeletonArray = createSkeletonArray(20);
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const selectedTopics = topicStates
                 .filter(topic => {
                     return topic.isSelected;
@@ -120,11 +123,15 @@ const CreateCourse: React.FC = () => {
 
             const response = await courseApi.createCourse(formDataPayload);
             if (response) {
+                toast.success('Khóa học đã được tạo thành công');
                 console.log('Course created successfully:', response);
                 router.push('/teacher/course/my-course-draft');
             }
+            toast.dismiss(toastLoading);
             // Handle the response as needed
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
         }

@@ -268,7 +268,7 @@ const Courses: React.FC<CoursesProps> = () => {
                                 <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem
+                                {/* <DropdownItem
                                     color="success"
                                     key={course.status === 'AVAILABLE' ? 'enableDis' : 'enable'}
                                     onClick={() => onApproveOpen(course?.id, 'ACCEPTED')}
@@ -281,7 +281,7 @@ const Courses: React.FC<CoursesProps> = () => {
                                     onClick={() => onDeclineOpen(course?.id, 'REJECT')}
                                 >
                                     Từ chối
-                                </DropdownItem>
+                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>

@@ -46,11 +46,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
                             {course.courseName}
                         </b>
                         <p className="mt-2 text-sm text-black">{course.teacherName}</p>
-                        <div className="flex items-baseline mt-1">
-                            <span className="text-base mr-2 font-bold text-black">{course.rating.toFixed(1)}</span>
-                            <Rate disabled allowHalf defaultValue={course.rating} className="!text-xs" />
-                            <span className="text-xs ml-2 text-black">({course.numberOfRate})</span>
-                        </div>
+                        {type !== 'teacher-course-draft' ? (
+                            <div className="flex items-baseline mt-1">
+                                <span className="text-base mr-2 font-bold text-black">{course.rating.toFixed(1)}</span>
+                                <Rate disabled allowHalf defaultValue={course.rating} className="!text-xs" />
+                                <span className="text-xs ml-2 text-black">({course.numberOfRate})</span>
+                            </div>
+                        ) : null}
                         <div className="mt-1 text-xs">
                             <span className="text-black">{course.totalVideo} bài giảng</span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2 text-black">

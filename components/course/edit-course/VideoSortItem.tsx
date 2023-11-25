@@ -22,16 +22,26 @@ interface VideoSortItemProps {
 }
 
 const floatToTime = (durationFloat: number): string => {
-    const totalSeconds = Math.round(durationFloat * 3600);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    if (durationFloat > 100) {
+        const hours = Math.floor(durationFloat / 3600);
+        const minutes = Math.floor((durationFloat % 3600) / 60);
+        const seconds = Math.floor(durationFloat % 60);
 
-    const formattedHours = hours > 0 ? `${hours}:` : '';
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    } else {
+        const totalSeconds = Math.round(durationFloat * 3600);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-    return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    }
 };
 
 const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {

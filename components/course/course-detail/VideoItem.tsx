@@ -7,7 +7,7 @@ import { FaComments } from 'react-icons/fa';
 import { RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
-    type?: 'teacher-video';
+    type?: 'my-video' | 'teacher-video' | 'teacher-video-draft' | 'admin-review-video' | 'admin-view-video';
     isMyVideo?: boolean;
     isTeacherVideo?: boolean;
     isAdminReviewCourse?: boolean;
@@ -22,23 +22,42 @@ interface VideoItemProps {
 }
 
 const floatToTime = (durationFloat: number): string => {
-    const totalSeconds = Math.round(durationFloat * 3600);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    if (durationFloat > 100) {
+        const hours = Math.floor(durationFloat / 3600);
+        const minutes = Math.floor((durationFloat % 3600) / 60);
+        const seconds = Math.floor(durationFloat % 60);
 
-    const formattedHours = hours > 0 ? `${hours}:` : '';
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    } else {
+        const totalSeconds = Math.round(durationFloat * 3600);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-    return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    }
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, isMyVideo, isTeacherVideo, isAdminReviewCourse }) => {
+const VideoItem: React.FC<VideoItemProps> = ({
+    videoItem,
+    index,
+    isMyVideo,
+    isTeacherVideo,
+    isAdminReviewCourse,
+    type
+}) => {
     let detailPage = '';
-    if (isTeacherVideo) detailPage = `/teacher/video/${videoItem?.id}`;
-    else if (isMyVideo) detailPage = `/my-course/${videoItem?.id}`;
-    else if (isAdminReviewCourse) detailPage = `/admin/approve/video/${videoItem?.id}`;
+    if (type == 'teacher-video') detailPage = `/teacher/video/${videoItem?.id}`;
+    else if (type == 'teacher-video-draft') detailPage = `/teacher/video/my-video-draft/${videoItem?.id}`;
+    else if (type == 'my-video') detailPage = `/my-course/${videoItem?.id}`;
+    else if (type == 'admin-review-video') detailPage = `/admin/approve/video/${videoItem?.id}`;
+    else if (type == 'admin-view-video') detailPage = `/admin/video/${videoItem?.id}`;
     else detailPage = `/video/${videoItem?.id}`;
     return (
         <li className="relative w-[85%] sm:w-[90%] mx-auto mb-4 py-4 bg-white rounded-xl shadow-lg">

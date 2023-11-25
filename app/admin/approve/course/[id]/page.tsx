@@ -65,7 +65,7 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
             <div className="relative grid grid-cols-10 gap-4 mt-4 mb-16">
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
-                    <CourseContent courseContent={courseContent} isAdminReviewCourse={true} />
+                    <CourseContent courseContent={courseContent} type="admin-review" />
                     {/* <Feedback feedbacksData={feedbacksData} /> */}
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">

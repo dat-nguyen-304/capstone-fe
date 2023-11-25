@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoCardProps {
-    type?: 'teacher' | 'all';
+    type?: 'teacher' | 'teacher-draft' | 'all';
     isTeacherVideo?: boolean;
     isTeacherVideoDraft?: boolean;
     video: VideoCardType;
@@ -21,19 +21,29 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const floatToTime = (durationFloat: number): string => {
-    const totalSeconds = Math.round(durationFloat * 3600);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    if (durationFloat > 100) {
+        const hours = Math.floor(durationFloat / 3600);
+        const minutes = Math.floor((durationFloat % 3600) / 60);
+        const seconds = Math.floor(durationFloat % 60);
 
-    const formattedHours = hours > 0 ? `${hours}:` : '';
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    } else {
+        const totalSeconds = Math.round(durationFloat * 3600);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-    return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+        const formattedHours = hours > 0 ? `${hours}:` : '';
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+        const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+        return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+    }
 };
 
-const VideoCard: React.FC<VideoCardProps> = ({ type, isTeacherVideo, isTeacherVideoDraft, video }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     let detailPage = '',
         teacherStatus = '',
         profileStatus;
@@ -45,18 +55,13 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, isTeacherVideo, isTeacherVi
         else if (video.status === 'BANNED') teacherStatus = 'Đã xóa';
         else if (video.status === 'UPDATING') teacherStatus = 'Chờ cập nhật';
         else teacherStatus = 'Vô hiệu';
-    } else if (isTeacherVideoDraft) detailPage = `/teacher/video/my-video-draft/${video?.id}`;
+    } else if (type === 'teacher-draft') detailPage = `/teacher/video/my-video-draft/${video?.id}`;
     else detailPage = `/video/${video.id}`;
     if (type === 'all') {
         if (video.videoStatus === 'PUBLIC') profileStatus = 'Xem trước';
         else if (video.isAccess === true) profileStatus = 'Đã mua';
         else profileStatus = 'Đang khóa';
     }
-
-    // let detailPage = '';
-    // if (isTeacherVideo) detailPage = `/teacher/video/${video?.id}`;
-    // else if (isTeacherVideoDraft) detailPage = `/teacher/video/my-video-draft/${video?.id}`;
-    // else detailPage = '/video/1';
 
     return (
         <div className="flex justify-center w-full">

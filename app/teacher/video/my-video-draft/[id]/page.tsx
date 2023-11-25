@@ -6,11 +6,13 @@ import CommentItem from '@/components/video/CommentItem';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { BiSolidLike, BiSolidPencil } from 'react-icons/bi';
+import { BiSolidLike, BiSolidPencil, BiTrash } from 'react-icons/bi';
 import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
+import { useRouter } from 'next/navigation';
+import { useCustomModal } from '@/hooks';
 interface VideoDraftProps {
     params: { id: number };
 }
@@ -20,14 +22,45 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
         queryKey: ['video-teacher-detail', params?.id],
         queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
-
+    const router = useRouter();
+    const goBack = () => {
+        router.back();
+    };
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const handleDeleteVideo = async (videoId: number) => {
+        try {
+            const res = await videoApi.deleteVideoDraft(videoId);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Xóa video',
+                    content: 'Video đã được xóa thành công'
+                });
+                router.push('/teacher/video/my-video-draft');
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+    const onApproveDeleteOpen = (videoId: number) => {
+        onWarning({
+            title: 'Xác nhận xóa',
+            content: 'Video sẽ bị xóa sau khi bạn duyệt, hành động không dược hoàn tác. Bạn chắc chứ?',
+            activeFn: () => handleDeleteVideo(videoId)
+        });
+        onOpen();
+    };
     const onSubmitReport = async () => {};
     if (!data) return <Loader />;
     return (
         <>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Button as={Link} size="sm" href="/teacher/video/my-video-draft">
+                    <Button size="sm" onClick={goBack}>
                         <BsArrowLeft />
                     </Button>
                     <p className="text-blue-700 text-xs sm:text-base font-semibold">{data?.name}</p>
@@ -43,12 +76,20 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                         </span>
                         <Button
                             as={Link}
-                            href={`/teacher/video/edit/${params?.id}`}
+                            href={`/teacher/video/my-video-draft/edit/${params?.id}`}
                             size="sm"
                             color="warning"
                             className="ml-4 text-black hover:text-black"
                         >
                             Chỉnh sửa <BiSolidPencil />
+                        </Button>
+                        <Button
+                            size="sm"
+                            color="danger"
+                            className="ml-4 text-black hover:text-black"
+                            onClick={() => onApproveDeleteOpen(params?.id)}
+                        >
+                            Xóa video <BiTrash />
                         </Button>
                     </div>
                 </div>
@@ -86,15 +127,15 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                                 Chỉnh sửa <BiSolidPencil />
                             </Button>
                         </div>
-                        <div className="mt-8 px-0 sm:px-4">
+                        {/* <div className="mt-8 px-0 sm:px-4">
                             <h3 className="font-semibold text-lg">Bình luận</h3>
                             <ul className="mt-6 px-0 sm:px-4">
-                                {/* <CommentItem />
                                 <CommentItem />
-                                <CommentItem /> */}
+                                <CommentItem />
+                                <CommentItem />
                             </ul>
                             <Button className="w-full">Xem thêm</Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
