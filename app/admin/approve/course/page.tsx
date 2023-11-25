@@ -205,6 +205,8 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, []);
 
+    console.log({ courses });
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học chờ phê duyệt</h3>

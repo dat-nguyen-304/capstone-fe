@@ -81,7 +81,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                     </CardHeader>
                     <CardBody className="text-small justify-between p-3">
                         <b className="text-[14px] h-[40px] font-semibold truncate2line text-black">{video?.name}</b>
-                        <div className="mt-1 text-xs">
+                        <div className="mt-[7px] text-xs">
                             <span className="text-black">2 tháng trước</span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 inline-flex item before:mx-2 text-black">
                                 <span className="text-black">{video?.like}</span>

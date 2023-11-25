@@ -86,7 +86,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
     const topicsOptions = useMemo(() => {
         if (!topicsData) return [];
-        const allOption = { id: -1, name: 'ALL', status: 'ENABLE' };
+        const allOption = { id: -1, name: 'Tất cả', status: 'ENABLE' };
         const topicOptions = Array.isArray(topicsData?.data) ? [allOption, ...topicsData?.data] : [allOption];
         return topicOptions;
     }, [topicsData]);

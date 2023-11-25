@@ -98,16 +98,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                             Thời gian làm bài {examData?.duration} phút
                         </p>
                     </div>
-                    <div className="flex gap-4 items-center mt-2 sm:mt-3">
-                        <p className="flex items-center gap-2 text-xs sm:text-base ">
-                            <FaUserEdit className="text-blue-700" />
-                            50.000 đã làm đề thi này
-                        </p>
-                        <p className="flex items-center gap-2 text-xs sm:text-base">
-                            <GoCommentDiscussion className="text-blue-700" />
-                            10.000 bình luận
-                        </p>
-                    </div>
                 </div>
                 <h4 className="font-semibold text-sm sm:text-lg mt-5">Kết quả làm bài của bạn</h4>
                 <ul className="p-3 sm:p-4 rounded-xl border-1 border-blue-500 shadow-xl w-full md:w-4/5 mt-4">
@@ -118,7 +108,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                             href={`/exam/${params.id}/practice`}
                             size="sm"
                             color="primary"
-                            className="flex items-center gap-4"
+                            className="flex items-center gap-2 sm:w-[100px] sm:h-[36px] sm:text-sm"
                         >
                             {totalRow && totalRow > 0 ? (
                                 <>
@@ -126,9 +116,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                     <span>Làm lại</span>
                                 </>
                             ) : (
-                                <>
-                                    <span>Làm bài kiểm tra</span>
-                                </>
+                                <span>Làm bài kiểm tra</span>
                             )}
                         </Button>
                     </li>

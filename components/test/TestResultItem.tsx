@@ -10,17 +10,14 @@ interface TestResultItemProps {
 }
 
 const TestResultItem: React.FC<TestResultItemProps> = ({ questions, index }) => {
-    const defaultContent =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     console.log(questions);
     console.log(questions?.statement);
     const isCorrectAnswer = questions?.selectedAnswer === questions?.question?.correctAnswer;
     return (
         <li className="mt-4">
             <span className="font-semibold text-sm flex items-center">
-                <BsFlag className="w-[30px] mr-2 cursor-pointer" />
                 <span>
-                    <Chip color="primary" variant="flat" size="sm">
+                    <Chip color="primary" variant="flat">
                         Câu {index + 1}
                     </Chip>{' '}
                     <span className="inline-block">{HTMLReactParser(questions?.question?.statement)}</span>
@@ -32,7 +29,7 @@ const TestResultItem: React.FC<TestResultItemProps> = ({ questions, index }) => 
                         <Radio
                             size="sm"
                             value={String.fromCharCode(65 + index)}
-                            className={`ml-2 ${
+                            className={`ml-2 my-0 ${
                                 isCorrectAnswer
                                     ? String.fromCharCode(65 + index) === questions?.selectedAnswer
                                         ? 'bg-green-100 rounded-md'

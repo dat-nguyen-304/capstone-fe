@@ -41,45 +41,14 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const teachers = [
-    {
-        id: 1,
-        name: 'Nguyễn Văn A',
-        subject: 'Toán Lí',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 2,
-        name: 'Nguyễn Văn A',
-        subject: 'Toán Lí',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 3,
-        name: 'Nguyễn Văn A',
-        subject: 'Toán Lí',
-        createdAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 4,
-        name: 'Nguyễn Văn A',
-        subject: 'Toán Lí',
-        createdAt: '02/11/2023',
-        status: 'unActive'
-    },
-    {
-        id: 5,
-        name: 'Nguyễn Văn A',
-        subject: 'Toán Lí',
-        createdAt: '02/11/2023',
-        status: 'active'
-    }
-];
-
-type Teacher = (typeof teachers)[0];
+type Teacher = {
+    id: number;
+    name: string;
+    subject: string[];
+    createdAt: string;
+    status: string;
+    email: string;
+};
 
 const Teachers: React.FC<TeachersProps> = () => {
     const [filterValue, setFilterValue] = useState('');
@@ -194,8 +163,10 @@ const Teachers: React.FC<TeachersProps> = () => {
     };
 
     const renderCell = useCallback((teacher: Teacher, columnKey: Key) => {
+        let res: string | number;
         const cellValue = teacher[columnKey as keyof Teacher];
-
+        if (Array.isArray(cellValue) || cellValue === undefined) res = '';
+        else res = cellValue;
         switch (columnKey) {
             case 'fullName':
                 return (
@@ -207,6 +178,15 @@ const Teachers: React.FC<TeachersProps> = () => {
                         name={cellValue}
                     />
                 );
+            case 'subject':
+                return (
+                    <div>
+                        {(cellValue as string[]).map(a => (
+                            <Chip key={a}>{a}</Chip>
+                        ))}
+                    </div>
+                );
+
             case 'status':
                 return (
                     <Chip
@@ -234,7 +214,11 @@ const Teachers: React.FC<TeachersProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary" as={Link} href="/admin/profile/teacher/1">
+                                <DropdownItem
+                                    color="primary"
+                                    as={Link}
+                                    href={`/admin/profile/teacher/${teacher.email}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
@@ -263,7 +247,7 @@ const Teachers: React.FC<TeachersProps> = () => {
                     </div>
                 );
             default:
-                return cellValue;
+                return res;
         }
     }, []);
 

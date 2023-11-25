@@ -13,6 +13,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { useCustomModal } from '@/hooks';
+import { toast } from 'react-toastify';
 interface EditExamProps {
     params: { id: number };
 }
@@ -106,6 +108,9 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             setSelectedSubject(getSubjectIdByName(examDetail?.subject));
         }
     }, [examDetail]);
+
+    const { onOpen: onConfirmOpen, onDanger, onClose: onConfirmClose } = useCustomModal();
+
     const handleEditQuestion = (editedQuestion: any, index: number) => {
         setQuestions(prevQuestions => {
             const updatedQuestions = [...prevQuestions];
@@ -124,9 +129,18 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
     };
     const handleDeleteQuestion = (index: number) => {
         // Delete the question at the specified index
-        setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+        onConfirmOpen();
+        onDanger({
+            content: 'Bạn có chắc muốn xóa câu hỏi',
+            title: 'Xác nhận xóa câu hỏi',
+            activeFn: () => {
+                setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+                onConfirmClose();
+            }
+        });
     };
     const updateExam = async (formData: any) => {
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             const payload = {
                 name: formData?.name,
@@ -142,6 +156,8 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
 
             // Call the API to update the exam
             const response = await examApi.updateExam(params?.id, payload);
+            toast.dismiss(toastLoading);
+            toast.success('Cập nhật bài thi thành công');
             console.log(response);
 
             if (response) {
@@ -221,6 +237,9 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                         </Select>
                     </div>
                 </div>
+                <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
+                    Thêm câu hỏi
+                </Button>
                 <AddQuestionModal
                     isOpen={isOpen}
                     onClose={onClose}
@@ -239,29 +258,22 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                                     index={index}
                                     onEdit={handleEditQuestion}
                                     subjectId={selectedSubject}
+                                    handleDeleteQuestion={handleDeleteQuestion}
                                 />
                                 {/* Add a delete button for each question */}
-                                <Button
-                                    onClick={() => handleDeleteQuestion(index)}
-                                    className="my-2"
-                                    color="danger"
-                                    size="sm"
-                                    variant="bordered"
-                                >
-                                    Xóa câu hỏi
-                                </Button>
                             </div>
                         ))}
                     </ul>
-                    <Button
-                        variant="bordered"
-                        onClick={handlePopUpAddQuestion}
-                        className="w-full font-semibold"
-                        color="primary"
-                        size="lg"
-                    >
-                        Thêm câu hỏi
-                    </Button>
+                    {questions && questions.length > 4 && (
+                        <Button
+                            onClick={handlePopUpAddQuestion}
+                            className="w-full mt-16 font-semibold"
+                            color="primary"
+                            size="lg"
+                        >
+                            Thêm câu hỏi
+                        </Button>
+                    )}
                 </div>
                 <Button color="primary" type="submit" className="mt-12">
                     Xác nhận thay đổi

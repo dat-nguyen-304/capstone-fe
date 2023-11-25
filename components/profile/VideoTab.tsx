@@ -34,7 +34,7 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher }) => {
     return (
         <div>
             <Spin spinning={isLoading ? true : false} size="large" tip="Đang tải">
-                {data.totalRow && (
+                {data?.totalRow && (
                     <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {data.totalRow} kết quả</p>
                 )}
                 <div className="mt-2 py-2 px-2">
@@ -47,16 +47,18 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher }) => {
                             <div className="mt-4 text-default-400 text-xs sm:text-sm">Danh Sách Video Trống</div>
                         )}
                     </div>
-                    {videos.length && data.totalPage > 1 && (
-                        <Pagination
-                            showControls
-                            color="primary"
-                            page={page}
-                            total={data.totalPage}
-                            variant="light"
-                            onChange={setPage}
-                        />
-                    )}
+                    <div className="flex justify-center">
+                        {videos.length && data?.totalPage > 1 && (
+                            <Pagination
+                                showControls
+                                color="primary"
+                                page={page}
+                                total={data.totalPage}
+                                variant="light"
+                                onChange={setPage}
+                            />
+                        )}
+                    </div>
                 </div>
             </Spin>
         </div>

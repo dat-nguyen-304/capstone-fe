@@ -48,19 +48,12 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                         ) : (
                             <>Empty List Question</>
                         )}
-                        {/* <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem />
-                        <TestResultItem /> */}
                     </ul>
                 </div>
                 <div className="col-span-3 my-4">
                     <div className="p-4 bg-blue-50 rounded-xl sticky top-[76px]">
                         <span className="">Tóm tắt bài làm</span>
-                        <div className="flex items-center my-2 justify-between sm:justify-normal">
+                        <div className="flex items-center my-2 gap-4 sm:gap-0 justify-normal">
                             <span className="inline-flex items-center text-xs">
                                 <span className="mr-2">Đúng</span>
                                 <div className="w-[20px] h-[20px] rounded-full bg-green-500" />
@@ -68,7 +61,7 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                             <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
                                 <span className="inline-flex items-center text-xs">
                                     <span className="mr-2">Sai</span>
-                                    <div className="w-[20px] h-[20px] rounded-full bg-red-500" />
+                                    <div className="w-[20px] h-[20px] rounded-full bg-red-400" />
                                 </span>
                             </span>
                         </div>
@@ -77,13 +70,13 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                                 Array.from({ length: totalQuestion }).map((_, index) => (
                                     <li
                                         key={index}
-                                        className={`flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-1 ${
+                                        className={`cursor-pointer flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-1 ${
                                             questions[index]?.selectedAnswer ===
                                             questions[index]?.question?.correctAnswer
                                                 ? 'bg-green-500  text-white'
                                                 : questions[index]?.selectedAnswer === null
                                                 ? 'bg-gray-500  text-white'
-                                                : 'bg-red-500 text-white'
+                                                : 'bg-red-400 text-white'
                                         }`}
                                     >
                                         {index + 1}

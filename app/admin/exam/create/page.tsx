@@ -12,6 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { useCustomModal } from '@/hooks';
+import { toast } from 'react-toastify';
 interface CreateQuizProps {}
 
 const getSubjectNameById = (id: number): string => {
@@ -56,7 +58,9 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
-    if (!subjectsData) return <Loader />;
+
+    const { onOpen: onConfirmOpen, onDanger, onClose: onConfirmClose } = useCustomModal();
+
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);
         setEditQuestion(null);
@@ -84,11 +88,20 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     const handleDeleteQuestion = (index: number) => {
         // Delete the question at the specified index
-        setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+        onConfirmOpen();
+        onDanger({
+            content: 'Bạn có chắc muốn xóa câu hỏi',
+            title: 'Xác nhận xóa câu hỏi',
+            activeFn: () => {
+                setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+                onConfirmClose();
+            }
+        });
     };
     console.log(editQuestion);
     console.log(questions);
     const createExam = async (formData: any) => {
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             const payload = {
                 name: formData?.name,
@@ -104,6 +117,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
             // Call the API to create the exam
             const response = await examApi.createExam(payload);
+            toast.dismiss(toastLoading);
+            toast.success('Tạo bài thi thành công');
 
             if (response) {
                 router.push('/admin/exam');
@@ -114,6 +129,9 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             // You can also show a user-friendly error message
         }
     };
+
+    if (!subjectsData) return <Loader />;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(createExam)}>
@@ -210,37 +228,27 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 <ul className="mt-8">
                     {questions?.map((question, index) => (
                         <div key={index}>
-                            <TestReviewItem questions={question} index={index} />
+                            <TestReviewItem
+                                questions={question}
+                                index={index}
+                                handleEditOpen={handleEditOpen}
+                                handleDeleteQuestion={handleDeleteQuestion}
+                            />
                             {/* Add a delete button for each question */}
-                            <Button
-                                onClick={() => handleEditOpen(index)}
-                                className="mx-2"
-                                color="warning"
-                                size="sm"
-                                variant="bordered"
-                            >
-                                Chỉnh sửa
-                            </Button>
-                            <Button
-                                onClick={() => handleDeleteQuestion(index)}
-                                className=""
-                                color="danger"
-                                size="sm"
-                                variant="bordered"
-                            >
-                                Xóa câu hỏi
-                            </Button>
                         </div>
                     ))}
                 </ul>
-                <Button
-                    onClick={handlePopUpAddQuestion}
-                    className="w-full mt-16 font-semibold"
-                    color="primary"
-                    size="lg"
-                >
-                    Thêm câu hỏi
-                </Button>
+                {questions && questions.length > 4 && (
+                    <Button
+                        onClick={handlePopUpAddQuestion}
+                        className="w-full mt-16 font-semibold"
+                        color="primary"
+                        size="lg"
+                    >
+                        Thêm câu hỏi
+                    </Button>
+                )}
+
                 <Button className="mt-8" type="submit" color="primary">
                     Tạo bài thi mới
                 </Button>

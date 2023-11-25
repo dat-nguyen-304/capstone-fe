@@ -34,26 +34,32 @@ const CourseTab: React.FC<CourseTabProps> = ({ teacher }) => {
 
     return (
         <div>
-            {data.totalRow && (
-                <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {data.totalRow} kết quả</p>
-            )}
-            <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                {courses.length ? (
-                    courses.map((courseItem: CourseCardType) => <CourseCard key={courseItem.id} course={courseItem} />)
-                ) : (
-                    <div className="mt-4 text-default-400 text-xs sm:text-sm">Giáo viên chưa đăng tải khóa học</div>
+            <Spin spinning={isLoading ? true : false} size="large" tip="Đang tải">
+                {data?.totalRow && (
+                    <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {data.totalRow} kết quả</p>
                 )}
-            </div>
-            {courses.length && data.totalPage > 1 && (
-                <Pagination
-                    showControls
-                    color="primary"
-                    page={page}
-                    total={data.totalPage}
-                    variant="light"
-                    onChange={setPage}
-                />
-            )}
+                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                    {courses.length ? (
+                        courses.map((courseItem: CourseCardType) => (
+                            <CourseCard key={courseItem.id} course={courseItem} />
+                        ))
+                    ) : (
+                        <div className="mt-4 text-default-400 text-xs sm:text-sm">Giáo viên chưa đăng tải khóa học</div>
+                    )}
+                </div>
+                <div className="flex justify-center">
+                    {courses.length && data?.totalPage > 1 && (
+                        <Pagination
+                            showControls
+                            color="primary"
+                            page={page}
+                            total={data.totalPage}
+                            variant="light"
+                            onChange={setPage}
+                        />
+                    )}
+                </div>
+            </Spin>
         </div>
     );
 };

@@ -11,6 +11,7 @@ interface TestEditItemProps {
     questions: QuestionType | any;
     onEdit: (index: number, editedQuestion: any) => void;
     subjectId: number;
+    handleDeleteQuestion: (index: number) => void;
 }
 const getSubjectNameById = (id: number): string => {
     if (id == 1) {
@@ -31,7 +32,7 @@ const getSubjectNameById = (id: number): string => {
         return '';
     }
 };
-const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index, onEdit }) => {
+const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index, onEdit, handleDeleteQuestion }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
@@ -43,7 +44,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
     };
     return (
         <li className="mt-4">
-            <span className="font-semibold text-sm">
+            <span className="text-sm">
                 <div className="flex items-center gap-4">
                     <Chip color="primary" variant="flat" size="md">
                         Câu {index + 1}
@@ -51,8 +52,17 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                     <Button color="warning" size="sm" onClick={() => handleEditOpen(index)}>
                         Chỉnh sửa
                     </Button>
+                    <Button
+                        onClick={() => handleDeleteQuestion(index)}
+                        className="my-2"
+                        color="danger"
+                        size="sm"
+                        variant="bordered"
+                    >
+                        Xóa câu hỏi
+                    </Button>
                 </div>
-                <span>{HTMLReactParser(questions?.statement)}</span>
+                <p className="ml-1 mt-1">{HTMLReactParser(questions?.statement)}</p>
             </span>
             <AddQuestionModal
                 isOpen={isOpen}

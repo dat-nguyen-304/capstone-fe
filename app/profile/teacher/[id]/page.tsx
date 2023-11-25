@@ -6,6 +6,7 @@ import CourseTab from '@/components/profile/CourseTab';
 import VideoTab from '@/components/profile/VideoTab';
 import { Button, Card, Chip, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
+import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { BsArrowLeft } from 'react-icons/bs';
@@ -48,7 +49,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                         />
                     </div>
                     <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
-                        <h3 className="text-base text-[#444] sm:text-lg font-bold flex items-center gap-2">
+                        <h3 className="text-base text-blue-500 sm:text-2xl font-bold flex items-center gap-2">
                             {teacherData.fullName}
                             {/* <MdVerified color="#0de298" /> */}
                         </h3>
@@ -57,7 +58,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                                 <p className="text-sm text-[#444] sm:text-base font-semibold">Giáo viên môn</p>
                                 <div className="flex gap-2 mt-2 xl:mt-0">
                                     {teacherData.subject.map((s: string) => (
-                                        <Chip key={s} color="primary">
+                                        <Chip key={s} color="primary" variant="flat">
                                             {s}
                                         </Chip>
                                     ))}
@@ -79,7 +80,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                 <div>
                     <Tabs color="primary" variant="underlined" aria-label="Tabs variants" className="mt-4">
                         <Tab key="description" title="Lời giới thiệu" className="p-0">
-                            Abcxyz
+                            <div className="mt-4">{HTMLReactParser(teacherData.description)}</div>
                         </Tab>
                         <Tab key="course" title="Khóa học">
                             <CourseTab teacher={params.id} />

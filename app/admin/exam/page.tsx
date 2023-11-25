@@ -246,32 +246,6 @@ const Exams: React.FC<ExamsProps> = () => {
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
-                            <Dropdown>
-                                <DropdownTrigger className="flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Cột
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
-                                >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
                         </div>
                     </div>
                     <div className="sm:flex justify-between items-center">

@@ -163,6 +163,23 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                 <div>
                                     <div className="col-span-10 sm:grid grid-cols-2 gap-4 my-5">
                                         <Select
+                                            label="Chủ đề"
+                                            color="primary"
+                                            isRequired
+                                            variant="bordered"
+                                            labelPlacement="outside"
+                                            defaultSelectedKeys={
+                                                editQuestion?.topicId ? [`${editQuestion?.topicId}`] : ['1']
+                                            }
+                                            onChange={event => setSelectTopic(Number(event.target.value))}
+                                        >
+                                            {topicsData?.data?.map((topic: Topic) => (
+                                                <SelectItem key={topic?.id} value={topic?.id}>
+                                                    {topic?.name}
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
+                                        <Select
                                             label="Mức độ"
                                             isRequired
                                             color="primary"
@@ -180,23 +197,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             <SelectItem key={'HARD'} value={'HARD'}>
                                                 Nâng cao
                                             </SelectItem>
-                                        </Select>
-                                        <Select
-                                            label="Chủ đề"
-                                            color="primary"
-                                            isRequired
-                                            variant="bordered"
-                                            labelPlacement="outside"
-                                            defaultSelectedKeys={
-                                                editQuestion?.topicId ? [`${editQuestion?.topicId}`] : ['1']
-                                            }
-                                            onChange={event => setSelectTopic(Number(event.target.value))}
-                                        >
-                                            {topicsData?.data?.map((topic: Topic) => (
-                                                <SelectItem key={topic?.id} value={topic?.id}>
-                                                    {topic?.name}
-                                                </SelectItem>
-                                            ))}
                                         </Select>
                                     </div>
                                     <div>

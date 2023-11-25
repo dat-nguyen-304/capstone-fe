@@ -7,6 +7,7 @@ import { GoCommentDiscussion } from 'react-icons/go';
 import { useCustomModal, useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { ExamCardType } from '@/types';
+import { MdVerified } from 'react-icons/md';
 
 interface ExamItemProps {
     exam: ExamCardType;
@@ -54,10 +55,15 @@ const ExamItem: React.FC<ExamItemProps> = ({ exam }) => {
         }
     };
 
+    console.log({ exam });
+
     return (
         <li>
-            <Card className="border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
-                <h3 className="font-semibold text-sm sm:text-base truncate2line">{exam?.name} </h3>
+            <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
+                <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
+                    {exam.attempted && <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />}
+                    <span>{exam.name}</span>
+                </div>
                 <div className="flex items-center gap-2 sm:gap-4 mt-2">
                     <BsBookFill className="text-blue-700" />
                     <span className="text-xs sm:text-sm">{getSubjectName(exam?.subject)}</span>
@@ -67,17 +73,11 @@ const ExamItem: React.FC<ExamItemProps> = ({ exam }) => {
                     <span className="text-xs sm:text-sm">{exam?.duration} phút</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                    <div className="flex items-center gap-2 sm:gap-4">
-                        <FaUserEdit className="text-blue-700" />
-                        <span className="text-xs sm:text-sm">1.200</span>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-4">
-                        <GoCommentDiscussion className="text-blue-700" />
-                        <span className="text-xs sm:text-sm">900</span>
-                    </div>
+                    <FaUserEdit className="text-blue-700" />
+                    <span className="text-xs sm:text-sm">{exam.questionList.length} câu hỏi</span>
                 </div>
                 <Button variant="bordered" className="mt-2" onClick={() => handleDoExam(exam?.id)}>
-                    Làm ngay
+                    {exam.attempted ? 'Làm lại' : 'Làm ngay'}
                 </Button>
             </Card>
         </li>

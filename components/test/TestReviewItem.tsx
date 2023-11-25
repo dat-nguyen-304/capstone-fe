@@ -1,28 +1,52 @@
 'use client';
 
 import { QuestionType } from '@/types';
-import { Accordion, AccordionItem, Chip, Radio, RadioGroup } from '@nextui-org/react';
+import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup } from '@nextui-org/react';
 import HTMLReactParser from 'html-react-parser';
 
 interface TestReviewItemProps {
     index: number;
     questions: QuestionType | any;
+    handleEditOpen?: (index: number) => void;
+    handleDeleteQuestion?: (index: number) => void;
 }
 
-const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => {
+const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index, handleEditOpen, handleDeleteQuestion }) => {
     return (
         <li className="mt-4">
             <div suppressContentEditableWarning={true}>
-                <span className="font-semibold text-sm flex items-center">
-                    <span>
-                        <Chip color="primary" variant="flat" size="sm">
+                <div className="text-sm flex items-center">
+                    <div>
+                        <Chip color="primary" variant="flat">
                             Câu {index + 1}
                         </Chip>{' '}
-                        <span className="inline-block" suppressContentEditableWarning={true}>
-                            {HTMLReactParser(questions?.statement)}
-                        </span>
-                    </span>
-                </span>
+                        {handleDeleteQuestion && handleEditOpen && (
+                            <>
+                                <Button
+                                    onClick={() => handleEditOpen(index)}
+                                    className="mx-2"
+                                    color="warning"
+                                    size="sm"
+                                    variant="bordered"
+                                >
+                                    Chỉnh sửa
+                                </Button>
+                                <Button
+                                    onClick={() => handleDeleteQuestion(index)}
+                                    className=""
+                                    color="danger"
+                                    size="sm"
+                                    variant="bordered"
+                                >
+                                    Xóa câu hỏi
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                </div>
+                <p className="ml-1 mt-1" suppressContentEditableWarning={true}>
+                    {HTMLReactParser(questions?.statement)}
+                </p>
             </div>
             {questions?.answerList?.map((answerList: any, index: number) => (
                 <div key={index} suppressContentEditableWarning={true}>
@@ -30,7 +54,7 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index }) => 
                         <Radio
                             size="sm"
                             value={String.fromCharCode(65 + index)}
-                            className={`ml-2 ${
+                            className={`ml-2 my-0 ${
                                 String.fromCharCode(65 + index) === questions?.correctAnswer
                                     ? 'bg-green-100 rounded-md'
                                     : ''

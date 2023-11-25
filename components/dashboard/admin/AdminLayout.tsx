@@ -58,11 +58,8 @@ const items: MenuItem[] = [
     getItem(<Link href="/admin/transaction">Giao dịch</Link>, '13', <LineChartOutlined />),
     getItem('Xử lý vi phạm', 'sub5', <StopOutlined />, [
         getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '14'),
-        getItem(<Link href="/admin/report/discussion-comment">Bình luận (T. Luận)</Link>, '15'),
         getItem(<Link href="/admin/report/exam">Bài thi</Link>, '16'),
-        getItem(<Link href="/admin/report/quiz">Bài kiểm tra</Link>, '17'),
-        getItem(<Link href="/admin/report/video">Video</Link>, '18'),
-        getItem(<Link href="/admin/report/video-comment">Bình luận (Video)</Link>, '19')
+        getItem(<Link href="/admin/report/video">Video</Link>, '18')
     ]),
     getItem('Thảo luận', 'sub6', <CommentOutlined />, [
         getItem(<Link href="/admin/discussion">Tất cả bài viết</Link>, '20'),

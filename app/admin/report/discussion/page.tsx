@@ -34,18 +34,21 @@ const reports = [
         id: 1,
         reportType: 'Lỗi kĩ thuật',
         contentType: 'video',
+        title: 'hello',
         description: 'abc'
     },
     {
         id: 2,
         reportType: 'Lỗi học thuật',
         contentType: 'video',
+        title: 'hello',
         description: 'abc'
     },
     {
         id: 3,
         reportType: 'Vi phạm chuẩn mực',
         contentType: 'video',
+        title: 'hello',
         description: 'abc'
     }
 ];
@@ -55,6 +58,7 @@ const columns = [
     { name: 'LOẠI BÁO CÁO', uid: 'reportType', sortable: true },
     { name: 'NỘI DUNG VI PHẠM', uid: 'contentType', sortable: true },
     { name: 'MÔ TẢ', uid: 'description' },
+    { name: 'CHỦ ĐỀ', uid: 'title' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -66,7 +70,7 @@ const Reports: React.FC<ReportsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const visibleColumns = new Set(['id', 'reportType', 'contentType', 'description', 'action']);
+    const visibleColumns = new Set(['id', 'reportType', 'contentType', 'description', 'action', 'title']);
     const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {

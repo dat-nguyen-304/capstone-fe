@@ -56,15 +56,8 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                                         <ExamItem key={examItem.id} exam={examItem} />
                                     ))
                                 ) : (
-                                    <></>
+                                    <div>Chưa có bài thi</div>
                                 )}
-                                {/* <ExamItem />
-                            <ExamItem />
-                            <ExamItem />
-                            <ExamItem />
-                            <ExamItem />
-                            <ExamItem />
-                            <ExamItem /> */}
                             </ul>
                         </div>
                         <div className="col-span-1 hidden xl:block ml-auto w-[90%] ">
