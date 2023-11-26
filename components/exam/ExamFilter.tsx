@@ -10,9 +10,10 @@ import { Dispatch, SetStateAction } from 'react';
 interface ExamFilterProps {
     selectedSubject: number;
     setSelectedSubject: Dispatch<SetStateAction<number>>;
+    setSelectedFilterSort: Dispatch<SetStateAction<number>>;
 }
 
-const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSubject }) => {
+const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSubject, setSelectedFilterSort }) => {
     const { data } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -66,6 +67,7 @@ const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSub
                         color="primary"
                         variant="bordered"
                         defaultSelectedKeys={['0']}
+                        onChange={event => setSelectedFilterSort(Number(event?.target?.value))}
                     >
                         <SelectItem key={0} value={0}>
                             Tất cả

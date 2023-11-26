@@ -29,6 +29,8 @@ import Loader from '@/components/Loader';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import Cookies from 'cookies';
 const UploadVideo: React.FC = () => {
     const currentUser = useUser();
     const [optionCourse, setOptionCourse] = useState<string>('NEW');
@@ -141,16 +143,32 @@ const UploadVideo: React.FC = () => {
             if (uploadedAttachedFiles !== undefined) {
                 formDataPayload.append('material', uploadedAttachedFiles[0]);
             }
+            let apiUrl = '';
+
             if (optionCourse == 'NEW') {
                 const response = await videoApi.createVideoForNewCourse(formDataPayload);
-
+                apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos';
+                // const response = await axios.post(apiUrl, formDataPayload, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data'
+                //         // Add any additional headers as needed (e.g., authorization)
+                //         // 'Authorization': `Bearer ${yourAuthToken}`,
+                //     }
+                // });
                 if (response) {
                     toast.success('Video đã được tạo thành công');
                     router.push('/teacher/video/my-video-draft');
                 }
             } else if (optionCourse == 'OLD') {
+                apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos/teacher/upload';
                 const response = await videoApi.createVideo(formDataPayload);
-
+                // const response = await axios.put(apiUrl, formDataPayload, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data'
+                //         // Add any additional headers as needed (e.g., authorization)
+                //         // 'Authorization': `Bearer ${yourAuthToken}`,
+                //     }
+                // });
                 if (response) {
                     toast.success('Video đã được tạo thành công');
                     router.push('/teacher/video/my-video-draft');

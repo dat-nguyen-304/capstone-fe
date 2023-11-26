@@ -80,7 +80,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     });
     const { data: topicsData } = useQuery({
         queryKey: ['topicsExam', subject],
-        queryFn: () => examApi.examinationTopics(0, 100)
+        queryFn: () => examApi.getAllTopicBySubject(subject, 0, 100)
     });
 
     useEffect(() => {
@@ -169,7 +169,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             variant="bordered"
                                             labelPlacement="outside"
                                             defaultSelectedKeys={
-                                                editQuestion?.topicId ? [`${editQuestion?.topicId}`] : ['1']
+                                                topicsData?.data ? [`${topicsData?.data[0]?.id}`] : ['1']
                                             }
                                             onChange={event => setSelectTopic(Number(event.target.value))}
                                         >

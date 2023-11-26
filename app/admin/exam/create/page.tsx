@@ -151,6 +151,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         <Select
                             size="sm"
                             isRequired
+                            isDisabled={questions?.length > 0}
                             label="Môn học"
                             color="primary"
                             variant="bordered"

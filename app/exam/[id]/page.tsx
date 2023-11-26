@@ -108,7 +108,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                             href={`/exam/${params.id}/practice`}
                             size="sm"
                             color="primary"
-                            className="flex items-center gap-2 sm:w-[100px] sm:h-[36px] sm:text-sm"
+                            className="flex items-center gap-2 sm:w-[120px] sm:h-[36px] sm:text-sm"
                         >
                             {totalRow && totalRow > 0 ? (
                                 <>

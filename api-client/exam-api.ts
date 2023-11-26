@@ -4,12 +4,29 @@ import axiosFormData from './axios-form';
 import { CreateDiscussion, UpdateDiscussion } from '@/types/discussion';
 
 export const examApi = {
-    getAll: async (examType: string, page: number, size: number) => {
+    getAllExamFilter: async (
+        isAttempt: string,
+        subject: string,
+        examType: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
-            `/examination/exams?examType=${examType}&page=${page}&size=${size}&sortType=ASC`
+            `/examination/exams?${isAttempt !== '' ? `isAttempt=${isAttempt}` : ''}${
+                subject !== '' && isAttempt !== ''
+                    ? `&subject=${subject}`
+                    : subject !== '' && isAttempt == ''
+                    ? `subject=${subject}`
+                    : ''
+            }${
+                isAttempt !== '' || subject !== '' ? `&examType=${examType}` : `examType=${examType}`
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
+
     getAllBySubject: async (subject: string, examType: string, page: number, size: number) => {
         const res = await axiosClient.get(
             `/examination/exams?subject=${subject}&examType=${examType}&page=${page}&size=${size}&sortType=ASC`
@@ -31,7 +48,7 @@ export const examApi = {
         return res.data;
     },
     examinationTopics: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/examination/topics?&page=${page}&size=${size}&sortType=ASC`);
+        const res = await axiosClient.get(`/examination/topics?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
     },
     createExam: async (payload: any) => {
@@ -49,9 +66,16 @@ export const examApi = {
     createAttempt: async (examId: number) => {
         return await axiosClient.post(`/examination/exams/submission/${examId}`);
     },
-    getAllTopic: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/examination/topics?page=${page}&size=${size}&sortType=ASC`);
-        return res.data;
+    getAllTopicBySubject: async (subject: string, page: number, size: number) => {
+        if (subject == '') {
+            const res = await axiosClient.get(`/examination/topics?page=${page}&size=${size}&sortType=ASC`);
+            return res.data;
+        } else {
+            const res = await axiosClient.get(
+                `/examination/topics?subject=${subject}&page=${page}&size=${size}&sortType=ASC`
+            );
+            return res.data;
+        }
     },
     getAllTopicAdmin: async (page: number, size: number) => {
         const res = await axiosClient.get(`/examination/topics/admin?page=${page}&size=${size}&sortType=ASC`);
