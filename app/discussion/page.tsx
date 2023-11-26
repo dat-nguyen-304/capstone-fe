@@ -27,7 +27,6 @@ const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
     { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
-    { name: 'Vai Trò', uid: 'ownerRole', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
@@ -46,7 +45,7 @@ function getRole(role: string) {
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['topicName', 'ownerFullName', 'ownerRole', 'title', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
     );
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['-1']));
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
@@ -136,12 +135,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
                             description: 'text-default-500'
                         }}
                         name={cellValue}
+                        description={getRole(post.ownerRole)}
                     >
                         {post.ownerFullName}
                     </User>
                 );
-            case 'ownerRole':
-                return getRole(cellValue);
             case 'createTime':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
 

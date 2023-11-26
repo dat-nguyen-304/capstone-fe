@@ -137,8 +137,9 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             <form onSubmit={handleSubmit(createExam)}>
                 <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo đề thi mới</h3>
                 <div className="sm:grid grid-cols-6 my-4 gap-2">
-                    <div className="my-4 col-span-6 lg:col-span-3">
+                    <div className="my-4 col-span-6 lg:col-span-6">
                         <InputText
+                            color="primary"
                             isRequired
                             variant="bordered"
                             name="name"
@@ -147,30 +148,32 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             control={control}
                         />
                     </div>
-                    <div className=" my-4 col-span-3 lg:col-span-3">
-                        <Select
-                            size="sm"
-                            isRequired
-                            isDisabled={questions?.length > 0}
-                            label="Môn học"
-                            color="primary"
-                            variant="bordered"
-                            defaultSelectedKeys={['1']}
-                            value={selectedSubject}
-                            name="subject"
-                            onChange={event => setSelectedSubject(Number(event.target.value))}
-                        >
-                            {subjectsData.map((subject: Subject) => (
-                                <SelectItem key={subject.id} value={subject.id}>
-                                    {subject.name}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </div>
-                    <div className="col-span-6 sm:grid grid-cols-3 gap-4">
+
+                    <div className="col-span-6 md:grid grid-cols-3 gap-4">
+                        <div className="mt-1">
+                            <Select
+                                size="sm"
+                                isRequired
+                                isDisabled={questions?.length > 0}
+                                label="Môn học"
+                                color="primary"
+                                variant="bordered"
+                                defaultSelectedKeys={['1']}
+                                value={selectedSubject}
+                                name="subject"
+                                onChange={event => setSelectedSubject(Number(event.target.value))}
+                            >
+                                {subjectsData.map((subject: Subject) => (
+                                    <SelectItem key={subject.id} value={subject.id}>
+                                        {subject.name}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </div>
                         <div className="col-span-1 mt-1">
                             <InputText
                                 isRequired
+                                color="primary"
                                 variant="bordered"
                                 name="duration"
                                 size="sm"
@@ -178,26 +181,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                                 control={control}
                             />
                         </div>
-
                         <Select
-                            label="Mức độ"
-                            color="primary"
-                            variant="bordered"
-                            labelPlacement="outside"
-                            defaultSelectedKeys={['EASY']}
-                            onChange={event => setLevel(String(event.target.value))}
-                        >
-                            <SelectItem key={'EASY'} value={'EASY'}>
-                                Cơ bản
-                            </SelectItem>
-                            <SelectItem key={'MEDIUM'} value={'MEDIUM'}>
-                                Trung bình
-                            </SelectItem>
-                            <SelectItem key={'HARD'} value={'HARD'}>
-                                Nâng cao
-                            </SelectItem>
-                        </Select>
-                        <Select
+                            className="md:mt-0 mt-8"
                             label="Thể loại kiểm tra"
                             color="primary"
                             variant="bordered"

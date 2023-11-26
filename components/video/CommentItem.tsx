@@ -149,7 +149,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
                                 onChange={event => setResponseComment(event?.target?.value)}
                             />
                             <Button
-                                className="ml-[-78px] mb-2"
+                                className="ml-[-54px] !min-w-[40px] w-[40px] h-[40px] rounded-full mb-2 cursor-pointer"
                                 color={responseComment == '' || submitting ? 'default' : 'primary'}
                                 variant="light"
                                 size="sm"

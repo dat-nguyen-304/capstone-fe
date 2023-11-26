@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import { BsArrowLeft } from 'react-icons/bs';
+import { IoMdSend } from 'react-icons/io';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 
 interface PostDetailProps {
@@ -162,7 +163,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
             {currentUser?.user?.fullName !== discussionData?.ownerFullName && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex gap-4 items-center">
-                        <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
+                        <div className="h-[100px] w-[160px] border-2 rounded-lg border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} name="avatar" />
                                 {uploadedFiles.length ? (
@@ -188,31 +189,40 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                                 )}
                             </div>
                         </div>
-                        <div className="flex-[1]">
+                        <div className="flex-[1] relative">
                             <InputFormula name="response" placeholder="Viết suy nghĩ của bạn" control={control} />
+                            <Button
+                                className="absolute right-2 bottom-[-40px] !min-w-[40px] w-[40px] h-[40px] rounded-full mb-2 cursor-pointer"
+                                color="primary"
+                                type="submit"
+                                variant="light"
+                                size="sm"
+                            >
+                                <IoMdSend size={20} />
+                            </Button>
                         </div>
-                        <Button className="mt-8" type="submit" color="primary">
-                            Gửi
-                        </Button>
                     </div>
                 </form>
             )}
-            <div className="w-full mt-12">
-                <Select
-                    size="sm"
-                    label="Sắp xếp theo"
-                    color="primary"
-                    variant="bordered"
-                    defaultSelectedKeys={['0']}
-                    className="w-[240px] mt-4"
-                >
-                    <SelectItem key={0} value={0}>
-                        Thời gian
-                    </SelectItem>
-                    <SelectItem key={1} value={1}>
-                        Tương tác
-                    </SelectItem>
-                </Select>
+            <div className="w-full mt-20">
+                <div className="flex items-baseline justify-between">
+                    <h3 className="text-xl font-semibold">Phản hồi</h3>
+                    <Select
+                        size="sm"
+                        label="Sắp xếp theo"
+                        color="primary"
+                        variant="bordered"
+                        defaultSelectedKeys={['0']}
+                        className="w-[240px] mt-4"
+                    >
+                        <SelectItem key={0} value={0}>
+                            Thời gian
+                        </SelectItem>
+                        <SelectItem key={1} value={1}>
+                            Tương tác
+                        </SelectItem>
+                    </Select>
+                </div>
                 <Card className="mt-8 p-8">
                     <ul>
                         {commentsData?.data?.length ? (
@@ -228,12 +238,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                                 <CommentItem commentInfo={commonInfo} />
                             </>
                         )}
-                        {/* <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem />
-                        <CommentItem /> */}
                     </ul>
                     {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>

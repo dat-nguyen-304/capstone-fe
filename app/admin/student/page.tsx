@@ -196,7 +196,11 @@ const Students: React.FC<StudentsProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary" as={Link} href="/admin/profile/student/1">
+                                <DropdownItem
+                                    color="primary"
+                                    as={Link}
+                                    href={`/admin/profile/student/${student.email}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem

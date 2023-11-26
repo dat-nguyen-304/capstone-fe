@@ -10,6 +10,9 @@ interface CourseInfoProps {
         subject: string;
         level: string;
         teacherName: string;
+        teacherEmail?: string;
+        teacherId?: string;
+        teacherAvatar?: string;
         numberOfRate: number;
         rating: number;
         totalStudent: number;
@@ -53,9 +56,9 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
                 Được tạo bởi:
                 <User
                     as={Link}
-                    href="/"
-                    avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-                    className="ml-2 cursor-pointer"
+                    href={`/profile/teacher/${courseInfo.teacherEmail}`}
+                    avatarProps={{ radius: 'full', size: 'sm', src: courseInfo.teacherAvatar || '/teacher.png' }}
+                    className="ml-2 cursor-pointer text-blue-500"
                     name={courseInfo.teacherName}
                 />
             </div>

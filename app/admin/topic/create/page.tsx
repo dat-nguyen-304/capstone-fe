@@ -45,9 +45,9 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (
-        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
+        <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Tạo chủ đề</h3>
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo chủ đề</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="name"

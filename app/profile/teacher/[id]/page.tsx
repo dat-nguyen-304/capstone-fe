@@ -49,7 +49,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                         />
                     </div>
                     <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
-                        <h3 className="text-base text-blue-500 sm:text-2xl font-bold flex items-center gap-2">
+                        <h3 className="text-base text-blue-500 sm:text-2xl font-semibold flex items-center gap-2">
                             {teacherData.fullName}
                             {/* <MdVerified color="#0de298" /> */}
                         </h3>

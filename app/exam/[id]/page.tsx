@@ -100,49 +100,60 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                     </div>
                 </div>
                 <h4 className="font-semibold text-sm sm:text-lg mt-5">Kết quả làm bài của bạn</h4>
-                <ul className="p-3 sm:p-4 rounded-xl border-1 border-blue-500 shadow-xl w-full md:w-4/5 mt-4">
-                    <li className="flex items-center justify-between">
-                        <span className="text-sm sm:text-base">Đã làm {totalRow || 0} lần</span>
-                        <Button
-                            as={Link}
-                            href={`/exam/${params.id}/practice`}
-                            size="sm"
-                            color="primary"
-                            className="flex items-center gap-2 sm:w-[120px] sm:h-[36px] sm:text-sm"
-                        >
-                            {totalRow && totalRow > 0 ? (
-                                <>
-                                    <FiRotateCw />
-                                    <span>Làm lại</span>
-                                </>
-                            ) : (
-                                <span>Làm bài kiểm tra</span>
-                            )}
-                        </Button>
-                    </li>
-                    {submissions?.length
-                        ? submissions?.map((examsSubmissionInfo: any, index: number) => (
-                              <TestResultLine
-                                  key={index}
-                                  type="exam"
-                                  index={index}
-                                  examId={params?.id}
-                                  examsSubmissionInfo={examsSubmissionInfo}
-                              />
-                          ))
-                        : null}
-
-                    {totalPage && totalPage > 1 ? (
-                        <div className="flex justify-center mb-16">
-                            <Pagination
-                                page={page}
-                                total={totalPage}
-                                onChange={value => scrollToTop(value)}
-                                showControls
-                            />
-                        </div>
-                    ) : null}
-                </ul>
+                {totalRow ? (
+                    <ul className="p-3 sm:p-4 rounded-xl border-1 border-blue-500 shadow-xl w-full md:w-4/5 mt-4">
+                        <li className="flex items-center justify-between">
+                            <span className="text-sm sm:text-base">Đã làm {totalRow || 0} lần</span>
+                            <Button
+                                as={Link}
+                                href={`/exam/${params.id}/practice`}
+                                size="sm"
+                                color="primary"
+                                className="flex items-center gap-2 sm:w-[120px] sm:h-[36px] sm:text-sm"
+                            >
+                                {totalRow && totalRow > 0 ? (
+                                    <>
+                                        <FiRotateCw />
+                                        <span>Làm lại</span>
+                                    </>
+                                ) : (
+                                    <span>Làm bài kiểm tra</span>
+                                )}
+                            </Button>
+                        </li>
+                        {submissions?.length
+                            ? submissions?.map((examsSubmissionInfo: any, index: number) => (
+                                  <TestResultLine
+                                      key={index}
+                                      type="exam"
+                                      index={index}
+                                      examId={params?.id}
+                                      examsSubmissionInfo={examsSubmissionInfo}
+                                  />
+                              ))
+                            : null}
+                        {totalPage && totalPage > 1 ? (
+                            <div className="flex justify-center mb-16">
+                                <Pagination
+                                    page={page}
+                                    total={totalPage}
+                                    onChange={value => scrollToTop(value)}
+                                    showControls
+                                />
+                            </div>
+                        ) : null}
+                    </ul>
+                ) : (
+                    <Button
+                        as={Link}
+                        href={`/exam/${params.id}/practice`}
+                        size="sm"
+                        color="primary"
+                        className="flex items-center mt-4 gap-2 sm:w-[150px] sm:h-[36px] sm:text-sm"
+                    >
+                        <span>Làm bài kiểm tra</span>
+                    </Button>
+                )}
             </div>
             {/* <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
                 <h3 className="text-lg font-bold mb-2">Bình luận</h3>

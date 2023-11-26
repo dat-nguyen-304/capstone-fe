@@ -312,7 +312,7 @@ const UploadVideo: React.FC = () => {
                                         Công Khai
                                     </SelectItem>
                                     <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
-                                        Riêng Tư
+                                        Không công khai
                                     </SelectItem>
                                 </Select>
                             </div>
@@ -357,23 +357,6 @@ const UploadVideo: React.FC = () => {
                 <div>
                     <label className="block mt-4 mb-2 font-semibold">Mô tả</label>
                     <InputDescription name="description" control={control} />
-                </div>
-                <div className="flex items-center mb-8 mt-20 sm:mt-16">
-                    <div className="flex items-center h-5">
-                        <Checkbox />
-                    </div>
-                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Video xem trước của khóa học
-                        <Tooltip
-                            placement="right"
-                            content="Học sinh có thể xem video này mà không cần mua khóa học."
-                            className="inline"
-                        >
-                            <Button variant="light" isIconOnly size="sm">
-                                <FaQuestionCircle />
-                            </Button>
-                        </Tooltip>
-                    </label>
                 </div>
                 <div className="flex items-start mb-8 mt-4">
                     <div className="flex items-center h-5">

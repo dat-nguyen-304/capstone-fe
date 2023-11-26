@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
 import { BiSolidLike } from 'react-icons/bi';
+import HTMLReactParser from 'html-react-parser';
 
 interface VideoProps {
     params: { id: number };
@@ -143,6 +144,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học
                         </Button>
+                        <p className="text-xs sm:text-sm mt-4">{HTMLReactParser(data.description)}</p>
                         <div className="mt-8 px-0 sm:px-4">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
@@ -179,9 +181,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                                 <CommentItem commentInfo={commonInfo} />
                                             </>
                                         )}
-
-                                        {/* <CommentItem />
-                                        <CommentItem /> */}
                                     </ul>
                                     {/* <Button className="w-full">Xem thêm</Button> */}
                                 </Tab>

@@ -7,6 +7,7 @@ export type Student = {
 export type StudentType = {
     id: number;
     name: string;
+    email: string;
     combination: string;
     userStatus: string;
     createdAt: string;
