@@ -51,20 +51,21 @@ const items: MenuItem[] = [
         getItem(<Link href="/admin/exam-topic">Tất cả chủ đề thi</Link>, '9'),
         getItem(<Link href="/admin/exam-topic/create">Tạo chủ đề thi</Link>, '10')
     ]),
-    getItem('Phê duyệt', 'sub4', <CheckCircleOutlined />, [
-        getItem(<Link href="/admin/approve/course">Khóa học</Link>, '11'),
-        getItem(<Link href="/admin/approve/video">Video</Link>, '12')
+    // getItem('Phê duyệt', 'sub4', <CheckCircleOutlined />, [
+    //     getItem(<Link href="/admin/approve/course">Khóa học</Link>, '11'),
+    //     getItem(<Link href="/admin/approve/video">Video</Link>, '12')
+    // ]),
+    getItem(<Link href="/admin/approve/course">Phê duyệt</Link>, '11', <CheckCircleOutlined />),
+    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '12', <LineChartOutlined />),
+    getItem('Xử lý vi phạm', 'sub4', <StopOutlined />, [
+        getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '13'),
+        getItem(<Link href="/admin/report/exam">Bài thi</Link>, '14'),
+        getItem(<Link href="/admin/report/video">Video</Link>, '15')
     ]),
-    getItem(<Link href="/admin/transaction">Giao dịch</Link>, '13', <LineChartOutlined />),
-    getItem('Xử lý vi phạm', 'sub5', <StopOutlined />, [
-        getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '14'),
-        getItem(<Link href="/admin/report/exam">Bài thi</Link>, '16'),
-        getItem(<Link href="/admin/report/video">Video</Link>, '18')
-    ]),
-    getItem('Thảo luận', 'sub6', <CommentOutlined />, [
-        getItem(<Link href="/admin/discussion">Tất cả bài viết</Link>, '20'),
-        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '21'),
-        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '22')
+    getItem('Thảo luận', 'sub5', <CommentOutlined />, [
+        getItem(<Link href="/admin/discussion">Tất cả bài viết</Link>, '16'),
+        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '17'),
+        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '18')
     ]),
     getItem(
         <div className="relative">

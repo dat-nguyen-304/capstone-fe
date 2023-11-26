@@ -11,7 +11,8 @@ const nextConfig = {
             'cdn2.hoc247.vn',
             'res.cloudinary.com',
             'images.unsplash.com',
-            'hoc247.vn'
+            'hoc247.vn',
+            'lh3.googleusercontent.com'
         ]
     }
 };

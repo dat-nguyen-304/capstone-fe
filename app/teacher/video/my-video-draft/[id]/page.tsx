@@ -13,13 +13,14 @@ import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
 import { useRouter } from 'next/navigation';
 import { useCustomModal } from '@/hooks';
+import HTMLReactParser from 'html-react-parser';
 interface VideoDraftProps {
     params: { id: number };
 }
 
 const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['video-teacher-detail', params?.id],
+        queryKey: ['video-teacher-detail-draft', { params }],
         queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
     const router = useRouter();
@@ -127,6 +128,21 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                                 Chỉnh sửa <BiSolidPencil />
                             </Button>
                         </div>
+                        <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Mô tả video</h3>
+                        {HTMLReactParser(data?.description)}
+                        {data?.material ? (
+                            <>
+                                <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">
+                                    Tài liệu học thuật:
+                                    <span className="font-semibold text-medium text-blue-400 underline">
+                                        <Link href={data?.material} target="_blank">
+                                            {' '}
+                                            tài liệu
+                                        </Link>
+                                    </span>
+                                </h4>
+                            </>
+                        ) : null}
                         {/* <div className="mt-8 px-0 sm:px-4">
                             <h3 className="font-semibold text-lg">Bình luận</h3>
                             <ul className="mt-6 px-0 sm:px-4">

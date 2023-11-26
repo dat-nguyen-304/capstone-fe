@@ -24,7 +24,7 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
     const { data: discussionTopic, isLoading } = useQuery({
-        queryKey: ['topicDetail'],
+        queryKey: ['topicDetail', { params }],
         queryFn: () => discussionApi.getTopicById(params?.id)
     });
     console.log(discussionTopic);

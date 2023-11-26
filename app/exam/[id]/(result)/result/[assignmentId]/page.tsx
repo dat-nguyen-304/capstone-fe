@@ -25,7 +25,7 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
         isLoading,
         status
     } = useQuery<any>({
-        queryKey: ['exam-submission-info'],
+        queryKey: ['exam-submission-info', { params }],
         queryFn: () => examApi.getExamSubmissionById(params?.assignmentId)
     });
     console.log(examSubmissionData);

@@ -10,6 +10,8 @@ import Loader from '../Loader';
 import { handleUserReload } from '@/utils/handleUserReload';
 import { SafeUser } from '@/types';
 import { useEffect, useState } from 'react';
+import { examApi } from '@/api-client';
+import { toast } from 'react-toastify';
 
 interface DoTestHeaderProps {
     type: 'quiz' | 'exam';
@@ -21,7 +23,18 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        onContentType,
+        onReportType,
+        onDescription,
+        onFile,
+        description,
+        reportType,
+        file
+    } = useReportModal();
 
     useEffect(() => {
         const handleReload = async () => {
@@ -44,12 +57,38 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
         };
         handleReload();
     }, [currentUser.user]);
+    const onSubmitReport = async () => {
+        let toastLoading;
+        try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('reportMsg', description);
+            formDataWithImage.append('reportType', reportType.toUpperCase());
+            if (file) {
+                formDataWithImage.append('image', file); // assuming 'image' is the field name expected by the server
+            }
 
+            const response = await examApi.createExamReport(formDataWithImage, id);
+
+            if (response) {
+                onDescription('');
+                onReportType('integrity');
+                onFile(null);
+                toast.success('Bài kiểm tra được báo cáo thành công');
+                onClose();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error creating course:', error);
+        }
+    };
     const openReportModal = () => {
-        onContentType('discussion');
+        onContentType('exam');
         onOpen();
     };
-    const onSubmitReport = async () => {};
+
     if (isLoading) return <Loader />;
 
     if (user?.role !== 'STUDENT') return <NotFound />;

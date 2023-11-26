@@ -66,7 +66,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
     const { data: examDetail, isLoading } = useQuery<any>({
-        queryKey: ['exam-detail'],
+        queryKey: ['exam-detail', { params }],
         queryFn: () => examApi.getExamById(params?.id)
     });
     const {

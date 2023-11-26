@@ -5,6 +5,7 @@ import { CreateDiscussion, UpdateDiscussion } from '@/types/discussion';
 
 export const examApi = {
     getAllExamFilter: async (
+        pattern: string,
         isAttempt: string,
         subject: string,
         examType: string,
@@ -14,19 +15,28 @@ export const examApi = {
         sort: string
     ) => {
         const res = await axiosClient.get(
-            `/examination/exams?${isAttempt !== '' ? `isAttempt=${isAttempt}` : ''}${
-                subject !== '' && isAttempt !== ''
+            `/examination/exams?${pattern !== '' ? `pattern=${pattern}` : ''}${
+                isAttempt !== '' && pattern !== ''
+                    ? `&isAttempt=${isAttempt}`
+                    : isAttempt !== '' && pattern == ''
+                    ? `isAttempt=${isAttempt}`
+                    : ''
+            }${
+                subject !== '' && (isAttempt !== '' || pattern !== '')
                     ? `&subject=${subject}`
-                    : subject !== '' && isAttempt == ''
+                    : subject !== '' && isAttempt == '' && pattern == ''
                     ? `subject=${subject}`
                     : ''
             }${
-                isAttempt !== '' || subject !== '' ? `&examType=${examType}` : `examType=${examType}`
+                pattern !== '' || isAttempt !== '' || subject !== '' ? `&examType=${examType}` : `examType=${examType}`
             }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
-
+    getExamBySearch: async (page: number, size: number) => {
+        const res = await axiosClient.get(`/examination/exams/admin?page=${page}&size=${size}&sortType=ASC`);
+        return res.data;
+    },
     getAllBySubject: async (subject: string, examType: string, page: number, size: number) => {
         const res = await axiosClient.get(
             `/examination/exams?subject=${subject}&examType=${examType}&page=${page}&size=${size}&sortType=ASC`
@@ -102,6 +112,35 @@ export const examApi = {
     },
     getExamSubmissionById: async (submissionId: number) => {
         const res = await axiosClient.get(`/examination/exams/submission/${submissionId}`);
+        return res.data;
+    },
+    getExamSubmissionStatistic: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/examination/exams/submission/statistic?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
+    getExamSubmissionStatisticBySubject: async (
+        subject: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/examination/exams/submission/statistic?subject=${subject}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
+    createExamReport: async (payload: any, examId: number) => {
+        return await axiosFormData.post(`/examination/report/${examId}`, payload);
+    },
+    getListReportExam: async (reportType: string, page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/examination/report?${reportType !== '' ? `type=${reportType}` : ''}${
+                reportType !== '' ? `&page=${page}` : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     }
 };

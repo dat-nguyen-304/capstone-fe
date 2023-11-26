@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Dropdown,
@@ -17,7 +17,7 @@ import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
+import { examApi, subjectApi } from '@/api-client';
 import { Subject } from '@/types';
 import Loader from '@/components/Loader';
 import AvgScoreMonthChart from '@/components/chart/exam-history/AvgScoreMonthChart';
@@ -83,20 +83,48 @@ const exams = [
 type Exam = (typeof exams)[0];
 
 const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
+    // const [exams, setExams] = useState<any[]>([]);
+
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [selectedSubject, setSelectedSubject] = useState<Selection>(new Set(['0']));
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(1);
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
+    const [avgGrade, setAvgGrade] = useState<any[]>();
+    const [times, setTimes] = useState<any[]>();
+    const [quantityGrade, setQuantityGrade] = useState<any[]>();
     const { user } = useUser();
     const { data } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
+
+    const {
+        status,
+        error,
+        data: examSubmissionData,
+        isPreviousData
+    } = useQuery({
+        queryKey: ['examSubmissionData', { page, rowsPerPage }],
+        queryFn: () => examApi.getExamSubmissionStatistic(page - 1, rowsPerPage, 'id', 'ASC')
+    });
+
+    console.log('examSubmissionData');
+    console.log(examSubmissionData);
+    useEffect(() => {
+        if (examSubmissionData) {
+            setAvgGrade(examSubmissionData?.avgGrade);
+            setQuantityGrade(examSubmissionData?.quantityGrade);
+            setTimes(examSubmissionData?.times);
+        }
+    }, [examSubmissionData]);
+
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'name', 'subject', 'score', 'date'])
     );
-    const [selectedSubject, setSelectedSubject] = useState<Selection>(new Set(['0']));
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [page, setPage] = useState(1);
-    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -123,6 +151,20 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
         switch (columnKey) {
             case 'name':
                 return <Link href={`/exam/${1}`}>{cellValue}</Link>;
+            case 'finishTime':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false
+                })?.format(dateValue);
+
+                return formattedDate;
             default:
                 return cellValue;
         }
@@ -140,7 +182,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 description: ''
             });
     }
-
+    if (!examSubmissionData) return <Loader />;
     return (
         <StudentLayout>
             <div className="w-[90%] xl:w-4/5 mx-auto my-8">
@@ -239,12 +281,12 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 <div className="md:grid grid-cols-2 mt-8 gap-4">
                     <div className="">
                         <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
-                        <AvgScoreMonthChart />
+                        <AvgScoreMonthChart avgGrade={avgGrade} times={times} />
                     </div>
 
                     <div className="mt-12 md:mt-0">
                         <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
-                        <QuantityScoreChart />
+                        <QuantityScoreChart quantityGrade={quantityGrade} />
                     </div>
                 </div>
             </div>

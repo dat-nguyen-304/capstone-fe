@@ -85,7 +85,7 @@ const RevenueChart: React.FC<BarChartProps> = ({ courseId }) => {
         ]
     });
     const { data: incomeCourseData, isLoading } = useQuery<any>({
-        queryKey: ['teacher-income-course', courseId],
+        queryKey: ['teacher-income-course', { courseId }],
         queryFn: () => {
             if (courseId) {
                 return teacherIncomeApi.getTeacherIncomeByCourse(courseId);

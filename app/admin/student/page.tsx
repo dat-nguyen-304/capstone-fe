@@ -155,14 +155,21 @@ const Students: React.FC<StudentsProps> = () => {
         onOpen();
     };
 
-    const renderCell = useCallback((student: StudentType, columnKey: Key) => {
-        const cellValue = student[columnKey as keyof StudentType];
+    const renderCell = useCallback((student: any, columnKey: Key) => {
+        const cellValue = student[columnKey as keyof any];
 
         switch (columnKey) {
             case 'fullName':
                 return (
                     <User
-                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src:
+                                student?.url !== 'empty' || student?.url
+                                    ? student?.url
+                                    : 'https://i.pravatar.cc/150?img=4'
+                        }}
                         classNames={{
                             description: 'text-default-500'
                         }}

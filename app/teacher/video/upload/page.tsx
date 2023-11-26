@@ -147,7 +147,7 @@ const UploadVideo: React.FC = () => {
 
             if (optionCourse == 'NEW') {
                 const response = await videoApi.createVideoForNewCourse(formDataPayload);
-                apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos';
+                // apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos';
                 // const response = await axios.post(apiUrl, formDataPayload, {
                 //     headers: {
                 //         'Content-Type': 'multipart/form-data'

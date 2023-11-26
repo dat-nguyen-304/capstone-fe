@@ -19,7 +19,7 @@ interface CourseDetailProps {
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data: courseData, isLoading } = useQuery<any>({
-        queryKey: ['my-course-detail'],
+        queryKey: ['my-course-detail', { params }],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
     const { data: feedbacksData } = useQuery<any>({

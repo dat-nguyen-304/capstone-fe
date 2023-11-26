@@ -280,10 +280,10 @@ const Videos: React.FC<VideosProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                                <DropdownItem as={Link} href={`/admin/video/${video?.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem
+                                {/* <DropdownItem
                                     color="success"
                                     key={video.status === 'AVAILABLE' ? 'enableDis' : 'enable'}
                                     onClick={() => onApproveOpen(video?.id, 'ACCEPTED')}
@@ -296,7 +296,7 @@ const Videos: React.FC<VideosProps> = () => {
                                     onClick={() => onDeclineOpen(video?.id, 'REJECT')}
                                 >
                                     Từ chối
-                                </DropdownItem>
+                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>

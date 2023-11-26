@@ -5,21 +5,32 @@ import { Subject } from '@/types';
 import { Button, Input, Select, SelectItem, Skeleton } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ExamFilterProps {
     selectedSubject: number;
     setSelectedSubject: Dispatch<SetStateAction<number>>;
     setSelectedFilterSort: Dispatch<SetStateAction<number>>;
+    setSearch: Dispatch<SetStateAction<string>>;
 }
 
-const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSubject, setSelectedFilterSort }) => {
+const ExamFilter: React.FC<ExamFilterProps> = ({
+    selectedSubject,
+    setSelectedSubject,
+    setSelectedFilterSort,
+    setSearch
+}) => {
     const { data } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
     const skeletonArray: number[] = [1, 2, 3, 4, 5, 6, 7];
+    const [searchInput, setSearchInput] = useState('');
+    const handleSearch = () => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     return (
         <>
             <ul className="flex gap-1 mt-8 flex-wrap">
@@ -33,7 +44,7 @@ const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSub
                     </Button>
                 </li>
                 {data
-                    ? data.map((subject: Subject) => (
+                    ? data?.map((subject: Subject) => (
                           <li key={subject.id}>
                               <Button
                                   onClick={() => setSelectedSubject(subject.id)}
@@ -55,8 +66,14 @@ const ExamFilter: React.FC<ExamFilterProps> = ({ selectedSubject, setSelectedSub
             </ul>
             <div className="md:flex items-center gap-8 mt-4">
                 <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
-                    <Input color="primary" variant="bordered" placeholder="Nhập từ khóa" className="flex-[1]" />
-                    <Button color="primary" className="">
+                    <Input
+                        color="primary"
+                        variant="bordered"
+                        placeholder="Nhập từ khóa"
+                        className="flex-[1]"
+                        onChange={e => setSearchInput(e.target.value)}
+                    />
+                    <Button color="primary" className="" onClick={handleSearch}>
                         Tìm kiếm
                     </Button>
                 </div>

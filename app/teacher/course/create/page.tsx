@@ -41,7 +41,7 @@ const CreateCourse: React.FC = () => {
     });
 
     const { data: topics } = useQuery({
-        queryKey: ['topics', selectedSubject],
+        queryKey: ['topics', { selectedSubject }],
         queryFn: () => (selectedSubject !== 0 ? topicApi.getTopicsBySubject(selectedSubject) : [])
     });
 

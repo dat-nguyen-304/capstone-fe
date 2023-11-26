@@ -57,15 +57,17 @@ const QuantityScoreData = [
     }
 ];
 
-interface BarChartProps {}
+interface BarChartProps {
+    quantityGrade: any[] | any;
+}
 
-const QuantityScoreChart: React.FC<BarChartProps> = () => {
+const QuantityScoreChart: React.FC<BarChartProps> = ({ quantityGrade }) => {
     const [userData, setUserData] = useState({
         labels: QuantityScoreData.map(data => data.score),
         datasets: [
             {
                 label: 'Số lượng điểm số',
-                data: QuantityScoreData.map(data => data.quantity),
+                data: quantityGrade?.map((data: any) => data),
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2

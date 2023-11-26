@@ -28,12 +28,12 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const { data: discussionData } = useQuery({
-        queryKey: ['discussionDetail'],
+        queryKey: ['discussionDetail', { params }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
     const { data: commentsData } = useQuery({
-        queryKey: ['commentsByDiscussion', updateState],
+        queryKey: ['commentsByDiscussion', { updateState }],
         queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
     });
     const { control, handleSubmit, setError, reset } = useForm({

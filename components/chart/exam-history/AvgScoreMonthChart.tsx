@@ -57,15 +57,18 @@ const AvgScoreData = [
     }
 ];
 
-interface BarChartProps {}
+interface BarChartProps {
+    avgGrade: any[] | any;
+    times: any[] | any;
+}
 
-const AvgScoreMonthChart: React.FC<BarChartProps> = () => {
+const AvgScoreMonthChart: React.FC<BarChartProps> = ({ avgGrade, times }) => {
     const [userData, setUserData] = useState({
-        labels: AvgScoreData.map(data => data.month),
+        labels: times?.map((data: any) => data),
         datasets: [
             {
                 label: 'Điểm số trung bình',
-                data: AvgScoreData.map(data => data.score),
+                data: avgGrade?.map((data: any) => data),
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2

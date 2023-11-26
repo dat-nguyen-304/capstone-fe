@@ -153,8 +153,8 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
                 </div>
                 {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                    {videos.length ? (
-                        videos.map((videoItem: VideoCardType) => (
+                    {videos?.length ? (
+                        videos?.map((videoItem: VideoCardType) => (
                             // <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
                             <VideoCard
                                 type="teacher-draft"

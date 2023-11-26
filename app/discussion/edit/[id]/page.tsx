@@ -24,7 +24,7 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
     const router = useRouter();
 
     const { data: editDiscussion } = useQuery({
-        queryKey: ['editDiscussion'],
+        queryKey: ['editDiscussion', { params }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
     const { data: topicsData } = useQuery({

@@ -33,7 +33,7 @@ interface UpdateVideoDraftProps {
 const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['edit-video-teacher-detail', params?.id],
+        queryKey: ['edit-video-teacher-detail', { params }],
         queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
     const [uploadedVideoFile, setUploadedVideoFile] = useState<FileWithPath>();

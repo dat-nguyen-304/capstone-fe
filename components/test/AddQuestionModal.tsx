@@ -79,7 +79,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         }
     });
     const { data: topicsData } = useQuery({
-        queryKey: ['topicsExam', subject],
+        queryKey: ['topicsExam', { subject }],
         queryFn: () => examApi.getAllTopicBySubject(subject, 0, 100)
     });
 

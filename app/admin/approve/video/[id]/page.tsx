@@ -12,13 +12,14 @@ import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
 import { useRouter } from 'next/navigation';
+import HTMLReactParser from 'html-react-parser';
 interface VideoDraftProps {
     params: { id: number };
 }
 
 const AdminReviewVideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['admin-review-video--detail', params?.id],
+        queryKey: ['admin-review-video--detail', { params }],
         queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
     const router = useRouter();
@@ -51,6 +52,23 @@ const AdminReviewVideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                                     'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
                                 }
                             />
+                        </div>
+                        <div className="mt-8 px-0 sm:px-4">
+                            <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Mô tả video</h3>
+                            <h4 className="font-semibold">{HTMLReactParser(data?.description)}</h4>
+                            {data?.material ? (
+                                <>
+                                    <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">
+                                        Tài liệu học thuật:
+                                        <span className="font-semibold text-medium text-blue-400 underline">
+                                            <Link href={data?.material} target="_blank">
+                                                {' '}
+                                                tài liệu
+                                            </Link>
+                                        </span>
+                                    </h4>
+                                </>
+                            ) : null}
                         </div>
                     </div>
                 </div>

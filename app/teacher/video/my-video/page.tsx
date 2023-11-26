@@ -31,7 +31,10 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
     const [page, setPage] = useState(1);
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: selectedCourse == 0 ? ['videoList', page, selectedCourse] : ['videoListCourse', page, selectedCourse],
+        queryKey:
+            selectedCourse == 0
+                ? ['videoList', { page, selectedCourse }]
+                : ['videoListCourse', { page, selectedCourse }],
         // keepPreviousData: true,
         queryFn: () => {
             if (selectedCourse != 0) {

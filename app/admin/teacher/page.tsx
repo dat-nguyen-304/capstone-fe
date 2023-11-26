@@ -162,16 +162,20 @@ const Teachers: React.FC<TeachersProps> = () => {
         onOpen();
     };
 
-    const renderCell = useCallback((teacher: Teacher, columnKey: Key) => {
+    const renderCell = useCallback((teacher: any, columnKey: Key) => {
         let res: string | number;
-        const cellValue = teacher[columnKey as keyof Teacher];
+        const cellValue = teacher[columnKey as keyof any];
         if (Array.isArray(cellValue) || cellValue === undefined) res = '';
         else res = cellValue;
         switch (columnKey) {
             case 'fullName':
                 return (
                     <User
-                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: teacher?.url ? teacher?.url : 'https://i.pravatar.cc/150?img=4'
+                        }}
                         classNames={{
                             description: 'text-default-500'
                         }}

@@ -66,5 +66,13 @@ export const discussionApi = {
     },
     createCommentReport: async (payload: any, commentId: number) => {
         return await axiosFormData.post(`/discussion/report/comments/${commentId}`, payload);
+    },
+    getListReportConversation: async (reportType: string, page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/discussion/report/conversations?${reportType !== '' ? `reportType=${reportType}` : ''}${
+                reportType !== '' ? `&page=${page}` : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
     }
 };

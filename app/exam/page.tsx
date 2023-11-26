@@ -42,28 +42,31 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
-
+    const [search, setSearch] = useState<string>('');
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['exams', { page, selectedSubject, selectedFilterSort }],
+        queryKey: ['exams', { page, selectedSubject, selectedFilterSort, search }],
         // keepPreviousData: true,
         queryFn: () =>
             examApi.getAllExamFilter(
+                search,
                 selectedFilterSort == 2 ? 'false' : selectedFilterSort == 3 ? 'true' : '',
                 getSubjectNameById(selectedSubject),
                 'PUBLIC_EXAM',
                 page - 1,
                 20,
                 selectedFilterSort == 1 ? 'createTime' : 'id',
-                'ASC'
+                selectedFilterSort == 1 ? 'DESC' : 'ASC'
             )
     });
+    console.log(search);
+
     useEffect(() => {
         if (data?.data) {
             setExams(data.data);
             setTotalPage(data?.totalPage);
             setTotalRow(data?.totalRow);
         }
-    }, [data, selectedSubject, selectedFilterSort]);
+    }, [data, selectedSubject, selectedFilterSort, search]);
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -84,6 +87,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                                 selectedSubject={selectedSubject}
                                 setSelectedSubject={setSelectedSubject}
                                 setSelectedFilterSort={setSelectedFilterSort}
+                                setSearch={setSearch}
                             />
                             <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-8 gap-2 sm:gap-4">
                                 {exams?.length ? (
