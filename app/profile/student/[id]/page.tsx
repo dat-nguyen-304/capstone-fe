@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card } from '@nextui-org/react';
+import { Button, Card, Chip } from '@nextui-org/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -60,8 +60,10 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                             <p className="w-[160px] font-semibold">Tổ hợp môn</p>
                             <ul>
                                 {targets.map((target: any) => (
-                                    <li className="inline-block mx-2" key={target.id}>
-                                        {target.name}
+                                    <li className="inline-block mx-1" key={target.id}>
+                                        <Chip color="primary" size="sm" variant="flat">
+                                            {target.name}
+                                        </Chip>
                                     </li>
                                 ))}
                             </ul>

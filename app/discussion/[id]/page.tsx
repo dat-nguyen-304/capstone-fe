@@ -12,12 +12,14 @@ import { Button, Card, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import { BsArrowLeft } from 'react-icons/bs';
 import { IoMdSend } from 'react-icons/io';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
+import { PuffLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 
 interface PostDetailProps {
     params: { id: number };
@@ -25,19 +27,27 @@ interface PostDetailProps {
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
+    const [comments, setComments] = useState<any[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const currentUser = useUser();
+
     const { data: discussionData } = useQuery({
         queryKey: ['discussionDetail', { params }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
-    const { data: commentsData } = useQuery({
-        queryKey: ['commentsByDiscussion', { updateState }],
+    const { data, refetch, isLoading } = useQuery({
+        queryKey: ['commentsByDiscussion'],
         queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
     });
 
-    const currentUser = useUser();
+    useEffect(() => {
+        if (data?.data) {
+            setComments(data.data);
+        }
+    }, [data]);
+
     const { control, handleSubmit, setError, reset } = useForm({
         defaultValues: {
             title: '',
@@ -57,7 +67,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         onReportType,
         onDescription,
         onFile,
-        file
+        file,
+        onSubmitting
     } = useReportModal();
 
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
@@ -77,6 +88,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
 
     const onSubmit = async (formData: any) => {
         try {
+            setIsSubmitting(true);
             console.log(formData.response);
             const formDataWithImage = new FormData();
             formDataWithImage.append('content', formData.response);
@@ -86,17 +98,21 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
             }
             const response = await discussionApi.createComment(formDataWithImage, discussionData?.id);
             if (response) {
+                setIsSubmitting(false);
+                refetch();
                 reset();
                 setUploadedFiles([]);
-                setUpdateState(prev => !prev);
             }
         } catch (error) {
+            setIsSubmitting(false);
             console.error('Error creating course:', error);
         }
     };
 
     const onSubmitReport = async () => {
+        const toastLoading = toast.loading('Đang gửi yêu cầu');
         try {
+            onSubmitting(true);
             const formDataWithImage = new FormData();
             formDataWithImage.append('reportMsg', description);
             formDataWithImage.append('reportType', reportType.toUpperCase());
@@ -107,6 +123,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 const response = await discussionApi.createConversationReport(formDataWithImage, discussionData?.id);
 
                 if (response) {
+                    toast.dismiss(toastLoading);
+                    onSubmitting(false);
+                    toast.success('Đã gửi thành công');
                     onDescription('');
                     onReportType('integrity');
                     onFile(null);
@@ -116,6 +135,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 if (reportCommentId) {
                     const response = await discussionApi.createCommentReport(formDataWithImage, reportCommentId);
                     if (response) {
+                        toast.dismiss(toastLoading);
+                        onSubmitting(false);
+                        toast.success('Đã gửi thành công');
                         onDescription('');
                         onReportType('integrity');
                         onFile(null);
@@ -124,6 +146,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 }
             }
         } catch (error) {
+            toast.dismiss(toastLoading);
+            onSubmitting(false);
+            toast.error('Hệ thống đang gặp trục trực. Vui lòng thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -132,6 +157,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         onContentType('discussion');
         onOpen();
     };
+
     const postContent = {
         id: discussionData?.id,
         title: discussionData?.title,
@@ -143,21 +169,22 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
-    const commonInfo = {
-        id: 1,
-        ownerFullName: 'Nguyễn Văn A',
-        content: 'Nội dung rất hay'
-    };
+
     if (!discussionData) return <Loader />;
+
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <div className="flex justify-between items-center mt-2">
-                <div onClick={() => router.back()} className="flex items-center gap-2 text-sm cursor-pointer">
+                <Button
+                    variant="flat"
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-sm cursor-pointer"
+                >
                     <BsArrowLeft />
                     <span>Quay lại</span>
-                </div>
+                </Button>
                 {currentUser.user && currentUser?.user?.fullName !== discussionData?.ownerFullName && (
-                    <Button size="sm" color="danger" onClick={openReportModal}>
+                    <Button color="danger" onClick={openReportModal}>
                         Báo cáo
                     </Button>
                 )}
@@ -201,6 +228,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                                 type="submit"
                                 variant="light"
                                 size="sm"
+                                isLoading={isSubmitting}
                             >
                                 <IoMdSend size={20} />
                             </Button>
@@ -229,21 +257,27 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     </Select>
                 </div>
                 <Card className="mt-8 p-8">
-                    <ul>
-                        {commentsData?.data?.length ? (
-                            commentsData?.data?.map((commentInfo: CommentCardType) => (
-                                <CommentItem
-                                    key={commentInfo?.id}
-                                    commentInfo={commentInfo}
-                                    onCommentId={setReportCommentId}
-                                />
-                            ))
-                        ) : (
-                            <>
-                                <CommentItem commentInfo={commonInfo} />
-                            </>
-                        )}
-                    </ul>
+                    {isLoading ? (
+                        <div className="flex justify-center">
+                            <PuffLoader color="blue" size={50} />
+                        </div>
+                    ) : (
+                        <ul>
+                            {comments?.length ? (
+                                comments.map((commentInfo: CommentCardType) => (
+                                    <CommentItem
+                                        refetch={refetch}
+                                        key={commentInfo?.id}
+                                        commentInfo={commentInfo}
+                                        onCommentId={setReportCommentId}
+                                    />
+                                ))
+                            ) : (
+                                <div>Chưa có phản hồi</div>
+                            )}
+                        </ul>
+                    )}
+
                     {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
             </div>

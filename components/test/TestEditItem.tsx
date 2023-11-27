@@ -49,7 +49,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                     <Chip color="primary" variant="flat" size="md">
                         Câu {index + 1}
                     </Chip>
-                    <Button color="warning" size="sm" onClick={() => handleEditOpen(index)}>
+                    <Button color="warning" variant="bordered" size="sm" onClick={() => handleEditOpen(index)}>
                         Chỉnh sửa
                     </Button>
                     <Button
@@ -78,7 +78,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                     <Radio
                         size="sm"
                         value={String.fromCharCode(65 + index)}
-                        className={`ml-2 ${
+                        className={`ml-2 my-0 ${
                             String.fromCharCode(65 + index) === questions?.correctAnswer
                                 ? 'bg-green-100 rounded-md'
                                 : ''

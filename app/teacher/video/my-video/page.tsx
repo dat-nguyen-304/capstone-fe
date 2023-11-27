@@ -97,12 +97,11 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="mt-8 flex justify-between gap-3 items-end">
+                <div className="mt-8 sm:flex items-center justify-between gap-3 items-end">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
-                        size="sm"
                         color="primary"
                         startContent={<BsSearch className="text-default-300" />}
                         // value={filterValue}
@@ -110,51 +109,54 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
                     />
-
-                    <Select
-                        size="sm"
-                        labelPlacement="outside"
-                        label="Khóa học"
-                        color="primary"
-                        variant="bordered"
-                        onChange={event => setSelectedCourse(Number(event.target.value))}
-                    >
-                        {coursesData?.data?.map((course: Course) => (
-                            <SelectItem key={course?.id} value={course?.id}>
-                                {course?.courseName}
-                            </SelectItem>
-                        ))}
-                    </Select>
-
-                    {/* <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    color="primary"
-                                    variant="bordered"
-                                >
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                // selectedKeys={() => {}}
-                                selectionMode="single"
-                                onSelectionChange={() => {}}
-                            >
-                                {statusArr.map(statusItem => (
-                                    <DropdownItem key={statusItem.value} className="capitalize">
-                                        {capitalize(statusItem.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div> */}
+                    <div className="flex-[1] flex flex-row-reverse">
+                        <Select
+                            size="sm"
+                            labelPlacement="inside"
+                            label="Khóa học"
+                            color="primary"
+                            variant="bordered"
+                            className="w-4/5"
+                            onChange={event => setSelectedCourse(Number(event.target.value))}
+                        >
+                            {coursesData?.data?.map((course: Course) => (
+                                <SelectItem key={course?.id} value={course?.id}>
+                                    {course?.courseName}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
                 </div>
+
+                <div className="flex flex-row-reverse mt-4">
+                    <Dropdown>
+                        <DropdownTrigger className="flex">
+                            <Button
+                                size="sm"
+                                endContent={<BsChevronDown className="text-small" />}
+                                color="primary"
+                                variant="bordered"
+                            >
+                                Trạng thái
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            disallowEmptySelection
+                            aria-label="Table Columns"
+                            closeOnSelect={false}
+                            // selectedKeys={() => {}}
+                            selectionMode="single"
+                            onSelectionChange={() => {}}
+                        >
+                            {statusArr.map(statusItem => (
+                                <DropdownItem key={statusItem.value} className="capitalize">
+                                    {capitalize(statusItem.name)}
+                                </DropdownItem>
+                            ))}
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+
                 {totalRow ? (
                     <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>
                 ) : null}

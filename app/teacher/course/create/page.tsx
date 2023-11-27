@@ -19,10 +19,10 @@ import { toast } from 'react-toastify';
 
 const CreateCourse: React.FC = () => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
-    const [values, setValues] = useState<Selection>(new Set(['1']));
     const [topicStates, setTopicStates] = useState<(Topic & { isSelected: boolean })[]>([]);
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
     const [levelId, setLevelId] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
@@ -92,6 +92,7 @@ const CreateCourse: React.FC = () => {
 
     const onSubmit = async (formData: any) => {
         let toastLoading;
+        setIsSubmitting(true);
         try {
             toastLoading = toast.loading('Đang xử lí yêu cầu');
             const selectedTopics = topicStates
@@ -123,6 +124,7 @@ const CreateCourse: React.FC = () => {
 
             const response = await courseApi.createCourse(formDataPayload);
             if (response) {
+                setIsSubmitting(false);
                 toast.success('Khóa học đã được tạo thành công');
                 console.log('Course created successfully:', response);
                 router.push('/teacher/course/my-course-draft');
@@ -131,6 +133,7 @@ const CreateCourse: React.FC = () => {
             // Handle the response as needed
         } catch (error) {
             toast.dismiss(toastLoading);
+            setIsSubmitting(false);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
@@ -276,7 +279,7 @@ const CreateCourse: React.FC = () => {
                         .
                     </label>
                 </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
                     Tạo khóa học mới
                 </Button>
             </form>

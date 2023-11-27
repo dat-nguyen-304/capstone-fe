@@ -1,21 +1,15 @@
 'use client';
 
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
-import { useQuery } from '@tanstack/react-query';
 import { examApi, subjectApi } from '@/api-client';
-import Loader from '@/components/Loader';
 import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
-import { InputFormula } from '@/components/form-input/InputFormula';
-import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useCallback, useState } from 'react';
-import Image from 'next/image';
-import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
-import { discussionApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
+import { InputDescription } from '@/components/form-input/InputDescription';
 interface CreateExamTopicProps {}
 
 const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
@@ -49,11 +43,12 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (
-        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
+        <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Tạo chủ đề thi</h3>
-                <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo chủ đề thi</h3>
+                <div className="sm:flex items-center mt-8 gap-8">
                     <InputText
+                        color="primary"
                         name="name"
                         isRequired
                         label="Tên tiêu đề"
@@ -66,7 +61,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                         label="Môn học"
                         color="primary"
                         variant="bordered"
-                        labelPlacement="outside"
+                        labelPlacement="inside"
                         defaultSelectedKeys={['MATHEMATICS']}
                         onChange={event => setSubject(String(event.target.value))}
                     >
@@ -96,7 +91,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                         label="Mức độ"
                         color="primary"
                         variant="bordered"
-                        labelPlacement="outside"
+                        labelPlacement="inside"
                         defaultSelectedKeys={['EASY']}
                         onChange={event => setLevel(String(event.target.value))}
                     >
@@ -111,10 +106,9 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                         </SelectItem>
                     </Select>
                 </div>
-                <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
-
-                    <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
+                <div className="mt-8">
+                    <label className="text-sm font-semibold text-[#0070f0]">Mô tả chủ đề</label>
+                    <InputDescription name="description" placeholder="Nội dung bài viết" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">

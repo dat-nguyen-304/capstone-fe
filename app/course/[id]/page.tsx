@@ -57,7 +57,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     if (!data) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">
-            <div className="mt-4 flex items-center gap-2 text-sm cursor-pointer" onClick={() => router.back()}>
+            <div className="mt-8 flex items-center gap-2 text-sm cursor-pointer" onClick={() => router.back()}>
                 <BsArrowLeft />
                 <span>Quay lại</span>
             </div>

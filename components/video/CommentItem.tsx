@@ -14,42 +14,44 @@ import { useReportModal } from '@/hooks';
 import { CommentCardType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
 import { IoMdSend } from 'react-icons/io';
-import { boolean } from 'yup';
 import { discussionApi } from '@/api-client';
 
 interface CommentItemProps {
     commentInfo: CommentCardType | any;
     onCommentId?: (commentId: number) => void;
+    refetch?: any;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, refetch }) => {
     const [showSubComment, setShowSubComment] = useState<boolean>(false);
     const [showWriteResponse, setShowWriteResponse] = useState<boolean>(false);
     const [responseComment, setResponseComment] = useState<string>('');
-    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
 
     const onSubmit = async () => {
         try {
-            setSubmitting(true);
+            setIsSubmitting(true);
             const formDataWithImage = new FormData();
             formDataWithImage.append('content', responseComment);
             formDataWithImage.append('commentParentId', commentInfo?.id);
             const response = await discussionApi.createComment(formDataWithImage, commentInfo?.conversationId);
             if (response) {
+                if (refetch) refetch();
                 setResponseComment('');
                 setShowWriteResponse(false);
-
-                setSubmitting(false);
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error creating course:', error);
         }
     };
+
     const handleLikeClick = async () => {
         try {
             // Assuming postContent.id is the discussionId
             const response = await discussionApi.commentReact(commentInfo?.id);
+            refetch();
             // Handle the response as needed
             console.log('API response:', response);
         } catch (error) {
@@ -57,6 +59,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
             console.error('Error reacting to discussion:', error);
         }
     };
+
     const openReportModal = () => {
         if (onCommentId) {
             onCommentId(commentInfo?.id);
@@ -104,7 +107,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
                             }`}
                             onClick={handleLikeClick}
                         />
-
                         <span className="text-xs sm:text-sm">{commentInfo?.reactCount || 0}</span>
                     </span>
                     {commentInfo?.owner !== true ? (
@@ -150,10 +152,11 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId }) =
                             />
                             <Button
                                 className="ml-[-54px] !min-w-[40px] w-[40px] h-[40px] rounded-full mb-2 cursor-pointer"
-                                color={responseComment == '' || submitting ? 'default' : 'primary'}
+                                isLoading={isSubmitting}
+                                color="primary"
                                 variant="light"
                                 size="sm"
-                                disabled={responseComment == '' || submitting}
+                                disabled={responseComment == '' || isSubmitting}
                                 onClick={onSubmit}
                             >
                                 <IoMdSend size={20} />

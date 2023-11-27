@@ -12,6 +12,7 @@ import TestResultLine from '@/components/test/TestResultLine';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import CourseCard from '@/components/course/CourseCard';
+import { useUser } from '@/hooks';
 
 interface ExamDetailProps {
     params: { id: number };
@@ -32,6 +33,7 @@ function getSubjectName(subjectCode: string) {
 }
 
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
+    const { user } = useUser();
     const router = useRouter();
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
     const [submissions, setSubmissions] = useState<any[]>([]);
@@ -52,7 +54,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         });
     };
 
-    console.log({ subjectsData });
     if (!subjectsData) return <Loader />;
 
     return (

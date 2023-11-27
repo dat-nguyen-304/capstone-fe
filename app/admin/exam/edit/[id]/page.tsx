@@ -15,6 +15,8 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useCustomModal } from '@/hooks';
 import { toast } from 'react-toastify';
+import { FaPlus } from 'react-icons/fa6';
+import { BsArrowLeft } from 'react-icons/bs';
 interface EditExamProps {
     params: { id: number };
 }
@@ -59,12 +61,13 @@ const getSubjectNameById = (id: number): string => {
 const EditExam: React.FC<EditExamProps> = ({ params }) => {
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [level, setLevel] = useState<string>('EASY');
     const [examType, setExamType] = useState<string>('PUBLIC_EXAM');
     const [questions, setQuestions] = useState<any[]>([]);
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { data: examDetail, isLoading } = useQuery<any>({
         queryKey: ['exam-detail', { params }],
         queryFn: () => examApi.getExamById(params?.id)
@@ -96,15 +99,13 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 explanation: question?.explanation,
                 topicId: question?.topic?.id, // Assuming `topic` is an object with an `id` property
                 answerList: question?.answerList,
-                correctAnswer: question?.correctAnswer,
-                level: question?.level
+                correctAnswer: question?.correctAnswer
             }));
 
             setQuestions(formattedQuestions);
             setValue('name', examDetail?.name);
             setValue('description', examDetail?.description);
             setValue('duration', examDetail?.duration);
-            setLevel(examDetail?.level);
             setSelectedSubject(getSubjectIdByName(examDetail?.subject));
         }
     }, [examDetail]);
@@ -140,6 +141,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
         });
     };
     const updateExam = async (formData: any) => {
+        setIsSubmitting(true);
         const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             const payload = {
@@ -148,7 +150,6 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 duration: Number(formData?.duration || 60),
                 courseId: -1,
                 subject: getSubjectNameById(selectedSubject),
-                level: level,
                 examType: examType,
                 questionList: questions.map(({ id, ...rest }) => rest)
             };
@@ -156,6 +157,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
 
             // Call the API to update the exam
             const response = await examApi.updateExam(params?.id, payload);
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
             toast.success('Cập nhật bài thi thành công');
             console.log(response);
@@ -165,6 +167,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             }
         } catch (error) {
             // Handle any errors that occur during the API call
+            setIsSubmitting(false);
             console.error('Error creating exam:', error);
             // You can also show a user-friendly error message
         }
@@ -177,13 +180,14 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             <form onSubmit={handleSubmit(updateExam)}>
                 <div className="flex justify-between items-center">
                     <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
-                    <Button onClick={() => router.back()} size="sm">
-                        Quay lại
+                    <Button variant="faded" onClick={() => router.back()} size="sm">
+                        <BsArrowLeft /> Quay lại
                     </Button>
                 </div>
                 <div className="sm:grid grid-cols-6 my-4 gap-2">
                     <div className="my-4 col-span-6 lg:col-span-3">
                         <InputText
+                            color="primary"
                             isRequired
                             variant="bordered"
                             name="name"
@@ -192,7 +196,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                             control={control}
                         />
                     </div>
-                    <div className=" my-4 col-span-3 lg:col-span-3">
+                    <div className="my-4 col-span-3 lg:col-span-3">
                         <Select
                             isRequired
                             size="sm"
@@ -208,37 +212,40 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                             ))}
                         </Select>
                     </div>
-                    <div className="col-span-6 sm:grid grid-cols-3 gap-4">
+                    <div className="col-span-6 sm:grid grid-cols-2 gap-4">
                         <div className="col-span-1 mt-1">
                             <InputText
+                                color="primary"
                                 isRequired
                                 variant="bordered"
                                 name="duration"
                                 size="sm"
-                                label="Thời gian"
+                                label="Thời gian (phút)"
                                 control={control}
                             />
                         </div>
-
-                        <Select
-                            label="Thể loại kiểm tra"
-                            color="primary"
-                            variant="bordered"
-                            labelPlacement="outside"
-                            defaultSelectedKeys={[`${examDetail?.examType}`]}
-                            onChange={event => setExamType(String(event.target.value))}
-                        >
-                            <SelectItem key={'PUBLIC_EXAM'} value={'PUBLIC_EXAM'}>
-                                Bài Kiểm Tra
-                            </SelectItem>
-                            <SelectItem key={'ENTRANCE_EXAM'} value={'ENTRANCE_EXAM'}>
-                                Bài Thi Đầu Vào
-                            </SelectItem>
-                        </Select>
+                        <div className="col-span-1 mt-2 sm:mt-0">
+                            <Select
+                                isRequired
+                                label="Thể loại kiểm tra"
+                                color="primary"
+                                variant="bordered"
+                                labelPlacement="inside"
+                                defaultSelectedKeys={[`${examDetail?.examType}`]}
+                                onChange={event => setExamType(String(event.target.value))}
+                            >
+                                <SelectItem key={'PUBLIC_EXAM'} value={'PUBLIC_EXAM'}>
+                                    Bài Luyện Thi
+                                </SelectItem>
+                                <SelectItem key={'ENTRANCE_EXAM'} value={'ENTRANCE_EXAM'}>
+                                    Bài Thi Đầu Vào
+                                </SelectItem>
+                            </Select>
+                        </div>
                     </div>
                 </div>
-                <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
-                    Thêm câu hỏi
+                <Button onClick={handlePopUpAddQuestion} color="success" variant="flat" className="mt-8">
+                    Thêm câu hỏi <FaPlus />
                 </Button>
                 <AddQuestionModal
                     isOpen={isOpen}
@@ -267,15 +274,16 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                     {questions && questions.length > 4 && (
                         <Button
                             onClick={handlePopUpAddQuestion}
-                            className="w-full mt-16 font-semibold"
-                            color="primary"
+                            className="w-full mt-2 font-semibold"
+                            color="success"
+                            variant="flat"
                             size="lg"
                         >
-                            Thêm câu hỏi
+                            Thêm câu hỏi <FaPlus />
                         </Button>
                     )}
                 </div>
-                <Button color="primary" type="submit" className="mt-12">
+                <Button color="primary" type="submit" className="mt-12" isLoading={isSubmitting}>
                     Xác nhận thay đổi
                 </Button>
             </form>

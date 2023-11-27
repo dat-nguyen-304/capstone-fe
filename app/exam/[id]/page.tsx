@@ -74,7 +74,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     if (!examData) return <Loader />;
     return (
         <StudentLayout>
-            <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 sm:border-1 sm:border-gray-200 sm:shadow-md">
+            <div className="w-[90%] 2xl:w-4/5 mx-auto my-8 rounded-lg sm:p-6 md:p-8 xl:p-12 sm:border-1 sm:border-gray-200 sm:shadow-md">
                 <div
                     onClick={() => router.push('/exam')}
                     className="mb-4 flex items-center gap-2 text-sm cursor-pointer"
@@ -126,7 +126,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                   <TestResultLine
                                       key={index}
                                       type="exam"
-                                      index={index}
+                                      index={submissions.length - index}
                                       examId={params?.id}
                                       examsSubmissionInfo={examsSubmissionInfo}
                                   />

@@ -2,6 +2,7 @@
 
 import { Accordion, AccordionItem, Chip, Radio, RadioGroup } from '@nextui-org/react';
 import HTMLReactParser from 'html-react-parser';
+import { ForwardedRef, forwardRef } from 'react';
 import { BsFlag } from 'react-icons/bs';
 
 interface TestResultItemProps {
@@ -9,12 +10,15 @@ interface TestResultItemProps {
     questions: any;
 }
 
-const TestResultItem: React.FC<TestResultItemProps> = ({ questions, index }) => {
+const TestResultItem = forwardRef(function MyComponent(
+    { questions, index }: TestResultItemProps,
+    ref: ForwardedRef<HTMLLIElement>
+) {
     console.log(questions);
     console.log(questions?.statement);
     const isCorrectAnswer = questions?.selectedAnswer === questions?.question?.correctAnswer;
     return (
-        <li className="mt-4">
+        <li className="mt-4" ref={ref}>
             <span className="font-semibold text-sm flex items-center">
                 <span>
                     <Chip color="primary" variant="flat">
@@ -25,7 +29,7 @@ const TestResultItem: React.FC<TestResultItemProps> = ({ questions, index }) => 
             </span>
             {questions?.question?.answerList?.map((answerList: any, index: number) => (
                 <div key={index} suppressContentEditableWarning={true}>
-                    <RadioGroup key={index} value={questions?.question?.correctAnswer} className="mt-2">
+                    <RadioGroup key={index} value={questions?.question?.correctAnswer} className="mt-4">
                         <Radio
                             size="sm"
                             value={String.fromCharCode(65 + index)}
@@ -59,6 +63,6 @@ const TestResultItem: React.FC<TestResultItemProps> = ({ questions, index }) => 
             </div>
         </li>
     );
-};
+});
 
 export default TestResultItem;

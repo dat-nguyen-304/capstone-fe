@@ -25,12 +25,6 @@ import { Spin } from 'antd';
 
 interface VideosProps {}
 
-const statusColorMap: Record<string, ChipProps['color']> = {
-    AVAILABLE: 'success',
-    BANNED: 'danger',
-    WAITING: 'primary',
-    UNAVAILABLE: 'warning'
-};
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
     { name: 'TÊN VIDEO', uid: 'name', sortable: true },

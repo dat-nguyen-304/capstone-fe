@@ -208,7 +208,7 @@ const Quizzes: React.FC<VideosProps> = () => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách câu hỏi ôn tập</h3>
             <div className="flex flex-col gap-4 mt-8">
-                <div className="flex justify-between gap-3 items-end">
+                <div className="sm:flex justify-between gap-3 items-end">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
@@ -221,7 +221,7 @@ const Quizzes: React.FC<VideosProps> = () => {
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}
                     />
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 mt-4 sm:mt-0">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button

@@ -4,8 +4,6 @@ import Image from 'next/image';
 import VideoItem from './VideoItem';
 
 interface CourseContentProps {
-    // isMyCourse?: boolean;
-    // isTeacherCourse?: boolean;
     type?: 'my-course' | 'teacher-course' | 'teacher-course-draft' | 'admin-review' | 'admin-view';
     isMyCourse?: boolean;
     isTeacherCourse?: boolean;
@@ -19,17 +17,12 @@ interface CourseContentProps {
             duration: number;
             totalComment: number;
             totalLike: number;
+            videoStatus: 'PUBLIC' | 'PRIVATE';
         }>;
     };
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({
-    type,
-    isMyCourse,
-    isTeacherCourse,
-    isAdminReviewCourse,
-    courseContent
-}) => {
+const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) => {
     return (
         <>
             <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Nội dung khóa học</h3>
@@ -76,8 +69,6 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                 ? 'admin-view-video'
                                 : undefined
                         }
-                        isTeacherVideo={isTeacherCourse}
-                        isAdminReviewCourse={isAdminReviewCourse}
                     />
                 ))}
             </ul>

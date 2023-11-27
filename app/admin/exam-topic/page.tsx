@@ -193,7 +193,7 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chủ đề thi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
-                    <div className="flex justify-between gap-3 items-end">
+                    <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
@@ -204,34 +204,6 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                        <div className="flex gap-3">
-                            <Dropdown>
-                                <DropdownTrigger className="flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Cột
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
-                                >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
                     </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>

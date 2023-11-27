@@ -194,7 +194,7 @@ const UploadVideo: React.FC = () => {
                         <div {...getVideoRootProps()}>
                             <input {...getVideoInputProps()} name="avatar" />
                             <div className="border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
-                                Tải lên video <BiUpArrowAlt size={24} />{' '}
+                                Tải lên video <BiUpArrowAlt size={24} />
                             </div>
                         </div>
                     </div>
@@ -274,6 +274,7 @@ const UploadVideo: React.FC = () => {
                                 isRequired
                                 variant="bordered"
                                 name="name"
+                                color="primary"
                                 size="sm"
                                 label="Tên Video"
                                 control={control}
@@ -334,10 +335,11 @@ const UploadVideo: React.FC = () => {
                             </Select>
                         </div>
                         <div className="col-span-2 my-4">
-                            <div {...getAttachedRootProps()}>
+                            <div {...getAttachedRootProps()} className="w-full sm:w-1/2">
                                 <input {...getAttachedInputProps()} name="avatar" />
-                                <div className="w-full sm:w-1/2 border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
-                                    Tải lên file đính kèm <BiUpArrowAlt size={24} />{' '}
+                                <div className="w-full border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
+                                    {uploadedAttachedFiles ? 'Tải lại file đính kèm' : 'Tải lên file đính kèm'}
+                                    <BiUpArrowAlt size={24} />
                                 </div>
                             </div>
 
@@ -358,7 +360,7 @@ const UploadVideo: React.FC = () => {
                     <label className="block mt-4 mb-2 font-semibold">Mô tả</label>
                     <InputDescription name="description" control={control} />
                 </div>
-                <div className="flex items-start mb-8 mt-4">
+                <div className="flex items-start mb-8 mt-16">
                     <div className="flex items-center h-5">
                         <Checkbox />
                     </div>

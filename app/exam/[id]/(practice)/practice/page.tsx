@@ -6,6 +6,7 @@ import { Button } from '@nextui-org/react';
 import { RefObject, createRef, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
+import { useCustomModal } from '@/hooks';
 interface DoExamProps {
     params: { id: number };
 }
@@ -34,6 +35,7 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
     const [remainingTime, setRemainingTime] = useState<number | null>(null);
     const [examSubmitted, setExamSubmitted] = useState(false);
     const [selectedAnswers, setSelectedAnswers] = useState<{ questionId: number; selection: string }[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     useEffect(() => {
         const createAttempt = async () => {
@@ -98,14 +100,18 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
         setSelectedAnswers(updatedAnswers);
         setAnsweredQuestions(prev => [...prev, index]);
     };
+
+    const { onOpen, onWarning, onClose } = useCustomModal();
+
     const handleSubmitExam = async () => {
         // Call your API to submit the exam with selected answers
+        setIsSubmitting(true);
+        onClose();
         try {
             setExamSubmitted(true);
             console.log(selectedAnswers);
-
             const res = await examApi.submitExam(params?.id, selectedAnswers);
-
+            setIsSubmitting(false);
             console.log(res);
             if (res) {
                 router?.push(`/exam/${params?.id}`);
@@ -114,10 +120,30 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
             console.log(error);
         }
     };
+
+    const onClickSubmit = () => {
+        onOpen();
+        onWarning({
+            title: 'Xác nhận nộp bài',
+            content: 'Bạn có chắc muốn nộp bài',
+            activeFn: handleSubmitExam
+        });
+    };
+
     const questionRefs: RefObject<HTMLLIElement>[] = questions.map(() => createRef());
     const scrollToQuestion = (questionId: number) => {
-        questionRefs[questionId - 1]?.current?.scrollIntoView({ behavior: 'smooth' });
+        const element = questionRefs[questionId - 1]?.current;
+
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            const elementPosition = element.getBoundingClientRect().top;
+            window.scrollBy({
+                top: elementPosition - 80,
+                behavior: 'smooth'
+            });
+        }
     };
+
     if (!totalQuestion) return <Loader />;
 
     return (
@@ -175,7 +201,8 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
                     <Button
                         className="mt-2"
                         color="primary"
-                        onClick={handleSubmitExam}
+                        onClick={onClickSubmit}
+                        isLoading={isSubmitting}
                         // disabled={examSubmitted}
                     >
                         Nộp bài

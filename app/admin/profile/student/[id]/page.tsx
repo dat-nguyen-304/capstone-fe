@@ -2,7 +2,7 @@
 
 import { studentApi } from '@/api-client';
 import Loader from '@/components/Loader';
-import { Button, Card } from '@nextui-org/react';
+import { Button, Card, Chip } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -27,14 +27,24 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     if (!studentData) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <Button
-                variant="light"
-                className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
-                onClick={() => router.back()}
-            >
-                <BsArrowLeft />
-                <span>Quay lại</span>
-            </Button>
+            <div className="flex items-center justify-between">
+                <Button
+                    variant="light"
+                    className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
+                    onClick={() => router.back()}
+                >
+                    <BsArrowLeft />
+                    <span>Quay lại</span>
+                </Button>
+                <div className="flex gap-2">
+                    <Button color="danger" variant="flat" size="sm">
+                        Vô hiệu hóa
+                    </Button>
+                    <Button color="danger" variant="flat" size="sm">
+                        Cấm
+                    </Button>
+                </div>
+            </div>
             <Card className="md:grid grid-cols-9 gap-8 my-4 p-8">
                 <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
@@ -61,8 +71,10 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                             <p className="w-[160px] font-semibold">Tổ hợp môn</p>
                             <ul>
                                 {targets.map((target: any) => (
-                                    <li className="inline-block mx-2" key={target.id}>
-                                        {target.name}
+                                    <li className="inline-block mx-1" key={target.id}>
+                                        <Chip color="primary" size="sm" variant="flat">
+                                            {target.name}
+                                        </Chip>
                                     </li>
                                 ))}
                             </ul>

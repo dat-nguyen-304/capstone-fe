@@ -55,7 +55,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                         </h3>
                         <div>
                             <div className="xl:flex items-center mt-4 gap-4">
-                                <p className="text-sm text-[#444] sm:text-base font-semibold">Giáo viên môn</p>
+                                <p className="text-sm text-[#444] sm:text-base">Giáo viên môn</p>
                                 <div className="flex gap-2 mt-2 xl:mt-0">
                                     {teacherData.subject.map((s: string) => (
                                         <Chip key={s} color="primary" variant="flat">
@@ -65,7 +65,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                                 </div>
                             </div>
                             <div className="xl:flex items-center mt-4">
-                                <p className="text-sm text-[#444] sm:text-base font-semibold">
+                                <p className="text-sm text-[#444] sm:text-base">
                                     <span className="mr-2">Ngày tham gia:</span>
                                     {new Intl.DateTimeFormat('en-GB', {
                                         year: 'numeric',

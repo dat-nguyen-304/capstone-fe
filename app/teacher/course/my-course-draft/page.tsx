@@ -65,7 +65,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
         <div className="w-[98%] xl:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học vừa tạo</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="mt-8 flex justify-between gap-3 items-end">
+                <div className="mt-8 sm:flex justify-between gap-3 items-end">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
@@ -78,7 +78,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
                     />
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 mt-4 sm:mt-0">
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
@@ -134,7 +134,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                     </div>
                 </div>
                 {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
-                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-3">
                     {courses.length ? (
                         courses.map((courseItem: CourseCardType) => (
                             <CourseCard key={courseItem.id} course={courseItem} type="teacher-course-draft" />

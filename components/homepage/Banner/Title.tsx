@@ -3,6 +3,7 @@
 import { Avatar, AvatarGroup, Button } from '@nextui-org/react';
 import { motion } from 'framer-motion';
 import { horizontal, vertical } from '@/animations';
+import Link from 'next/link';
 
 interface TitleProps {}
 
@@ -24,6 +25,8 @@ const Title: React.FC<TitleProps> = () => {
                 </motion.div>
                 <motion.div {...vertical(-100, 0.5, 0)} className="flex flex-col justify-start">
                     <Button
+                        as={Link}
+                        href="/suggestion"
                         size="lg"
                         className="!text-white font-bold w-full sm:w-auto rounded-xl py-7 text-lg my-5 text-20 bg-[#0071F9]"
                     >

@@ -109,12 +109,12 @@ const MenuItems: React.FC<MenuItemsProps> = () => {
                 </NavbarItem>
                 <NavbarItem key="suggestion" isActive={false} className="font-medium text-sm">
                     <Link color="foreground" href="/suggestion">
-                        Đánh giá năng lực
+                        Gợi ý khóa học
                     </Link>
                 </NavbarItem>
-                <NavbarItem key="suggestion" isActive={false} className="font-medium text-sm">
-                    <Link color="foreground" href="/suggestion">
-                        Gợi ý khóa học
+                <NavbarItem key="exam" isActive={false} className="font-medium text-sm">
+                    <Link color="foreground" href="/exam">
+                        Luyện đề
                     </Link>
                 </NavbarItem>
                 <NavbarItem key="discussion" isActive={false} className="font-medium text-sm">

@@ -55,7 +55,7 @@ const items: MenuItem[] = [
     //     getItem(<Link href="/admin/approve/course">Khóa học</Link>, '11'),
     //     getItem(<Link href="/admin/approve/video">Video</Link>, '12')
     // ]),
-    getItem(<Link href="/admin/approve/course">Phê duyệt</Link>, '11', <CheckCircleOutlined />),
+    getItem(<Link href="/admin/approve/course">Phê duyệt khóa học</Link>, '11', <CheckCircleOutlined />),
     getItem(<Link href="/admin/transaction">Giao dịch</Link>, '12', <LineChartOutlined />),
     getItem('Xử lý vi phạm', 'sub4', <StopOutlined />, [
         getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '13'),

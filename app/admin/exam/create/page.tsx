@@ -14,6 +14,8 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useCustomModal } from '@/hooks';
 import { toast } from 'react-toastify';
+import { BsArrowLeft } from 'react-icons/bs';
+import { FaPlus } from 'react-icons/fa6';
 interface CreateQuizProps {}
 
 const getSubjectNameById = (id: number): string => {
@@ -41,10 +43,11 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [questions, setQuestions] = useState<any[]>([]);
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
-    const [level, setLevel] = useState<string>('EASY');
     const [examType, setExamType] = useState<string>('PUBLIC_EXAM');
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { control, handleSubmit, setError, getValues } = useForm({
         defaultValues: {
             name: '',
@@ -53,6 +56,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             duration: ''
         }
     });
+
     const { data: subjectsData, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -66,10 +70,12 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         setEditQuestion(null);
         onOpen();
     };
+
     const handleAddQuestion = (question: any) => {
         // Add the new question to the list
         setQuestions(prevQuestions => [...prevQuestions, question]);
     };
+
     const handleEditOpen = (index: number) => {
         setEditIndex(index);
         setEditQuestion(questions[index]);
@@ -98,9 +104,12 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             }
         });
     };
+
     console.log(editQuestion);
     console.log(questions);
+
     const createExam = async (formData: any) => {
+        setIsSubmitting(true);
         const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             const payload = {
@@ -109,7 +118,6 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 duration: Number(formData?.duration || 60),
                 courseId: -1,
                 subject: getSubjectNameById(selectedSubject),
-                level: level,
                 examType: examType,
                 questionList: questions
             };
@@ -117,6 +125,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
             // Call the API to create the exam
             const response = await examApi.createExam(payload);
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
             toast.success('Tạo bài thi thành công');
 
@@ -124,9 +133,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 router.push('/admin/exam');
             }
         } catch (error) {
-            // Handle any errors that occur during the API call
+            setIsSubmitting(false);
             console.error('Error creating exam:', error);
-            // You can also show a user-friendly error message
         }
     };
 
@@ -135,9 +143,14 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(createExam)}>
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo đề thi mới</h3>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài thi</h3>
+                    <Button variant="flat" onClick={() => router.back()} size="sm">
+                        <BsArrowLeft /> Quay lại
+                    </Button>
+                </div>
                 <div className="sm:grid grid-cols-6 my-4 gap-2">
-                    <div className="my-4 col-span-6 lg:col-span-6">
+                    <div className="my-4 col-span-6 lg:col-span-3">
                         <InputText
                             color="primary"
                             isRequired
@@ -148,45 +161,45 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             control={control}
                         />
                     </div>
-
-                    <div className="col-span-6 md:grid grid-cols-3 gap-4">
-                        <div className="mt-1">
-                            <Select
-                                size="sm"
-                                isRequired
-                                isDisabled={questions?.length > 0}
-                                label="Môn học"
-                                color="primary"
-                                variant="bordered"
-                                defaultSelectedKeys={['1']}
-                                value={selectedSubject}
-                                name="subject"
-                                onChange={event => setSelectedSubject(Number(event.target.value))}
-                            >
-                                {subjectsData.map((subject: Subject) => (
-                                    <SelectItem key={subject.id} value={subject.id}>
-                                        {subject.name}
-                                    </SelectItem>
-                                ))}
-                            </Select>
-                        </div>
-                        <div className="col-span-1 mt-1">
-                            <InputText
-                                isRequired
-                                color="primary"
-                                variant="bordered"
-                                name="duration"
-                                size="sm"
-                                label="Thời gian"
-                                control={control}
-                            />
-                        </div>
+                    <div className="my-4 col-span-3 lg:col-span-3">
                         <Select
+                            size="sm"
+                            isRequired
+                            isDisabled={questions?.length > 0}
+                            label="Môn học"
+                            color="primary"
+                            variant="bordered"
+                            defaultSelectedKeys={['1']}
+                            value={selectedSubject}
+                            name="subject"
+                            onChange={event => setSelectedSubject(Number(event.target.value))}
+                        >
+                            {subjectsData.map((subject: Subject) => (
+                                <SelectItem key={subject.id} value={subject.id}>
+                                    {subject.name}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
+                    <div className="col-span-3 lg:col-span-3">
+                        <InputText
+                            isRequired
+                            color="primary"
+                            variant="bordered"
+                            name="duration"
+                            size="sm"
+                            label="Thời gian (phút)"
+                            control={control}
+                        />
+                    </div>
+                    <div className="col-span-3 lg:col-span-3">
+                        <Select
+                            isRequired
                             className="md:mt-0 mt-8"
                             label="Thể loại kiểm tra"
                             color="primary"
                             variant="bordered"
-                            labelPlacement="outside"
+                            labelPlacement="inside"
                             defaultSelectedKeys={['PUBLIC_EXAM']}
                             onChange={event => setExamType(String(event.target.value))}
                         >
@@ -199,8 +212,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </Select>
                     </div>
                 </div>
-                <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
-                    Thêm câu hỏi
+                <Button onClick={handlePopUpAddQuestion} color="success" variant="flat" className="mt-8">
+                    Thêm câu hỏi <FaPlus />
                 </Button>
                 <AddQuestionModal
                     isOpen={isOpen}
@@ -227,15 +240,16 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 {questions && questions.length > 4 && (
                     <Button
                         onClick={handlePopUpAddQuestion}
-                        className="w-full mt-16 font-semibold"
-                        color="primary"
+                        className="w-full mt-2 font-semibold"
+                        color="success"
+                        variant="flat"
                         size="lg"
                     >
-                        Thêm câu hỏi
+                        Thêm câu hỏi <FaPlus />
                     </Button>
                 )}
 
-                <Button className="mt-8" type="submit" color="primary">
+                <Button className="mt-12" type="submit" color="primary" isLoading={isSubmitting}>
                     Tạo bài thi mới
                 </Button>
             </form>

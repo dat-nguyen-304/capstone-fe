@@ -40,65 +40,17 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const courses = [
-    {
-        id: 1,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 2,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'unActive'
-    },
-    {
-        id: 3,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 4,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'waiting'
-    },
-    {
-        id: 5,
-        courseName: 'Lấy gốc thần tốc',
-        teacherName: 'Nguyễn Văn A',
-        subject: 'Toán học',
-        level: 'Cơ bản',
-        rating: '4.4',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'updating'
-    }
-];
-
-type Course = (typeof courses)[0];
+type Course = {
+    id: number;
+    courseName: string;
+    teacherName: string;
+    subject: string;
+    level: string;
+    rating: string;
+    createdAt: string;
+    updatedAt: string;
+    status: string;
+};
 
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
@@ -306,7 +258,7 @@ const Courses: React.FC<CoursesProps> = () => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách khóa học</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
-                    <div className="flex justify-between gap-3 items-end">
+                    <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
@@ -318,7 +270,7 @@ const Courses: React.FC<CoursesProps> = () => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                        <div className="flex gap-3">
+                        <div className="mt-4 sm:mt-0 flex gap-3">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -343,12 +295,6 @@ const Courses: React.FC<CoursesProps> = () => {
                                     </DropdownItem>
                                     <DropdownItem key="AVAILABLE" className="capitalize">
                                         {capitalize('Hoạt Động')}
-                                    </DropdownItem>
-                                    <DropdownItem key="WAITING" className="capitalize">
-                                        {capitalize('Chờ Xác Thực')}
-                                    </DropdownItem>
-                                    <DropdownItem key="UPDATING" className="capitalize">
-                                        {capitalize('Chờ Cập Nhật')}
                                     </DropdownItem>
                                     <DropdownItem key="UNAVAILABLE" className="capitalize">
                                         {capitalize('Vô Hiệu')}

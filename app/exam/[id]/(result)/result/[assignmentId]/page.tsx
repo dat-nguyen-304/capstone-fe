@@ -6,7 +6,7 @@ import TestResultItem from '@/components/test/TestResultItem';
 import { Button } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { RefObject, createRef, useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 
 interface ResultExamProps {
@@ -35,6 +35,19 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
             setTotalQuestion(examSubmissionData?.selectionList?.length);
         }
     }, [examSubmissionData]);
+    const questionRefs: RefObject<HTMLLIElement>[] = questions.map(() => createRef());
+    const scrollToQuestion = (questionId: number) => {
+        const element = questionRefs[questionId - 1]?.current;
+
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            const elementPosition = element.getBoundingClientRect().top;
+            window.scrollBy({
+                top: elementPosition - 80,
+                behavior: 'smooth'
+            });
+        }
+    };
     if (!examSubmissionData) return <Loader />;
     return (
         <>
@@ -43,7 +56,12 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                     <ul>
                         {totalQuestion ? (
                             questions?.map((questions: any, index: number) => (
-                                <TestResultItem key={index} questions={questions} index={index} />
+                                <TestResultItem
+                                    key={index}
+                                    questions={questions}
+                                    index={index}
+                                    ref={questionRefs[index]}
+                                />
                             ))
                         ) : (
                             <>Empty List Question</>
@@ -69,6 +87,7 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                             {totalQuestion &&
                                 Array.from({ length: totalQuestion }).map((_, index) => (
                                     <li
+                                        onClick={() => scrollToQuestion(index + 1)}
                                         key={index}
                                         className={`cursor-pointer flex justify-center items-center w-[32px] h-[32px] rounded-full text-xs border-1 ${
                                             questions[index]?.selectedAnswer ===

@@ -147,8 +147,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         } else {
             onAddQuestion(question);
         }
-
-        // Close the modal
+        reset();
         onClose();
     };
 
@@ -289,6 +288,9 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                             </div>
                         </ModalBody>
                         <ModalFooter>
+                            <Button variant="light" onClick={onClose}>
+                                Đóng
+                            </Button>
                             <Button color="danger" variant="light" onClick={() => reset()}>
                                 Đặt lại
                             </Button>

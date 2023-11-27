@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoCardProps {
-    type?: 'teacher' | 'teacher-draft' | 'all';
+    type?: 'teacher' | 'teacher-draft' | 'admin' | 'all';
     isTeacherVideo?: boolean;
     isTeacherVideoDraft?: boolean;
     video: VideoCardType;
@@ -61,6 +61,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         if (video.videoStatus === 'PUBLIC') profileStatus = 'Xem trước';
         else if (video.isAccess === true) profileStatus = 'Đã mua';
         else profileStatus = 'Đang khóa';
+    } else if (type === 'admin') {
+        if (video.videoStatus === 'PUBLIC') profileStatus = 'Công khai';
+        else profileStatus = 'Không công khai';
     }
 
     return (
@@ -98,16 +101,17 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                                 {teacherStatus}
                             </Chip>
                         )}
-                        {type === 'all' && (
-                            <Chip
-                                className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
-                                color={profileStatus === 'Đang khóa' ? 'danger' : 'success'}
-                                size="sm"
-                                variant="dot"
-                            >
-                                {profileStatus}
-                            </Chip>
-                        )}
+                        {type === 'all' ||
+                            (type === 'admin' && (
+                                <Chip
+                                    className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
+                                    color={video.videoStatus === 'PUBLIC' ? 'success' : 'danger'}
+                                    size="sm"
+                                    variant="dot"
+                                >
+                                    {profileStatus}
+                                </Chip>
+                            ))}
                     </CardBody>
                 </Link>
             </Card>

@@ -11,8 +11,9 @@ import { Spin } from 'antd';
 
 interface VideoTabProps {
     teacher: string;
+    type?: 'teacher' | 'teacher-draft' | 'admin' | 'all';
 }
-const VideoTab: React.FC<VideoTabProps> = ({ teacher }) => {
+const VideoTab: React.FC<VideoTabProps> = ({ teacher, type }) => {
     const [videos, setVideos] = useState<VideoCardType[]>([]);
 
     const [page, setPage] = useState(1);
@@ -41,7 +42,7 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher }) => {
                     <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {videos.length ? (
                             videos.map((videoItem: VideoCardType) => (
-                                <VideoCard type="all" key={videoItem?.id} video={videoItem} />
+                                <VideoCard type={type || 'all'} key={videoItem?.id} video={videoItem} />
                             ))
                         ) : (
                             <div className="mt-4 text-default-400 text-xs sm:text-sm">Danh Sách Video Trống</div>

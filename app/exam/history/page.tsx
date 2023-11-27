@@ -198,7 +198,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="flex">
                                     <Button

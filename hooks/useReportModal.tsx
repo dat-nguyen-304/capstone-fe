@@ -5,6 +5,8 @@ interface ReportModalStore {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
+    isSubmitting: boolean;
+    onSubmitting: (isSubmitting: boolean) => void;
     reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other';
     contentType: 'comment' | 'discussion' | 'exam' | 'quiz' | 'video';
     onReportType: (reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other') => void;
@@ -19,6 +21,8 @@ export const useReportModal = create<ReportModalStore>(set => ({
     isOpen: false,
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false }),
+    isSubmitting: false,
+    onSubmitting: (isSubmitting: boolean) => set({ isSubmitting }),
     reportType: 'integrity',
     contentType: 'comment',
     onReportType: (reportType: 'integrity' | 'academic' | 'technical' | 'opinion' | 'other') => set({ reportType }),

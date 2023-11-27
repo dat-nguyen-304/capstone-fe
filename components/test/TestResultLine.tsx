@@ -30,7 +30,7 @@ const TestResultLine: React.FC<TestResultItemProps> = ({ type, examsSubmissionIn
     return (
         <li className="flex items-center justify-between border-t-1 border-gray-300 p-4 my-2">
             <User
-                name={`Làm bài lần ${index + 1}`}
+                name={`Làm bài lần ${index}`}
                 description={`Nộp bài lúc ${formattedFinishTime}`}
                 avatarProps={{
                     src: examsSubmissionInfo?.ownerAvatar

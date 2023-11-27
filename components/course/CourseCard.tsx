@@ -40,7 +40,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
             <Card shadow="sm" isPressable className="w-full max-w-[320px] mt-4 mx-1">
                 <Link href={detailPage}>
                     <CardHeader className="overflow-visible p-0">
-                        <Image height={216} width={384} alt="" className="rounded-xl" src={course?.thumbnail} />
+                        <Image
+                            height={216}
+                            width={384}
+                            alt=""
+                            className="rounded-xl h-[150px] sm:h-[176px] object-cover object-center"
+                            src={course?.thumbnail}
+                        />
                     </CardHeader>
                     <CardBody className="text-small justify-between !p-4">
                         <b className="text-[15px] h-[40px] font-semibold truncate2line text-black">

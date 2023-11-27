@@ -28,14 +28,24 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
     const teacherData = data.data;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto ">
-            <Button
-                variant="light"
-                className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
-                onClick={() => router.back()}
-            >
-                <BsArrowLeft />
-                <span>Quay lại</span>
-            </Button>
+            <div className="flex items-center justify-between">
+                <Button
+                    variant="light"
+                    className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
+                    onClick={() => router.back()}
+                >
+                    <BsArrowLeft />
+                    <span>Quay lại</span>
+                </Button>
+                <div className="flex gap-2">
+                    <Button color="danger" variant="flat" size="sm">
+                        Vô hiệu hóa
+                    </Button>
+                    <Button color="danger" variant="flat" size="sm">
+                        Cấm
+                    </Button>
+                </div>
+            </div>
 
             <Card className="p-8 my-4 min-h-[360px]">
                 <div className=" md:flex items-start gap-8">
@@ -86,7 +96,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
                             <CourseTab teacher={params.id} />
                         </Tab>
                         <Tab key="video" title="Video">
-                            <VideoTab teacher={params.id} />
+                            <VideoTab type="admin" teacher={params.id} />
                         </Tab>
                     </Tabs>
                 </div>

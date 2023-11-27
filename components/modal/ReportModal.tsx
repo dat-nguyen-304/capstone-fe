@@ -22,7 +22,7 @@ interface ReportModalProps {
 }
 
 export const ReportModal: React.FC<ReportModalProps> = ({ onReport }) => {
-    const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription } = useReportModal();
+    const { isOpen, onOpen, onClose, file, onFile, onReportType, onDescription, isSubmitting } = useReportModal();
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         onFile(acceptedFiles[0]);
@@ -109,7 +109,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ onReport }) => {
                     <Button color="danger" variant="light" onPress={onClose}>
                         Hủy bỏ
                     </Button>
-                    <Button color="primary" onClick={onReport}>
+                    <Button color="primary" onClick={onReport} isLoading={isSubmitting}>
                         Gửi
                     </Button>
                 </ModalFooter>

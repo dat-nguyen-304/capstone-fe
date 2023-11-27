@@ -3,6 +3,7 @@
 import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
+    Chip,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -23,6 +24,7 @@ import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
 import { toast } from 'react-toastify';
 import { InputModal } from '@/components/modal/InputModal';
+import { courseStatusColorMap } from '@/utils';
 
 interface CoursesProps {}
 
@@ -34,6 +36,7 @@ const columns = [
     { name: 'MỨC ĐỘ', uid: 'level' },
     { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
     { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -45,12 +48,23 @@ type Course = {
     level: string;
     createdAt: string;
     updatedAt: string;
+    status: string;
 };
 
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'courseName', 'teacherName', 'subject', 'level', 'createdDate', 'updateDate', 'action'])
+        new Set([
+            'id',
+            'courseName',
+            'teacherName',
+            'subject',
+            'level',
+            'createdDate',
+            'updateDate',
+            'status',
+            'action'
+        ])
     );
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -189,6 +203,17 @@ const Courses: React.FC<CoursesProps> = () => {
                         </Dropdown>
                     </div>
                 );
+            case 'status':
+                return (
+                    <Chip
+                        className="capitalize border-none gap-1 text-default-600"
+                        color={cellValue === 'WAITING' ? 'warning' : 'secondary'}
+                        size="sm"
+                        variant="dot"
+                    >
+                        {cellValue === 'WAITING' ? 'Chờ xác thực' : 'Chờ cập nhật'}
+                    </Chip>
+                );
             case 'createdDate':
             case 'updateDate':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
@@ -212,7 +237,7 @@ const Courses: React.FC<CoursesProps> = () => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học chờ phê duyệt</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
-                    <div className="flex justify-between gap-3 items-end">
+                    <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
@@ -224,7 +249,23 @@ const Courses: React.FC<CoursesProps> = () => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu disallowEmptySelection closeOnSelect={false} selectionMode="single">
+                                    <DropdownItem className="capitalize">Chờ xác thực</DropdownItem>
+                                    <DropdownItem className="capitalize">Chờ cập nhật</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="flex">
                                     <Button
