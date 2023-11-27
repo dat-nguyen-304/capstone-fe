@@ -14,7 +14,7 @@ interface StudentTargetProps {
 }
 
 const StudentTarget: React.FC<StudentTargetProps> = ({ targets }) => {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [targetData, setTargetData] = useState(targets);
 
     const { data: combinationsData, isLoading } = useQuery({
@@ -55,6 +55,7 @@ const StudentTarget: React.FC<StudentTargetProps> = ({ targets }) => {
             <AddTargetModal
                 isOpen={isOpen}
                 onOpen={onOpen}
+                onClose={onClose}
                 onOpenChange={onOpenChange}
                 addTargetItems={addTargetItems}
             />

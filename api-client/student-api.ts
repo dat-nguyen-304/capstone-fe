@@ -14,9 +14,13 @@ export const studentApi = {
         return students;
     },
     addTarget: async (newTarget: any) => {
-        await axiosClient.post('/student/target', newTarget);
+        return await axiosClient.post('/student/target', newTarget);
+    },
+    getTarget: async () => {
+        const { data: students } = await axiosClient.get(`student/targets`);
+        return students;
     },
     updateTarget: async (newTarget: any) => {
-        await axiosClient.post('/student/edit-target', newTarget);
+        return await axiosClient.post('/student/edit-target', newTarget);
     }
 };

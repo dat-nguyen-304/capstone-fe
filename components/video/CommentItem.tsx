@@ -15,6 +15,7 @@ import { CommentCardType } from '@/types';
 import HTMLReactParser from 'html-react-parser';
 import { IoMdSend } from 'react-icons/io';
 import { discussionApi } from '@/api-client';
+import { toast } from 'react-toastify';
 
 interface CommentItemProps {
     commentInfo: CommentCardType | any;
@@ -30,8 +31,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
     const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
 
     const onSubmit = async () => {
+        let toastLoading;
         try {
             setIsSubmitting(true);
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const formDataWithImage = new FormData();
             formDataWithImage.append('content', responseComment);
             formDataWithImage.append('commentParentId', commentInfo?.id);
@@ -41,21 +44,32 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                 setResponseComment('');
                 setShowWriteResponse(false);
                 setIsSubmitting(false);
+                toast.success('Phản hồi thành công');
             }
+
+            toast.dismiss(toastLoading);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
 
     const handleLikeClick = async () => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             // Assuming postContent.id is the discussionId
             const response = await discussionApi.commentReact(commentInfo?.id);
             refetch();
-            // Handle the response as needed
-            console.log('API response:', response);
+            if (response) {
+                toast.success('Tương tác thành công');
+            }
+            toast.dismiss(toastLoading);
         } catch (error) {
             // Handle errors
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error reacting to discussion:', error);
         }
     };
@@ -109,28 +123,31 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                         />
                         <span className="text-xs sm:text-sm">{commentInfo?.reactCount || 0}</span>
                     </span>
-                    {commentInfo?.owner !== true ? (
-                        <>
-                            <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
-                                Phản hồi
-                            </Button>
-                            <Tooltip
-                                onClick={openReportModal}
-                                placement="right"
-                                content={
-                                    <div className="p-1 cursor-pointer">
-                                        <span className="flex items-center gap-2">
-                                            <CiFlag1 /> Báo cáo vi phạm
-                                        </span>
-                                    </div>
-                                }
-                            >
-                                <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
-                                    <BiDotsHorizontalRounded />
-                                </button>
-                            </Tooltip>
-                        </>
-                    ) : null}
+
+                    <>
+                        <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
+                            Phản hồi
+                        </Button>
+                        {commentInfo?.owner !== true ? (
+                            <>
+                                <Tooltip
+                                    onClick={openReportModal}
+                                    placement="right"
+                                    content={
+                                        <div className="p-1 cursor-pointer">
+                                            <span className="flex items-center gap-2">
+                                                <CiFlag1 /> Báo cáo vi phạm
+                                            </span>
+                                        </div>
+                                    }
+                                >
+                                    <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
+                                        <BiDotsHorizontalRounded />
+                                    </button>
+                                </Tooltip>
+                            </>
+                        ) : null}
+                    </>
                 </div>
                 <div className="">
                     {commentInfo?.subComments?.length ? (

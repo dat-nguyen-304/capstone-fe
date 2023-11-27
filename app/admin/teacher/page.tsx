@@ -36,7 +36,7 @@ const columns = [
     { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
     { name: 'Email', uid: 'email', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'ĐÃ THAM GIA', uid: 'createdAt', sortable: true },
+    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -53,7 +53,7 @@ type Teacher = {
 const Teachers: React.FC<TeachersProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'fullName', 'email', 'subject', 'createdAt', 'status', 'action'])
+        new Set(['id', 'fullName', 'email', 'subject', 'createDate', 'status', 'action'])
     );
     const [teachers, setTeachers] = useState<TeacherType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -192,7 +192,16 @@ const Teachers: React.FC<TeachersProps> = () => {
                         ))}
                     </div>
                 );
+            case 'createDate':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
 
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                })?.format(dateValue);
+
+                return formattedDate;
             case 'status':
                 return (
                     <Chip

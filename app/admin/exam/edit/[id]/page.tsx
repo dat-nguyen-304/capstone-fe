@@ -158,14 +158,16 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             // Call the API to update the exam
             const response = await examApi.updateExam(params?.id, payload);
             setIsSubmitting(false);
-            toast.dismiss(toastLoading);
-            toast.success('Cập nhật bài thi thành công');
-            console.log(response);
 
             if (response) {
+                toast.success('Cập nhật bài thi thành công');
                 router.push('/admin/exam');
             }
+            toast.dismiss(toastLoading);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+
             // Handle any errors that occur during the API call
             setIsSubmitting(false);
             console.error('Error creating exam:', error);

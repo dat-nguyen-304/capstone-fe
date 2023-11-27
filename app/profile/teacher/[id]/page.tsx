@@ -24,7 +24,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
 
     if (!data) return <Loader />;
 
-    const teacherData = data.data;
+    const teacherData = data?.data;
 
     return (
         <div className="w-[94%] xl:w-[90%] my-4 mx-auto ">
@@ -41,7 +41,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                 <div className=" md:flex items-start gap-8">
                     <div className="col-span-4 xl:col-span-3 rounded-xl">
                         <Image
-                            src={teacherData.url || '/student.png'}
+                            src={teacherData?.url || '/student.png'}
                             width={100}
                             height={100}
                             alt=""
@@ -50,14 +50,14 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                     </div>
                     <div className="col-span-5 xl:col-span-6 mt-8 sm:mt-0 relative">
                         <h3 className="text-base text-blue-500 sm:text-2xl font-semibold flex items-center gap-2">
-                            {teacherData.fullName}
+                            {teacherData?.fullName}
                             {/* <MdVerified color="#0de298" /> */}
                         </h3>
                         <div>
                             <div className="xl:flex items-center mt-4 gap-4">
                                 <p className="text-sm text-[#444] sm:text-base">Giáo viên môn</p>
                                 <div className="flex gap-2 mt-2 xl:mt-0">
-                                    {teacherData.subject.map((s: string) => (
+                                    {teacherData?.subject?.map((s: string) => (
                                         <Chip key={s} color="primary" variant="flat">
                                             {s}
                                         </Chip>
@@ -71,7 +71,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                                         year: 'numeric',
                                         month: 'numeric',
                                         day: 'numeric'
-                                    })?.format(teacherData.createDate || new Date())}
+                                    })?.format(teacherData?.createDate || new Date())}
                                 </p>
                             </div>
                         </div>
@@ -80,7 +80,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                 <div>
                     <Tabs color="primary" variant="underlined" aria-label="Tabs variants" className="mt-4">
                         <Tab key="description" title="Lời giới thiệu" className="p-0">
-                            <div className="mt-4">{HTMLReactParser(teacherData.description)}</div>
+                            <div className="mt-4">{HTMLReactParser(String(teacherData?.description))}</div>
                         </Tab>
                         <Tab key="course" title="Khóa học">
                             <CourseTab teacher={params.id} />

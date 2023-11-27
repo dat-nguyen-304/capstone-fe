@@ -69,7 +69,12 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                 </div>*/}
                 <div className="xl:flex items-center mt-12 xl:mt-8">
                     <p className="w-[160px] mb-4 xl:mb-0 font-semibold">Giới thiệu</p>
-                    <ReactQuill theme="snow" className="flex-[1]" placeholder="Giới thiệu về bạn một chút đi nào" />
+                    <ReactQuill
+                        theme="snow"
+                        className="flex-[1]"
+                        placeholder="Giới thiệu về bạn một chút đi nào"
+                        value={studentData?.description}
+                    />
                 </div>
             </div>
             {/* )} */}

@@ -8,8 +8,9 @@ import { ReportModal } from '@/components/modal';
 import CommentItem from '@/components/video/CommentItem';
 import { useReportModal, useUser } from '@/hooks';
 import { CommentCardType } from '@/types/comment';
-import { Button, Card, Select, SelectItem } from '@nextui-org/react';
+import { Button, Card, Pagination, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
+import { Spin } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -27,8 +28,14 @@ interface PostDetailProps {
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
+    const [updateState, setUpdateState] = useState<Boolean>(false);
+    const [comments, setComments] = useState<[]>([]);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [filter, setFilter] = useState<number>(0);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
-    const [comments, setComments] = useState<any[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const currentUser = useUser();
 
@@ -37,16 +44,29 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
-    const { data, refetch, isLoading } = useQuery({
-        queryKey: ['commentsByDiscussion'],
-        queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
+    const {
+        data: commentsData,
+        status,
+        refetch,
+        isLoading
+    } = useQuery({
+        queryKey: ['commentsByDiscussion', { page, updateState, filter }],
+        queryFn: () =>
+            discussionApi.getCommentsByDiscussionId(
+                params?.id,
+                page - 1,
+                rowsPerPage,
+                filter == 1 ? 'reactCount' : 'createTime',
+                'DESC'
+            )
     });
-
     useEffect(() => {
-        if (data?.data) {
-            setComments(data.data);
+        if (commentsData?.data) {
+            setComments(commentsData.data);
+            setTotalPage(commentsData.totalPage);
+            setTotalRow(commentsData.totalRow);
         }
-    }, [data]);
+    }, [commentsData]);
 
     const { control, handleSubmit, setError, reset } = useForm({
         defaultValues: {
@@ -87,6 +107,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     });
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
             setIsSubmitting(true);
             console.log(formData.response);
@@ -102,9 +123,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 refetch();
                 reset();
                 setUploadedFiles([]);
+                setUpdateState(prev => !prev);
+                toast.success('Tin nhắn đã gửi thành công');
             }
+            toast.dismiss(toastLoading);
         } catch (error) {
             setIsSubmitting(false);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -130,7 +156,10 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     onReportType('integrity');
                     onFile(null);
                     onClose();
+
+                    toast.success('Báo cáo vi phạm thành công');
                 }
+                toast.dismiss(toastLoading);
             } else if (contentType == 'comment') {
                 if (reportCommentId) {
                     const response = await discussionApi.createCommentReport(formDataWithImage, reportCommentId);
@@ -142,7 +171,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                         onReportType('integrity');
                         onFile(null);
                         onClose();
+                        toast.success('Báo cáo vi phạm thành công');
                     }
+                    toast.dismiss(toastLoading);
                 }
             }
         } catch (error) {
@@ -247,6 +278,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                         variant="bordered"
                         defaultSelectedKeys={['0']}
                         className="w-[240px] mt-4"
+                        onChange={event => setFilter(Number(event.target.value))}
                     >
                         <SelectItem key={0} value={0}>
                             Thời gian

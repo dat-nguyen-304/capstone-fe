@@ -17,6 +17,7 @@ import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
 import { BiSolidLike } from 'react-icons/bi';
 import HTMLReactParser from 'html-react-parser';
+import Link from 'next/link';
 
 interface VideoProps {
     params: { id: number };
@@ -107,11 +108,11 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         ownerFullName: 'Nguyễn Văn A',
         content: 'Nội dung rất hay'
     };
-    const onSubmitReport = async () => {};
+
     if (!data) return <Loader />;
 
     return (
-        <VideoHeader>
+        <VideoHeader id={params?.id}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -144,7 +145,20 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học
                         </Button>
-                        <p className="text-xs sm:text-sm mt-4">{HTMLReactParser(data.description)}</p>
+                        <h3 className="text-xs sm:text-sm mt-4">{HTMLReactParser(data?.description)}</h3>
+                        {data?.material ? (
+                            <>
+                                <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">
+                                    Tài liệu học thuật:
+                                    <span className="font-semibold text-medium text-blue-400 underline">
+                                        <Link href={data?.material} target="_blank">
+                                            {' '}
+                                            tài liệu
+                                        </Link>
+                                    </span>
+                                </h4>
+                            </>
+                        ) : null}
                         <div className="mt-8 px-0 sm:px-4">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
@@ -201,7 +215,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <VideoList isOnDrawer={true} video={data?.videoItemResponses} />
                     </Drawer>
                 </div>
-                <ReportModal onReport={onSubmitReport} />
             </div>
         </VideoHeader>
     );

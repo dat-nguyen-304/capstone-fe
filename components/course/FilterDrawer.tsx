@@ -9,13 +9,39 @@ import RatingFilter from './filter-item/RatingFilter';
 import SubjectFilter from './filter-item/SubjectFilter';
 import LevelFilter from './filter-item/LevelFilter';
 import PriceFilter from './filter-item/PriceFilter';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 interface FilterDrawerProps {
     onClose: () => void;
     open: boolean;
+    setFilter: Dispatch<SetStateAction<{ type: string; value: any[] }>>;
 }
 
-const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open }) => {
+const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter }) => {
+    const [filterRating, setFilterRating] = useState<number>(0);
+    const [filterSubject, setFilterSubject] = useState<string[]>([]);
+    const [filterLevel, setFilterLevel] = useState<string[]>([]);
+    const [filterPriceStart, setFilterPriceStart] = useState<number>(0);
+    const [filterPriceEnd, setFilterPriceEnd] = useState<number>(0);
+    const [filterChange, setFilterChange] = useState<string>('');
+    const onSearch = () => {
+        if (filterChange == 'RATE') {
+            console.log(filterRating);
+            setFilter({ type: filterChange, value: [filterRating] });
+        } else if (filterChange == 'SUBJECT') {
+            console.log(filterSubject);
+            setFilter({ type: filterChange, value: filterSubject });
+        } else if (filterChange == 'LEVEL') {
+            console.log(filterLevel);
+            setFilter({ type: filterChange, value: filterLevel });
+        } else if (filterChange == 'PRICE') {
+            setFilter({ type: filterChange, value: [filterPriceStart, filterPriceEnd] });
+        } else {
+            setFilter({ type: '', value: [] });
+        }
+        onClose();
+    };
+
     return (
         <Drawer title="Bộ lọc" placement="right" onClose={onClose} open={open} className="relative">
             <Accordion isCompact>
@@ -26,7 +52,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open }) => {
                     title="Đánh giá"
                     subtitle=">= 3 sao"
                 >
-                    <RatingFilter />
+                    <RatingFilter setFilterRating={setFilterRating} setFilterChange={setFilterChange} />
                 </AccordionItem>
                 <AccordionItem
                     key="2"
@@ -35,7 +61,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open }) => {
                     title="Môn học"
                     subtitle="Đã chọn 3 môn học"
                 >
-                    <SubjectFilter />
+                    <SubjectFilter setFilterSubject={setFilterSubject} setFilterChange={setFilterChange} />
                 </AccordionItem>
                 <AccordionItem
                     key="3"
@@ -44,7 +70,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open }) => {
                     subtitle="Cơ bản, Trung bình, Nâng cao"
                     title="Trình độ"
                 >
-                    <LevelFilter />
+                    <LevelFilter setFilterLevel={setFilterLevel} setFilterChange={setFilterChange} />
                 </AccordionItem>
                 <AccordionItem
                     key="4"
@@ -53,11 +79,17 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open }) => {
                     startContent={<FaCoins className="text-orange-400" size={20} />}
                     subtitle="0.5 triệu - 5 triệu"
                 >
-                    <PriceFilter />
+                    <PriceFilter
+                        setFilterPriceStart={setFilterPriceStart}
+                        setFilterPriceEnd={setFilterPriceEnd}
+                        setFilterChange={setFilterChange}
+                    />
                 </AccordionItem>
             </Accordion>
             <div className="absolute bottom-4">
-                <Button color="primary">Tìm kiếm</Button>
+                <Button color="primary" onClick={onSearch}>
+                    Tìm kiếm
+                </Button>
                 <Button color="danger" variant="bordered" className="ml-4">
                     Xóa bộ lọc
                 </Button>

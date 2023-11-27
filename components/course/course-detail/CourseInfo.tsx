@@ -56,10 +56,10 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
                 Được tạo bởi:
                 <User
                     as={Link}
-                    href={`/profile/teacher/${courseInfo.teacherEmail}`}
+                    href={`/profile/teacher/${courseInfo?.teacherEmail}`}
                     avatarProps={{ radius: 'full', size: 'sm', src: courseInfo.teacherAvatar || '/teacher.png' }}
                     className="ml-2 cursor-pointer text-blue-500"
-                    name={courseInfo.teacherName}
+                    name={courseInfo?.teacherName}
                 />
             </div>
             <p className="my-2 text-sm">Cập nhật gần đây nhất {formattedDate}</p>

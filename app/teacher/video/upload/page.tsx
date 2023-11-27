@@ -121,12 +121,6 @@ const UploadVideo: React.FC = () => {
                 videoStatus: selectedStatusVideo,
                 order: 0
             };
-
-            console.log(videoRequest);
-            console.log(uploadedImageFile);
-            console.log(uploadedVideoFile);
-            console.log(uploadedAttachedFiles);
-
             const formDataPayload = new FormData();
             formDataPayload.append(
                 'videoRequest',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 
@@ -67,13 +67,28 @@ const QuantityScoreChart: React.FC<BarChartProps> = ({ quantityGrade }) => {
         datasets: [
             {
                 label: 'Số lượng điểm số',
-                data: quantityGrade?.map((data: any) => data),
+                data: quantityGrade || [],
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2
             }
         ]
     });
+
+    useEffect(() => {
+        setUserData({
+            labels: QuantityScoreData.map(data => data.score),
+            datasets: [
+                {
+                    label: 'Số lượng điểm số',
+                    data: quantityGrade || [],
+                    backgroundColor: ['#6395fa'],
+                    borderColor: 'black',
+                    borderWidth: 2
+                }
+            ]
+        });
+    }, [quantityGrade]);
 
     return <Bar data={userData} />;
 };

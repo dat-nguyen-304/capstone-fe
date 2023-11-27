@@ -10,26 +10,54 @@ import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
 
 interface CourseListProps {}
-
+interface SelectedFilter {
+    type: string;
+    value: [] | any;
+}
 const CourseList: React.FC<CourseListProps> = ({}) => {
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [type, setType] = useState<number>(0);
+    const [selectedFilter, setSelectedFilter] = useState<SelectedFilter>({ type: '', value: [] });
+    console.log(selectedFilter);
+
     const { status, error, data, isPreviousData, refetch } = useQuery({
-        queryKey: ['courses', { page }],
+        queryKey: ['courses', { page, searchTerm, type, selectedFilter }],
         // keepPreviousData: true,
         queryFn: () => {
             if (searchTerm !== '') {
                 // If searchTerm is not empty, call searchCourse
-                return courseApi.searchCourse(searchTerm, page - 1);
+                return courseApi.searchCourse(
+                    searchTerm,
+                    page - 1,
+                    20,
+                    type == 1 || type == 2 ? 'price' : 'id',
+                    type == 1 ? 'DESC' : 'ASC'
+                );
+            } else if (selectedFilter.type !== '' && selectedFilter?.value?.length > 0) {
+                return courseApi.filterCourse(
+                    selectedFilter?.type,
+                    selectedFilter?.value as [],
+                    page - 1,
+                    20,
+                    type == 1 || type == 2 ? 'price' : 'id',
+                    type == 1 ? 'DESC' : 'ASC'
+                );
             } else {
                 // If searchTerm is empty, call courseApi.getAll
-                return courseApi.getAll(page - 1);
+                return courseApi.getAll(
+                    page - 1,
+                    20,
+                    type == 1 || type == 2 ? 'price' : 'id',
+                    type == 1 ? 'DESC' : 'ASC'
+                );
             }
         }
     });
+
     useEffect(() => {
         if (data?.data) {
             setCourses(data.data);
@@ -48,14 +76,13 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
         setSearchTerm(newSearchTerm);
         console.log(searchTerm);
 
-        // Reset the page to 1 when performing a new search
         setPage(1);
     };
 
     return (
         <div className="background-xl">
             <div className="w-[90%] 2xl:w-[85%] 3xl:w-[90%] mx-auto pt-8">
-                <CourseFilter onSearch={handleSearch} />
+                <CourseFilter onSearch={handleSearch} setSortType={setType} setFilter={setSelectedFilter} />
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                     {totalRow ? (
                         <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>

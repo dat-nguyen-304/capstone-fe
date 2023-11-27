@@ -7,7 +7,7 @@ import { InputFormula } from '@/components/form-input/InputFormula';
 import { ReportModal } from '@/components/modal';
 import CommentItem from '@/components/video/CommentItem';
 import { useReportModal, useUser } from '@/hooks';
-import { Button, Card, Select, SelectItem } from '@nextui-org/react';
+import { Button, Card, Pagination, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -27,6 +27,12 @@ interface PostDetailProps {
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
     const currentUser = useUser();
+    const [updateState, setUpdateState] = useState<Boolean>(false);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [filter, setFilter] = useState<number>(0);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -41,9 +47,24 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         refetch,
         isLoading
     } = useQuery({
-        queryKey: ['commentsByDiscussion'],
-        queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
+        queryKey: ['teacherCommentsByDiscussion', { updateState, page }],
+        queryFn: () =>
+            discussionApi.getCommentsByDiscussionId(
+                params?.id,
+                page - 1,
+                rowsPerPage,
+                filter == 1 ? 'reactCount' : 'createTime',
+                'DESC'
+            )
     });
+
+    useEffect(() => {
+        if (commentsData?.data) {
+            setComments(commentsData.data);
+            setTotalPage(commentsData.totalPage);
+            setTotalRow(commentsData.totalRow);
+        }
+    }, [commentsData]);
 
     const { control, handleSubmit, setError, reset } = useForm({
         defaultValues: {
@@ -169,7 +190,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
-
     if (!discussionData) return <Loader />;
 
     return (
@@ -241,6 +261,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                         variant="bordered"
                         defaultSelectedKeys={['0']}
                         className="w-[240px] mt-4"
+                        onChange={event => setFilter(Number(event.target.value))}
                     >
                         <SelectItem key={0} value={0}>
                             Thời gian

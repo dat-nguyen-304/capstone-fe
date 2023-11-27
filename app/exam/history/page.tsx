@@ -24,15 +24,16 @@ import AvgScoreMonthChart from '@/components/chart/exam-history/AvgScoreMonthCha
 import QuantityScoreChart from '@/components/chart/exam-history/QuantityScoreChart';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
+import { Spin } from 'antd';
 
 interface ExamHistoryProps {}
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN BÀI THI', uid: 'name', sortable: true },
+    { name: 'TÊN BÀI THI', uid: 'examName', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'ĐIỂM SỐ', uid: 'score', sortable: true },
-    { name: 'NGÀY', uid: 'date', sortable: true }
+    { name: 'ĐIỂM SỐ', uid: 'grade', sortable: true },
+    { name: 'NGÀY', uid: 'finishTime', sortable: true }
 ];
 
 const exams = [
@@ -81,10 +82,34 @@ const exams = [
 ];
 
 type Exam = (typeof exams)[0];
+const getSubjectNameById = (id: number): string => {
+    const subjectMap: Record<number, string> = {
+        1: 'MATHEMATICS',
+        2: 'PHYSICS',
+        3: 'CHEMISTRY',
+        4: 'ENGLISH',
+        5: 'BIOLOGY',
+        6: 'HISTORY',
+        7: 'GEOGRAPHY'
+    };
 
+    return subjectMap[id] || '';
+};
+function getSubjectName(subjectCode: string) {
+    const subjectNames: { [key: string]: string | null } = {
+        MATHEMATICS: 'Toán học',
+        ENGLISH: 'Tiếng anh',
+        PHYSICS: 'Vật lí',
+        CHEMISTRY: 'Hóa học',
+        BIOLOGY: 'Sinh học',
+        HISTORY: 'Lịch sử',
+        GEOGRAPHY: 'Địa lý'
+    };
+
+    return subjectNames[subjectCode] || null;
+}
 const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
-    // const [exams, setExams] = useState<any[]>([]);
-
+    const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [selectedSubject, setSelectedSubject] = useState<Selection>(new Set(['0']));
@@ -94,6 +119,11 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     const [avgGrade, setAvgGrade] = useState<any[]>();
     const [times, setTimes] = useState<any[]>();
     const [quantityGrade, setQuantityGrade] = useState<any[]>();
+    const [filterValue, setFilterValue] = useState('');
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(
+        new Set(['id', 'examName', 'subject', 'grade', 'finishTime'])
+    );
+
     const { user } = useUser();
     const { data } = useQuery({
         queryKey: ['subjects'],
@@ -107,24 +137,38 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
         data: examSubmissionData,
         isPreviousData
     } = useQuery({
-        queryKey: ['examSubmissionData', { page, rowsPerPage }],
-        queryFn: () => examApi.getExamSubmissionStatistic(page - 1, rowsPerPage, 'id', 'ASC')
+        queryKey: [
+            'examSubmissionData',
+            { page, rowsPerPage, statusFilter: Array.from(selectedSubject)[0] as number, filterValue }
+        ],
+        queryFn: () =>
+            examApi.getExamSubmissions(
+                filterValue,
+                getSubjectNameById(Array.from(selectedSubject)[0] as number),
+                page - 1,
+                rowsPerPage,
+                'finishTime',
+                'DESC'
+            )
     });
-
-    console.log('examSubmissionData');
-    console.log(examSubmissionData);
+    const { data: examSubmissionStaticData, status: statusStatic } = useQuery({
+        queryKey: ['examSubmissionStaticData', { statusFilter: Array.from(selectedSubject)[0] as number }],
+        queryFn: () => examApi.getExamSubmissionStatistic(getSubjectNameById(Array.from(selectedSubject)[0] as number))
+    });
     useEffect(() => {
-        if (examSubmissionData) {
-            setAvgGrade(examSubmissionData?.avgGrade);
-            setQuantityGrade(examSubmissionData?.quantityGrade);
-            setTimes(examSubmissionData?.times);
+        if (examSubmissionStaticData) {
+            setAvgGrade(examSubmissionStaticData?.avgGrade);
+            setQuantityGrade(examSubmissionStaticData?.quantityGrade);
+            setTimes(examSubmissionStaticData?.times);
+        }
+    }, [examSubmissionStaticData]);
+    useEffect(() => {
+        if (examSubmissionData?.data) {
+            setExams(examSubmissionData?.data);
+            setTotalPage(examSubmissionData?.totalPage);
+            setTotalRow(examSubmissionData?.totalRow);
         }
     }, [examSubmissionData]);
-
-    const [filterValue, setFilterValue] = useState('');
-    const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'subject', 'score', 'date'])
-    );
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -145,12 +189,17 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
+    console.log(avgGrade);
+    console.log(times);
+    console.log(quantityGrade);
 
-    const renderCell = useCallback((exam: Exam, columnKey: Key) => {
-        const cellValue = exam[columnKey as keyof Exam];
+    const renderCell = useCallback((exam: any, columnKey: Key) => {
+        const cellValue = exam[columnKey as keyof any];
         switch (columnKey) {
-            case 'name':
-                return <Link href={`/exam/${1}`}>{cellValue}</Link>;
+            case 'examName':
+                return <Link href={`/exam/${exam?.id}`}>{cellValue}</Link>;
+            case 'subject':
+                return getSubjectName(cellValue);
             case 'finishTime':
                 const dateValue = cellValue ? new Date(cellValue) : new Date();
 
@@ -165,6 +214,8 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 })?.format(dateValue);
 
                 return formattedDate;
+            case 'grade':
+                return (cellValue as number).toFixed(1);
             default:
                 return cellValue;
         }
@@ -182,113 +233,92 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 description: ''
             });
     }
-    if (!examSubmissionData) return <Loader />;
+    // if (!examSubmissionData) return <Loader />;
+    // if (!examSubmissionStaticData) return <Loader />;
     return (
         <StudentLayout>
             <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-                <div className="flex flex-col gap-4">
-                    <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
-                                <DropdownTrigger className="flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
+                <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                    <div className="flex flex-col gap-4">
+                        <div className="sm:flex justify-between gap-3 items-end">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={filterValue}
+                                variant="bordered"
+                                onClear={() => setFilterValue('')}
+                                onValueChange={onSearchChange}
+                            />
+
+                            <div className="flex gap-3">
+                                <Dropdown>
+                                    <DropdownTrigger className="flex">
+                                        <Button
+                                            endContent={<BsChevronDown className="text-small" />}
+                                            size="sm"
+                                            variant="bordered"
+                                            color="primary"
+                                        >
+                                            Môn học
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        disallowEmptySelection
+                                        aria-label="Table Columns"
+                                        closeOnSelect={false}
+                                        selectionMode="single"
+                                        selectedKeys={selectedSubject}
+                                        onSelectionChange={setSelectedSubject}
                                     >
-                                        Môn học
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectionMode="single"
-                                    selectedKeys={selectedSubject}
-                                    onSelectionChange={setSelectedSubject}
+                                        {data.map((subject: Subject) => (
+                                            <DropdownItem key={subject.id} className="capitalize">
+                                                {capitalize(subject.name)}
+                                            </DropdownItem>
+                                        ))}
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </div>
+                        </div>
+                        <div className="sm:flex justify-between items-center">
+                            <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                            <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                                Số kết quả mỗi trang:
+                                <select
+                                    className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                    onChange={onRowsPerPageChange}
                                 >
-                                    {data.map((subject: Subject) => (
-                                        <DropdownItem key={subject.id} className="capitalize">
-                                            {capitalize(subject.name)}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
-                            <Dropdown>
-                                <DropdownTrigger className="flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Cột
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
-                                >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                </select>
+                            </label>
                         </div>
                     </div>
-                    <div className="sm:flex justify-between items-center">
-                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {exams.length} kết quả</span>
-                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                            Số kết quả mỗi trang:
-                            <select
-                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                                onChange={onRowsPerPageChange}
-                            >
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                            </select>
-                        </label>
-                    </div>
-                </div>
-                <TableContent
-                    renderCell={renderCell}
-                    headerColumns={headerColumns}
-                    items={exams}
-                    page={page}
-                    setPage={setPage}
-                    sortDescriptor={sortDescriptor}
-                    setSortDescriptor={setSortDescriptor}
-                    totalPage={2}
-                />
-                <div className="md:grid grid-cols-2 mt-8 gap-4">
-                    <div className="">
-                        <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
-                        <AvgScoreMonthChart avgGrade={avgGrade} times={times} />
-                    </div>
+                    <TableContent
+                        renderCell={renderCell}
+                        headerColumns={headerColumns}
+                        items={exams || []}
+                        page={page}
+                        setPage={setPage}
+                        sortDescriptor={sortDescriptor}
+                        setSortDescriptor={setSortDescriptor}
+                        totalPage={totalPage || 1}
+                    />
 
-                    <div className="mt-12 md:mt-0">
-                        <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
-                        <QuantityScoreChart quantityGrade={quantityGrade} />
+                    <div className="md:grid grid-cols-2 mt-8 gap-4">
+                        <div className="">
+                            <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
+                            <AvgScoreMonthChart avgGrade={avgGrade} times={times} />
+                        </div>
+
+                        <div className="mt-12 md:mt-0">
+                            <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
+                            <QuantityScoreChart quantityGrade={quantityGrade} />
+                        </div>
                     </div>
-                </div>
+                </Spin>
             </div>
         </StudentLayout>
     );

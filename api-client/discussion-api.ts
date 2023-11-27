@@ -44,8 +44,16 @@ export const discussionApi = {
     createComment: async (payload: any, discussionId: number) => {
         return await axiosFormData.post(`/discussion/comments/${discussionId}`, payload);
     },
-    getCommentsByDiscussionId: async (discussionId: number) => {
-        const res = await axiosClient.get(`/discussion/conversations/${discussionId}/comments`);
+    getCommentsByDiscussionId: async (
+        discussionId: number,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/discussion/conversations/${discussionId}/comments?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     updateDiscussion: async (payload: UpdateDiscussion, conversationId: number) => {

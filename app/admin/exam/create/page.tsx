@@ -131,9 +131,13 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
             if (response) {
                 router.push('/admin/exam');
+                toast.success('Tạo bài thi thành công');
             }
+            toast.dismiss(toastLoading);
         } catch (error) {
             setIsSubmitting(false);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating exam:', error);
         }
     };

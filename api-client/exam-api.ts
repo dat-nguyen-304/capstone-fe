@@ -114,9 +114,26 @@ export const examApi = {
         const res = await axiosClient.get(`/examination/exams/submission/${submissionId}`);
         return res.data;
     },
-    getExamSubmissionStatistic: async (page: number, size: number, field: string, sort: string) => {
+    getExamSubmissionStatistic: async (subject: string) => {
         const res = await axiosClient.get(
-            `/examination/exams/submission/statistic?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/examination/exams/submission/statistic${subject != '' ? `?subject=${subject}` : ''}`
+        );
+        return res.data;
+    },
+    getExamSubmissions: async (
+        pattern: string,
+        subject: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/examination/exams/submission?${pattern !== '' ? `pattern=${pattern}` : ''}${
+                pattern !== '' && subject != '' ? `&subject=${subject}` : subject != '' ? `subject=${subject}` : ''
+            }${
+                pattern != '' || subject !== '' ? `&page=${page}` : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -141,6 +158,14 @@ export const examApi = {
                 reportType !== '' ? `&page=${page}` : `page=${page}`
             }&size=${size}&field=${field}&sortType=${sort}`
         );
+        return res.data;
+    },
+    getExamRandomBySubject: async (subject: string) => {
+        const res = await axiosClient.get(`/examination/exams/random?subject=${subject}`);
+        return res.data;
+    },
+    getEntranceExamBySubject: async (subject: string) => {
+        const res = await axiosClient.get(`/examination/exams/entrance?subject=${subject}`);
         return res.data;
     }
 };

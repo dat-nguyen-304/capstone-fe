@@ -46,6 +46,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         teacherName: data?.teacherName,
+        teacherEmail: data?.teacherEmail,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
         totalStudent: data?.totalStudent,

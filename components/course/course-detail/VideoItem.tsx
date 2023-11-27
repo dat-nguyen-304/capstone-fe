@@ -50,7 +50,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type }) => {
     let detailPage = '';
     if (type == 'teacher-video') detailPage = `/teacher/video/${videoItem?.id}`;
     else if (type == 'teacher-video-draft') detailPage = `/teacher/video/my-video-draft/${videoItem?.id}`;
-    else if (type == 'my-video') detailPage = `/my-course/${videoItem?.id}`;
+    else if (type == 'my-video') detailPage = `/video/${videoItem?.id}`;
     else if (type == 'admin-review-video') detailPage = `/admin/approve/video/${videoItem?.id}`;
     else if (type == 'admin-view-video') detailPage = `/admin/video/${videoItem?.id}`;
     else detailPage = `/video/${videoItem?.id}`;

@@ -2,12 +2,21 @@ import { ChangeCourseStatus, CourseCardType, CreateCourse } from '@/types';
 import axiosClient from './axios-client';
 import axiosFormData from './axios-form';
 export const courseApi = {
-    getAll: async (page: number) => {
-        const res = await axiosClient.get(`/courses/user?page=${page}&size=20&sortType=ASC`);
+    getAll: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(`/courses/user?page=${page}&size=${size}&field=${field}&sortType=${sort}`);
         return res.data;
     },
-    searchCourse: async (searchTerm: string, page: number) => {
-        const res = await axiosClient.get(`/courses/search?searchTerm=${searchTerm}&page=${page}&size=20&sortType=ASC`);
+    searchCourse: async (searchTerm: string, page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/courses/search?searchTerm=${searchTerm}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
+    filterCourse: async (filter: string, values: [], page: number, size: number, field: string, sort: string) => {
+        const valuesString = values.length ? `&value=${values.join('&value=')}` : '';
+        const res = await axiosClient.get(
+            `/courses/filter?filterBy=${filter}${valuesString}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getCourseById: async (courseId: number) => {

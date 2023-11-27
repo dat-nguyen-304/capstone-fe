@@ -22,7 +22,7 @@ const StudentAvatar: React.FC<StudentAvatarProps> = ({ studentData }) => {
                 <div className="w-[200px] lg:w-[300px] h-[200px] lg:h-[300px] mx-auto relative object-contain">
                     <div className="group relative object-contain ">
                         <Image
-                            src={studentData.image || '/student.png'}
+                            src={studentData.url || '/student.png'}
                             width={300}
                             height={300}
                             alt=""

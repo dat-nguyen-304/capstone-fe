@@ -2,7 +2,7 @@
 
 import { Button, Card, Link, Pagination, Select, SelectItem, User } from '@nextui-org/react';
 import StudentLayout from '@/components/header/StudentLayout';
-import { examApi, subjectApi } from '@/api-client';
+import { combinationApi, examApi, studentApi, subjectApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useEffect, useState } from 'react';
@@ -13,6 +13,7 @@ import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import CourseCard from '@/components/course/CourseCard';
 import { useUser } from '@/hooks';
+import { link } from 'fs';
 
 interface ExamDetailProps {
     params: { id: number };
@@ -31,6 +32,19 @@ function getSubjectName(subjectCode: string) {
 
     return subjectNames[subjectCode] || null;
 }
+const getSubjectNameById = (id: number): string => {
+    const subjectMap: Record<number, string> = {
+        1: 'MATHEMATICS',
+        2: 'PHYSICS',
+        3: 'CHEMISTRY',
+        4: 'ENGLISH',
+        5: 'BIOLOGY',
+        6: 'HISTORY',
+        7: 'GEOGRAPHY'
+    };
+
+    return subjectMap[id] || '';
+};
 
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const { user } = useUser();
@@ -46,7 +60,27 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
+    // const { data, isLoading } = useQuery({
+    //     queryKey: ['combinationIds'],
+    //     queryFn: combinationApi.getAll
+    // });
+    const { data: targetData } = useQuery({
+        queryKey: ['targets'],
+        queryFn: studentApi.getTarget
+    });
+    const { data: entranceExam } = useQuery({
+        queryKey: ['entranceExam', { selectedSubject }],
+        queryFn: () => examApi.getEntranceExamBySubject(getSubjectNameById(selectedSubject))
+    });
+    console.log(entranceExam);
 
+    useEffect(() => {
+        // Check if targetData is an empty array
+        if (Array.isArray(targetData) && targetData?.length === 0) {
+            // Redirect to profile page to add target
+            router.push('/edit-profile');
+        }
+    }, [targetData]);
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -72,31 +106,46 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                     className="w-1/5"
                     onChange={event => setSelectedSubject(Number(event.target.value))}
                 >
-                    {subjectsData.map((subject: Subject) => (
+                    {subjectsData?.map((subject: Subject) => (
                         <SelectItem key={subject.id} value={subject.id}>
                             {subject.name}
                         </SelectItem>
                     ))}
                 </Select>
-                <h2 className="text-lg my-8">Danh sách bài kiểm tra đầu vào:</h2>
+                <h2 className="text-lg my-8">Bài kiểm tra đầu vào:</h2>
                 <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-8 gap-2 sm:gap-4">
-                    <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
-                        <div className="flex font-semibold text-sm sm:text-base truncate">
-                            <span>Môn Toán học</span>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                            <BsClockFill className="text-blue-700" />
-                            <span className="text-xs sm:text-sm">12 phút</span>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                            <FaUserEdit className="text-blue-700" />
-                            <span className="text-xs sm:text-sm">60 câu hỏi</span>
-                        </div>
-                        <Button variant="flat" disabled className="mt-2" color="primary">
-                            ĐIỂM SỐ: 9
-                        </Button>
-                    </Card>
-                    <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
+                    {entranceExam ? (
+                        <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
+                            <div className="flex font-semibold text-sm sm:text-base truncate">
+                                <span>{entranceExam?.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                <BsBookFill className="text-blue-700" />
+                                <span className="text-xs sm:text-sm">{getSubjectName(entranceExam?.subject)}</span>
+                            </div>
+                            <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                <BsClockFill className="text-blue-700" />
+                                <span className="text-xs sm:text-sm">{entranceExam?.duration} phút</span>
+                            </div>
+                            <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                <FaUserEdit className="text-blue-700" />
+                                <span className="text-xs sm:text-sm">{entranceExam?.questionList?.length} câu hỏi</span>
+                            </div>
+                            <Button
+                                variant="flat"
+                                disabled
+                                className="mt-2"
+                                color="primary"
+                                as={Link}
+                                href={`/exam/${entranceExam?.id}/practice`}
+                            >
+                                Làm bài
+                            </Button>
+                        </Card>
+                    ) : (
+                        <>Bài Kiểm Tra Đầu Vào Hiện Chưa Có</>
+                    )}
+                    {/* <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
                         <div className="flex font-semibold text-sm sm:text-base truncate">
                             <span>Môn Vật lý</span>
                         </div>
@@ -127,7 +176,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         <Button variant="bordered" className="mt-2">
                             Làm bài
                         </Button>
-                    </Card>
+                    </Card> */}
                 </ul>
                 <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
                 <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
@@ -148,7 +197,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                     />
 
                     <CourseCard
-                        key="1"
+                        key="2"
                         course={{
                             id: 1,
                             thumbnail: '/banner/slide-1.png',
@@ -163,7 +212,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         }}
                     />
                     <CourseCard
-                        key="1"
+                        key="3"
                         course={{
                             id: 1,
                             thumbnail: '/banner/slide-1.png',

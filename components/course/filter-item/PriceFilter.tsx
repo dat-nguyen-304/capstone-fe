@@ -1,13 +1,26 @@
 'use client';
 
 import { Slider } from 'antd';
+import { Dispatch, SetStateAction } from 'react';
 
-interface PriceFilterProps {}
+interface PriceFilterProps {
+    setFilterPriceStart: Dispatch<SetStateAction<number>>;
+    setFilterPriceEnd: Dispatch<SetStateAction<number>>;
+    setFilterChange: Dispatch<SetStateAction<string>>;
+}
 
-const PriceFilter: React.FC<PriceFilterProps> = () => {
+const PriceFilter: React.FC<PriceFilterProps> = ({ setFilterPriceStart, setFilterPriceEnd, setFilterChange }) => {
     const getMoney = (money?: number) => {
         if (money) return <span>{`${money / 1000000} triệu`}</span>;
         return 0;
+    };
+    const handleFilterPriceStart = (value: any) => {
+        setFilterPriceStart(value);
+        setFilterChange('PRICE');
+    };
+    const handleFilterPriceEnd = (value: any) => {
+        setFilterPriceEnd(value);
+        setFilterChange('PRICE');
     };
     return (
         <div className="w-[94%] mx-auto">
@@ -29,6 +42,7 @@ const PriceFilter: React.FC<PriceFilterProps> = () => {
                     defaultValue={0}
                     className="w-full text-orange-400"
                     trackStyle={{ backgroundColor: 'orange' }}
+                    onChange={event => handleFilterPriceStart(event)}
                 />
             </div>
             <div className="flex mt-8">
@@ -49,6 +63,7 @@ const PriceFilter: React.FC<PriceFilterProps> = () => {
                     defaultValue={500000}
                     className="w-full text-orange-400"
                     trackStyle={{ backgroundColor: 'orange' }}
+                    onChange={event => handleFilterPriceEnd(event)}
                 />
             </div>
         </div>

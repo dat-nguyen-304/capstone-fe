@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 
@@ -64,17 +64,36 @@ interface BarChartProps {
 
 const AvgScoreMonthChart: React.FC<BarChartProps> = ({ avgGrade, times }) => {
     const [userData, setUserData] = useState({
-        labels: times?.map((data: any) => data),
+        labels: times || [],
         datasets: [
             {
                 label: 'Điểm số trung bình',
-                data: avgGrade?.map((data: any) => data),
+                data: avgGrade || [],
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2
             }
         ]
     });
+
+    useEffect(() => {
+        console.log('AvgScoreMonthChart useEffect triggered');
+        console.log('avgGrade:', avgGrade);
+        console.log('times:', times);
+
+        setUserData({
+            labels: times || [],
+            datasets: [
+                {
+                    label: 'Điểm số trung bình',
+                    data: avgGrade || [],
+                    backgroundColor: ['#6395fa'],
+                    borderColor: 'black',
+                    borderWidth: 2
+                }
+            ]
+        });
+    }, [avgGrade, times]);
 
     return <Bar data={userData} />;
 };

@@ -11,6 +11,9 @@ import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '../Loader';
 import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
+import { ReportModal } from '../modal';
+import { toast } from 'react-toastify';
+import { reportVideoApi } from '@/api-client';
 interface VideoHeaderProps {
     children: React.ReactNode;
     id?: number;
@@ -20,7 +23,18 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { isOpen, onOpen, onClose, onContentType, onReportType, onDescription, onFile } = useReportModal();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        onContentType,
+        onReportType,
+        onDescription,
+        onFile,
+        description,
+        reportType,
+        file
+    } = useReportModal();
     const router = useRouter();
     const goBack = () => {
         router.back();
@@ -47,6 +61,41 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
         handleReload();
     }, [currentUser.user]);
 
+    const onSubmitReport = async () => {
+        let toastLoading;
+        try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const reportRequest = {
+                content: description,
+                objectId: id,
+                reportType: reportType.toUpperCase()
+            };
+
+            const formDataPayload = new FormData();
+            formDataPayload.append(
+                'reportRequest',
+                new Blob([JSON.stringify(reportRequest)], { type: 'application/json' })
+            );
+            if (file) {
+                formDataPayload.append('image', file); // assuming 'image' is the field name expected by the server
+            }
+            console.log(id);
+            const response = await reportVideoApi.createVideoReport(formDataPayload);
+
+            if (response) {
+                onDescription('');
+                onReportType('integrity');
+                onFile(null);
+                toast.success('Báo cáo video thành công');
+                onClose();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error creating course:', error);
+        }
+    };
     const openReportModal = () => {
         onContentType('video');
         onOpen();
@@ -100,6 +149,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
                         Báo cáo
                     </Button>
                 </div>
+                <ReportModal onReport={onSubmitReport} />
             </div>
             {children}
         </>

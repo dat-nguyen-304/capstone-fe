@@ -22,11 +22,18 @@ import { toast } from 'react-toastify';
 interface AddTargetModalProps {
     isOpen: boolean;
     onOpen: () => void;
+    onClose: () => void;
     onOpenChange: () => void;
     addTargetItems: any;
 }
 
-export const AddTargetModal: React.FC<AddTargetModalProps> = ({ isOpen, onOpen, onOpenChange, addTargetItems }) => {
+export const AddTargetModal: React.FC<AddTargetModalProps> = ({
+    isOpen,
+    onOpen,
+    onClose,
+    onOpenChange,
+    addTargetItems
+}) => {
     const [combinationId, setCombinationId] = useState<string>(addTargetItems[0].name);
     const [subjectTarget, setSubjectTarget] = useState<any[3]>([{}, {}, {}]);
     const { data: combinationsData, isLoading } = useQuery({
@@ -58,11 +65,24 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({ isOpen, onOpen, 
         const founded = subjectTarget.find((target: any) => !target.isValid);
         if (founded) toast.error('Vui lòng điền đúng thông tin');
         else {
-            const res = await studentApi.addTarget({
-                combinationId: combination?.id,
-                studentTargetRequest: subjectTarget
-            });
-            console.log({ res });
+            let toastLoading;
+            try {
+                toastLoading = toast.loading('Đang xử lí yêu cầu');
+                const res = await studentApi.addTarget({
+                    combinationId: combination?.id,
+                    studentTargetRequest: subjectTarget
+                });
+                console.log({ res });
+                if (res) {
+                    toast.success('Thêm tổ hợp môn thành công');
+                    onClose();
+                }
+                toast.dismiss(toastLoading);
+            } catch (error) {
+                toast.dismiss(toastLoading);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.log(error);
+            }
         }
     };
 

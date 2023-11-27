@@ -5,10 +5,11 @@ import Loader from '@/components/Loader';
 import PostTitle from '@/components/discussion/PostTitle';
 import CommentItem from '@/components/video/CommentItem';
 import { CommentCardType } from '@/types';
-import { Card, Select, SelectItem } from '@nextui-org/react';
+import { Card, Pagination, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 
 interface PostDetailProps {
@@ -17,16 +18,35 @@ interface PostDetailProps {
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
+    const [comments, setComments] = useState<[]>([]);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [filter, setFilter] = useState<number>(0);
     const { data: discussionData } = useQuery({
         queryKey: ['discussionDetail'],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
     const { data: commentsData } = useQuery({
-        queryKey: ['commentsByDiscussion'],
-        queryFn: () => discussionApi.getCommentsByDiscussionId(params?.id)
+        queryKey: ['adminCommentsByDiscussion', { page, filter }],
+        queryFn: () =>
+            discussionApi.getCommentsByDiscussionId(
+                params?.id,
+                page - 1,
+                rowsPerPage,
+                filter == 1 ? 'reactCount' : 'createTime',
+                'DESC'
+            )
     });
-
+    useEffect(() => {
+        if (commentsData?.data) {
+            setComments(commentsData.data);
+            setTotalPage(commentsData.totalPage);
+            setTotalRow(commentsData.totalRow);
+        }
+    }, [commentsData]);
     const postContent = {
         id: discussionData?.id,
         title: discussionData?.title,
@@ -43,6 +63,12 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         ownerFullName: 'Nguyễn Văn A',
         imageUrl: '/banner/slide-1.png',
         content: 'Nội dung rất hay'
+    };
+    const scrollToTop = (value: number) => {
+        setPage(value);
+        window.scrollTo({
+            top: 0
+        });
     };
     if (!discussionData) return <Loader />;
     return (
@@ -62,6 +88,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     variant="bordered"
                     defaultSelectedKeys={['0']}
                     className="w-[240px] mt-4"
+                    onChange={event => setFilter(Number(event.target.value))}
                 >
                     <SelectItem key={0} value={0}>
                         Thời gian
@@ -81,6 +108,16 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                                 <CommentItem commentInfo={commonInfo} />
                             </>
                         )}
+                        {totalPage && totalPage > 1 ? (
+                            <div className="flex justify-center mb-16">
+                                <Pagination
+                                    page={page}
+                                    total={totalPage}
+                                    onChange={value => scrollToTop(value)}
+                                    showControls
+                                />
+                            </div>
+                        ) : null}
                     </ul>
                     {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
