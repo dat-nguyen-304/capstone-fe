@@ -18,11 +18,7 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
     return (
         <Card className="text-sm p-4 sm:p-8">
             <h4 className="text-lg sm:text-xl text-blue-500 font-semibold mb-8">Thông tin cá nhân</h4>
-            {/* {!combinationsData ? (
-                <div className="h-[20vh] flex flex-col justify-center items-center">
-                    <PuffLoader size={100} color="blue" />
-                </div>
-            ) : ( */}
+
             <div>
                 <div className="xl:flex items-center mt-4">
                     <p className="w-[160px] font-semibold">Họ và tên</p>
@@ -66,7 +62,7 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                             </SelectItem>
                         )}
                     </Select> 
-                </div>*/}
+                </div>
                 <div className="xl:flex items-center mt-12 xl:mt-8">
                     <p className="w-[160px] mb-4 xl:mb-0 font-semibold">Giới thiệu</p>
                     <ReactQuill
@@ -75,7 +71,7 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                         placeholder="Giới thiệu về bạn một chút đi nào"
                         value={studentData?.description}
                     />
-                </div>
+                </div> */}
             </div>
             {/* )} */}
             <div className="flex flex-row-reverse mt-8">

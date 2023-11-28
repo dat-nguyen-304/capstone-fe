@@ -9,21 +9,31 @@ import RatingFilter from './filter-item/RatingFilter';
 import SubjectFilter from './filter-item/SubjectFilter';
 import LevelFilter from './filter-item/LevelFilter';
 import PriceFilter from './filter-item/PriceFilter';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 interface FilterDrawerProps {
     onClose: () => void;
     open: boolean;
     setFilter: Dispatch<SetStateAction<{ type: string; value: any[] }>>;
+    onFilterQuantity: Dispatch<SetStateAction<number>>;
 }
 
-const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter }) => {
+const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, onFilterQuantity }) => {
     const [filterRating, setFilterRating] = useState<number>(0);
     const [filterSubject, setFilterSubject] = useState<string[]>([]);
     const [filterLevel, setFilterLevel] = useState<string[]>([]);
     const [filterPriceStart, setFilterPriceStart] = useState<number>(0);
-    const [filterPriceEnd, setFilterPriceEnd] = useState<number>(0);
+    const [filterPriceEnd, setFilterPriceEnd] = useState<number>(5000000);
     const [filterChange, setFilterChange] = useState<string>('');
+
+    useEffect(() => {
+        let quantity = 1;
+        if (filterRating) quantity++;
+        if (filterSubject.length) quantity++;
+        if (filterLevel.length) quantity++;
+        onFilterQuantity(quantity);
+    }, [filterRating, filterSubject, filterLevel]);
+
     const onSearch = () => {
         if (filterChange == 'RATE') {
             console.log(filterRating);
@@ -42,6 +52,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter })
         onClose();
     };
 
+    console.log({ filterPriceStart });
+
     return (
         <Drawer title="Bộ lọc" placement="right" onClose={onClose} open={open} className="relative">
             <Accordion isCompact>
@@ -50,7 +62,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter })
                     key="1"
                     aria-label="Đánh giá"
                     title="Đánh giá"
-                    subtitle=">= 3 sao"
+                    subtitle={`>= ${filterRating} sao`}
                 >
                     <RatingFilter setFilterRating={setFilterRating} setFilterChange={setFilterChange} />
                 </AccordionItem>
@@ -59,7 +71,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter })
                     aria-label="Môn học"
                     startContent={<BsBookFill className="text-blue-400" size={20} />}
                     title="Môn học"
-                    subtitle="Đã chọn 3 môn học"
+                    subtitle={`Đã chọn ${filterSubject.length} môn học`}
                 >
                     <SubjectFilter setFilterSubject={setFilterSubject} setFilterChange={setFilterChange} />
                 </AccordionItem>
@@ -67,7 +79,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter })
                     key="3"
                     aria-label="Trình độ"
                     startContent={<SiLevelsdotfyi className="text-green-400" size={20} />}
-                    subtitle="Cơ bản, Trung bình, Nâng cao"
+                    subtitle={`Đã chọn ${filterLevel.length} mức độ`}
                     title="Trình độ"
                 >
                     <LevelFilter setFilterLevel={setFilterLevel} setFilterChange={setFilterChange} />
@@ -77,9 +89,13 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter })
                     aria-label="Mức giá"
                     title="Mức giá"
                     startContent={<FaCoins className="text-orange-400" size={20} />}
-                    subtitle="0.5 triệu - 5 triệu"
+                    subtitle={`${filterPriceStart.toLocaleString('vi-VN')}  - ${filterPriceEnd.toLocaleString(
+                        'vi-VN'
+                    )}`}
                 >
                     <PriceFilter
+                        filterPriceStart={filterPriceStart}
+                        filterPriceEnd={filterPriceEnd}
                         setFilterPriceStart={setFilterPriceStart}
                         setFilterPriceEnd={setFilterPriceEnd}
                         setFilterChange={setFilterChange}

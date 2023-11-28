@@ -8,12 +8,17 @@ import { AddTargetModal } from '../modal/AddTargetModal';
 import { useState } from 'react';
 import UpdatingTargetTab from './UpdatingTargetTab';
 import TargetTab from './TargetTab';
+import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 interface StudentTargetProps {
     targets: any;
+    refetch: <TPageData>(
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    ) => Promise<QueryObserverResult<AxiosResponse<any, any>, unknown>>;
 }
 
-const StudentTarget: React.FC<StudentTargetProps> = ({ targets }) => {
+const StudentTarget: React.FC<StudentTargetProps> = ({ targets, refetch }) => {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [targetData, setTargetData] = useState(targets);
 
@@ -25,8 +30,6 @@ const StudentTarget: React.FC<StudentTargetProps> = ({ targets }) => {
 
     const targetNameList = targets?.map((target: any) => target.name);
     const addTargetItems = combinationsData?.filter(combination => !targetNameList.includes(combination.name));
-
-    console.log({ targets });
 
     if (!targets || !addTargetItems) return <Loader />;
 
@@ -42,17 +45,18 @@ const StudentTarget: React.FC<StudentTargetProps> = ({ targets }) => {
                 {targetData?.map((target: any) =>
                     target.grade === 0 ? (
                         <Tab key={target.id} title={`${target.name} (Chưa cập nhật)`}>
-                            <UpdatingTargetTab target={target} />
+                            <UpdatingTargetTab refetch={refetch} target={target} />
                         </Tab>
                     ) : (
                         <Tab key={target.id} title={`${target.name} (${target.grade})`}>
-                            <TargetTab target={target} />
+                            <TargetTab refetch={refetch} target={target} />
                         </Tab>
                     )
                 )}
             </Tabs>
 
             <AddTargetModal
+                refetch={refetch}
                 isOpen={isOpen}
                 onOpen={onOpen}
                 onClose={onClose}

@@ -26,6 +26,8 @@ import Loader from '@/components/Loader';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { useRouter } from 'next/navigation';
 import { BiUpArrowAlt } from 'react-icons/bi';
+import { BsArrowLeft } from 'react-icons/bs';
+import { toast } from 'react-toastify';
 interface UpdateVideoDraftProps {
     params: { id: number };
 }
@@ -41,6 +43,8 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
     }, []);
@@ -101,9 +105,12 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
             setFileUrl(data?.material);
         }
     }, [data]);
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const onSubmit = async (formData: any) => {
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
+            setIsSubmitting(true);
             const videoRequest = {
                 name: formData?.name,
                 videoTemporaryId: Number(params?.id),
@@ -136,19 +143,40 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
             const response = await videoApi.updateVideoDraft(formDataPayload);
 
             if (response) {
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
+                toast.success('Video đã được cập nhật thành công');
                 router.push('/teacher/video/my-video-draft');
             }
             // Handle the response as needed
         } catch (error) {
+            toast.dismiss(toastLoading);
+            setIsSubmitting(false);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
         }
     };
 
+    const removeAttachedFile = (file?: FileWithPath) => {
+        if (file) {
+            const newAttachedFiles = uploadedAttachedFiles?.filter(f => f.path !== file.path);
+            if (!newAttachedFiles?.length) setUploadedAttachedFiles(undefined);
+            else setUploadedAttachedFiles(newAttachedFiles);
+        } else setFileUrl(null);
+    };
+
     if (!data) return <Loader />;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa video</h3>
+            <div className="mt-4 sm:mt-0 flex justify-between">
+                <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa video</h3>
+                <Button size="sm" variant="flat" onClick={() => router.back()}>
+                    <BsArrowLeft />
+                    <span>Quay lại</span>
+                </Button>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="lg:grid grid-cols-6 gap-2 mt-8">
                     {/* <div className="col-span-6">
@@ -164,7 +192,8 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                         <div {...getVideoRootProps()}>
                             <input {...getVideoInputProps()} name="avatar" />
                             <div className="border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
-                                Tải lên video <BiUpArrowAlt size={24} />{' '}
+                                Tải video khác
+                                <BiUpArrowAlt size={24} />{' '}
                             </div>
                         </div>
                     </div>
@@ -274,7 +303,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                             ) : data?.thumbnail ? (
                                 <div className="group relative">
                                     <Image
-                                        className="object-cover w-full h-[120px]"
+                                        className="object-cover w-full h-[240px]"
                                         key={data?.thumbnail}
                                         src={data?.thumbnail}
                                         alt={data?.thumbnail as string}
@@ -340,8 +369,19 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                                 </div>
                             ) : fileUrl ? (
                                 <div className="mt-4">
-                                    <label className="font-semibold">Đã tải lên file</label>
-                                    <p className="truncate mt-2">{fileUrl}</p>
+                                    <label className="font-semibold text-blue-500">Đã tải lên file</label>
+                                    <div className="flex items-center">
+                                        <p className="truncate mt-2">{fileUrl}</p>
+                                        <Button
+                                            color="danger"
+                                            size="sm"
+                                            variant="flat"
+                                            className="mt-2 ml-2 !h-[24px]"
+                                            onClick={() => removeAttachedFile()}
+                                        >
+                                            Xóa
+                                        </Button>
+                                    </div>
                                 </div>
                             ) : null}
                         </div>
@@ -362,7 +402,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit" className="mb-4">
+                <Button color="primary" type="submit" className="mb-4" isLoading={isSubmitting}>
                     Xác nhận thay đổi
                 </Button>
             </form>

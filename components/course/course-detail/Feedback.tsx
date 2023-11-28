@@ -6,11 +6,7 @@ import FeedbackItem from './FeedBackItem';
 interface FeedbackProps {
     feedbacksData: any;
 }
-const feedbackInfo = {
-    fullname: 'Nguyễn Văn A',
-    rating: 5,
-    content: 'Nội dung khóa học rất hay'
-};
+
 const Feedback: React.FC<FeedbackProps> = ({ feedbacksData }) => {
     return (
         <>
@@ -21,14 +17,8 @@ const Feedback: React.FC<FeedbackProps> = ({ feedbacksData }) => {
                         <FeedbackItem key={index} feedbackInfo={feedbackInfo} />
                     ))
                 ) : (
-                    <>
-                        <FeedbackItem feedbackInfo={feedbackInfo} />
-                    </>
+                    <div>Chưa có đánh giá</div>
                 )}
-                {/* <FeedbackItem />
-                <FeedbackItem />
-                <FeedbackItem />
-                <FeedbackItem /> */}
             </ul>
             {feedbacksData?.totalPage && feedbacksData?.totalPage > 1 ? (
                 <div className="flex justify-center my-8">

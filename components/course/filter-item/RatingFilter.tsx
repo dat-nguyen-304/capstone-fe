@@ -18,7 +18,7 @@ const RatingFilter: React.FC<RatingFilterProps> = ({ setFilterRating, setFilterC
     return (
         <RadioGroup
             size="sm"
-            color="secondary"
+            color="primary"
             defaultValue="london"
             className="mb-4"
             onChange={event => handleFilterRating(Number(event?.target?.value))}

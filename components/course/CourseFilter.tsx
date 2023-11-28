@@ -15,6 +15,7 @@ interface CourseFilterProps {
 const CourseFilter: React.FC<CourseFilterProps> = ({ onSearch, setSortType, setFilter }) => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterQuantity, setFilterQuantity] = useState(1);
 
     const showDrawer = () => {
         setOpenDrawer(true);
@@ -23,17 +24,24 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ onSearch, setSortType, setF
     const onClose = () => {
         setOpenDrawer(false);
     };
+
     const handleSearch = () => {
         onSearch(searchTerm);
         setSearchTerm('');
     };
+
     return (
         <div className="md:flex items-center gap-8 flex-wrap">
             <div>
                 <Button startContent={<CiFilter size={18} />} color="primary" onClick={showDrawer}>
-                    <span>Bộ Lọc (5)</span>
+                    <span>Bộ Lọc ({filterQuantity})</span>
                 </Button>
-                <FilterDrawer onClose={onClose} open={openDrawer} setFilter={setFilter} />
+                <FilterDrawer
+                    onFilterQuantity={setFilterQuantity}
+                    onClose={onClose}
+                    open={openDrawer}
+                    setFilter={setFilter}
+                />
             </div>
             <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
                 <Input

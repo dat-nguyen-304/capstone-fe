@@ -1,18 +1,22 @@
 'use client';
 
-import Image from 'next/image';
-
-import { Button, Card, Input, Select, Tab, useDisclosure } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import Loader from '../Loader';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { studentApi } from '@/api-client';
+import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 interface TargetTabProps {
     target: any;
+    refetch: <TPageData>(
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    ) => Promise<QueryObserverResult<AxiosResponse<any, any>, unknown>>;
 }
 
-const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
+const TargetTab: React.FC<TargetTabProps> = ({ target, refetch }) => {
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [subjectTarget, setSubjectTarget] = useState<any[3]>(
         target.subjectTargetResponses.map((subject: any) => ({
             subjectId: subject.subjectId,
@@ -40,10 +44,11 @@ const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
     const onSubmit = async () => {
         let toastLoading;
         try {
-            toastLoading = toast.loading('Đang cập nhật');
             const founded = subjectTarget.find((subject: any) => subject.isValid === false);
             if (founded) toast.error('Vui lòng điền đúng thông tin');
             else {
+                setIsSubmitting(true);
+                toastLoading = toast.loading('Đang cập nhật');
                 const subjectTargetBody = subjectTarget.map((subject: any) => ({
                     subjectId: subject.subjectId,
                     grade: subject.grade
@@ -54,15 +59,51 @@ const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
                         studentSubjectTargetRequests: subjectTargetBody
                     }
                 });
-                const res = await studentApi.updateTarget({
+                await studentApi.updateTarget({
                     targetId: target.id,
                     studentSubjectTargetRequests: subjectTarget
                 });
-                console.log({ res });
+                setIsSubmitting(false);
+                refetch();
                 toast.dismiss(toastLoading);
                 toast.success('Cập nhật thành công');
             }
         } catch (error) {
+            setIsSubmitting(false);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc. Vui lòng thử lại sau ít phút.');
+        }
+    };
+
+    const onRemove = async () => {
+        let toastLoading;
+        try {
+            const founded = subjectTarget.find((subject: any) => subject.isValid === false);
+            if (founded) toast.error('Vui lòng điền đúng thông tin');
+            else {
+                setIsSubmitting(true);
+                toastLoading = toast.loading('Đang cập nhật');
+                const subjectTargetBody = subjectTarget.map((subject: any) => ({
+                    subjectId: subject.subjectId,
+                    grade: subject.grade
+                }));
+                console.log({
+                    hello: {
+                        targetId: target.id,
+                        studentSubjectTargetRequests: subjectTargetBody
+                    }
+                });
+                await studentApi.updateTarget({
+                    targetId: target.id,
+                    studentSubjectTargetRequests: subjectTarget
+                });
+                setIsSubmitting(false);
+                refetch();
+                toast.dismiss(toastLoading);
+                toast.success('Cập nhật thành công');
+            }
+        } catch (error) {
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc. Vui lòng thử lại sau ít phút.');
         }
@@ -84,9 +125,12 @@ const TargetTab: React.FC<TargetTabProps> = ({ target }) => {
                     isInvalid={subjectTarget[index].isValid === false}
                 />
             ))}
-            <div className="flex flex-row-reverse mt-8">
-                <Button color="primary" onClick={() => onSubmit()}>
+            <div className="flex flex-row-reverse mt-8 gap-3">
+                <Button color="primary" isLoading={isSubmitting} onClick={() => onSubmit()}>
                     Lưu mục tiêu {target.name}
+                </Button>
+                <Button color="danger" isLoading={isSubmitting} onClick={() => onRemove()}>
+                    Xóa mục tiêu {target.name}
                 </Button>
             </div>
         </>

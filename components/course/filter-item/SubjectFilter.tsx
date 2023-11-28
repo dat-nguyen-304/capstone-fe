@@ -25,7 +25,7 @@ const SubjectFilter: React.FC<SubjectFilterProps> = ({ setFilterSubject, setFilt
     return (
         <CheckboxGroup size="sm" label="" className="mb-4" onValueChange={handleFilterSubject}>
             {isLoading ? (
-                <PuffLoader size={100} color="red" />
+                <PuffLoader size={100} color="blue" />
             ) : (
                 <>
                     {data?.map((SubjectFilter: Subject) => (

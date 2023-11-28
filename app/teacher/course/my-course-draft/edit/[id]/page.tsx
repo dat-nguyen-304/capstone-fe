@@ -7,8 +7,6 @@ import CourseContent from '@/components/course/edit-course/CourseContent';
 
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { Spin } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 interface EditDraftCourseProps {
@@ -57,7 +55,6 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         <div className="w-[98%] sm:w-full lg:w-[90%] mx-auto">
             <div className="mt-4 sm:mt-0 flex justify-between">
                 <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa khóa học</h3>
-
                 <Button size="sm" onClick={() => router.back()}>
                     Quay lại
                 </Button>

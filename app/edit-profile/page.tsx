@@ -15,7 +15,7 @@ interface StudentProfileProps {}
 
 const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
     const { user } = useUser();
-    const { data: studentData } = useQuery({
+    const { data: studentData, refetch } = useQuery({
         queryKey: ['student-detail'],
         queryFn: () => studentApi.getStudent()
     });
@@ -30,7 +30,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
             </div>
             <div className="col-span-5 xl:col-span-6 mt-8 md:mt-0">
                 <StudentInfo studentData={studentData?.data} />
-                <StudentTarget targets={studentData?.data.targets} />
+                <StudentTarget targets={studentData?.data.targets} refetch={refetch} />
             </div>
         </Card>
     );

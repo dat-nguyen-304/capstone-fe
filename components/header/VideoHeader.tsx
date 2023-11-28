@@ -1,7 +1,6 @@
 'use client';
 
 import { BsArrowLeft } from 'react-icons/bs';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@nextui-org/react';
 import { useReportModal, useUser } from '@/hooks';
@@ -132,7 +131,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
                         </span>
                         <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
                             <span className="inline-flex items-center text-xs">
-                                <span className="font-bold mr-1">5</span>
+                                <span className="font-bold mr-1">0</span>
                                 <span>Bài tập</span>
                                 <Image src="/video-number/red.svg" width={30} height={30} alt="" />
                             </span>

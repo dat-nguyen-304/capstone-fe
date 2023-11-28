@@ -16,7 +16,7 @@ interface CourseDraftDetailProps {
 }
 const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
     const router = useRouter();
-    const { data, isLoading } = useQuery<any>({
+    const { data, isLoading, refetch } = useQuery<any>({
         queryKey: ['course-draft', { params }],
         queryFn: () => courseApi.getCourseDraftById(params?.id)
     });
@@ -64,12 +64,10 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
             <div className="relative grid grid-cols-10 gap-4 mt-4 mb-16">
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
-
                     <CourseContent courseContent={courseContent} type="teacher-course-draft" />
-                    <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">
-                    <EditCourse onOpenPopup={onOpen} editCourse={editCourse} />
+                    <EditCourse refetch={refetch} onOpenPopup={onOpen} editCourse={editCourse} />
                 </div>
             </div>
             <CourseRevenueModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />

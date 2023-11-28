@@ -32,7 +32,7 @@ import { toast } from 'react-toastify';
 
 const UploadVideo: React.FC = () => {
     const router = useRouter();
-    const [selectedOptionCourse, setSelectedOptionCourse] = useState<string>('NEW');
+    const [selectedOptionCourse, setSelectedOptionCourse] = useState<string>();
     const [optionCourse, setOptionCourse] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [courses, setCourses] = useState<any[]>([]);
@@ -54,6 +54,9 @@ const UploadVideo: React.FC = () => {
         queryFn: () => courseApi.getAllOfTeacher(0, 100)
     });
 
+    console.log({ updatingCoursesData, activatedCoursesData });
+    console.log({ courses });
+
     useEffect(() => {
         let arr: string[] = [];
         if (activatedCoursesData?.data?.length) {
@@ -62,14 +65,16 @@ const UploadVideo: React.FC = () => {
         }
         if (updatingCoursesData?.data?.length) {
             arr.push('NEW');
-            setSelectedOptionCourse('OLD');
+            setSelectedOptionCourse('NEW');
         }
         setOptionCourse(arr);
     }, [activatedCoursesData, updatingCoursesData]);
 
     useEffect(() => {
-        if (selectedOptionCourse === 'NEW') setCourses(updatingCoursesData?.data);
-        else setCourses(activatedCoursesData?.data);
+        if (selectedOptionCourse) {
+            if (selectedOptionCourse === 'NEW') setCourses(updatingCoursesData?.data);
+            else setCourses(activatedCoursesData?.data);
+        }
     }, [selectedOptionCourse]);
 
     const [selectedCourse, setSelectedCourse] = useState<number>();
@@ -133,10 +138,9 @@ const UploadVideo: React.FC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const onSubmit = async (formData: any) => {
-        let toastLoading;
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             setIsSubmitting(true);
-            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const videoRequest = {
                 name: formData.name,
                 courseId: selectedCourse,
@@ -321,12 +325,12 @@ const UploadVideo: React.FC = () => {
                             </Select>
                         </div>
                         <div className="col-span-2 my-4 sm:grid grid-cols-2 gap-4">
-                            {optionCourse.length === 2 ? (
+                            {optionCourse.length === 2 && selectedOptionCourse ? (
                                 <div className="col-span-1">
                                     <Select
                                         isRequired
                                         size="sm"
-                                        label="Video này thuộc khóa học"
+                                        label="Video này thuộc"
                                         color="primary"
                                         variant="bordered"
                                         defaultSelectedKeys={[selectedOptionCourse]}
@@ -344,7 +348,7 @@ const UploadVideo: React.FC = () => {
                                 <></>
                             )}
                         </div>
-                        <div className="col-span-2  ">
+                        <div className="col-span-2">
                             <Select
                                 isRequired
                                 size="sm"

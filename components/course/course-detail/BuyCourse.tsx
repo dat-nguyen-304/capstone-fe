@@ -63,7 +63,7 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full rounded-xl"
+                className="w-full rounded-xl h-[200px] object-cover object-center"
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
@@ -87,7 +87,7 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">5 bài tập</span>
+                        <span className="text-sm">0 bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <BsPersonWorkspace className="mr-8" />

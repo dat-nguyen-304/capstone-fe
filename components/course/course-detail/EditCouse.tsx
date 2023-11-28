@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 
 interface EditCourseProps {
     onOpenPopup: () => void;
+    refetch?: any;
     type?: 'teacher';
     editCourse: {
         id: number;
@@ -28,8 +29,9 @@ interface EditCourseProps {
     };
 }
 
-const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
+const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse, refetch }) => {
     const router = useRouter();
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     let status = '';
     if (editCourse.status === 'AVAILABLE') status = 'Hoạt động';
     else if (editCourse.status === 'WAITING') status = 'Chờ xác thực';
@@ -38,14 +40,15 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
     else if (editCourse.status === 'UPDATING') status = 'Chờ cập nhật';
     else if (editCourse.status === 'DRAFT') status = 'Bản nháp';
     else status = 'Vô hiệu';
-    const handleVerifyCourse = async () => {
-        let toastLoading;
-        try {
-            toastLoading = toast.loading('Đang xử lí yêu cầu');
-            const courseId = editCourse.id;
 
+    const submitVerifyCourse = async () => {
+        onClose();
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
+        try {
+            const courseId = editCourse.id;
             const response = await courseApi.TeacherSendVerifyCourse([courseId]);
             if (response) {
+                refetch();
                 toast.success('Khóa học của đã được gửi duyệt thành công');
             }
             toast.dismiss(toastLoading);
@@ -56,7 +59,16 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
             console.error('Error verifying course:', error);
         }
     };
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+
+    const handleVerifyCourse = () => {
+        onWarning({
+            title: 'Gửi yêu cầu duyệt khóa học',
+            content: 'Hãy chắc chắn rằng bạn đã cập nhật hoàn chỉnh khóa học trước khi gửi yêu cầu.',
+            activeFn: submitVerifyCourse
+        });
+        onOpen();
+    };
+
     const handleDeleteCourse = async (courseId: number) => {
         try {
             console.log(editCourse?.status);
@@ -104,7 +116,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full rounded-xl"
+                className="w-full rounded-xl h-[200px] object-cover object-center"
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
@@ -113,10 +125,10 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
                 {editCourse.status === 'DRAFT' || editCourse.status === 'UPDATING' ? (
                     <Button
                         color="success"
-                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base text-white hover:text-gray-200"
                         onClick={handleVerifyCourse}
                     >
-                        Duyệt khóa học
+                        Gửi yêu cầu duyệt
                     </Button>
                 ) : null}
                 {editCourse?.status != 'WAITING' ? (
@@ -131,7 +143,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
                                 : `/teacher/course/edit/${editCourse?.id}`
                         }
                         color="warning"
-                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base text-white hover:text-gray-200"
                     >
                         Chỉnh sửa <BiSolidPencil />
                     </Button>
@@ -140,7 +152,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
                     <Button
                         color="danger"
                         onClick={() => onApproveDeleteOpen(editCourse?.id)}
-                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-black"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-gray-200"
                     >
                         Xóa khóa học <FaTrash />
                     </Button>
@@ -169,7 +181,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">5 bài tập</span>
+                        <span className="text-sm">0 bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <SiStatuspage className="mr-6" />

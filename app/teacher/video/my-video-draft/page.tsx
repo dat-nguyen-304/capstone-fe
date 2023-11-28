@@ -130,7 +130,6 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
                         </Select>
                     </div>
                 </div>
-
                 <div className="flex flex-row-reverse mt-4">
                     <Dropdown>
                         <DropdownTrigger className="flex">

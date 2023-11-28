@@ -16,19 +16,6 @@ interface CourseDetailProps {
     params: { id: number };
 }
 
-// const CourseInfoTest = {
-//     createDate: '2023-11-11T23:34:48.088886',
-//     courseName: 'Lập Trình C++',
-//     subject: 'Lập Trình',
-//     level: 'Cơ bản',
-//     rating: 4.7,
-//     numberOfRate: 100,
-//     totalStudent: 100,
-//     teacherName: 'Bùi Đức Tiến',
-//     description:
-//         'Khóa học lập trình C++ từ cơ bản tới nâng cao dành cho người mới bắt đầu. Mục tiêu của khóa học này nhằm giúp các bạn nắm được các khái niệm căn cơ của lập trình, giúp các bạn có nền tảng vững chắc để chinh phục con đường trở thành một lập trình viên.'
-// };
-
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading } = useQuery<any>({

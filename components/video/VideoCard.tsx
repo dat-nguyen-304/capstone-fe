@@ -67,15 +67,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     }
 
     return (
-        <div className="flex justify-center w-full">
+        <div className="w-full">
             <Card shadow="sm" isPressable className="w-full max-w-[216px] mt-4 mx-1">
                 <Link href={detailPage}>
-                    <CardHeader className="overflow-visible p-0 h-[120px] relative">
+                    <CardHeader className="relative overflow-visible p-0">
                         <Image
-                            height={200}
-                            width={200}
+                            height={216}
+                            width={384}
                             alt=""
-                            className="w-full object-contain h-[120px]"
+                            className="rounded-xl object-cover object-center h-[120px]"
                             src={video?.thumbnail || '/banner/slide-1.png'}
                         />
                         <div className="absolute bottom-0 right-1 text-xs text-white bg-gray-600 rounded-md p-1">
@@ -91,7 +91,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                                 <BiSolidLike className="text-sm text-blue-300 ml-2" />
                             </span>
                         </div>
-                        {type === 'teacher' && (
+                        {type === 'teacher' ? (
                             <Chip
                                 className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
                                 color={statusColorMap[video?.status as string]}
@@ -100,18 +100,17 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                             >
                                 {teacherStatus}
                             </Chip>
-                        )}
-                        {type === 'all' ||
-                            (type === 'admin' && (
-                                <Chip
-                                    className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
-                                    color={video.videoStatus === 'PUBLIC' ? 'success' : 'danger'}
-                                    size="sm"
-                                    variant="dot"
-                                >
-                                    {profileStatus}
-                                </Chip>
-                            ))}
+                        ) : null}
+                        {type === 'all' || type === 'admin' ? (
+                            <Chip
+                                className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
+                                color={video.videoStatus === 'PUBLIC' ? 'success' : 'danger'}
+                                size="sm"
+                                variant="dot"
+                            >
+                                {profileStatus}
+                            </Chip>
+                        ) : null}
                     </CardBody>
                 </Link>
             </Card>

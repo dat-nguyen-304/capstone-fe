@@ -25,7 +25,7 @@ const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full"
+                className="w-full rounded-xl h-[200px] object-cover object-center"
             />
             <div className="hidden md:flex justify-center flex-col items-center">
                 <div>
@@ -41,22 +41,22 @@ const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">5 bài tập</span>
+                        <span className="text-sm">0 bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaCheckDouble className="mr-8" />
-                        <span className="text-sm">Đã hoàn thành: 5/30</span>
+                        <span className="text-sm">Đã hoàn thành: 0/{courseImage.totalVideo}</span>
                     </div>
                     <div className="flex items-center my-4">
                         <SiProgress className="mr-8" />
                         <div className="flex-[1]">
-                            <Progress percent={30} />
+                            <Progress percent={0} />
                         </div>
                     </div>
                 </div>
             </div>
             <div className="flex justify-center mt-4 md:hidden">
-                <Progress className="m-0 max-w-[300px]" percent={30} />
+                <Progress className="m-0 max-w-[300px]" percent={0} />
             </div>
         </div>
     );

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { BiSolidPencil } from 'react-icons/bi';
 import { UploadImageModal } from '../modal/UploadImageModal';
-import { useDisclosure } from '@nextui-org/react';
+import { Chip, useDisclosure } from '@nextui-org/react';
 import Loader from '../Loader';
 
 interface StudentAvatarProps {
@@ -48,11 +48,15 @@ const StudentAvatar: React.FC<StudentAvatarProps> = ({ studentData }) => {
                         <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>
                         <p className="mt-4 text-sm">
                             Tổ hợp môn:
-                            {studentData.targets.map((target: any) => (
-                                <span key={target.name} className="ml-2">
-                                    {target.name}
-                                </span>
-                            ))}
+                            <ul className="flex flex-wrap gap-2 mt-2">
+                                {studentData.targets.map((target: any) => (
+                                    <li key={target.name}>
+                                        <Chip color="primary" className=" text-xs sm:text-sm">
+                                            {target.name}
+                                        </Chip>
+                                    </li>
+                                ))}
+                            </ul>
                         </p>
                     </div>
                 </div>

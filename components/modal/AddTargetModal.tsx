@@ -18,6 +18,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 interface AddTargetModalProps {
     isOpen: boolean;
@@ -25,6 +27,9 @@ interface AddTargetModalProps {
     onClose: () => void;
     onOpenChange: () => void;
     addTargetItems: any;
+    refetch: <TPageData>(
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    ) => Promise<QueryObserverResult<AxiosResponse<any, any>, unknown>>;
 }
 
 export const AddTargetModal: React.FC<AddTargetModalProps> = ({
@@ -32,9 +37,11 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
     onOpen,
     onClose,
     onOpenChange,
-    addTargetItems
+    addTargetItems,
+    refetch
 }) => {
     const [combinationId, setCombinationId] = useState<string>(addTargetItems[0].name);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [subjectTarget, setSubjectTarget] = useState<any[3]>([{}, {}, {}]);
     const { data: combinationsData, isLoading } = useQuery({
         queryKey: ['combinations'],
@@ -65,6 +72,7 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
         const founded = subjectTarget.find((target: any) => !target.isValid);
         if (founded) toast.error('Vui lòng điền đúng thông tin');
         else {
+            setIsSubmitting(true);
             let toastLoading;
             try {
                 toastLoading = toast.loading('Đang xử lí yêu cầu');
@@ -72,14 +80,16 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
                     combinationId: combination?.id,
                     studentTargetRequest: subjectTarget
                 });
-                console.log({ res });
                 if (res) {
+                    refetch();
+                    setIsSubmitting(false);
                     toast.success('Thêm tổ hợp môn thành công');
                     onClose();
                 }
                 toast.dismiss(toastLoading);
             } catch (error) {
                 toast.dismiss(toastLoading);
+                setIsSubmitting(false);
                 toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
                 console.log(error);
             }
@@ -136,10 +146,10 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
                             ))}
                         </ModalBody>
                         <ModalFooter>
-                            <Button className="bg-white" variant="bordered" onPress={onClose}>
+                            <Button className="bg-white" variant="bordered" onPress={onClose} isLoading={isSubmitting}>
                                 Đóng
                             </Button>
-                            <Button color="primary" onClick={onSubmit}>
+                            <Button color="primary" onClick={onSubmit} isLoading={isSubmitting}>
                                 Thêm mục tiêu
                             </Button>
                         </ModalFooter>
