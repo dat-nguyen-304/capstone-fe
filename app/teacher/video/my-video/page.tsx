@@ -38,16 +38,16 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         // keepPreviousData: true,
         queryFn: () => {
             if (selectedCourse != 0) {
-                return videoApi.getByCourseId(selectedCourse, page - 1, 20, 'id', 'ASC');
+                return videoApi.getByCourseId(selectedCourse, page - 1, 20, 'createDate', 'DESC');
             } else {
-                return videoApi.getAllOfTeacher('ALL', page - 1, 20, 'id', 'ASC');
+                return videoApi.getAllOfTeacher('ALL', page - 1, 20, 'createDate', 'DESC');
             }
         }
     });
 
     const { data: coursesData, isLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100)
+        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
 
     useEffect(() => {

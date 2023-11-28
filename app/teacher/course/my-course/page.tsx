@@ -23,7 +23,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['courses', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacher(page - 1, 20)
+        queryFn: () => courseApi.getAllOfTeacher(page - 1, 20, 'createdDate', 'DESC')
     });
 
     useEffect(() => {
@@ -144,7 +144,9 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                         </Dropdown>
                     </div>
                 </div>
-                {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
+                <p className="mt-4 text-default-400 text-xs sm:text-sm">
+                    {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
+                </p>
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-3">
                     {courses.length ? (
                         courses.map((courseItem: CourseCardType) => (
@@ -154,11 +156,11 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                         <></>
                     )}
                 </div>
-                {totalPage && totalPage > 1 && (
+                {totalPage && totalPage > 1 ? (
                     <div className="flex justify-center my-8">
                         <Pagination page={page} total={totalPage} onChange={value => scrollToTop(value)} showControls />
                     </div>
-                )}
+                ) : null}
             </Spin>
         </div>
     );

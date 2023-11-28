@@ -25,7 +25,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [filter, setFilter] = useState<number>(0);
     const { data: discussionData } = useQuery({
-        queryKey: ['discussionDetail'],
+        queryKey: ['discussionDetail', { params: params?.id }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 

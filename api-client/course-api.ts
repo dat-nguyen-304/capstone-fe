@@ -23,8 +23,8 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;
     },
-    getAllOfTeacher: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/courses/teacher?page=${page}&size=${size}&sortType=ASC`);
+    getAllOfTeacher: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(`/courses/teacher?page=${page}&size=${size}&field=${field}&sortType=${sort}`);
         return res.data;
     },
     getAllOfTeacherDraft: async (page: number, size: number, field: string, sort: string) => {

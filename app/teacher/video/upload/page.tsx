@@ -46,12 +46,12 @@ const UploadVideo: React.FC = () => {
 
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
-        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'id', 'ASC')
+        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
     });
 
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100)
+        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
 
     console.log({ updatingCoursesData, activatedCoursesData });

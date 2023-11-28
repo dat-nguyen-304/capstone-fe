@@ -26,7 +26,7 @@ const EditExamTopic: React.FC<EditExamTopicProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
     const { data: examTopic, isLoading } = useQuery({
-        queryKey: ['topicExamDetail', { params }],
+        queryKey: ['topicExamDetail', { params: params?.id }],
         queryFn: () => examApi.getTopicExamById(params?.id)
     });
     console.log(examTopic);

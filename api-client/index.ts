@@ -15,3 +15,4 @@ export * from './comments-api';
 export * from './react-video-api';
 export * from './teacher-incomes-api';
 export * from './report-video-api';
+export * from './suggest-api';

@@ -43,8 +43,10 @@ export const examApi = {
         );
         return res.data;
     },
-    getAllByAdmin: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/examination/exams/admin?page=${page}&size=${size}&sortType=ASC`);
+    getAllByAdmin: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/examination/exams/admin?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getAllByAdminBySubject: async (subject: string, page: number, size: number) => {
@@ -87,8 +89,10 @@ export const examApi = {
             return res.data;
         }
     },
-    getAllTopicAdmin: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/examination/topics/admin?page=${page}&size=${size}&sortType=ASC`);
+    getAllTopicAdmin: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/examination/topics/admin?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getTopicExamById: async (topicId: number) => {
@@ -166,6 +170,12 @@ export const examApi = {
     },
     getEntranceExamBySubject: async (subject: string) => {
         const res = await axiosClient.get(`/examination/exams/entrance?subject=${subject}`);
+        return res.data;
+    },
+    getEntranceExamByCombination: async (subject1: string, subject2: string, subject3: string) => {
+        const res = await axiosClient.get(
+            `/examination/exams/entrances?subject1=${subject1}&subject2=${subject2}&subject3=${subject3}`
+        );
         return res.data;
     }
 };

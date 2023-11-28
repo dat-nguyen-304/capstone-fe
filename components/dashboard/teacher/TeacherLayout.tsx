@@ -45,10 +45,10 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '7'),
         getItem(<Link href="/teacher/course/my-course-draft">Khóa học vừa tạo</Link>, '8')
     ]),
-    getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
-        getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '9'),
-        getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '10')
-    ]),
+    // getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
+    //     getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '9'),
+    //     getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '10')
+    // ]),
     getItem('Thảo luận', 'sub4', <CommentOutlined />, [
         getItem(<Link href="/teacher/discussion">Tất cả bài đăng</Link>, '11'),
         getItem(<Link href="/teacher/discussion/create">Tạo bài đăng</Link>, '12'),

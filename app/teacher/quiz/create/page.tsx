@@ -58,7 +58,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     });
     const { data: coursesData } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100)
+        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);

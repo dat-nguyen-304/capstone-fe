@@ -19,7 +19,7 @@ interface VideoDraftProps {
 
 const AdminReviewVideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['admin-review-video--detail', { params }],
+        queryKey: ['admin-review-video--detail', { params: params?.id }],
         queryFn: () => videoApi.getVideoDraftById(params?.id)
     });
     const router = useRouter();

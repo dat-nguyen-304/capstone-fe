@@ -41,7 +41,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ time, noteData, onEditNote, refetch
     };
     const onApproveOpen = (id: number) => {
         onWarning({
-            title: 'Xác nhận xoa1',
+            title: 'Xác nhận xóa',
             content: 'Note sẽ bị xóa sau khi được duyệt. Bạn chắc chứ?',
             activeFn: () => handleDeleteNote(id)
         });

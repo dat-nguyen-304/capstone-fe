@@ -26,7 +26,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     });
     const { data: commentsData } = useQuery<any>({
         queryKey: ['teacherCommentsVideo'],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createDate', 'DESC')
     });
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const mapCommentToCommonInfo = (commentData: any) => {

@@ -21,7 +21,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const floatToTime = (durationFloat: number): string => {
-    if (durationFloat > 100) {
+    if (durationFloat > 10) {
         const hours = Math.floor(durationFloat / 3600);
         const minutes = Math.floor((durationFloat % 3600) / 60);
         const seconds = Math.floor(durationFloat % 60);

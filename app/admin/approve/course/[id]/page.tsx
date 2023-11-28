@@ -17,11 +17,11 @@ interface CourseApproveDetailProps {
 const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['course'],
+        queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseDraftById(params?.id)
     });
     const { data: feedbacksData } = useQuery<any>({
-        queryKey: ['feedbacksAdmin'],
+        queryKey: ['feedbacksAdmin', { params: params?.id }],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
     const courseInfo = {

@@ -69,7 +69,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { data: examDetail, isLoading } = useQuery<any>({
-        queryKey: ['exam-detail', { params }],
+        queryKey: ['exam-detail', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
     const {

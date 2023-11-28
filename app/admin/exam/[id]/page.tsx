@@ -16,7 +16,7 @@ interface ExamDetailProps {
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
-        queryKey: ['exam-detail'],
+        queryKey: ['exam-detail', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
     console.log(data);

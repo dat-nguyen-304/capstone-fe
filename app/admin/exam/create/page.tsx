@@ -19,25 +19,18 @@ import { FaPlus } from 'react-icons/fa6';
 interface CreateQuizProps {}
 
 const getSubjectNameById = (id: number): string => {
-    if (id == 1) {
-        return 'MATHEMATICS';
-    } else if (id == 2) {
-        return 'PHYSICS';
-    } else if (id == 3) {
-        return 'CHEMISTRY';
-    } else if (id == 4) {
-        return 'ENGLISH';
-    } else if (id == 5) {
-        return 'BIOLOGY';
-    } else if (id == 6) {
-        return 'HISTORY';
-    } else if (id == 7) {
-        return 'GEOGRAPHY';
-    } else {
-        return '';
-    }
-};
+    const subjectMap: Record<number, string> = {
+        1: 'MATHEMATICS',
+        2: 'PHYSICS',
+        3: 'CHEMISTRY',
+        4: 'ENGLISH',
+        5: 'BIOLOGY',
+        6: 'HISTORY',
+        7: 'GEOGRAPHY'
+    };
 
+    return subjectMap[id] || '';
+};
 const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -126,8 +119,6 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             // Call the API to create the exam
             const response = await examApi.createExam(payload);
             setIsSubmitting(false);
-            toast.dismiss(toastLoading);
-            toast.success('Tạo bài thi thành công');
 
             if (response) {
                 router.push('/admin/exam');

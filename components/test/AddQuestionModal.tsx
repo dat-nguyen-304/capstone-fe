@@ -65,7 +65,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         }
     ]);
     const [level, setLevel] = useState<string>('EASY');
-    const [selectTopic, setSelectTopic] = useState<number>();
     const { control, handleSubmit, setError, reset, setValue, getValues } = useForm({
         defaultValues: {
             name: '',
@@ -82,6 +81,14 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         queryKey: ['topicsExam', { subject }],
         queryFn: () => examApi.getAllTopicBySubject(subject, 0, 100)
     });
+
+    const [selectTopic, setSelectTopic] = useState<number>();
+
+    useEffect(() => {
+        if (topicsData) {
+            setSelectTopic(topicsData?.data[0]?.id);
+        }
+    }, [topicsData]);
 
     useEffect(() => {
         if (editQuestion) {
@@ -201,7 +208,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                     <div>
                                         <label>Nội dung câu hỏi</label>
                                         <div>
-                                            <div className="mt-4 mb-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
+                                            {/* <div className="mt-4 mb-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
                                                 <div {...getRootProps()}>
                                                     <input {...getInputProps()} name="avatar" />
                                                     {uploadedFiles.length > 0 ? (
@@ -226,7 +233,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            </div> */}
                                             <div className="flex-[1]" suppressContentEditableWarning={true}>
                                                 <InputFormula
                                                     name="questionContent"

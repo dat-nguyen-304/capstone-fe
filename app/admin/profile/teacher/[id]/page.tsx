@@ -19,7 +19,7 @@ interface TeacherProfileProps {
 const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
     const router = useRouter();
     const { data } = useQuery({
-        queryKey: ['teacher-public-detail'],
+        queryKey: ['teacher-public-detail', { params: params?.id }],
         queryFn: () => teacherApi.getPublicTeacher(params.id)
     });
 

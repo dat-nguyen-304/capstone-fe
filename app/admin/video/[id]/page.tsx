@@ -27,8 +27,8 @@ const AdminViewVideo: React.FC<AdminViewVideoProps> = ({ params }) => {
         router.back();
     };
     const { data: commentsData } = useQuery<any>({
-        queryKey: ['teacherCommentsVideo'],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
+        queryKey: ['adminCommentsVideo'],
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createDate', 'DESC')
     });
     const mapCommentToCommonInfo = (commentData: any) => {
         return {

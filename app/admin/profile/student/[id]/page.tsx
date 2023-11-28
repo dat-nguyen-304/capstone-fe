@@ -16,7 +16,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     const router = useRouter();
 
     const { data } = useQuery({
-        queryKey: ['student-public-detail'],
+        queryKey: ['student-public-detail', { params: params?.id }],
         queryFn: () => studentApi.getPublicStudent(params.id)
     });
 

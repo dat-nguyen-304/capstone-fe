@@ -10,6 +10,7 @@ import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
 import { InputDescription } from '@/components/form-input/InputDescription';
+import { toast } from 'react-toastify';
 interface CreateExamTopicProps {}
 
 const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
@@ -25,7 +26,9 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
     });
 
     const onSubmit = async (formData: CreateTopicObject) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const response = await examApi.createTopicExam({
                 name: formData.name,
                 description: formData.description,
@@ -33,9 +36,13 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                 level: level
             });
             if (!response.data.code) {
+                toast.success('Chủ đề thi đã được tạo thành công');
                 router.push('/admin/exam-topic');
             }
+            toast.dismiss(toastLoading);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };

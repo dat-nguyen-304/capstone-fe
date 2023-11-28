@@ -28,7 +28,7 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { data: discussionTopic, isLoading } = useQuery({
-        queryKey: ['topicDetail', { params }],
+        queryKey: ['topicDetail', { params: params?.id }],
         queryFn: () => discussionApi.getTopicById(params?.id)
     });
     console.log(discussionTopic);

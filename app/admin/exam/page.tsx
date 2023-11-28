@@ -77,7 +77,7 @@ const Exams: React.FC<ExamsProps> = () => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['exams', { page, rowsPerPage, updateState }],
         // keepPreviousData: true,
-        queryFn: () => examApi.getAllByAdmin(page - 1, rowsPerPage)
+        queryFn: () => examApi.getAllByAdmin(page - 1, rowsPerPage, 'createTime', 'DESC')
     });
     useEffect(() => {
         if (data?.data) {
@@ -171,14 +171,28 @@ const Exams: React.FC<ExamsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Table Columns">
-                                <DropdownItem color="primary" as={Link} href={`/admin/exam/${exam?.id}`}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'bannedDis']}>
+                                <DropdownItem
+                                    key={exam?.status === 'DISABLE' ? 'viewDis' : 'view'}
+                                    color="primary"
+                                    as={Link}
+                                    href={`/admin/exam/${exam?.id}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" as={Link} href={`/admin/exam/edit/${exam?.id}`}>
+                                <DropdownItem
+                                    key={exam?.status === 'DISABLE' ? 'editDis' : 'edit'}
+                                    color="warning"
+                                    as={Link}
+                                    href={`/admin/exam/edit/${exam?.id}`}
+                                >
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onDeactivateOpen(exam?.id)}>
+                                <DropdownItem
+                                    key={exam?.status === 'DISABLE' ? 'bannedDis' : 'ban'}
+                                    color="danger"
+                                    onClick={() => onDeactivateOpen(exam?.id)}
+                                >
                                     Vô hiệu hóa
                                 </DropdownItem>
                             </DropdownMenu>

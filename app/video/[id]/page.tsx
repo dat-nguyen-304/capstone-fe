@@ -31,6 +31,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [isLike, setIsLike] = useState(false);
     const [numberLike, setNumberLike] = useState<number>(0);
     const [updateState, setUpdateState] = useState<Boolean>(false);
+    const [reportCommentId, setReportCommentId] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
     };
@@ -41,12 +43,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     };
 
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['video-detail', params?.id],
+        queryKey: ['video-detail', { params: params?.id }],
         queryFn: () => videoApi.getVideoDetailById(params?.id)
     });
-    const { data: commentsData } = useQuery<any>({
+    const { data: commentsData, refetch } = useQuery<any>({
         queryKey: ['commentsVideo', updateState],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100)
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createDate', 'DESC')
     });
     useEffect(() => {
         if (data) {
@@ -59,6 +61,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
 
     const handleFeedbackSubmission = async () => {
         try {
+            setIsSubmitting(true);
             const commentVideo = {
                 videoId: Number(params?.id),
                 commentContent: comment
@@ -66,10 +69,14 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             console.log(commentVideo);
             const res = await commentsVideoApi.createCommentVideo(commentVideo);
             console.log(res);
-            setComment('');
-            setUpdateState(prev => !prev);
+            if (res) {
+                setIsSubmitting(false);
+                setComment('');
+                refetch();
+            }
             // console.log(ratingCourse);
         } catch (error) {
+            setIsSubmitting(false);
             console.error('Error submitting feedback:', error);
         }
     };
@@ -100,7 +107,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         return {
             id: commentData.id,
             ownerFullName: commentData.useName || 'Nguyễn Văn A',
-            content: commentData.comment || 'Nội dung rất hay'
+            content: commentData.comment || 'Nội dung rất hay',
+            ownerAvatar: commentData?.avatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c'
         };
     };
     const commonInfo = {
@@ -176,6 +184,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                             color={comment === '' ? 'default' : 'primary'}
                                             className="my-4"
                                             onClick={handleFeedbackSubmission}
+                                            isLoading={isSubmitting}
                                         >
                                             Bình luận
                                         </Button>
@@ -185,13 +194,13 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                             commentsData?.data?.map((commentInfo: any, index: number) => (
                                                 <CommentItem
                                                     key={index}
+                                                    refetch={refetch}
                                                     commentInfo={mapCommentToCommonInfo(commentInfo)}
+                                                    onCommentId={setReportCommentId}
                                                 />
                                             ))
                                         ) : (
-                                            <>
-                                                <CommentItem commentInfo={commonInfo} />
-                                            </>
+                                            <div>Chưa có phản hồi</div>
                                         )}
                                     </ul>
                                     {/* <Button className="w-full">Xem thêm</Button> */}

@@ -77,7 +77,7 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
         isPreviousData
     } = useQuery({
         queryKey: ['exam-topics', { page, rowsPerPage, updateState }],
-        queryFn: () => examApi.getAllTopicAdmin(page - 1, rowsPerPage)
+        queryFn: () => examApi.getAllTopicAdmin(page - 1, rowsPerPage, 'id', 'DESC')
     });
     console.log(topicsData);
 

@@ -2,7 +2,7 @@
 
 import { Button, Card, Link, Pagination, Select, SelectItem, Skeleton, Tooltip, User } from '@nextui-org/react';
 import StudentLayout from '@/components/header/StudentLayout';
-import { combinationApi, examApi, studentApi, subjectApi } from '@/api-client';
+import { combinationApi, examApi, studentApi, subjectApi, suggestApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,8 @@ import CourseCard from '@/components/course/CourseCard';
 import { useUser } from '@/hooks';
 import { link } from 'fs';
 import { createSkeletonArray } from '@/utils';
+import { MdVerified } from 'react-icons/md';
+import Home from '../page';
 
 interface ExamDetailProps {
     params: { id: number };
@@ -56,18 +58,16 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const [isCreatingTarget, setIsCreatingTarget] = useState(false);
     const [showCombination, setShowCombination] = useState(true);
     const [showEntranceExam, setShowEntranceExam] = useState(false);
-
+    // const [showSuggestCourse, setShowSuggestCourse] = useState(false);
+    const [entranceExamCombination, setEntranceExamCombination] = useState<any[]>([]);
+    const [courseCombination, setCourseCombination] = useState<any[]>([]);
     const { data: subjectsData } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
-    const { data, isLoading } = useQuery({
-        queryKey: ['combinationIds'],
-        queryFn: combinationApi.getAll,
-        staleTime: Infinity
-    });
-    const { data: targetData } = useQuery({
+
+    const { data: targetData, isLoading } = useQuery({
         queryKey: ['targets'],
         queryFn: studentApi.getTarget
     });
@@ -99,7 +99,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         ?.subjectTargetResponses?.map((response: any) => response.subjectId) || [];
 
                 setFilteredSubjects(subjectsData?.filter(subject => subjectIds.includes(subject.id)) || []);
-                console.log(filteredSubjects);
                 setShowEntranceExam(true);
                 setShowCombination(false);
             } else {
@@ -114,9 +113,48 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
             setShowCombination(false);
         }
     };
-    console.log(filteredSubjects[0]?.id);
 
+    const getEntranceExamByCombination = async () => {
+        const subject1 = getSubjectNameById(filteredSubjects[0]?.id || 1);
+        const subject2 = getSubjectNameById(filteredSubjects[1]?.id || 2);
+        const subject3 = getSubjectNameById(filteredSubjects[2]?.id || 3);
+
+        try {
+            const response = await examApi.getEntranceExamByCombination(subject1, subject2, subject3);
+            // Handle the API response as needed
+            setEntranceExamCombination(response);
+            // console.log(response);
+        } catch (error) {
+            // Handle API error
+            console.error(error);
+        }
+    };
+    const getSuggestCourseCombination = async () => {
+        const subject1 = filteredSubjects[0]?.id || 1;
+        const subject2 = filteredSubjects[1]?.id || 2;
+        const subject3 = filteredSubjects[2]?.id || 3;
+
+        try {
+            const response = await suggestApi.getSuggestByCombination(subject1, subject2, subject3);
+            // Handle the API response as needed
+            setCourseCombination(response);
+            // console.log(response);
+        } catch (error) {
+            // Handle API error
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        if (showEntranceExam && filteredSubjects.length === 3) {
+            getEntranceExamByCombination();
+            getSuggestCourseCombination();
+        }
+    }, [showEntranceExam, filteredSubjects]);
     const skeletonArray = createSkeletonArray(16);
+    console.log(entranceExamCombination);
+    console.log(courseCombination);
+
+    if (!user) return <Home />;
     if (!subjectsData) return <Loader />;
 
     return (
@@ -125,8 +163,8 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                 {!isLoading ? (
                     <>
                         {showCombination
-                            ? data?.map((combination: Combination) => (
-                                  <Tooltip key={combination.id} color="primary" content={combination.description}>
+                            ? targetData?.map((combination: any) => (
+                                  <Tooltip key={combination.id} color="primary" content={combination?.name}>
                                       <li>
                                           <Card
                                               isPressable
@@ -159,12 +197,12 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                 )}
             </ul>
             {showCombination ? (
-                <div className="flex justify-center w-full mt-4">
+                <div className="flex justify-center items-center w-full mt-4">
                     <Button
                         onClick={handleSelectButtonClick}
                         variant="bordered"
                         color="primary"
-                        className="w-full mx-7"
+                        className="w-1/2 mx-7"
                         disabled={!selectedCombination}
                     >
                         Chọn tổ hợp
@@ -196,26 +234,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                 {showEntranceExam ? (
                     <div>
                         <div className="flex items-center ">
-                            <Select
-                                size="lg"
-                                isRequired
-                                isDisabled={false}
-                                label="Chọn môn"
-                                color="primary"
-                                variant="bordered"
-                                labelPlacement="outside"
-                                defaultSelectedKeys={[filteredSubjects?.length ? `${filteredSubjects[0]?.id}` : '1']}
-                                value={selectedSubject}
-                                name="subject"
-                                className="w-1/5"
-                                onChange={event => setSelectedSubject(Number(event.target.value))}
-                            >
-                                {filteredSubjects?.map((subject: Subject) => (
-                                    <SelectItem key={subject.id} value={subject.id}>
-                                        {subject.name}
-                                    </SelectItem>
-                                ))}
-                            </Select>
                             <Button
                                 onClick={() => {
                                     // Add logic to navigate to the create target page
@@ -231,78 +249,94 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         </div>
                         <h2 className="text-lg my-8">Bài kiểm tra đầu vào:</h2>
                         <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-8 gap-2 sm:gap-4">
-                            {entranceExam !== '' ? (
-                                <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
-                                    <div className="flex font-semibold text-sm sm:text-base truncate">
-                                        <span>{entranceExam?.name}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                        <BsBookFill className="text-blue-700" />
-                                        <span className="text-xs sm:text-sm">
-                                            {getSubjectName(entranceExam?.subject)}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                        <BsClockFill className="text-blue-700" />
-                                        <span className="text-xs sm:text-sm">{entranceExam?.duration} phút</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                        <FaUserEdit className="text-blue-700" />
-                                        <span className="text-xs sm:text-sm">
-                                            {entranceExam?.questionList?.length} câu hỏi
-                                        </span>
-                                    </div>
-                                    <Button
-                                        variant="flat"
-                                        disabled
-                                        className="mt-2"
-                                        color="primary"
-                                        as={Link}
-                                        href={`/exam/${entranceExam?.id}/practice`}
+                            {entranceExamCombination && entranceExamCombination.length > 0 ? (
+                                entranceExamCombination.map((examCombination, index) => (
+                                    <Card
+                                        key={index}
+                                        className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg"
                                     >
-                                        Làm bài
-                                    </Button>
-                                </Card>
+                                        {examCombination?.attemptStatus !== null ? (
+                                            <div>
+                                                <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
+                                                    {examCombination?.attemptStatus == 'DONE' && (
+                                                        <MdVerified
+                                                            color="rgb(13, 226, 152)"
+                                                            className="inline mr-1 mb-1"
+                                                            size={20}
+                                                        />
+                                                    )}
+                                                    <span>{examCombination?.examName}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                    <BsBookFill className="text-blue-700" />
+                                                    <span className="text-xs sm:text-sm">
+                                                        {getSubjectName(examCombination?.subject)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                    <BsClockFill className="text-blue-700" />
+                                                    <span className="text-xs sm:text-sm">
+                                                        {examCombination?.examDuration} phút
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                    <FaUserEdit className="text-blue-700" />
+                                                    <span className="text-xs sm:text-sm">
+                                                        {examCombination?.examTotalQuestion || 0} câu hỏi
+                                                    </span>
+                                                </div>
+                                                <Button
+                                                    variant="flat"
+                                                    disabled
+                                                    className="w-full mt-2"
+                                                    color="primary"
+                                                    as={Link}
+                                                    isDisabled={examCombination?.grade !== null ? true : false}
+                                                    href={`/exam/${examCombination?.examId}/practice`}
+                                                >
+                                                    {examCombination?.grade !== null
+                                                        ? examCombination?.grade
+                                                        : 'Làm bài'}
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center mt-4">
+                                                <p className="m-4">
+                                                    Đề kiểm tra {getSubjectName(examCombination?.subject)} hiện chưa có{' '}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </Card>
+                                ))
                             ) : (
                                 <>Bài Kiểm Tra Đầu Vào Hiện Chưa Có</>
                             )}
                         </ul>
                     </div>
                 ) : null}
-                <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
-                <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
-                    <CourseCard
-                        key="1"
-                        course={{
-                            id: 1,
-                            thumbnail: '/banner/slide-1.png',
-                            courseName: 'course mới',
-                            teacherName: 'nguyen van a',
-                            rating: 4.3,
-                            numberOfRate: 4,
-                            totalVideo: 12,
-                            subject: 'Toán học',
-                            level: 'Cơ bản',
-                            price: 1000000
-                        }}
-                    />
+                {showEntranceExam ? (
+                    <>
+                        <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
+                        <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
+                            {courseCombination.map((course, index) => (
+                                <CourseCard
+                                    key={index}
+                                    course={{
+                                        id: course.id,
+                                        thumbnail: course.thumbnail,
+                                        courseName: course.courseName,
+                                        teacherName: course.teacherName,
+                                        rating: course.rating,
+                                        numberOfRate: course.numberOfRate,
+                                        totalVideo: course.totalVideo,
+                                        subject: course.subject,
+                                        level: course.level,
+                                        price: course.price
+                                    }}
+                                />
+                            ))}
 
-                    <CourseCard
-                        key="2"
-                        course={{
-                            id: 1,
-                            thumbnail: '/banner/slide-1.png',
-                            courseName: 'course mới',
-                            teacherName: 'nguyen van a',
-                            rating: 4.3,
-                            numberOfRate: 4,
-                            totalVideo: 12,
-                            subject: 'Toán học',
-                            level: 'Cơ bản',
-                            price: 1000000
-                        }}
-                    />
-                    <CourseCard
+                            {/* <CourseCard
                         key="3"
                         course={{
                             id: 1,
@@ -316,8 +350,10 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                             level: 'Cơ bản',
                             price: 1000000
                         }}
-                    />
-                </div>
+                    /> */}
+                        </div>
+                    </>
+                ) : null}
             </div>
         </StudentLayout>
     );
