@@ -16,6 +16,8 @@ import NotFound from '@/app/not-found';
 import { discussionApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
 import { CreateTopicObject } from '@/types';
+import { toast } from 'react-toastify';
+import { BsArrowLeft } from 'react-icons/bs';
 interface EditTopicProps {
     params: { id: number };
 }
@@ -23,6 +25,8 @@ interface EditTopicProps {
 const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { data: discussionTopic, isLoading } = useQuery({
         queryKey: ['topicDetail', { params }],
         queryFn: () => discussionApi.getTopicById(params?.id)
@@ -44,7 +48,9 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     }, [discussionTopic]);
 
     const onSubmit = async (formData: CreateTopicObject) => {
+        const toastLoading = toast.loading('Đang chỉnh sửa chủ đề');
         try {
+            setIsSubmitting(true);
             const response = await discussionApi.updateTopic(
                 {
                     name: formData.name,
@@ -53,9 +59,15 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
                 params?.id
             );
             if (!response.data.code) {
+                toast.success('Chỉnh sửa thành công');
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
                 router.push('/admin/topic');
             }
         } catch (error) {
+            setIsSubmitting(false);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -63,9 +75,14 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (
-        <div className="w-[90%] sm:w-4/5 mx-auto my-8">
+        <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Chỉnh sửa chủ đề</h3>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa chủ đề</h3>
+                    <Button variant="faded" onClick={() => router.back()} size="sm">
+                        <BsArrowLeft /> Quay lại
+                    </Button>
+                </div>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="name"
@@ -75,12 +92,13 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
                         className="w-[100%] max-w-[360px] mb-2 sm:mb-0"
                         variant="bordered"
                         control={control}
+                        color="primary"
                     />
                 </div>
                 <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
+                    <label className="text-sm font-semibold text-blue-500">Mô tả chủ đề</label>
 
-                    <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="description" placeholder="Nội dung" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">
@@ -93,7 +111,7 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
                     Chỉnh sửa chủ đề
                 </Button>
             </form>

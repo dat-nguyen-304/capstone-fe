@@ -50,9 +50,9 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/quiz">Danh sách bài tập</Link>, '10')
     ]),
     getItem('Thảo luận', 'sub4', <CommentOutlined />, [
-        getItem(<Link href="/teacher/discussion">Tất cả bài viết</Link>, '11'),
-        getItem(<Link href="/teacher/discussion/create">Tạo bài viết</Link>, '12'),
-        getItem(<Link href="/teacher/discussion/my-post">Bài viết của tôi</Link>, '13')
+        getItem(<Link href="/teacher/discussion">Tất cả bài đăng</Link>, '11'),
+        getItem(<Link href="/teacher/discussion/create">Tạo bài đăng</Link>, '12'),
+        getItem(<Link href="/teacher/discussion/my-post">Bài đăng của tôi</Link>, '13')
     ]),
     getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '14', <LineChartOutlined />),
     getItem(

@@ -15,6 +15,7 @@ import Loader from '@/components/Loader';
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { BsArrowLeft } from 'react-icons/bs';
 interface UploadVideoProps {
     params: { id: number };
 }
@@ -32,6 +33,8 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
     }, []);
     const [selectedVideoStatus, setSelectedVideoStatus] = useState<string>('PUBLIC');
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { getRootProps: getImageRootProps, getInputProps: getImageInputProps }: DropzoneRootProps = useDropzone({
         onDrop: onImageDrop,
         accept: {
@@ -57,9 +60,11 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             setVideoUrl(data?.url);
         }
     }, [data]);
+
     const onSubmit = async (formData: any) => {
         let toastLoading;
         try {
+            setIsSubmitting(true);
             toastLoading = toast.loading('Đang xử lí yêu cầu');
 
             const videoRequest = {
@@ -74,13 +79,14 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             const response = await videoApi.updateVideo(videoRequest);
 
             if (response) {
+                setIsSubmitting(false);
+                toast.dismiss(toastLoading);
                 toast.success('Video đã được chỉnh sửa thành công');
-                router.push('/teacher/video/my-video-draft');
+                router.push('/teacher/video/my-video');
             }
-            toast.dismiss(toastLoading);
-            // Handle the response as needed
         } catch (error) {
             toast.dismiss(toastLoading);
+            setIsSubmitting(false);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
@@ -89,7 +95,13 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
     if (!data) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa video</h3>
+            <div className="mt-4 sm:mt-0 flex justify-between">
+                <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa video</h3>
+                <Button size="sm" variant="flat" onClick={() => router.back()}>
+                    <BsArrowLeft />
+                    <span>Quay lại</span>
+                </Button>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="lg:grid grid-cols-6 gap-2 mt-8">
                     <div className="col-span-6">
@@ -191,7 +203,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit" className="mb-4">
+                <Button color="primary" type="submit" className="mb-4" isLoading={isSubmitting}>
                     Xác nhận thay đổi
                 </Button>
             </form>

@@ -15,6 +15,8 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
+import { BsArrowLeft } from 'react-icons/bs';
+import { toast } from 'react-toastify';
 interface EditPostProps {
     params: { id: number };
 }
@@ -22,6 +24,7 @@ interface EditPostProps {
 const EditPost: React.FC<EditPostProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const { data: editDiscussion } = useQuery({
         queryKey: ['editDiscussion', { params }],
@@ -62,7 +65,10 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
         multiple: false
     });
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang chỉnh sửa bài đăng');
+            setIsSubmitting(true);
             const response = await discussionApi.updateDiscussion(
                 {
                     title: formData.title,
@@ -72,12 +78,18 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                 params.id
             );
             if (response) {
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
+                toast.success('Chỉnh sửa thành công');
                 router.push('/discussion/my-post');
             }
             // console.log(formData.title);
             // console.log(formData.content);
             // console.log(selectedTopic);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            setIsSubmitting(false);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -89,9 +101,16 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Chỉnh sửa bài viết</h3>
+                <div className="mt-4 sm:mt-0 flex justify-between">
+                    <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa bài đăng</h3>
+                    <Button size="sm" variant="flat" onClick={() => router.back()}>
+                        <BsArrowLeft />
+                        <span>Quay lại</span>
+                    </Button>
+                </div>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
+                        color="primary"
                         name="title"
                         isRequired
                         label="Tên tiêu đề"
@@ -101,6 +120,7 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                         control={control}
                     />
                     <Select
+                        color="primary"
                         isRequired
                         items={topicsData?.data}
                         label="Chọn chủ đề"
@@ -118,7 +138,7 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                     </Select>
                 </div>
                 <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
+                    <label className="text-sm font-semibold">Nội dung bài đăng</label>
                     <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                         <div {...getRootProps()}>
                             <input {...getInputProps()} name="avatar" />
@@ -160,7 +180,7 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                             )}
                         </div>
                     </div>
-                    <InputFormula name="content" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="content" placeholder="Nội dung bài đăng" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">
@@ -173,7 +193,7 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
                     Lưu thay đổi
                 </Button>
             </form>

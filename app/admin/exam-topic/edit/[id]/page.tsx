@@ -132,9 +132,9 @@ const EditExamTopic: React.FC<EditExamTopicProps> = ({ params }) => {
                     </Select>
                 </div>
                 <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
+                    <label className="text-sm font-semibold">Nội dung bài đăng</label>
 
-                    <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="description" placeholder="Nội dung bài đăng" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">

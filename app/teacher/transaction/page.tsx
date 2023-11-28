@@ -171,7 +171,12 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     <div className="flex gap-3 mt-4 sm:mt-0">
                         <Dropdown>
                             <DropdownTrigger className="flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
                                     Cột
                                 </Button>
                             </DropdownTrigger>

@@ -97,7 +97,7 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="mt-8 sm:flex items-center justify-between gap-3 items-end">
+                <div className="mt-8 sm:flex items-center justify-between gap-3">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
@@ -157,17 +157,15 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                     </Dropdown>
                 </div>
 
-                {totalRow ? (
-                    <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>
-                ) : null}
+                <p className="mt-4 text-default-400 text-xs sm:text-sm">
+                    {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
+                </p>
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                    {videos.length ? (
-                        videos.map((videoItem: VideoCardType) => (
-                            <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
-                        ))
-                    ) : (
-                        <>Danh Sách Video Trống</>
-                    )}
+                    {videos.length
+                        ? videos.map((videoItem: VideoCardType) => (
+                              <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
+                          ))
+                        : null}
                 </div>
                 {totalPage && totalPage > 1 ? (
                     <div className="flex justify-center my-8">

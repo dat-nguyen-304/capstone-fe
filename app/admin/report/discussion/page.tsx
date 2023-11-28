@@ -188,7 +188,7 @@ const Reports: React.FC<ReportsProps> = () => {
     }, []);
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách báo cáo</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách báo cáo thảo luận</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">

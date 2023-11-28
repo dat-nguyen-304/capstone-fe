@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { Spin } from 'antd';
 import { useCustomModal } from '@/hooks';
+import { toast } from 'react-toastify';
 interface MyPostListProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -70,22 +71,20 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
     }, [discussionsData]);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const handleStatusChange = async (id: number) => {
+        let toastLoading;
         try {
-            onLoading();
+            onClose();
+            toastLoading = toast.loading('Đang xóa');
             const res = await discussionApi.deleteDiscussion(id);
             if (!res?.data?.code) {
-                onSuccess({
-                    title: 'Đã xóa bài thảo luận thành công',
-                    content: 'Bài thảo luận đã được xóa thành công'
-                });
+                toast.success('Xóa thành công');
+                toast.dismiss(toastLoading);
                 setUpdateState(prev => !prev);
             }
         } catch (error) {
             // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
-            });
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error changing user status', error);
         }
     };
@@ -176,7 +175,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                                     key={post.status === 'DELETED' ? 'delDis' : 'delete'}
                                     onClick={() => onDeactivateOpen(post?.id)}
                                 >
-                                    Xóa thảo luận
+                                    Xóa bài đăng
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -189,7 +188,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Bài viết của tôi</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Bài đăng của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between items-center">

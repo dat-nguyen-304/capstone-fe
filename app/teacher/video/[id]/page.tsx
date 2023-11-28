@@ -144,12 +144,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                             </Button>
                         </div>
                         <div className="mt-8 px-0 sm:px-4">
-                            <h3 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">Mô tả video</h3>
-                            <h4 className="font-semibold">{HTMLReactParser(data?.description)}</h4>
+                            <h3 className="mt-8 mb-4 font-bold text-lg text-slate-800">Mô tả video</h3>
+                            <p className="">{HTMLReactParser(data?.description)}</p>
                             {data?.material ? (
                                 <>
-                                    <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">
-                                        Tài liệu học thuật:
+                                    <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800">
+                                        Tài liệu đính kèm:
                                         <span className="font-semibold text-medium text-blue-400 underline">
                                             <Link href={data?.material} target="_blank">
                                                 {' '}

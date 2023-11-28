@@ -27,7 +27,6 @@ interface PostDetailProps {
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
     const currentUser = useUser();
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState<number>();
@@ -47,7 +46,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         refetch,
         isLoading
     } = useQuery({
-        queryKey: ['teacherCommentsByDiscussion', { updateState, page }],
+        queryKey: ['teacherCommentsByDiscussion', { page }],
         queryFn: () =>
             discussionApi.getCommentsByDiscussionId(
                 params?.id,

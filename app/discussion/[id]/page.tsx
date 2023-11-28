@@ -10,7 +10,6 @@ import { useReportModal, useUser } from '@/hooks';
 import { CommentCardType } from '@/types/comment';
 import { Button, Card, Pagination, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { Spin } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -28,7 +27,6 @@ interface PostDetailProps {
 
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [comments, setComments] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(1);
@@ -50,7 +48,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         refetch,
         isLoading
     } = useQuery({
-        queryKey: ['commentsByDiscussion', { page, updateState, filter }],
+        queryKey: ['commentsByDiscussion', { page, filter }],
         queryFn: () =>
             discussionApi.getCommentsByDiscussionId(
                 params?.id,
@@ -107,7 +105,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     });
 
     const onSubmit = async (formData: any) => {
-        let toastLoading;
         try {
             setIsSubmitting(true);
             console.log(formData.response);
@@ -123,13 +120,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 refetch();
                 reset();
                 setUploadedFiles([]);
-                setUpdateState(prev => !prev);
-                toast.success('Tin nhắn đã gửi thành công');
             }
-            toast.dismiss(toastLoading);
         } catch (error) {
             setIsSubmitting(false);
-            toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }

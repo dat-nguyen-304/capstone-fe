@@ -16,11 +16,14 @@ import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { CreateDiscussion } from '@/types/discussion';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 interface CreatePostProps {}
 
 const CreatePost: React.FC<CreatePostProps> = ({}) => {
     const { user } = useUser();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -49,7 +52,10 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
     });
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang tạo bài đăng');
+            setIsSubmitting(true);
             const formDataWithImage = new FormData();
             formDataWithImage.append('title', formData.title);
             formDataWithImage.append('topicId', selectedTopic.toString());
@@ -59,12 +65,18 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
             }
             const response = await discussionApi.createDiscussion(formDataWithImage);
             if (response) {
-                router.push('/discussion');
+                toast.dismiss(toastLoading);
+                toast.success('Tạo bài đăng thành công');
+                setIsSubmitting(false);
+                router.push('/discussion/my-post');
             }
             // console.log(formData.title);
             // console.log(formData.content);
             // console.log(selectedTopic);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            setIsSubmitting(false);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -76,9 +88,10 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
     return (
         <div className="w-[90%] sm:w-4/5 mx-auto my-8">
             <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="font-bold text-xl">Tạo bài viết</h3>
+                <h3 className="font-bold text-xl text-blue-500">Tạo bài đăng</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
+                        color="primary"
                         name="title"
                         isRequired
                         label="Tên tiêu đề"
@@ -88,6 +101,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                         control={control}
                     />
                     <Select
+                        color="primary"
                         isRequired
                         items={data?.data}
                         label="Chọn môn"
@@ -105,7 +119,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                     </Select>
                 </div>
                 <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
+                    <label className="text-sm font-semibold text-blue-500">Nội dung bài đăng</label>
                     <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                         <div {...getRootProps()}>
                             <input {...getInputProps()} name="avatar" />
@@ -132,7 +146,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                             )}
                         </div>
                     </div>
-                    <InputFormula name="content" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="content" placeholder="Nội dung bài đăng" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">
@@ -145,8 +159,8 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
-                    Tạo bài viết
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
+                    Tạo bài đăng
                 </Button>
             </form>
         </div>

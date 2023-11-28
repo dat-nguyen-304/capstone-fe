@@ -63,7 +63,7 @@ const items: MenuItem[] = [
         getItem(<Link href="/admin/report/video">Video</Link>, '15')
     ]),
     getItem('Thảo luận', 'sub5', <CommentOutlined />, [
-        getItem(<Link href="/admin/discussion">Tất cả bài viết</Link>, '16'),
+        getItem(<Link href="/admin/discussion">Tất cả bài đăng</Link>, '16'),
         getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '17'),
         getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '18')
     ]),

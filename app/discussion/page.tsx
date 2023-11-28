@@ -52,7 +52,6 @@ const PostList: React.FC<PostListProps> = ({}) => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [selectedTopic, setSelectedTopic] = useState<Number>(1);
@@ -62,10 +61,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
         data: discussionsData,
         isPreviousData
     } = useQuery({
-        queryKey: [
-            'discussions',
-            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as number }
-        ],
+        queryKey: ['discussions', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as number }],
         queryFn: () => {
             // Check if statusFilter is -1
             if (Array.from(statusFilter)[0] === '-1') {
@@ -178,7 +174,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-            <h3 className="text-xl font-semibold mt-4 sm:mt-0">Tất cả bài viết</h3>
+            <h3 className="text-xl font-semibold text-blue-500 mt-4 sm:mt-0">Tất cả bài đăng</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">

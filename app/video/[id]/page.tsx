@@ -145,11 +145,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>
                             Danh sách bài học
                         </Button>
-                        <h3 className="text-xs sm:text-sm mt-4">{HTMLReactParser(data?.description)}</h3>
+                        <h3 className="mt-8 mb-4 font-bold text-lg text-slate-800">Mô tả video</h3>
+                        <p>{HTMLReactParser(data?.description)}</p>
                         {data?.material ? (
                             <>
-                                <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800 uppercase">
-                                    Tài liệu học thuật:
+                                <h4 className="mt-16 mb-8 font-bold text-lg text-slate-800">
+                                    Tài liệu đính kèm:
                                     <span className="font-semibold text-medium text-blue-400 underline">
                                         <Link href={data?.material} target="_blank">
                                             {' '}
@@ -159,7 +160,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                 </h4>
                             </>
                         ) : null}
-                        <div className="mt-8 px-0 sm:px-4">
+                        <div className="mt-8 px-0">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
                                     <Note currentTime={currentTime} />

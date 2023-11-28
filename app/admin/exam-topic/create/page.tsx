@@ -108,7 +108,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                 </div>
                 <div className="mt-8">
                     <label className="text-sm font-semibold text-[#0070f0]">Mô tả chủ đề</label>
-                    <InputDescription name="description" placeholder="Nội dung bài viết" control={control} />
+                    <InputDescription name="description" placeholder="Nội dung" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">

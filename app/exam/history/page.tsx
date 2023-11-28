@@ -36,52 +36,6 @@ const columns = [
     { name: 'NGÀY', uid: 'finishTime', sortable: true }
 ];
 
-const exams = [
-    {
-        id: 1,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 5,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 2,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 6,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 3,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 8,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 4,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 6,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 5,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 8,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 6,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        score: 7,
-        date: '12/12/2023 08:02:02'
-    }
-];
-
-type Exam = (typeof exams)[0];
 const getSubjectNameById = (id: number): string => {
     const subjectMap: Record<number, string> = {
         1: 'MATHEMATICS',
@@ -242,6 +196,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                     <div className="flex flex-col gap-4">
                         <div className="sm:flex justify-between gap-3 items-end">
                             <Input
+                                color="primary"
                                 isClearable
                                 className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
                                 placeholder="Tìm kiếm..."

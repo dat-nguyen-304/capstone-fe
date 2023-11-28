@@ -1,7 +1,7 @@
 'use client';
 
 import { InputText } from '@/components/form-input';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BiUpArrowAlt } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
 import {
@@ -12,6 +12,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
+    Radio,
+    RadioGroup,
     Select,
     SelectItem,
     Tooltip,
@@ -22,19 +24,18 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { courseApi, videoApi } from '@/api-client';
-import { useUser } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { Course } from '@/types';
 import Loader from '@/components/Loader';
-import { FaQuestionCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-import Cookies from 'cookies';
+
 const UploadVideo: React.FC = () => {
-    const currentUser = useUser();
-    const [optionCourse, setOptionCourse] = useState<string>('NEW');
     const router = useRouter();
+    const [selectedOptionCourse, setSelectedOptionCourse] = useState<string>('NEW');
+    const [optionCourse, setOptionCourse] = useState<string[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [courses, setCourses] = useState<any[]>([]);
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -42,18 +43,34 @@ const UploadVideo: React.FC = () => {
             description: ''
         }
     });
-    const { data: coursesData, isLoading } = useQuery({
-        queryKey: optionCourse === 'NEW' ? ['coursesDraftList'] : ['coursesList'],
-        queryFn: () => {
-            if (optionCourse === 'NEW') {
-                return courseApi.getAllOfTeacherDraft(0, 100, 'id', 'ASC');
-            } else if (optionCourse === 'OLD') {
-                return courseApi.getAllOfTeacher(0, 100);
-            } else {
-                return [];
-            }
-        }
+
+    const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
+        queryKey: ['draftCoursesList'],
+        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'id', 'ASC')
     });
+
+    const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
+        queryKey: ['coursesList'],
+        queryFn: () => courseApi.getAllOfTeacher(0, 100)
+    });
+
+    useEffect(() => {
+        let arr: string[] = [];
+        if (activatedCoursesData?.data?.length) {
+            arr.push('OLD');
+            setSelectedOptionCourse('OLD');
+        }
+        if (updatingCoursesData?.data?.length) {
+            arr.push('NEW');
+            setSelectedOptionCourse('OLD');
+        }
+        setOptionCourse(arr);
+    }, [activatedCoursesData, updatingCoursesData]);
+
+    useEffect(() => {
+        if (selectedOptionCourse === 'NEW') setCourses(updatingCoursesData?.data);
+        else setCourses(activatedCoursesData?.data);
+    }, [selectedOptionCourse]);
 
     const [selectedCourse, setSelectedCourse] = useState<number>();
     const [selectedStatusVideo, setSelectedStatusVideo] = useState<string>('PUBLIC');
@@ -91,8 +108,13 @@ const UploadVideo: React.FC = () => {
         multiple: false
     });
 
+    const removeAttachedFile = (file: FileWithPath) => {
+        const newAttachedFiles = uploadedAttachedFiles?.filter(f => f.path !== file.path);
+        if (!newAttachedFiles?.length) setUploadedAttachedFiles(undefined);
+        else setUploadedAttachedFiles(newAttachedFiles);
+    };
+
     const [uploadedAttachedFiles, setUploadedAttachedFiles] = useState<FileWithPath[]>();
-    const [uploadedAttachedUrl, setUploadedAttachedUrl] = useState<string | null>(null);
     const onAttachedDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         setUploadedAttachedFiles(acceptedFiles);
     }, []);
@@ -113,6 +135,7 @@ const UploadVideo: React.FC = () => {
     const onSubmit = async (formData: any) => {
         let toastLoading;
         try {
+            setIsSubmitting(true);
             toastLoading = toast.loading('Đang xử lí yêu cầu');
             const videoRequest = {
                 name: formData.name,
@@ -139,7 +162,7 @@ const UploadVideo: React.FC = () => {
             }
             let apiUrl = '';
 
-            if (optionCourse == 'NEW') {
+            if (selectedOptionCourse == 'NEW') {
                 const response = await videoApi.createVideoForNewCourse(formDataPayload);
                 // apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos';
                 // const response = await axios.post(apiUrl, formDataPayload, {
@@ -150,10 +173,11 @@ const UploadVideo: React.FC = () => {
                 //     }
                 // });
                 if (response) {
+                    setIsSubmitting(false);
                     toast.success('Video đã được tạo thành công');
                     router.push('/teacher/video/my-video-draft');
                 }
-            } else if (optionCourse == 'OLD') {
+            } else if (selectedOptionCourse == 'OLD') {
                 apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos/teacher/upload';
                 const response = await videoApi.createVideo(formDataPayload);
                 // const response = await axios.put(apiUrl, formDataPayload, {
@@ -164,6 +188,7 @@ const UploadVideo: React.FC = () => {
                 //     }
                 // });
                 if (response) {
+                    setIsSubmitting(false);
                     toast.success('Video đã được tạo thành công');
                     router.push('/teacher/video/my-video-draft');
                 }
@@ -173,18 +198,22 @@ const UploadVideo: React.FC = () => {
             toast.dismiss(toastLoading);
         } catch (error) {
             toast.dismiss(toastLoading);
+            setIsSubmitting(false);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
             // Handle error
         }
     };
-    if (!coursesData) return <Loader />;
+    if (isActivatedCourseLoading || isUpdatingCourseLoading) return <Loader />;
+
+    if (!optionCourse.length) return <div>Vui lòng tạo khóa học</div>;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Đăng tải video mới</h3>
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="lg:grid grid-cols-6 gap-2 mt-8">
-                    <div className="col-span-1">
+                    <div className="lg:col-span-2 xl:col-span-1">
                         <div {...getVideoRootProps()}>
                             <input {...getVideoInputProps()} name="avatar" />
                             <div className="border-2 border-neutral-300 flex items-center justify-center gap-2 rounded-xl cursor-pointer h-[40px]">
@@ -219,7 +248,6 @@ const UploadVideo: React.FC = () => {
                                                     Xem trước video
                                                 </ModalHeader>
                                                 <ModalBody className="flex items-center justify-center">
-                                                    {/* <ReactPlayer url={uploadedVideoUrl} controls /> */}
                                                     <video className="w-4/5" controls>
                                                         <source src={uploadedVideoUrl} type="video/mp4" />
                                                     </video>
@@ -263,7 +291,7 @@ const UploadVideo: React.FC = () => {
                         </div>
                     </div>
                     <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
-                        <div className="col-span-2">
+                        <div className="col-span-1">
                             <InputText
                                 isRequired
                                 variant="bordered"
@@ -274,43 +302,47 @@ const UploadVideo: React.FC = () => {
                                 control={control}
                             />
                         </div>
+                        <div>
+                            <Select
+                                isRequired
+                                size="sm"
+                                label="Trạng thái video"
+                                color="primary"
+                                variant="bordered"
+                                defaultSelectedKeys={['PUBLIC']}
+                                onChange={event => setSelectedStatusVideo(event?.target?.value)}
+                            >
+                                <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
+                                    Công Khai
+                                </SelectItem>
+                                <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
+                                    Không công khai
+                                </SelectItem>
+                            </Select>
+                        </div>
                         <div className="col-span-2 my-4 sm:grid grid-cols-2 gap-4">
-                            <div className="col-span-1  ">
-                                <Select
-                                    isRequired
-                                    size="sm"
-                                    label="Loại khóa học"
-                                    color="primary"
-                                    variant="bordered"
-                                    defaultSelectedKeys={['NEW']}
-                                    onChange={event => setOptionCourse(event?.target?.value)}
-                                >
-                                    <SelectItem key={'NEW'} value={'NEW'}>
-                                        Khóa học mới
-                                    </SelectItem>
-                                    <SelectItem key={'OLD'} value={'OLD'}>
-                                        Khóa học cũ
-                                    </SelectItem>
-                                </Select>
-                            </div>
-                            <div className="col-span-1  ">
-                                <Select
-                                    isRequired
-                                    size="sm"
-                                    label="Trạng thái video"
-                                    color="primary"
-                                    variant="bordered"
-                                    defaultSelectedKeys={['PUBLIC']}
-                                    onChange={event => setSelectedStatusVideo(event?.target?.value)}
-                                >
-                                    <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
-                                        Công Khai
-                                    </SelectItem>
-                                    <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
-                                        Không công khai
-                                    </SelectItem>
-                                </Select>
-                            </div>
+                            {selectedOptionCourse.length === 2 ? (
+                                <div className="col-span-1">
+                                    <Select
+                                        isRequired
+                                        size="sm"
+                                        label="Video này thuộc khóa học"
+                                        color="primary"
+                                        variant="bordered"
+                                        defaultSelectedKeys={[selectedOptionCourse]}
+                                        onChange={event => setSelectedOptionCourse(event?.target?.value)}
+                                    >
+                                        <SelectItem key={'NEW'} value={'NEW'}>
+                                            Khóa học mới
+                                        </SelectItem>
+                                        <SelectItem key={'OLD'} value={'OLD'}>
+                                            Khóa học cũ
+                                        </SelectItem>
+                                    </Select>
+                                </div>
+                            ) : (
+                                <></>
+                            )}
                         </div>
                         <div className="col-span-2  ">
                             <Select
@@ -321,7 +353,7 @@ const UploadVideo: React.FC = () => {
                                 variant="bordered"
                                 onChange={event => setSelectedCourse(Number(event.target.value))}
                             >
-                                {coursesData?.data?.map((course: Course) => (
+                                {courses?.map((course: Course) => (
                                     <SelectItem key={course?.id} value={course?.id}>
                                         {course?.courseName}
                                     </SelectItem>
@@ -339,11 +371,20 @@ const UploadVideo: React.FC = () => {
 
                             {uploadedAttachedFiles && (
                                 <div className="mt-4">
-                                    <label className="font-semibold">Đã tải lên file</label>
+                                    <label className="font-semibold text-[#1877f1]">Đã tải lên file</label>
                                     {uploadedAttachedFiles.map(attachedFile => (
-                                        <p key={attachedFile.path} className="truncate mt-2">
-                                            {attachedFile.path}
-                                        </p>
+                                        <div className="flex items-center" key={attachedFile.path}>
+                                            <p className="truncate mt-2">{attachedFile.path}</p>
+                                            <Button
+                                                color="danger"
+                                                size="sm"
+                                                variant="flat"
+                                                className="mt-2 ml-2 !h-[24px]"
+                                                onClick={() => removeAttachedFile(attachedFile)}
+                                            >
+                                                Xóa
+                                            </Button>
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -351,7 +392,7 @@ const UploadVideo: React.FC = () => {
                     </div>
                 </div>
                 <div>
-                    <label className="block mt-4 mb-2 font-semibold">Mô tả</label>
+                    <label className="block mt-4 mb-2 font-semibold text-[#1877f1]">Mô tả</label>
                     <InputDescription name="description" control={control} />
                 </div>
                 <div className="flex items-start mb-8 mt-16">
@@ -365,7 +406,7 @@ const UploadVideo: React.FC = () => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit" className="mb-4">
+                <Button color="primary" type="submit" className="mb-4" isLoading={isSubmitting}>
                     Xác nhận video mới
                 </Button>
             </form>

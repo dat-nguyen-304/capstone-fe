@@ -13,9 +13,13 @@ import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 interface PostsProps {}
 
 const PostList: React.FC<PostsProps> = ({}) => {
+    const [selectedTopic, setSelectedTopic] = useState<number>(1);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             title: '',
@@ -24,7 +28,6 @@ const PostList: React.FC<PostsProps> = ({}) => {
         }
     });
     const router = useRouter();
-    const [selectedTopic, setSelectedTopic] = useState<Number>(1);
     const { data } = useQuery({
         queryKey: ['topics'],
         queryFn: () => discussionApi.getAll(0, 100)
@@ -45,7 +48,10 @@ const PostList: React.FC<PostsProps> = ({}) => {
     });
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang tạo bài đăng');
+            setIsSubmitting(true);
             const formDataWithImage = new FormData();
             formDataWithImage.append('title', formData.title);
             formDataWithImage.append('topicId', selectedTopic.toString());
@@ -55,12 +61,13 @@ const PostList: React.FC<PostsProps> = ({}) => {
             }
             const response = await discussionApi.createDiscussion(formDataWithImage);
             if (response) {
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
                 router.push('/teacher/discussion/my-post');
             }
-            // console.log(formData.title);
-            // console.log(formData.content);
-            // console.log(selectedTopic);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            setIsSubmitting(false);
             console.error('Error creating course:', error);
         }
     };
@@ -70,7 +77,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài viết mới</h3>
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài đăng mới</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="title"
@@ -83,6 +90,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
                         control={control}
                     />
                     <Select
+                        color="primary"
                         isRequired
                         items={data?.data}
                         label="Chọn chủ đề"
@@ -100,7 +108,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
                     </Select>
                 </div>
                 <div className="mt-8">
-                    <label className="font-semibold">Nội dung bài viết</label>
+                    <label className="font-semibold">Nội dung bài đăng</label>
                     <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                         <div {...getRootProps()}>
                             <input {...getInputProps()} name="avatar" />
@@ -127,7 +135,7 @@ const PostList: React.FC<PostsProps> = ({}) => {
                             )}
                         </div>
                     </div>
-                    <InputFormula name="content" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="content" placeholder="Nội dung bài đăng" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-4">
                     <div className="flex items-center h-5">
@@ -140,8 +148,8 @@ const PostList: React.FC<PostsProps> = ({}) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
-                    Tạo bài viết
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
+                    Tạo bài đăng
                 </Button>
             </form>
         </div>

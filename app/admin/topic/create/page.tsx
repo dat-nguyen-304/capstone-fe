@@ -1,26 +1,24 @@
 'use client';
 
 import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
-import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { InputFormula } from '@/components/form-input/InputFormula';
-import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
-import { useCallback, useState } from 'react';
-import Image from 'next/image';
-import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { discussionApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { useState } from 'react';
 interface CreateTopicProps {}
 
 const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
     const { user } = useUser();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -29,15 +27,23 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
     });
 
     const onSubmit = async (formData: CreateTopicObject) => {
+        const toastLoading = toast.loading('Đang tạo chủ đề');
         try {
+            setIsSubmitting(true);
             const response = await discussionApi.createTopic({
                 name: formData.name,
                 description: formData.description
             });
             if (!response.data.code) {
+                toast.success('Tạo chủ đề thành công');
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
                 router.push('/admin/topic');
             }
         } catch (error) {
+            setIsSubmitting(false);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -57,12 +63,13 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
                         className="w-[100%] max-w-[360px] mb-2 sm:mb-0"
                         variant="bordered"
                         control={control}
+                        color="primary"
                     />
                 </div>
                 <div className="mt-6">
-                    <label className="text-sm font-semibold">Nội dung bài viết</label>
+                    <label className="text-sm font-semibold text-blue-500">Mô tả</label>
 
-                    <InputFormula name="description" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="description" placeholder="Mô tả chủ đề" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-6">
                     <div className="flex items-center h-5">
@@ -75,8 +82,8 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
-                    Tạo bài viết
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
+                    Tạo chủ đề
                 </Button>
             </form>
         </div>

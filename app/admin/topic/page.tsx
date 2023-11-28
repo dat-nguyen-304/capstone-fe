@@ -157,34 +157,6 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
-                                <DropdownTrigger className="flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Cột
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
-                                >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
                     </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>

@@ -79,7 +79,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     return (
         <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">
-                <h2 className="text-2xl font-bold">Thư viện đề thi</h2>
+                <h2 className="text-2xl text-blue-500 font-bold">Thư viện đề thi</h2>
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                     <div className="xl:grid grid-cols-4 relative">
                         <div className="col-span-3">

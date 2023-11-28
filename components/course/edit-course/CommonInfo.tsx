@@ -34,6 +34,8 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const router = useRouter();
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
     const [selectedLevel, setSelectedLevel] = useState<number>(1);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -101,6 +103,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
         else
             try {
+                setIsSubmitting(true);
                 toastLoading = toast.loading('Đang xử lí yêu cầu');
                 const formDataPayload = new FormData();
                 if (uploadedFiles[0]) {
@@ -140,6 +143,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     console.log(videoOrders);
                     const response = await courseApi.updateDraftCourse(formDataPayload);
                     if (response) {
+                        setIsSubmitting(false);
                         console.log('Course draft update successfully:', response);
                         toast.success('Khóa học đã được chỉnh sửa thành công');
                         router.push('/teacher/course/my-course-draft');
@@ -160,14 +164,16 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
 
                     const response = await courseApi.updateCourse(formDataPayload);
                     if (response) {
+                        setIsSubmitting(false);
                         console.log('Course update successfully:', response);
                         toast.success('Khóa học đã chỉnh sửa thành công');
-                        router.push('/teacher/course/my-course-draft');
+                        router.push('/teacher/course/my-course');
                     }
                 }
                 toast.dismiss(toastLoading);
                 // Handle the response as needed
             } catch (error) {
+                setIsSubmitting(false);
                 toast.dismiss(toastLoading);
                 toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
                 console.error('Error creating course:', error);
@@ -316,7 +322,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         .
                     </label>
                 </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
                     Lưu thay đổi
                 </Button>
             </form>

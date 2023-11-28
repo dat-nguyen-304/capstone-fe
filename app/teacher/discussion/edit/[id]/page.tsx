@@ -15,6 +15,7 @@ import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
+import { toast } from 'react-toastify';
 interface PostsProps {
     params: { id: number };
 }
@@ -22,6 +23,8 @@ interface PostsProps {
 const PostList: React.FC<PostsProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { data: editDiscussion } = useQuery({
         queryKey: ['editDiscussion'],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
@@ -62,7 +65,10 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
     });
 
     const onSubmit = async (formData: any) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang chỉnh sửa bài đăng');
+            setIsSubmitting(true);
             const response = await discussionApi.updateDiscussion(
                 {
                     title: formData.title,
@@ -72,12 +78,18 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
                 params.id
             );
             if (response) {
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
+                toast.success('Chỉnh sửa thành công');
                 router.push('/teacher/discussion/my-post');
             }
             // console.log(formData.title);
             // console.log(formData.content);
             // console.log(selectedTopic);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            setIsSubmitting(false);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
         }
     };
@@ -91,7 +103,7 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài viết</h3>
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chỉnh sửa bài đăng</h3>
                 <div className="sm:flex items-center mt-8 sm:mt-12 gap-8">
                     <InputText
                         name="title"
@@ -109,6 +121,7 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
                         label="Chọn chủ đề"
                         variant="bordered"
                         size="sm"
+                        color="primary"
                         className="max-w-xs"
                         defaultSelectedKeys={[`${editDiscussion?.topicId}`]}
                         onChange={event => setSelectedTopic(Number(event.target.value))}
@@ -121,7 +134,7 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
                     </Select>
                 </div>
                 <div className="mt-8">
-                    <label className="font-semibold">Nội dung bài viết</label>
+                    <label className="font-semibold">Nội dung bài đăng</label>
                     <div className="h-[100px] w-[160px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
                         <div {...getRootProps()}>
                             <input {...getInputProps()} name="avatar" />
@@ -163,7 +176,7 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
                             )}
                         </div>
                     </div>
-                    <InputFormula name="content" placeholder="Nội dung bài viết" control={control} />
+                    <InputFormula name="content" placeholder="Nội dung bài đăng" control={control} />
                 </div>
                 <div className="flex items-start mt-16 mb-4">
                     <div className="flex items-center h-5">
@@ -176,7 +189,7 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" isLoading={isSubmitting}>
                     Lưu thay đổi
                 </Button>
             </form>

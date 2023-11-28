@@ -6,10 +6,9 @@ import CommonInfo from '@/components/course/edit-course/CommonInfo';
 import CourseContent from '@/components/course/edit-course/CourseContent';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { Spin } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { BsArrowLeft } from 'react-icons/bs';
 interface EditCourseProps {
     params: { id: number };
 }
@@ -23,6 +22,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     });
 
     console.log(data);
+
     const commonInfo = {
         id: data?.id,
         name: data?.name,
@@ -33,6 +33,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         subject: data?.subject,
         status: data?.status
     };
+
     const courseContent = {
         teacherName: data?.teacherName,
         courseName: data?.courseName,
@@ -52,13 +53,14 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     );
 
     if (!data) return <Loader />;
+
     return (
         <div className="w-[98%] sm:w-full lg:w-[90%] mx-auto">
             <div className="mt-4 sm:mt-0 flex justify-between">
                 <h3 className="text-xl text-blue-500 font-semibold">Chỉnh sửa khóa học</h3>
-
-                <Button size="sm" onClick={() => router.back()}>
-                    Quay lại
+                <Button size="sm" variant="flat" onClick={() => router.back()}>
+                    <BsArrowLeft />
+                    <span>Quay lại</span>
                 </Button>
             </div>
             <Tabs variant="underlined" aria-label="Tabs variants" className="mt-4">
