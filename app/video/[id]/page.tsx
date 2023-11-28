@@ -163,7 +163,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <div className="mt-8 px-0">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
-                                    <Note currentTime={currentTime} />
+                                    <Note currentTime={currentTime} videoId={params?.id} />
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
                                     <Textarea

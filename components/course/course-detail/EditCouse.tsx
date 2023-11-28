@@ -12,6 +12,7 @@ import { courseStatusColorMap } from '@/utils';
 import { courseApi } from '@/api-client';
 import { useCustomModal } from '@/hooks';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface EditCourseProps {
     onOpenPopup: () => void;
@@ -38,26 +39,45 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse }) => {
     else if (editCourse.status === 'DRAFT') status = 'Bản nháp';
     else status = 'Vô hiệu';
     const handleVerifyCourse = async () => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             const courseId = editCourse.id;
 
             const response = await courseApi.TeacherSendVerifyCourse([courseId]);
-
+            if (response) {
+                toast.success('Khóa học của đã được gửi duyệt thành công');
+            }
+            toast.dismiss(toastLoading);
             console.log(response);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error verifying course:', error);
         }
     };
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const handleDeleteCourse = async (courseId: number) => {
         try {
-            const res = await courseApi.deleteCourse(courseId);
-            if (!res.data.code) {
-                onSuccess({
-                    title: 'Xóa khóa học',
-                    content: 'Khóa học đã được xóa thành công'
-                });
-                router.push('/teacher/course/my-course');
+            console.log(editCourse?.status);
+            if (editCourse.status === 'AVAILABLE') {
+                const res = await courseApi.deleteCourse(courseId);
+                if (!res.data.code) {
+                    onSuccess({
+                        title: 'Xóa khóa học',
+                        content: 'Khóa học đã được xóa thành công'
+                    });
+                    router.push('/teacher/course/my-course');
+                }
+            } else {
+                const res = await courseApi.deleteCourseDraft(courseId);
+                if (!res.data.code) {
+                    onSuccess({
+                        title: 'Xóa khóa học',
+                        content: 'Khóa học đã được xóa thành công'
+                    });
+                    router.push('/teacher/course/my-course-draft');
+                }
             }
         } catch (error) {
             // Handle error

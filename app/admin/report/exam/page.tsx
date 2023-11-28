@@ -54,10 +54,10 @@ const reports = [
 
 const columns = [
     { name: 'ID', uid: 'id', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'examName' },
     { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: true },
     { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: true },
     { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: true },
-    { name: 'MÔ TẢ', uid: 'imageUrl' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -81,7 +81,7 @@ const Reports: React.FC<ReportsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const visibleColumns = new Set(['id', 'type', 'reportMsg', 'ownerFullName', 'imageUrl', 'action']);
+    const visibleColumns = new Set(['id', 'examName', 'type', 'reportMsg', 'ownerFullName', 'action']);
     const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
@@ -130,22 +130,6 @@ const Reports: React.FC<ReportsProps> = () => {
         switch (columnKey) {
             case 'type':
                 return getTypeName(cellValue);
-            case 'imageUrl':
-                // Use a default image URL if the imageUrl is null or empty
-                const imageUrl = cellValue || 'URL_OF_YOUR_DEFAULT_IMAGE';
-                return (
-                    <User
-                        avatarProps={{
-                            radius: 'full',
-                            size: 'sm',
-                            src: imageUrl ? imageUrl : 'https://i.pravatar.cc/150?img=4'
-                        }}
-                        classNames={{
-                            description: 'text-default-500'
-                        }}
-                        name={''}
-                    />
-                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -156,7 +140,9 @@ const Reports: React.FC<ReportsProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary">Xem chi tiết</DropdownItem>
+                                <DropdownItem color="primary" as={Link} href={`/admin/exam/${student?.examId}`}>
+                                    Xem chi tiết
+                                </DropdownItem>
                                 <DropdownItem
                                     color="success"
                                     key={student?.userStatus === 'ENABLE' ? 'enableDis' : 'enable'}

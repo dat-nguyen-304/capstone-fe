@@ -47,7 +47,8 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
         try {
             const res = await transactionApi.createPayment(paymentPayload);
             // window.location.href = res?.data;
-            window.open(res?.data, '_blank');
+            // window.open(res?.data, '_blank');
+            window.open(res?.data);
             onOpenChange();
         } catch (error) {
             // Handle errors here, e.g., show an error message

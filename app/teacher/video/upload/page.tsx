@@ -321,7 +321,7 @@ const UploadVideo: React.FC = () => {
                             </Select>
                         </div>
                         <div className="col-span-2 my-4 sm:grid grid-cols-2 gap-4">
-                            {selectedOptionCourse.length === 2 ? (
+                            {optionCourse.length === 2 ? (
                                 <div className="col-span-1">
                                     <Select
                                         isRequired

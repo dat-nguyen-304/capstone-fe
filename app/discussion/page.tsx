@@ -65,11 +65,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
         queryFn: () => {
             // Check if statusFilter is -1
             if (Array.from(statusFilter)[0] === '-1') {
-                return discussionApi.getAllOfConversation(page - 1, rowsPerPage);
+                return discussionApi.getAllOfConversation(page - 1, rowsPerPage, 'createTime', 'DESC');
             } else {
                 // If not -1, get the topicId from statusFilter
                 const topicId = Array.from(statusFilter)[0] as number;
-                return discussionApi.getConversationsByTopicId(topicId, page - 1, rowsPerPage);
+                return discussionApi.getConversationsByTopicId(topicId, page - 1, rowsPerPage, 'createTime', 'DESC');
             }
         }
     });

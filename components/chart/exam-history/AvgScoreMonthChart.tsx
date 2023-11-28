@@ -63,12 +63,13 @@ interface BarChartProps {
 }
 
 const AvgScoreMonthChart: React.FC<BarChartProps> = ({ avgGrade, times }) => {
+    const startIndex = Math.max(times?.length - 10, 0);
     const [userData, setUserData] = useState({
-        labels: times || [],
+        labels: times?.slice(startIndex) || [],
         datasets: [
             {
                 label: 'Điểm số trung bình',
-                data: avgGrade || [],
+                data: avgGrade?.slice(startIndex) || [],
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2
@@ -77,16 +78,14 @@ const AvgScoreMonthChart: React.FC<BarChartProps> = ({ avgGrade, times }) => {
     });
 
     useEffect(() => {
-        console.log('AvgScoreMonthChart useEffect triggered');
-        console.log('avgGrade:', avgGrade);
-        console.log('times:', times);
+        const startIndex = Math?.max(times?.length - 10, 0);
 
         setUserData({
-            labels: times || [],
+            labels: times?.slice(startIndex) || [],
             datasets: [
                 {
                     label: 'Điểm số trung bình',
-                    data: avgGrade || [],
+                    data: avgGrade?.slice(startIndex) || [],
                     backgroundColor: ['#6395fa'],
                     borderColor: 'black',
                     borderWidth: 2

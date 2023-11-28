@@ -35,7 +35,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
     const { data: discussionData } = useQuery({
         queryKey: ['discussionDetail', { params }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
@@ -46,7 +45,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         refetch,
         isLoading
     } = useQuery({
-        queryKey: ['teacherCommentsByDiscussion', { page }],
+        queryKey: ['teacherCommentsByDiscussion', { page, filter }],
         queryFn: () =>
             discussionApi.getCommentsByDiscussionId(
                 params?.id,

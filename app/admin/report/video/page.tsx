@@ -93,11 +93,11 @@ const Reports: React.FC<ReportsProps> = () => {
 
     useEffect(() => {
         if (reportVideosData?.data) {
-            const updatedReportVideo = reportVideosData.data.map((item: any) => ({
-                ...item,
-                key: item.reportId.toString()
-            }));
-            setReportVideo(updatedReportVideo);
+            // const updatedReportVideo = reportVideosData.data.map((item: any) => ({
+            //     ...item,
+            //     key: item.reportId.toString()
+            // }));
+            setReportVideo(reportVideosData?.data);
             setTotalPage(reportVideosData.totalPage);
             setTotalRow(reportVideosData.totalRow);
         }
@@ -189,10 +189,10 @@ const Reports: React.FC<ReportsProps> = () => {
                                 <DropdownItem color="primary" as={Link} href={`/admin/video/${student?.objectId}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="success" onClick={() => onApproveOpen(student?.reportId)}>
+                                <DropdownItem color="success" onClick={() => onApproveOpen(student?.id)}>
                                     Duyệt
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onDeclineOpen(student?.reportId)}>
+                                <DropdownItem color="danger" onClick={() => onDeclineOpen(student?.id)}>
                                     Từ chối
                                 </DropdownItem>
                                 <DropdownItem color="danger" onClick={() => {}}>

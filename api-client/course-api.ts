@@ -78,5 +78,8 @@ export const courseApi = {
     },
     deleteCourse: async (courseId: number) => {
         return await axiosClient.delete(`/courses/teacher?courseId=${courseId}`);
+    },
+    deleteCourseDraft: async (courseId: number) => {
+        return await axiosClient.delete(`/courses/teacher/draft?courseId=${courseId}`);
     }
 };

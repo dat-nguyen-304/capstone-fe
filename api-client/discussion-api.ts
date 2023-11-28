@@ -21,13 +21,15 @@ export const discussionApi = {
     deleteTopic: async (topicId: number) => {
         return await axiosClient.delete(`/discussion/topics/${topicId}`);
     },
-    getAllOfConversation: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/discussion/conversations?&page=${page}&size=${size}&sortType=ASC`);
+    getAllOfConversation: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/discussion/conversations?&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
-    getConversationsByTopicId: async (topicId: number, page: number, size: number) => {
+    getConversationsByTopicId: async (topicId: number, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/discussion/topics/${topicId}/conversations?&page=${page}&size=${size}&sortType=ASC`
+            `/discussion/topics/${topicId}/conversations?&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -59,8 +61,10 @@ export const discussionApi = {
     updateDiscussion: async (payload: UpdateDiscussion, conversationId: number) => {
         return await axiosClient.put(`/discussion/conversations/${conversationId}`, payload);
     },
-    getAllMyDiscussion: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/discussion/conversations/my?page=${page}&size=${size}&sortType=ASC`);
+    getAllMyDiscussion: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/discussion/conversations/my?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     discussionReact: async (discussionId: number) => {

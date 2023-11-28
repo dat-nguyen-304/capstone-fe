@@ -63,7 +63,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         isPreviousData
     } = useQuery({
         queryKey: ['my-student-discussions', { page, rowsPerPage, updateState }],
-        queryFn: () => discussionApi.getAllMyDiscussion(page - 1, rowsPerPage)
+        queryFn: () => discussionApi.getAllMyDiscussion(page - 1, rowsPerPage, 'createTime', 'DESC')
     });
     useEffect(() => {
         if (discussionsData?.data) {

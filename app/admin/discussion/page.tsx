@@ -31,6 +31,15 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action' }
 ];
 
+function getRole(role: string) {
+    const roleNames: { [key: string]: string | null } = {
+        STUDENT: 'Học sinh',
+        TEACHER: 'Giáo viên',
+        ADMIN: 'Quản trị viên'
+    };
+
+    return roleNames[role] || null;
+}
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -50,7 +59,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
         isPreviousData
     } = useQuery({
         queryKey: ['discussions', { page, rowsPerPage, updateState }],
-        queryFn: () => discussionApi.getAllOfConversation(page - 1, rowsPerPage)
+        queryFn: () => discussionApi.getAllOfConversation(page - 1, rowsPerPage, 'createTime', 'DESC')
     });
     useEffect(() => {
         if (discussionsData?.data) {
@@ -96,6 +105,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
                             description: 'text-default-500'
                         }}
                         name={cellValue}
+                        description={getRole(post.ownerRole)}
                     >
                         {post.ownerFullName}
                     </User>
