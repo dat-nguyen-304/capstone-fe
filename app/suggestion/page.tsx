@@ -58,6 +58,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const [isCreatingTarget, setIsCreatingTarget] = useState(false);
     const [showCombination, setShowCombination] = useState(true);
     const [showEntranceExam, setShowEntranceExam] = useState(false);
+    const [alreadyDoEntranceExam, setAlreadyDoEntranceExam] = useState(false);
     // const [showSuggestCourse, setShowSuggestCourse] = useState(false);
     const [entranceExamCombination, setEntranceExamCombination] = useState<any[]>([]);
     const [courseCombination, setCourseCombination] = useState<any[]>([]);
@@ -122,6 +123,10 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         try {
             const response = await examApi.getEntranceExamByCombination(subject1, subject2, subject3);
             // Handle the API response as needed
+            const hasDoneAttempt = response.some((exam: any) => exam?.attemptStatus === 'DONE');
+            // Handle the API response as needed
+
+            setAlreadyDoEntranceExam(hasDoneAttempt);
             setEntranceExamCombination(response);
             // console.log(response);
         } catch (error) {
@@ -136,9 +141,9 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
 
         try {
             const response = await suggestApi.getSuggestByCombination(subject1, subject2, subject3);
-            // Handle the API response as needed
+
             setCourseCombination(response);
-            // console.log(response);
+            console.log(response);
         } catch (error) {
             // Handle API error
             console.error(error);
@@ -255,7 +260,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                         key={index}
                                         className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg"
                                     >
-                                        {examCombination?.attemptStatus !== null ? (
+                                        {examCombination?.examId !== null ? (
                                             <div>
                                                 <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
                                                     {examCombination?.attemptStatus == 'DONE' && (
@@ -314,7 +319,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         </ul>
                     </div>
                 ) : null}
-                {showEntranceExam ? (
+                {showEntranceExam && alreadyDoEntranceExam ? (
                     <>
                         <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
                         <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
