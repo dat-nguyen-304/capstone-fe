@@ -25,17 +25,17 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     const studentData = data?.data.userResponse;
 
     return (
-        <div className="w-[94%] xl:w-[90%] mx-auto my-8">
+        <div className="w-[90%] xl:w-4/5 mx-auto my-8">
             <Button
                 variant="light"
-                className="mt-4 inline-flex items-center gap-2 text-sm cursor-pointer"
+                className="inline-flex items-center gap-2 text-sm cursor-pointer"
                 onClick={() => router.back()}
             >
                 <BsArrowLeft />
                 <span>Quay lại</span>
             </Button>
             <Card className="md:grid grid-cols-9 gap-8 my-4 p-8">
-                <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
+                <div className="col-span-4 xl:col-span-3 py-8 px-4 rounded-xl">
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
                         <Image src="/student.png" width={300} height={300} alt="" className="sm:border-1 rounded-lg" />
                         <div className="hidden md:block">
@@ -57,11 +57,11 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                             <p>{studentData.createdDate || '12/12/2023'}</p>
                         </div>
                         <div className="xl:flex items-center mt-4">
-                            <p className="w-[160px] font-semibold">Tổ hợp môn</p>
-                            <ul>
+                            <p className="w-[160px] font-semibold mb-2 sm:mb-0">Tổ hợp môn</p>
+                            <ul className="flex flex-wrap gap-2">
                                 {targets.map((target: any) => (
-                                    <li className="inline-block mx-1" key={target.id}>
-                                        <Chip color="primary" size="sm" variant="flat">
+                                    <li className="inline-block" key={target.id}>
+                                        <Chip color="primary" variant="flat">
                                             {target.name}
                                         </Chip>
                                     </li>

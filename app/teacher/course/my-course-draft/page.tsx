@@ -70,7 +70,6 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
-                        size="sm"
                         color="primary"
                         startContent={<BsSearch className="text-default-300" />}
                         // value={filterValue}

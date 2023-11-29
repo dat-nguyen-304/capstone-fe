@@ -17,7 +17,7 @@ import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useUser } from '@/hooks';
-import NotFound from '../not-found';
+import NotFound from '@/app/not-found';
 
 interface TransactionsProps {}
 
@@ -142,13 +142,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
 
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-            <div className="flex flex-col gap-4">
+            <h3 className="text-xl font-semibold text-blue-500 mt-4 sm:mt-0">Lịch sử giao dịch</h3>
+            <div className="flex flex-col gap-4 mt-8">
                 <div className="sm:flex justify-between gap-3 items-end">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
-                        size="sm"
+                        color="primary"
                         startContent={<BsSearch className="text-default-300" />}
                         value={filterValue}
                         variant="bordered"
@@ -158,7 +159,12 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     <div className="flex gap-3 mt-4 sm:mt-0">
                         <Dropdown>
                             <DropdownTrigger className="flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
                                     Cột
                                 </Button>
                             </DropdownTrigger>

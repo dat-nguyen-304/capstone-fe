@@ -3,7 +3,7 @@
 import NotificationItem from '@/components/notification/NotificationItem';
 import { Tab, Tabs } from '@nextui-org/react';
 import { useUser } from '@/hooks';
-import NotFound from '../not-found';
+import NotFound from '@/app/not-found';
 
 interface UserNotificationProps {}
 
