@@ -2,6 +2,7 @@ import { VideoCardType } from '@/types';
 import { Card, CardBody, CardHeader, Chip, ChipProps } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BiSolidLike } from 'react-icons/bi';
 
 interface VideoCardProps {
@@ -44,6 +45,8 @@ const floatToTime = (durationFloat: number): string => {
 };
 
 const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
+    const router = useRouter();
+
     let detailPage = '',
         teacherStatus = '',
         profileStatus;
@@ -66,10 +69,18 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         else profileStatus = 'Không công khai';
     }
 
+    const viewDetailVideo = () => {
+        if (type === 'all' && video.videoStatus === 'PUBLIC') router.push(detailPage);
+    };
+
     return (
         <div className="w-full">
-            <Card shadow="sm" isPressable className="w-full max-w-[216px] mt-4 mx-1">
-                <Link href={detailPage}>
+            <Card
+                shadow="sm"
+                isPressable={!(type === 'all' && video.videoStatus === 'PRIVATE')}
+                className="w-full max-w-[216px] mt-4 mx-1"
+            >
+                <div onClick={viewDetailVideo}>
                     <CardHeader className="relative overflow-visible p-0">
                         <Image
                             height={216}
@@ -112,7 +123,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                             </Chip>
                         ) : null}
                     </CardBody>
-                </Link>
+                </div>
             </Card>
         </div>
     );

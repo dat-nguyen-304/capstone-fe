@@ -2,7 +2,7 @@ import DoTestHeader from '@/components/header/DoTestHeader';
 import React from 'react';
 
 export const metadata = {
-    title: 'CEPA - Luyện đề',
+    title: 'CEPA - Kiểm tra',
     description: 'Nền tảng ôn thi Đại học số 1 Việt Nam'
 };
 

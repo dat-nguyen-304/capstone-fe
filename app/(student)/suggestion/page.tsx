@@ -13,10 +13,8 @@ import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import CourseCard from '@/components/course/CourseCard';
 import { useUser } from '@/hooks';
-import { link } from 'fs';
 import { createSkeletonArray } from '@/utils';
 import { MdVerified } from 'react-icons/md';
-import Home from '../page';
 
 interface ExamDetailProps {
     params: { id: number };
@@ -159,7 +157,9 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     console.log(entranceExamCombination);
     console.log(courseCombination);
 
-    if (!user) return <Home />;
+    if (!user) {
+        router.push('/auth');
+    }
     if (!subjectsData) return <Loader />;
 
     return (

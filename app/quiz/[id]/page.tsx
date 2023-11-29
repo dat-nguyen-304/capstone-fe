@@ -8,7 +8,6 @@ import VideoList from '@/components/video/VideoList';
 import { BsQuestionOctagon } from 'react-icons/bs';
 import { CiTimer } from 'react-icons/ci';
 import Link from 'next/link';
-import TestResultLine from '@/components/test/TestResultLine';
 import { FiRotateCw } from 'react-icons/fi';
 
 interface QuizProps {}

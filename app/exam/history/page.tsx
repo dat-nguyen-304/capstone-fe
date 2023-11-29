@@ -11,7 +11,6 @@ import {
     Selection,
     SortDescriptor
 } from '@nextui-org/react';
-import StudentLayout from '@/components/header/StudentLayout';
 import Link from 'next/link';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
@@ -190,92 +189,90 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     // if (!examSubmissionData) return <Loader />;
     // if (!examSubmissionStaticData) return <Loader />;
     return (
-        <StudentLayout>
-            <div className="w-[90%] xl:w-4/5 mx-auto my-8">
-                <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                    <div className="flex flex-col gap-4">
-                        <div className="sm:flex justify-between gap-3 items-end">
-                            <Input
-                                color="primary"
-                                isClearable
-                                className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
-                                placeholder="Tìm kiếm..."
-                                startContent={<BsSearch className="text-default-300" />}
-                                value={filterValue}
-                                variant="bordered"
-                                onClear={() => setFilterValue('')}
-                                onValueChange={onSearchChange}
-                            />
+        <div className="w-[90%] xl:w-4/5 mx-auto my-8">
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="flex flex-col gap-4">
+                    <div className="sm:flex justify-between gap-3 items-end">
+                        <Input
+                            color="primary"
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
+                            placeholder="Tìm kiếm..."
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={filterValue}
+                            variant="bordered"
+                            onClear={() => setFilterValue('')}
+                            onValueChange={onSearchChange}
+                        />
 
-                            <div className="flex gap-3">
-                                <Dropdown>
-                                    <DropdownTrigger className="flex">
-                                        <Button
-                                            endContent={<BsChevronDown className="text-small" />}
-                                            size="sm"
-                                            variant="bordered"
-                                            color="primary"
-                                        >
-                                            Môn học
-                                        </Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu
-                                        disallowEmptySelection
-                                        aria-label="Table Columns"
-                                        closeOnSelect={false}
-                                        selectionMode="single"
-                                        selectedKeys={selectedSubject}
-                                        onSelectionChange={setSelectedSubject}
+                        <div className="flex gap-3">
+                            <Dropdown>
+                                <DropdownTrigger className="flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
                                     >
-                                        {data.map((subject: Subject) => (
-                                            <DropdownItem key={subject.id} className="capitalize">
-                                                {capitalize(subject.name)}
-                                            </DropdownItem>
-                                        ))}
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </div>
-                        </div>
-                        <div className="sm:flex justify-between items-center">
-                            <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
-                            <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                                Số kết quả mỗi trang:
-                                <select
-                                    className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                                    onChange={onRowsPerPageChange}
+                                        Môn học
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectionMode="single"
+                                    selectedKeys={selectedSubject}
+                                    onSelectionChange={setSelectedSubject}
                                 >
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="15">15</option>
-                                </select>
-                            </label>
+                                    {data.map((subject: Subject) => (
+                                        <DropdownItem key={subject.id} className="capitalize">
+                                            {capitalize(subject.name)}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
                     </div>
-                    <TableContent
-                        renderCell={renderCell}
-                        headerColumns={headerColumns}
-                        items={exams || []}
-                        page={page}
-                        setPage={setPage}
-                        sortDescriptor={sortDescriptor}
-                        setSortDescriptor={setSortDescriptor}
-                        totalPage={totalPage || 1}
-                    />
-
-                    <div className="md:grid grid-cols-2 mt-8 gap-4">
-                        <div className="">
-                            <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
-                            <AvgScoreMonthChart avgGrade={avgGrade} times={times} />
-                        </div>
-
-                        <div className="mt-12 md:mt-0">
-                            <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
-                            <QuantityScoreChart quantityGrade={quantityGrade} />
-                        </div>
+                    <div className="sm:flex justify-between items-center">
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                            Số kết quả mỗi trang:
+                            <select
+                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                onChange={onRowsPerPageChange}
+                            >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </label>
                     </div>
-                </Spin>
-            </div>
-        </StudentLayout>
+                </div>
+                <TableContent
+                    renderCell={renderCell}
+                    headerColumns={headerColumns}
+                    items={exams || []}
+                    page={page}
+                    setPage={setPage}
+                    sortDescriptor={sortDescriptor}
+                    setSortDescriptor={setSortDescriptor}
+                    totalPage={totalPage || 1}
+                />
+
+                <div className="md:grid grid-cols-2 mt-8 gap-4">
+                    <div className="">
+                        <h3 className="my-4 font-semibold">Thống kê theo tháng</h3>
+                        <AvgScoreMonthChart avgGrade={avgGrade} times={times} />
+                    </div>
+
+                    <div className="mt-12 md:mt-0">
+                        <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
+                        <QuantityScoreChart quantityGrade={quantityGrade} />
+                    </div>
+                </div>
+            </Spin>
+        </div>
     );
 };
 

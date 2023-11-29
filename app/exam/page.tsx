@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 import ExamFilter from '@/components/exam/ExamFilter';
 import ExamItem from '@/components/exam/ExamItem';
 import ExamInfoCard from '@/components/exam/ExamInfoCard';
-import StudentLayout from '@/components/header/StudentLayout';
 import { useUser } from '@/hooks';
-import NotFound from '../not-found';
+
 import { examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { ExamCardType } from '@/types';
 import { Spin } from 'antd';
+import NotFound from '@/app/not-found';
+import StudentLayout from '@/components/header/StudentLayout';
 
 interface ExamListProps {}
 const getSubjectNameById = (id: number): string => {
@@ -76,6 +77,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     console.log(data);
 
     if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
+
     return (
         <StudentLayout>
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">

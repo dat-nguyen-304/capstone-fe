@@ -20,6 +20,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         router.push('/');
     };
 
+    console.log('currentUser.role', currentUser.role);
     return (
         <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -57,12 +58,12 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                     <DropdownItem key="hello" className="h-14 gap-2">
                         <p className="font-semibold">Xin chào</p>
                         <p className="font-semibold">{currentUser.fullName}</p>
-                        <DropdownItem as={Link} href={`/${currentUser.role.toLocaleLowerCase()}`} key="profile">
-                            Bảng điều khiển
-                        </DropdownItem>
-                        <DropdownItem onClick={handleLogout} key="logout" color="danger">
-                            Đăng xuất
-                        </DropdownItem>
+                    </DropdownItem>
+                    <DropdownItem as={Link} href={`/${currentUser.role.toLocaleLowerCase()}`} key="profile">
+                        Bảng điều khiển
+                    </DropdownItem>
+                    <DropdownItem onClick={handleLogout} key="logout" color="danger">
+                        Đăng xuất
                     </DropdownItem>
                 </DropdownMenu>
             )}
