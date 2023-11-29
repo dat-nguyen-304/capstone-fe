@@ -46,6 +46,19 @@ const getSubjectNameById = (id: number): string => {
 
     return subjectMap[id] || '';
 };
+const getSubjectIdByName = (subject: string): number => {
+    const subjectMap: Record<string, number> = {
+        MATHEMATICS: 1,
+        PHYSICS: 2,
+        CHEMISTRY: 3,
+        ENGLISH: 4,
+        BIOLOGY: 5,
+        HISTORY: 6,
+        GEOGRAPHY: 7
+    };
+
+    return subjectMap[subject] || 0;
+};
 
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const { user } = useUser();
@@ -57,7 +70,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const [showCombination, setShowCombination] = useState(true);
     const [showEntranceExam, setShowEntranceExam] = useState(false);
     const [alreadyDoEntranceExam, setAlreadyDoEntranceExam] = useState(false);
-    // const [showSuggestCourse, setShowSuggestCourse] = useState(false);
     const [entranceExamCombination, setEntranceExamCombination] = useState<any[]>([]);
     const [courseCombination, setCourseCombination] = useState<any[]>([]);
     const { data: subjectsData } = useQuery({
@@ -68,13 +80,12 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
 
     const { data: targetData, isLoading } = useQuery({
         queryKey: ['targets'],
-        queryFn: studentApi.getTarget
+        queryFn: studentApi.getTarget,
+        staleTime: Infinity
     });
-    const { data: entranceExam } = useQuery({
-        queryKey: ['entranceExam', { selectedSubject }],
-        queryFn: () => examApi.getEntranceExamBySubject(getSubjectNameById(selectedSubject !== 0 ? selectedSubject : 1))
-    });
+
     const [filteredSubjects, setFilteredSubjects] = useState<Subject[]>(subjectsData || []);
+    const [filteredSubjectsDone, setFilteredSubjectsDone] = useState<Subject[]>(subjectsData || []);
     const handleCombinationClick = (combinationName: string) => {
         setSelectedCombination(combinationName);
     };
@@ -120,9 +131,15 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
 
         try {
             const response = await examApi.getEntranceExamByCombination(subject1, subject2, subject3);
-            // Handle the API response as needed
+
             const hasDoneAttempt = response.some((exam: any) => exam?.attemptStatus === 'DONE');
-            // Handle the API response as needed
+
+            const doneSubjects = response
+                .filter((exam: any) => exam?.attemptStatus === 'DONE')
+                .map((exam: any) => getSubjectIdByName(exam?.subject));
+
+            setFilteredSubjectsDone(subjectsData?.filter(subject => doneSubjects?.includes(subject?.id)) || []);
+            // Update filteredSubjectsDone with the filtered subjects
 
             setAlreadyDoEntranceExam(hasDoneAttempt);
             setEntranceExamCombination(response);
@@ -133,15 +150,17 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         }
     };
     const getSuggestCourseCombination = async () => {
-        const subject1 = filteredSubjects[0]?.id || 1;
-        const subject2 = filteredSubjects[1]?.id || 2;
-        const subject3 = filteredSubjects[2]?.id || 3;
+        const subject1 = filteredSubjectsDone[0]?.id || 0;
+        const subject2 = filteredSubjectsDone[1]?.id || 0;
+        const subject3 = filteredSubjectsDone[2]?.id || 0;
 
         try {
-            const response = await suggestApi.getSuggestByCombination(subject1, subject2, subject3);
-
-            setCourseCombination(response);
-            console.log(response);
+            if (subject1 !== 0 || subject2 !== 0 || subject3 !== 0) {
+                const response = await suggestApi.getSuggestCourseByCombination(subject1, subject2, subject3);
+                setCourseCombination(response);
+            } else {
+                setCourseCombination([]);
+            }
         } catch (error) {
             // Handle API error
             console.error(error);
@@ -154,8 +173,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         }
     }, [showEntranceExam, filteredSubjects]);
     const skeletonArray = createSkeletonArray(16);
-    console.log(entranceExamCombination);
-    console.log(courseCombination);
 
     if (!user) {
         router.push('/auth');
@@ -163,7 +180,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     if (!subjectsData) return <Loader />;
 
     return (
-        <StudentLayout>
+        <div>
             <ul className="flex gap-4 mt-8 flex-wrap justify-center">
                 {!isLoading ? (
                     <>
@@ -300,7 +317,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                                     href={`/exam/${examCombination?.examId}/practice`}
                                                 >
                                                     {examCombination?.grade !== null
-                                                        ? examCombination?.grade
+                                                        ? examCombination?.grade?.toFixed(1)
                                                         : 'Làm bài'}
                                                 </Button>
                                             </div>
@@ -323,44 +340,32 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                     <>
                         <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
                         <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
-                            {courseCombination.map((course, index) => (
-                                <CourseCard
-                                    key={index}
-                                    course={{
-                                        id: course.id,
-                                        thumbnail: course.thumbnail,
-                                        courseName: course.courseName,
-                                        teacherName: course.teacherName,
-                                        rating: course.rating,
-                                        numberOfRate: course.numberOfRate,
-                                        totalVideo: course.totalVideo,
-                                        subject: course.subject,
-                                        level: course.level,
-                                        price: course.price
-                                    }}
-                                />
-                            ))}
-
-                            {/* <CourseCard
-                        key="3"
-                        course={{
-                            id: 1,
-                            thumbnail: '/banner/slide-1.png',
-                            courseName: 'course mới',
-                            teacherName: 'nguyen van a',
-                            rating: 4.3,
-                            numberOfRate: 4,
-                            totalVideo: 12,
-                            subject: 'Toán học',
-                            level: 'Cơ bản',
-                            price: 1000000
-                        }}
-                    /> */}
+                            {courseCombination?.length > 0 ? (
+                                courseCombination?.map((course, index) => (
+                                    <CourseCard
+                                        key={index}
+                                        course={{
+                                            id: course.id,
+                                            thumbnail: course.thumbnail,
+                                            courseName: course.courseName,
+                                            teacherName: course.teacherName,
+                                            rating: course.rating,
+                                            numberOfRate: course.numberOfRate,
+                                            totalVideo: course.totalVideo,
+                                            subject: course.subject,
+                                            level: course.level,
+                                            price: course.price
+                                        }}
+                                    />
+                                ))
+                            ) : (
+                                <>Hiện tại chưa có khóa học dành cho bạn</>
+                            )}
                         </div>
                     </>
                 ) : null}
             </div>
-        </StudentLayout>
+        </div>
     );
 };
 

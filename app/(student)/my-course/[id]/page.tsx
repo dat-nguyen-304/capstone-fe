@@ -11,6 +11,7 @@ import { courseApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface CourseDetailProps {
     params: { id: number };
@@ -22,10 +23,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryKey: ['my-course-detail', { params }],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
-    const { data: feedbacksData } = useQuery<any>({
+    const { data: feedbacksData, refetch } = useQuery<any>({
         queryKey: ['feedbacks'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
+    console.log(courseData);
 
     const courseInfo = {
         courseName: courseData?.name as string,
@@ -33,6 +35,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         level: courseData?.level,
         teacherName: courseData?.teacherName,
         teacherEmail: courseData?.teacherEmail,
+        teacherAvatar: courseData?.teacherAvatar,
         numberOfRate: courseData?.numberOfRate,
         rating: courseData?.rating,
         totalStudent: courseData?.totalStudent,
@@ -45,27 +48,37 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         price: courseData?.price,
         subject: courseData?.subject,
         level: courseData?.level,
-        totalVideo: courseData?.totalVideo
+        totalVideo: courseData?.totalVideo,
+        progress: courseData?.progress
     };
 
     const courseContent = {
         id: courseData?.id,
         totalVideo: courseData?.totalVideo,
-        listVideo: courseData?.courseVideoResponses
+        listVideo: courseData?.courseVideoResponses,
+        totalCompleted: courseData?.totalCompleted
     };
     console.log(courseData);
     console.log(feedbacksData);
     const handleFeedbackSubmission = async (feedback: { rating: number; comment: string }) => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang tạo bài đăng');
             const ratingCourse = {
                 courseId: Number(params?.id),
                 rating: Number(feedback.rating),
                 content: feedback.comment
             };
             const res = await ratingCourseApi.createRating(ratingCourse);
-            console.log(res);
+            if (res) {
+                toast.success('Bình luận khóa học thành công');
+                refetch();
+            }
+            toast.dismiss(toastLoading);
             // console.log(ratingCourse);
         } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error submitting feedback:', error);
         }
     };

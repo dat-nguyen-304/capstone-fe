@@ -16,3 +16,4 @@ export * from './react-video-api';
 export * from './teacher-incomes-api';
 export * from './report-video-api';
 export * from './suggest-api';
+export * from './student-process-api';

@@ -31,6 +31,7 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         teacherName: data?.teacherName,
+        teacherAvatar: data?.teacherAvatar,
         teacherEmail: data?.teacherEmail,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
@@ -50,7 +51,8 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        listVideo: data?.courseVideoResponses,
+        totalCompleted: data?.totalCompleted
     };
     const { isOpen, onOpen, onClose } = useDisclosure();
     if (!data) return <Loader />;
@@ -63,7 +65,7 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
             </div>
             <div className="relative grid grid-cols-10 gap-4 mt-4 mb-16">
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
-                    <CourseInfo courseInfo={courseInfo} />
+                    <CourseInfo courseInfo={courseInfo} type="draft" />
                     <CourseContent courseContent={courseContent} type="teacher-course-draft" />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">

@@ -30,7 +30,6 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
         setOpen(true);
     };
 
-    console.log(videoId);
     const { data, isLoading, refetch } = useQuery<any>({
         queryKey: ['video-detail-notes', { videoId }],
         queryFn: () => studentNoteApi.getVideoNote(videoId)
@@ -39,7 +38,6 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
         try {
             if (editNoteData && editNoteId) {
                 // If editing an existing note
-                console.log(editNoteData);
 
                 const response = await studentNoteApi.editVideoNote({
                     id: editNoteId,
@@ -74,8 +72,7 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
 
         setOpen(false); // Close the drawer after saving
     };
-    console.log(editNoteData);
-    console.log(data);
+    // console.log(editNoteData);
 
     return (
         <div className="mt-4">
@@ -105,9 +102,9 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
             </Drawer>
             <ul>
                 {data?.length
-                    ? data?.map((note: any) => (
+                    ? data?.map((note: any, index: number) => (
                           <NoteItem
-                              key={data?.id}
+                              key={index}
                               time={currentTime}
                               noteData={note}
                               onEditNote={() => showDrawer(note)}

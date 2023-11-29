@@ -16,7 +16,7 @@ interface EditDraftCourseProps {
 const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
-        queryKey: ['editDraftCourse'],
+        queryKey: ['editDraftCourse', { params: params?.id }],
         queryFn: () => courseApi.getCourseDraftById(params?.id),
         staleTime: 20000
     });
@@ -41,11 +41,12 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         status: data?.status
     };
 
-    const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number }[]>(
+    const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number; isDraft: boolean }[]>(
         data?.videoResponse
             ? data?.courseVideoResponses.map((video: any, index: number) => ({
                   videoId: video.id,
-                  videoOrder: index + 1
+                  videoOrder: index + 1,
+                  isDraft: video?.isDraft
               }))
             : []
     );

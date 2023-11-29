@@ -19,6 +19,7 @@ interface CourseInfoProps {
         description: string;
         updateDate: string;
     };
+    type?: 'draft';
 }
 
 const formatDate = (dateString: string) => {
@@ -26,9 +27,8 @@ const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
-const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
+const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo, type }) => {
     const dateValue = courseInfo?.updateDate ? new Date(courseInfo?.updateDate) : new Date();
-    console.log(courseInfo);
 
     const formattedDate = new Intl.DateTimeFormat('en-GB', {
         year: 'numeric',
@@ -42,16 +42,18 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo }) => {
             <h3 className="text-l my-4 font-semibold truncate">
                 {courseInfo?.subject} - {courseInfo?.level}
             </h3>
-            <div className="flex items-baseline my-2">
-                <span className="text-base mr-2 font-bold">{courseInfo?.rating?.toFixed(1)}</span>
-                <Rate disabled allowHalf defaultValue={courseInfo?.rating} className="!text-xs" />
-                <span className="text-xs ml-2">({courseInfo?.numberOfRate})</span>
-                <span className="text-sm ml-2">
-                    {courseInfo?.totalStudent > 0
-                        ? `${courseInfo?.totalStudent} học sinh đã tham gia`
-                        : 'Chưa có học sinh tham gia'}{' '}
-                </span>
-            </div>
+            {type != 'draft' ? (
+                <div className="flex items-baseline my-2">
+                    <span className="text-base mr-2 font-bold">{courseInfo?.rating?.toFixed(1)}</span>
+                    <Rate disabled allowHalf defaultValue={courseInfo?.rating} className="!text-xs" />
+                    <span className="text-xs ml-2">({courseInfo?.numberOfRate})</span>
+                    <span className="text-sm ml-2">
+                        {courseInfo?.totalStudent > 0
+                            ? `${courseInfo?.totalStudent} học sinh đã tham gia`
+                            : 'Chưa có học sinh tham gia'}{' '}
+                    </span>
+                </div>
+            ) : null}
             <div className="my-2 text-sm flex items-center">
                 Được tạo bởi:
                 <User

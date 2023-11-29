@@ -71,7 +71,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
                         </div>
                         {type === 'my-course' ? (
                             <div className="w-full mt-2">
-                                <Progress className="w-full" percent={0} />
+                                <Progress className="w-full" percent={course?.progress} />
                             </div>
                         ) : (
                             <p className="mt-1 text-[#333] font-bold text-base">

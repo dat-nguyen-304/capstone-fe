@@ -76,7 +76,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         <>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Button as={Link} size="sm" href="/teacher/video/my-video">
+                    <Button size="sm" onClick={() => route?.back()}>
                         <BsArrowLeft />
                     </Button>
                     <p className="text-blue-700 text-xs sm:text-base font-semibold">{data?.name}</p>

@@ -18,7 +18,9 @@ interface CourseContentProps {
             totalComment: number;
             totalLike: number;
             videoStatus: 'PUBLIC' | 'PRIVATE';
+            isDraft: boolean;
         }>;
+        totalCompleted: number;
     };
 }
 
@@ -44,7 +46,9 @@ const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) =>
                     <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
                         <span className="mt-2 sm:mt-0 inline-flex items-center">
                             <span>Hoàn thành</span>
-                            <span className="font-bold mx-1">0</span>
+                            <span className="font-bold mx-1">
+                                {type == 'my-course' ? courseContent?.totalCompleted : 0}
+                            </span>
                             <span>/{courseContent?.totalVideo}</span>
                             <Image src="/video-number/green.svg" width={30} height={30} alt="" />
                         </span>

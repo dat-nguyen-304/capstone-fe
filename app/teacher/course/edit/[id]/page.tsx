@@ -31,7 +31,8 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         description: data?.description,
         price: data?.price,
         subject: data?.subject,
-        status: data?.status
+        status: data?.status,
+        isDraft: data?.isDraft
     };
 
     const courseContent = {
@@ -43,11 +44,12 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         status: data?.status
     };
 
-    const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number }[]>(
+    const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number; isDraft: boolean }[]>(
         data?.videoResponse
             ? data?.courseVideoResponses.map((video: any, index: number) => ({
                   videoId: video.id,
-                  videoOrder: index + 1
+                  videoOrder: index + 1,
+                  isDraft: video?.isDraft
               }))
             : []
     );

@@ -51,7 +51,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        listVideo: data?.courseVideoResponses,
+        totalCompleted: data?.totalCompleted
     };
 
     if (!data) return <Loader />;

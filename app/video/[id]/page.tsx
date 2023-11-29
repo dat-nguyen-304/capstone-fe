@@ -11,7 +11,7 @@ import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
 import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
-import { commentsVideoApi, reactVideoApi, videoApi } from '@/api-client';
+import { commentsVideoApi, progressVideoApi, reactVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
@@ -29,17 +29,14 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [comment, setComment] = useState<string>('');
     const [currentTime, setCurrentTime] = useState('');
     const [isLike, setIsLike] = useState(false);
+    const [isWatched, setIsWatched] = useState(false);
     const [numberLike, setNumberLike] = useState<number>(0);
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [hasCalledProgressApi, setHasCalledProgressApi] = useState(false);
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
-    };
-
-    const handleProgress = (progress: OnProgressProps) => {
-        const timeString = convertSeconds(progress.playedSeconds);
-        setCurrentTime(timeString);
     };
 
     const { data, isLoading } = useQuery<any>({
@@ -50,14 +47,39 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['commentsVideo', updateState],
         queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createDate', 'DESC')
     });
+
+    const handleProgress = (progress: OnProgressProps) => {
+        const timeString = convertSeconds(progress.playedSeconds);
+        const videoDuration = data?.duration || 0;
+        const threshold = 5;
+        setCurrentTime(timeString);
+        console.log(videoDuration - progress.playedSeconds <= threshold);
+        console.log(data?.isWatched);
+        console.log(hasCalledProgressApi);
+
+        if (videoDuration - progress.playedSeconds <= threshold && !isWatched && !hasCalledProgressApi) {
+            callProgressApi(params?.id);
+            setHasCalledProgressApi(true); // Set the state to indicate that the API has been called
+        } else {
+        }
+    };
+
+    const callProgressApi = async (videoId: number) => {
+        try {
+            // Call your API here
+            const res = await progressVideoApi.progressApi(videoId);
+        } catch (error) {
+            console.error('Error calling progress API:', error);
+        }
+    };
+
     useEffect(() => {
         if (data) {
             setIsLike(data?.reactStatus ? true : false);
             setNumberLike(data?.like);
+            setIsWatched(data?.isWatched);
         }
     }, [data]);
-
-    console.log({ data });
 
     const handleFeedbackSubmission = async () => {
         try {
@@ -66,15 +88,14 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                 videoId: Number(params?.id),
                 commentContent: comment
             };
-            console.log(commentVideo);
+
             const res = await commentsVideoApi.createCommentVideo(commentVideo);
-            console.log(res);
+
             if (res) {
                 setIsSubmitting(false);
                 setComment('');
                 refetch();
             }
-            // console.log(ratingCourse);
         } catch (error) {
             setIsSubmitting(false);
             console.error('Error submitting feedback:', error);

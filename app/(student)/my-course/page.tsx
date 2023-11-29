@@ -25,6 +25,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
         // keepPreviousData: true,
         queryFn: () => courseApi.getEnrollCourse(page - 1)
     });
+
     useEffect(() => {
         if (data?.data) {
             setCourses(data.data);

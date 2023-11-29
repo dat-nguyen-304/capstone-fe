@@ -38,7 +38,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         rating: data?.rating,
         totalStudent: data?.totalStudent,
         description: data?.description,
-        updateDate: data?.updateDate
+        updateDate: data?.updateDate,
+        isDraft: data?.isDraft
     };
     const editCourse = {
         id: data?.id,
@@ -52,7 +53,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        listVideo: data?.courseVideoResponses,
+        totalCompleted: data?.totalCompleted
     };
     const { isOpen, onOpen, onClose } = useDisclosure();
     if (!data) return <Loader />;

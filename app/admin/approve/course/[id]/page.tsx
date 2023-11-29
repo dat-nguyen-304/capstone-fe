@@ -29,6 +29,7 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
         subject: data?.subject,
         level: data?.level,
         teacherName: data?.teacherName,
+        teacherAvatar: data?.teacherAvatar,
         teacherEmail: data?.teacherEmail,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
@@ -50,7 +51,8 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses
+        listVideo: data?.courseVideoResponses,
+        totalCompleted: data?.totalCompleted
     };
 
     console.log(data);

@@ -27,7 +27,7 @@ interface CommonInfoProps {
               price: number;
           }
         | any;
-    videoOrders: { videoId: number; videoOrder: number }[];
+    videoOrders: { videoId: number; videoOrder: number; isDraft: boolean }[];
 }
 
 const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
@@ -109,6 +109,9 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                 if (uploadedFiles[0]) {
                     formDataPayload.append('thumbnail', uploadedFiles[0]);
                 }
+                console.log('videoOrders');
+                console.log(videoOrders);
+
                 if (!videoOrders) {
                     formDataPayload.append(
                         'videoOrders',
@@ -140,7 +143,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         'courseTemporaryUpdateRequest',
                         new Blob([JSON.stringify(courseTemporaryUpdateRequest)], { type: 'application/json' })
                     );
-                    console.log(videoOrders);
+
                     const response = await courseApi.updateDraftCourse(formDataPayload);
                     if (response) {
                         setIsSubmitting(false);
@@ -167,7 +170,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         setIsSubmitting(false);
                         console.log('Course update successfully:', response);
                         toast.success('Khóa học đã chỉnh sửa thành công');
-                        router.push('/teacher/course/my-course');
+                        router.push('/teacher/course/my-course-draft');
                     }
                 }
                 toast.dismiss(toastLoading);

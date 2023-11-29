@@ -22,6 +22,7 @@ import Link from 'next/link';
 type VideoItem = {
     id: number;
     name: string;
+    isDraft: boolean;
     duration: number;
     totalComment: number;
     totalLike: number;
@@ -40,7 +41,7 @@ interface CourseContentProps {
         thumbnail: string;
         listVideo: VideoItem[];
     };
-    setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number }[]>>;
+    setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number; isDraft: boolean }[]>>;
 }
 
 const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders }) => {
@@ -76,7 +77,8 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
 
             const updatedVideoOrders = arrayMove(items, activeIndex, overIndex).map((video, index) => ({
                 videoId: video.id,
-                videoOrder: index + 1
+                videoOrder: index + 1,
+                isDraft: video?.isDraft
             }));
             setVideoOrders(updatedVideoOrders);
         }
