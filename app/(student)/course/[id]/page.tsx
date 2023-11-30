@@ -6,7 +6,7 @@ import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
+    });
+
     const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacksCourse'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
@@ -46,13 +51,15 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         price: data?.price,
         subject: data?.subject,
         level: data?.level,
-        totalVideo: data?.totalVideo
+        totalVideo: data?.totalVideo,
+        totalQuiz: quizCourse?.totalRow
     };
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses,
-        totalCompleted: data?.totalCompleted
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizCourse?.data || [])],
+        totalCompleted: data?.totalCompleted,
+        totalQuiz: quizCourse?.totalRow
     };
 
     if (!data) return <Loader />;

@@ -7,14 +7,7 @@ import { FaBookReader, FaCheckDouble } from 'react-icons/fa';
 import { Progress } from 'antd';
 
 interface CourseImageProps {
-    courseImage: {
-        id: number;
-        thumbnail: string;
-        price: number;
-        subject: string;
-        level: string;
-        totalVideo: number;
-    };
+    courseImage: any;
 }
 
 const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
@@ -41,7 +34,7 @@ const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">0 bài tập</span>
+                        <span className="text-sm">{courseImage?.totalQuiz || 0} bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaCheckDouble className="mr-8" />

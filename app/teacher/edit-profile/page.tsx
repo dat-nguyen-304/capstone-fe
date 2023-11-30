@@ -10,7 +10,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 import { PuffLoader } from 'react-spinners';
 import { useQuery } from '@tanstack/react-query';
-import { subjectApi } from '@/api-client';
+import { subjectApi, teacherApi } from '@/api-client';
 import { Subject } from '@/types';
 
 const Profile: React.FC = () => {
@@ -19,6 +19,12 @@ const Profile: React.FC = () => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
+    const { data: teacherProfile } = useQuery({
+        queryKey: ['teacher-public-detail'],
+        queryFn: teacherApi.getTeacherDetail
+    });
+    console.log(teacherProfile);
+
     const [values, setValues] = useState<Selection>(new Set(['1']));
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {

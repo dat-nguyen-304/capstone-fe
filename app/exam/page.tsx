@@ -36,8 +36,6 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
     const { user } = useUser();
 
     const [selectedSubject, setSelectedSubject] = useState(0);
-    console.log(selectedSubject);
-
     const [selectedFilterSort, setSelectedFilterSort] = useState(0);
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();

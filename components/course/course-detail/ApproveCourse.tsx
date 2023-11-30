@@ -14,15 +14,7 @@ import { useState } from 'react';
 import { InputModal } from '@/components/modal/InputModal';
 
 interface ApproveCourseProps {
-    approveCourse: {
-        id: number;
-        thumbnail: string;
-        price: number;
-        subject: string;
-        level: string;
-        totalVideo: number;
-        status: string;
-    };
+    approveCourse: any;
 }
 
 const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
@@ -133,7 +125,7 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">5 bài tập</span>
+                        <span className="text-sm">{approveCourse?.totalQuiz || 0} bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <SiStatuspage className="mr-6" />

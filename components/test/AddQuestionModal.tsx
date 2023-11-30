@@ -174,9 +174,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             isRequired
                                             variant="bordered"
                                             labelPlacement="outside"
-                                            defaultSelectedKeys={
-                                                topicsData?.data ? [`${topicsData?.data[0]?.id}`] : ['1']
-                                            }
+                                            defaultSelectedKeys={editQuestion ? [`${editQuestion?.topicId}`] : ['1']}
                                             onChange={event => setSelectTopic(Number(event.target.value))}
                                         >
                                             {topicsData?.data?.map((topic: Topic) => (

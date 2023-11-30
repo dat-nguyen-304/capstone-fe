@@ -1,10 +1,18 @@
 'use client';
 
+import { teacherIncomeApi } from '@/api-client';
 import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
 import TopContributorItem from '@/components/dashboard/teacher/TopContributorItem';
 import { Card, Tab, Tabs } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
 
 const TeacherDashboard: React.FC = () => {
+    const { data: incomeCourseData, isLoading } = useQuery<any>({
+        queryKey: ['teacher-income-course-for-month'],
+        queryFn: teacherIncomeApi.getTeacherRevenue
+    });
+    console.log(incomeCourseData);
+
     return (
         <div>
             <div className="sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">

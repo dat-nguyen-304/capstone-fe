@@ -26,24 +26,17 @@ import { Spin } from 'antd';
 
 interface ExamsProps {}
 function getSubjectName(subjectCode: string) {
-    switch (subjectCode) {
-        case 'MATHEMATICS':
-            return 'Toán học';
-        case 'ENGLISH':
-            return 'Tiếng anh';
-        case 'PHYSICS':
-            return 'Vật lí';
-        case 'CHEMISTRY':
-            return 'Hóa học';
-        case 'BIOLOGY':
-            return 'Sinh học';
-        case 'HISTORY':
-            return 'Lịch sử';
-        case 'GEOGRAPHY':
-            return 'Địa lý';
-        default:
-            return null;
-    }
+    const subjectNames: { [key: string]: string | null } = {
+        MATHEMATICS: 'Toán học',
+        ENGLISH: 'Tiếng anh',
+        PHYSICS: 'Vật lí',
+        CHEMISTRY: 'Hóa học',
+        BIOLOGY: 'Sinh học',
+        HISTORY: 'Lịch sử',
+        GEOGRAPHY: 'Địa lý'
+    };
+
+    return subjectNames[subjectCode] || null;
 }
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',

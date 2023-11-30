@@ -98,7 +98,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 duration: Number(formData?.duration || 60),
                 courseId: selectedCourse,
                 subject: getSubjectNameById(selectedSubject),
-                examType: 'PRIVATE_EXAM',
+                examType: 'QUIZ',
                 questionList: questions
             };
             console.log(payload);
@@ -118,128 +118,132 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     if (!subjectsData) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
-            <div className="sm:grid grid-cols-6 my-4 gap-3">
-                <div className="my-4 col-span-6 lg:col-span-3">
-                    <InputText
-                        isRequired
-                        variant="bordered"
-                        name="name"
-                        color="primary"
-                        size="sm"
-                        label="Tiêu đề"
-                        control={control}
-                    />
+            <form onSubmit={handleSubmit(createQuiz)}>
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
+                <div className="sm:grid grid-cols-6 my-4 gap-3">
+                    <div className="my-4 col-span-6 lg:col-span-3">
+                        <InputText
+                            isRequired
+                            variant="bordered"
+                            name="name"
+                            color="primary"
+                            size="sm"
+                            label="Tiêu đề"
+                            control={control}
+                        />
+                    </div>
+                    <div className=" my-4 col-span-3 lg:col-span-3">
+                        <Select
+                            size="sm"
+                            isRequired
+                            label="Môn học"
+                            color="primary"
+                            variant="bordered"
+                            defaultSelectedKeys={['1']}
+                            value={selectedSubject}
+                            name="subject"
+                            onChange={event => setSelectedSubject(Number(event.target.value))}
+                        >
+                            {subjectsData.map((subject: Subject) => (
+                                <SelectItem key={subject.id} value={subject.id}>
+                                    {subject.name}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
                 </div>
-                <div className=" my-4 col-span-3 lg:col-span-3">
-                    <Select
-                        size="sm"
-                        isRequired
-                        label="Môn học"
-                        color="primary"
-                        variant="bordered"
-                        defaultSelectedKeys={['1']}
-                        value={selectedSubject}
-                        name="subject"
-                        onChange={event => setSelectedSubject(Number(event.target.value))}
-                    >
-                        {subjectsData.map((subject: Subject) => (
-                            <SelectItem key={subject.id} value={subject.id}>
-                                {subject.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
+                <div className="sm:grid grid-cols-6 my-4 gap-3">
+                    <div className="my-4 col-span-3 lg:col-span-3">
+                        <InputText
+                            isRequired
+                            variant="bordered"
+                            name="duration"
+                            size="sm"
+                            label="Thời gian"
+                            control={control}
+                        />
+                    </div>
+                    <div className="my-4 col-span-3 lg:col-span-3">
+                        <Select
+                            isRequired
+                            size="sm"
+                            label="Khóa học"
+                            color="primary"
+                            variant="bordered"
+                            onChange={event => setSelectedCourse(Number(event.target.value))}
+                        >
+                            {coursesData?.data?.map((course: Course) => (
+                                <SelectItem key={course?.id} value={course?.id}>
+                                    {course?.courseName}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
                 </div>
-            </div>
-            <div className="sm:grid grid-cols-6 my-4 gap-3">
-                <div className="my-4 col-span-3 lg:col-span-3">
-                    <InputText
-                        isRequired
-                        variant="bordered"
-                        name="duration"
-                        size="sm"
-                        label="Thời gian"
-                        control={control}
-                    />
-                </div>
-                <div className="my-4 col-span-3 lg:col-span-3">
-                    <Select
-                        isRequired
-                        size="sm"
-                        label="Khóa học"
-                        color="primary"
-                        variant="bordered"
-                        onChange={event => setSelectedCourse(Number(event.target.value))}
-                    >
-                        {coursesData?.data?.map((course: Course) => (
-                            <SelectItem key={course?.id} value={course?.id}>
-                                {course?.courseName}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                </div>
-            </div>
-            <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
-                Thêm câu hỏi
-            </Button>
-            <AddQuestionModal
-                isOpen={isOpen}
-                onClose={onClose}
-                onAddQuestion={handleAddQuestion}
-                subject={getSubjectNameById(selectedSubject)}
-                editIndex={editIndex}
-                editQuestion={editQuestion}
-                onEditQuestion={handleEditQuestion}
-            />
-            <div>
-                <ul className="mt-8">
-                    {questions?.map((question, index) => (
-                        <div key={index}>
-                            <TestReviewItem questions={question} index={index} />
-                            {/* Add a delete button for each question */}
-                            <Button
-                                onClick={() => handleEditOpen(index)}
-                                className="mx-2"
-                                color="warning"
-                                size="sm"
-                                variant="bordered"
-                            >
-                                Chỉnh sửa
-                            </Button>
-                            <Button
-                                onClick={() => handleDeleteQuestion(index)}
-                                className=""
-                                color="danger"
-                                size="sm"
-                                variant="bordered"
-                            >
-                                Xóa câu hỏi
-                            </Button>
-                        </div>
-                    ))}
-                </ul>
-                <Button
-                    className="w-full mt-16 font-semibold"
-                    color="primary"
-                    size="lg"
-                    onClick={handlePopUpAddQuestion}
-                >
+                <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
                     Thêm câu hỏi
                 </Button>
-            </div>
-            <div className="flex items-start mb-4 mt-8 sm:mt-12">
-                <div className="flex items-center h-5">
-                    <Checkbox />
+                <AddQuestionModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    onAddQuestion={handleAddQuestion}
+                    subject={getSubjectNameById(selectedSubject)}
+                    editIndex={editIndex}
+                    editQuestion={editQuestion}
+                    onEditQuestion={handleEditQuestion}
+                />
+                <div>
+                    <ul className="mt-8">
+                        {questions?.map((question, index) => (
+                            <div key={index}>
+                                <TestReviewItem questions={question} index={index} />
+                                {/* Add a delete button for each question */}
+                                <Button
+                                    onClick={() => handleEditOpen(index)}
+                                    className="mx-2"
+                                    color="warning"
+                                    size="sm"
+                                    variant="bordered"
+                                >
+                                    Chỉnh sửa
+                                </Button>
+                                <Button
+                                    onClick={() => handleDeleteQuestion(index)}
+                                    className=""
+                                    color="danger"
+                                    size="sm"
+                                    variant="bordered"
+                                >
+                                    Xóa câu hỏi
+                                </Button>
+                            </div>
+                        ))}
+                    </ul>
+                    <Button
+                        className="w-full mt-16 font-semibold"
+                        color="primary"
+                        size="lg"
+                        onClick={handlePopUpAddQuestion}
+                    >
+                        Thêm câu hỏi
+                    </Button>
                 </div>
-                <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Tôi đồng ý với{' '}
-                    <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                        chính sách và điều khoản của CEPA
-                    </a>
-                    .
-                </label>
-            </div>
-            <Button color="primary">Tạo bài tập mới</Button>
+                <div className="flex items-start mb-4 mt-8 sm:mt-12">
+                    <div className="flex items-center h-5">
+                        <Checkbox />
+                    </div>
+                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Tôi đồng ý với{' '}
+                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                            chính sách và điều khoản của CEPA
+                        </a>
+                        .
+                    </label>
+                </div>
+                <Button color="primary" type="submit">
+                    Tạo bài tập mới
+                </Button>
+            </form>
         </div>
     );
 };

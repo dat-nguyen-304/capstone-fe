@@ -112,9 +112,6 @@ const CreateCourse: React.FC = () => {
                 topic: selectedTopics
             };
 
-            console.log(courseRequest);
-            console.log(uploadedFiles[0]);
-
             const formDataPayload = new FormData();
             formDataPayload.append(
                 'courseRequest',

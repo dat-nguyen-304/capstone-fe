@@ -18,15 +18,7 @@ interface EditCourseProps {
     onOpenPopup: () => void;
     refetch?: any;
     type?: 'teacher';
-    editCourse: {
-        id: number;
-        thumbnail: string;
-        price: number;
-        subject: string;
-        level: string;
-        totalVideo: number;
-        status: string;
-    };
+    editCourse: any;
 }
 
 const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse, refetch }) => {
@@ -181,7 +173,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse, refetc
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">0 bài tập</span>
+                        <span className="text-sm">{editCourse.totalQuiz || 0} bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <SiStatuspage className="mr-6" />

@@ -4,7 +4,8 @@ export const teacherIncomeApi = {
         return await axiosClient.get(`/teacher-incomes`);
     },
     getTeacherRevenue: async () => {
-        return await axiosClient.get(`/teacher-incomes/course-revenue`);
+        const res = await axiosClient.get(`/teacher-incomes/course-revenue`);
+        return res?.data;
     },
     getTeacherIncomeByCourse: async (courseId: number) => {
         return await axiosClient.get(`/teacher-incomes/by-course?courseId=${courseId}`);

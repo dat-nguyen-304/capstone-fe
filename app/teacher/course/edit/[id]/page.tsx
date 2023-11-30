@@ -1,6 +1,6 @@
 'use client';
 
-import { courseApi } from '@/api-client';
+import { courseApi, examApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import CommonInfo from '@/components/course/edit-course/CommonInfo';
 import CourseContent from '@/components/course/edit-course/CourseContent';
@@ -16,12 +16,16 @@ interface EditCourseProps {
 const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading, status } = useQuery<any>({
-        queryKey: ['editCourse'],
+        queryKey: ['editCourse', { params: params?.id }],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
         staleTime: 20000
     });
-
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['edit-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
+    });
     console.log(data);
+    console.log(quizCourse);
 
     const commonInfo = {
         id: data?.id,
@@ -38,8 +42,12 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     const courseContent = {
         teacherName: data?.teacherName,
         courseName: data?.courseName,
-        totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses,
+        totalVideo: data?.courseVideoResponses?.length,
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizCourse?.data || [])].sort((a, b) => {
+            const aOrder = a.ordinalNumber || a.courseOrder || 0;
+            const bOrder = b.ordinalNumber || b.courseOrder || 0;
+            return aOrder - bOrder;
+        }),
         thumbnail: data?.thumbnail,
         status: data?.status
     };

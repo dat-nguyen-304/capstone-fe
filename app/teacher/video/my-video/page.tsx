@@ -38,9 +38,9 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         // keepPreviousData: true,
         queryFn: () => {
             if (selectedCourse != 0) {
-                return videoApi.getByCourseId(selectedCourse, page - 1, 20, 'createDate', 'DESC');
+                return videoApi.getByCourseId(selectedCourse, page - 1, 20, 'createdDate', 'DESC');
             } else {
-                return videoApi.getAllOfTeacher('ALL', page - 1, 20, 'createDate', 'DESC');
+                return videoApi.getAllOfTeacher('ALL', page - 1, 20, 'createdDate', 'DESC');
             }
         }
     });

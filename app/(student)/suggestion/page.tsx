@@ -63,8 +63,6 @@ const getSubjectIdByName = (subject: string): number => {
 const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const { user } = useUser();
     const router = useRouter();
-    const [selectedSubject, setSelectedSubject] = useState<number>(1);
-    const [submissions, setSubmissions] = useState<any[]>([]);
     const [selectedCombination, setSelectedCombination] = useState<string | null>(null);
     const [isCreatingTarget, setIsCreatingTarget] = useState(false);
     const [showCombination, setShowCombination] = useState(true);
@@ -72,6 +70,9 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const [alreadyDoEntranceExam, setAlreadyDoEntranceExam] = useState(false);
     const [entranceExamCombination, setEntranceExamCombination] = useState<any[]>([]);
     const [courseCombination, setCourseCombination] = useState<any[]>([]);
+    const [selectedTarget, setSelectedTarget] = useState<any>();
+    const [isLoadingEntrance, setIsLoadingEntrance] = useState(false);
+    const [isLoadingCourse, setIsLoadingCourse] = useState(false);
     const { data: subjectsData } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -81,7 +82,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     const { data: targetData, isLoading } = useQuery({
         queryKey: ['targets'],
         queryFn: studentApi.getTarget,
-        staleTime: Infinity
+        staleTime: 30000
     });
 
     const [filteredSubjects, setFilteredSubjects] = useState<Subject[]>(subjectsData || []);
@@ -92,11 +93,11 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
 
     const handleSelectButtonClick = () => {
         // Check if the selected combination exists in targetData.map
-        const combinationExists = targetData?.some(
+        const selectedTarget = targetData?.find(
             (targetCombination: any) => targetCombination.name === selectedCombination
         );
 
-        if (combinationExists) {
+        if (selectedTarget) {
             const subjectTargetResponses = targetData.find(
                 (targetCombination: any) => targetCombination.name === selectedCombination
             )?.subjectTargetResponses;
@@ -107,13 +108,12 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                     targetData
                         .find((targetCombination: any) => targetCombination.name === selectedCombination)
                         ?.subjectTargetResponses?.map((response: any) => response.subjectId) || [];
-
+                setSelectedTarget(selectedTarget);
                 setFilteredSubjects(subjectsData?.filter(subject => subjectIds.includes(subject.id)) || []);
+
                 setShowEntranceExam(true);
                 setShowCombination(false);
             } else {
-                console.log();
-
                 setIsCreatingTarget(true);
                 setShowCombination(false);
             }
@@ -128,28 +128,36 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         const subject1 = getSubjectNameById(filteredSubjects[0]?.id || 1);
         const subject2 = getSubjectNameById(filteredSubjects[1]?.id || 2);
         const subject3 = getSubjectNameById(filteredSubjects[2]?.id || 3);
-
+        setIsLoadingEntrance(true);
+        setIsLoadingCourse(true);
         try {
             const response = await examApi.getEntranceExamByCombination(subject1, subject2, subject3);
+            if (response) {
+                setIsLoadingEntrance(false);
+                setIsLoadingCourse(false);
+                const hasDoneAttempt = response.some((exam: any) => exam?.attemptStatus === 'DONE');
 
-            const hasDoneAttempt = response.some((exam: any) => exam?.attemptStatus === 'DONE');
+                const doneSubjects = response
+                    .filter((exam: any) => exam?.attemptStatus === 'DONE')
+                    .map((exam: any) => getSubjectIdByName(exam?.subject));
 
-            const doneSubjects = response
-                .filter((exam: any) => exam?.attemptStatus === 'DONE')
-                .map((exam: any) => getSubjectIdByName(exam?.subject));
+                const filterDataDone = subjectsData?.filter(subject => doneSubjects?.includes(subject?.id)) || [];
 
-            setFilteredSubjectsDone(subjectsData?.filter(subject => doneSubjects?.includes(subject?.id)) || []);
-            // Update filteredSubjectsDone with the filtered subjects
+                setFilteredSubjectsDone(filterDataDone);
 
-            setAlreadyDoEntranceExam(hasDoneAttempt);
-            setEntranceExamCombination(response);
-            // console.log(response);
+                setAlreadyDoEntranceExam(hasDoneAttempt);
+                setEntranceExamCombination(response);
+            }
         } catch (error) {
-            // Handle API error
+            setIsLoadingEntrance(false);
+            setIsLoadingCourse(false);
             console.error(error);
         }
     };
     const getSuggestCourseCombination = async () => {
+        console.log('filteredSubjectsDone');
+        console.log(filteredSubjectsDone);
+
         const subject1 = filteredSubjectsDone[0]?.id || 0;
         const subject2 = filteredSubjectsDone[1]?.id || 0;
         const subject3 = filteredSubjectsDone[2]?.id || 0;
@@ -157,23 +165,41 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         try {
             if (subject1 !== 0 || subject2 !== 0 || subject3 !== 0) {
                 const response = await suggestApi.getSuggestCourseByCombination(subject1, subject2, subject3);
-                setCourseCombination(response);
+                if (response) {
+                    setCourseCombination(response);
+                }
             } else {
                 setCourseCombination([]);
             }
         } catch (error) {
-            // Handle API error
             console.error(error);
+
+            // Handle API error
+            throw error;
         }
     };
     useEffect(() => {
-        if (showEntranceExam && filteredSubjects.length === 3) {
-            getEntranceExamByCombination();
-            getSuggestCourseCombination();
-        }
-    }, [showEntranceExam, filteredSubjects]);
-    const skeletonArray = createSkeletonArray(16);
+        const fetchData = async () => {
+            if (showEntranceExam && filteredSubjects.length === 3) {
+                try {
+                    await getEntranceExamByCombination();
+                } catch (error) {
+                    console.error(error);
+                    // Handle errors as needed
+                }
+            }
+        };
 
+        fetchData();
+    }, [showEntranceExam, filteredSubjects]);
+
+    useEffect(() => {
+        getSuggestCourseCombination();
+    }, [filteredSubjectsDone]);
+
+    const skeletonArray = createSkeletonArray(16);
+    const skeletonEntranceExamArray = createSkeletonArray(3);
+    const skeletonCourseArray = createSkeletonArray(1);
     if (!user) {
         router.push('/auth');
     }
@@ -255,115 +281,159 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">
                 {showEntranceExam ? (
                     <div>
-                        <div className="flex items-center ">
-                            <Button
-                                onClick={() => {
-                                    // Add logic to navigate to the create target page
-                                    setShowCombination(true), setShowEntranceExam(false);
-                                }}
-                                size="lg"
-                                className="mx-2"
-                                variant="bordered"
-                                color="default"
-                            >
-                                Chọn tổ hợp khác
-                            </Button>
-                        </div>
+                        <Card className=" sm:p-8 mt-8 my-2">
+                            <div className="text-center mt-4">
+                                <h2 className="m-4 font-bold">Mục tiêu của bạn </h2>
+                                <div>
+                                    {selectedTarget && selectedTarget?.subjectTargetResponses
+                                        ? selectedTarget?.subjectTargetResponses.map((response: any) => (
+                                              <Button
+                                                  key={response.id}
+                                                  variant="bordered"
+                                                  color="primary"
+                                                  className="mx-2"
+                                                  disabled
+                                              >
+                                                  {response.name}: {response.grade}
+                                              </Button>
+                                          ))
+                                        : ''}
+                                </div>
+                                <Button
+                                    onClick={() => {
+                                        // Add logic to navigate to the create target page
+                                        setShowCombination(true), setShowEntranceExam(false);
+                                    }}
+                                    className="m-2   items-center justify-center"
+                                    variant="bordered"
+                                    color="default"
+                                >
+                                    Chọn tổ hợp khác
+                                </Button>
+                            </div>
+                        </Card>
+
                         <h2 className="text-lg my-8">Bài kiểm tra đầu vào:</h2>
                         <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-8 gap-2 sm:gap-4">
-                            {entranceExamCombination && entranceExamCombination.length > 0 ? (
-                                entranceExamCombination.map((examCombination, index) => (
-                                    <Card
-                                        key={index}
-                                        className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg"
-                                    >
-                                        {examCombination?.examId !== null ? (
-                                            <div>
-                                                <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
-                                                    {examCombination?.attemptStatus == 'DONE' && (
-                                                        <MdVerified
-                                                            color="rgb(13, 226, 152)"
-                                                            className="inline mr-1 mb-1"
-                                                            size={20}
-                                                        />
-                                                    )}
-                                                    <span>{examCombination?.examName}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                                    <BsBookFill className="text-blue-700" />
-                                                    <span className="text-xs sm:text-sm">
-                                                        {getSubjectName(examCombination?.subject)}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                                    <BsClockFill className="text-blue-700" />
-                                                    <span className="text-xs sm:text-sm">
-                                                        {examCombination?.examDuration} phút
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2 sm:gap-4 mt-2">
-                                                    <FaUserEdit className="text-blue-700" />
-                                                    <span className="text-xs sm:text-sm">
-                                                        {examCombination?.examTotalQuestion || 0} câu hỏi
-                                                    </span>
-                                                </div>
-                                                <Button
-                                                    variant="flat"
-                                                    disabled
-                                                    className="w-full mt-2"
-                                                    color="primary"
-                                                    as={Link}
-                                                    isDisabled={examCombination?.grade !== null ? true : false}
-                                                    href={`/exam/${examCombination?.examId}/practice`}
-                                                >
-                                                    {examCombination?.grade !== null
-                                                        ? examCombination?.grade?.toFixed(1)
-                                                        : 'Làm bài'}
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center mt-4">
-                                                <p className="m-4">
-                                                    Đề kiểm tra {getSubjectName(examCombination?.subject)} hiện chưa có{' '}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </Card>
-                                ))
+                            {!isLoadingEntrance ? (
+                                <>
+                                    {entranceExamCombination && entranceExamCombination.length > 0
+                                        ? entranceExamCombination.map((examCombination, index) => (
+                                              <Card
+                                                  key={index}
+                                                  className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg"
+                                              >
+                                                  {examCombination?.examId !== null ? (
+                                                      <div>
+                                                          <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
+                                                              {examCombination?.attemptStatus == 'DONE' && (
+                                                                  <MdVerified
+                                                                      color="rgb(13, 226, 152)"
+                                                                      className="inline mr-1 mb-1"
+                                                                      size={20}
+                                                                  />
+                                                              )}
+                                                              <span>{examCombination?.examName}</span>
+                                                          </div>
+                                                          <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                              <BsBookFill className="text-blue-700" />
+                                                              <span className="text-xs sm:text-sm">
+                                                                  {getSubjectName(examCombination?.subject)}
+                                                              </span>
+                                                          </div>
+                                                          <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                              <BsClockFill className="text-blue-700" />
+                                                              <span className="text-xs sm:text-sm">
+                                                                  {examCombination?.examDuration} phút
+                                                              </span>
+                                                          </div>
+                                                          <div className="flex items-center gap-2 sm:gap-4 mt-2">
+                                                              <FaUserEdit className="text-blue-700" />
+                                                              <span className="text-xs sm:text-sm">
+                                                                  {examCombination?.examTotalQuestion || 0} câu hỏi
+                                                              </span>
+                                                          </div>
+                                                          <Button
+                                                              variant="flat"
+                                                              disabled
+                                                              className="w-full mt-2"
+                                                              color="primary"
+                                                              as={Link}
+                                                              isDisabled={
+                                                                  examCombination?.grade !== null ? true : false
+                                                              }
+                                                              href={`/exam/${examCombination?.examId}/practice`}
+                                                          >
+                                                              {examCombination?.grade !== null
+                                                                  ? examCombination?.grade?.toFixed(1)
+                                                                  : 'Làm bài'}
+                                                          </Button>
+                                                      </div>
+                                                  ) : (
+                                                      <div className="text-center mt-4">
+                                                          <p className="m-4">
+                                                              Đề kiểm tra {getSubjectName(examCombination?.subject)}{' '}
+                                                              hiện chưa có{' '}
+                                                          </p>
+                                                      </div>
+                                                  )}
+                                              </Card>
+                                          ))
+                                        : null}
+                                </>
                             ) : (
-                                <>Bài Kiểm Tra Đầu Vào Hiện Chưa Có</>
+                                <>
+                                    {skeletonEntranceExamArray.map((i: number) => (
+                                        <Skeleton key={i} isLoaded={false} className="rounded-xl">
+                                            <li className="w-[80px] sm:w-[120px] h-[152px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
+                                        </Skeleton>
+                                    ))}
+                                </>
                             )}
                         </ul>
                     </div>
                 ) : null}
-                {showEntranceExam && alreadyDoEntranceExam ? (
-                    <>
-                        <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
-                        <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
-                            {courseCombination?.length > 0 ? (
-                                courseCombination?.map((course, index) => (
-                                    <CourseCard
-                                        key={index}
-                                        course={{
-                                            id: course.id,
-                                            thumbnail: course.thumbnail,
-                                            courseName: course.courseName,
-                                            teacherName: course.teacherName,
-                                            rating: course.rating,
-                                            numberOfRate: course.numberOfRate,
-                                            totalVideo: course.totalVideo,
-                                            subject: course.subject,
-                                            level: course.level,
-                                            price: course.price
-                                        }}
-                                    />
-                                ))
+
+                <>
+                    {showEntranceExam && alreadyDoEntranceExam ? (
+                        <>
+                            <h2 className="text-lg mt-16 mb-8">Khóa học gợi ý:</h2>
+                            {!isLoadingCourse ? (
+                                <div className="min-h-[300px] mb-8 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:cols-5">
+                                    {courseCombination?.length > 0 ? (
+                                        courseCombination?.map((course, index) => (
+                                            <CourseCard
+                                                key={index}
+                                                course={{
+                                                    id: course.id,
+                                                    thumbnail: course.thumbnail,
+                                                    courseName: course.courseName,
+                                                    teacherName: course.teacherName,
+                                                    rating: course.rating,
+                                                    numberOfRate: course.numberOfRate,
+                                                    totalVideo: course.totalVideo,
+                                                    subject: course.subject,
+                                                    level: course.level,
+                                                    price: course.price
+                                                }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <>Hiện tại chưa có khóa học dành cho bạn</>
+                                    )}
+                                </div>
                             ) : (
-                                <>Hiện tại chưa có khóa học dành cho bạn</>
+                                <>
+                                    {skeletonCourseArray.map((i: number) => (
+                                        <Skeleton key={i} isLoaded={false} className="rounded-xl mt-2">
+                                            <li className="mt-2 w-[80px] sm:w-[120px] h-[152px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
+                                        </Skeleton>
+                                    ))}
+                                </>
                             )}
-                        </div>
-                    </>
-                ) : null}
+                        </>
+                    ) : null}
+                </>
             </div>
         </div>
     );

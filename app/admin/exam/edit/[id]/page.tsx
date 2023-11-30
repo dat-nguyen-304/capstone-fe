@@ -99,6 +99,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 explanation: question?.explanation,
                 topicId: question?.topic?.id, // Assuming `topic` is an object with an `id` property
                 answerList: question?.answerList,
+                level: question?.level,
                 correctAnswer: question?.correctAnswer
             }));
 

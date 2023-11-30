@@ -91,7 +91,12 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
             </div>
             <div className="xl:grid grid-cols-10 mt-6">
                 <div className="hidden xl:block col-span-3 p-4 border-2 border-gray-200 rounded-xl sticky top-[70px] h-[420px]">
-                    <Image src="/banner/slide-1.png" alt="" width={300} height={240} />
+                    <Image
+                        src={courseContent?.thumbnail ? courseContent?.thumbnail : '/banner/slide-1.png'}
+                        alt=""
+                        width={300}
+                        height={240}
+                    />
                     <h2 className="truncate2line font-bold text-lg mt-4">{courseContent?.courseName}</h2>
                     <h3 className="mt-1 font-semibold">{courseContent?.teacherName}</h3>
                     <div className="mt-4">

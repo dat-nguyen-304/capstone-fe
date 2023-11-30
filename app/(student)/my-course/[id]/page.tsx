@@ -7,7 +7,7 @@ import WriteFeedback from '@/components/course/course-detail/WriteFeedback';
 import CourseImage from '@/components/course/course-detail/CourseImage';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
@@ -20,14 +20,19 @@ interface CourseDetailProps {
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data: courseData, isLoading } = useQuery<any>({
-        queryKey: ['my-course-detail', { params }],
+        queryKey: ['my-course-detail', { params: params?.id }],
         queryFn: () => courseApi.getCourseById(params?.id)
+    });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['my-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
     });
     const { data: feedbacksData, refetch } = useQuery<any>({
         queryKey: ['feedbacks'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
-    console.log(courseData);
+    const attemptedQuizzes = quizCourse?.data?.filter((quiz: any) => quiz.attempted);
+    const numberOfAttemptedQuizzes = attemptedQuizzes ? attemptedQuizzes.length : 0;
 
     const courseInfo = {
         courseName: courseData?.name as string,
@@ -49,14 +54,16 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         subject: courseData?.subject,
         level: courseData?.level,
         totalVideo: courseData?.totalVideo,
-        progress: courseData?.progress
+        progress: courseData?.progress,
+        totalQuiz: quizCourse?.totalRow
     };
 
     const courseContent = {
         id: courseData?.id,
         totalVideo: courseData?.totalVideo,
-        listVideo: courseData?.courseVideoResponses,
-        totalCompleted: courseData?.totalCompleted
+        listVideo: [...(courseData?.courseVideoResponses || []), ...(quizCourse?.data || [])],
+        totalQuiz: quizCourse?.totalRow,
+        totalCompleted: courseData?.totalCompleted + numberOfAttemptedQuizzes
     };
     console.log(courseData);
     console.log(feedbacksData);

@@ -109,10 +109,11 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                 if (uploadedFiles[0]) {
                     formDataPayload.append('thumbnail', uploadedFiles[0]);
                 }
-                console.log('videoOrders');
-                console.log(videoOrders);
 
-                if (!videoOrders) {
+                const filteredVideoOrders = videoOrders.filter(item => item.isDraft !== undefined);
+                console.log(filteredVideoOrders);
+
+                if (!filteredVideoOrders) {
                     formDataPayload.append(
                         'videoOrders',
                         new Blob([JSON.stringify(null)], { type: 'application/json' })
@@ -120,7 +121,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                 } else {
                     formDataPayload.append(
                         'videoOrders',
-                        new Blob([JSON.stringify(videoOrders)], { type: 'application/json' })
+                        new Blob([JSON.stringify(filteredVideoOrders)], { type: 'application/json' })
                     );
                 }
 

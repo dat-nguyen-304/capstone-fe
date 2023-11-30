@@ -10,14 +10,7 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@
 import Link from 'next/link';
 import { useCustomModal } from '@/hooks';
 interface VideoSortItemProps {
-    videoItem: {
-        id: number;
-        name: string;
-        duration: number;
-        totalComment: number;
-        totalLike: number;
-        thumbnail: string;
-    };
+    videoItem: any;
     index: UniqueIdentifier;
 }
 
@@ -72,7 +65,11 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
             }}
         >
             <Image
-                src={'/video-number/blue.svg'}
+                src={
+                    videoItem?.isDraft === undefined && videoItem?.isDraft !== null
+                        ? '/video-number/red.svg'
+                        : '/video-number/blue.svg'
+                }
                 width={40}
                 height={40}
                 alt=""
@@ -108,10 +105,30 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Table Columns">
-                            <DropdownItem color="primary" as={Link} href={`/teacher/video/${videoItem.id}`}>
+                            <DropdownItem
+                                color="primary"
+                                as={Link}
+                                href={
+                                    videoItem?.isDraft === undefined
+                                        ? `/teacher/quiz/${videoItem.id}`
+                                        : videoItem?.isDraft
+                                        ? `/teacher/my-video-draft/${videoItem.id}`
+                                        : `/teacher/video/${videoItem.id}`
+                                }
+                            >
                                 Xem chi tiết
                             </DropdownItem>
-                            <DropdownItem color="warning" as={Link} href={`/teacher/video/edit/${videoItem.id}`}>
+                            <DropdownItem
+                                color="warning"
+                                as={Link}
+                                href={
+                                    videoItem?.isDraft === undefined
+                                        ? `/teacher/quiz/edit/${videoItem.id}`
+                                        : videoItem?.isDraft
+                                        ? `/teacher/my-video-draft/edit/${videoItem.id}`
+                                        : `/teacher/video/edit/${videoItem.id}`
+                                }
+                            >
                                 Chỉnh sửa
                             </DropdownItem>
                             <DropdownItem color="danger" onClick={removeVideo}>

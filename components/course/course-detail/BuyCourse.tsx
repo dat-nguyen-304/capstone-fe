@@ -22,14 +22,7 @@ import { transactionApi } from '@/api-client';
 import { Transaction } from '@/types';
 import { useState } from 'react';
 interface BuyCourseProps {
-    buyCourse: {
-        id: number;
-        thumbnail: string;
-        price: number;
-        subject: string;
-        level: string;
-        totalVideo: number;
-    };
+    buyCourse: any;
 }
 
 const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
@@ -83,11 +76,11 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <TfiVideoClapper className="mr-8" />
-                        <span className="text-sm">{buyCourse?.totalVideo} bài giảng </span>
+                        <span className="text-sm">{buyCourse?.totalVideo || 0} bài giảng </span>
                     </div>
                     <div className="flex items-center my-4">
                         <FaBookReader className="mr-8" />
-                        <span className="text-sm">0 bài tập</span>
+                        <span className="text-sm">{buyCourse?.totalQuiz || 0} bài tập</span>
                     </div>
                     <div className="flex items-center my-4">
                         <BsPersonWorkspace className="mr-8" />

@@ -6,7 +6,7 @@ import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import ApproveCourse from '@/components/course/course-detail/ApproveCourse';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
     });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['admin-view-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
+    });
+
     const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacksAdmin'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
@@ -30,6 +35,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         level: data?.level,
         teacherName: data?.teacherName,
         teacherEmail: data?.teacherEmail,
+        teacherAvatar: data?.teacherAvatar,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
         totalStudent: data?.totalStudent,
@@ -44,14 +50,16 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         totalVideo: data?.totalVideo,
-        status: data?.status
+        status: data?.status,
+        totalQuiz: quizCourse?.totalRow
     };
 
     const courseContent = {
         id: data?.id,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses,
-        totalCompleted: data?.totalCompleted
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizCourse?.data || [])],
+        totalCompleted: data?.totalCompleted,
+        totalQuiz: quizCourse?.totalRow
     };
 
     if (!data) return <Loader />;

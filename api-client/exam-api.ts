@@ -177,5 +177,9 @@ export const examApi = {
             `/examination/exams/entrances?subject1=${subject1}&subject2=${subject2}&subject3=${subject3}`
         );
         return res.data;
+    },
+    getQuizCourseById: async (courseId: number) => {
+        const res = await axiosClient.get(`/examination/exams/course/${courseId}`);
+        return res.data;
     }
 };

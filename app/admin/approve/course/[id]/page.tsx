@@ -6,7 +6,7 @@ import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import ApproveCourse from '@/components/course/course-detail/ApproveCourse';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,10 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
     const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacksAdmin', { params: params?.id }],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
+    });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['teacher-review-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
     });
     const courseInfo = {
         courseName: data?.name as string,
@@ -44,15 +48,17 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
         price: data?.price,
         subject: data?.subject,
         level: data?.level,
-        totalVideo: data?.totalVideo,
-        status: data?.status
+        totalVideo: data?.courseVideoResponses?.length,
+        status: data?.status,
+        totalQuiz: quizCourse?.totalRow
     };
 
     const courseContent = {
         id: data?.id,
-        totalVideo: data?.totalVideo,
+        totalVideo: data?.courseVideoResponses?.length,
         listVideo: data?.courseVideoResponses,
-        totalCompleted: data?.totalCompleted
+        totalCompleted: data?.totalCompleted,
+        totalQuiz: quizCourse?.totalRow
     };
 
     console.log(data);

@@ -10,5 +10,8 @@ export const teacherApi = {
     },
     getPublicTeacher: async (email: string) => {
         return await axiosClient.get(`/teacher/detail/user?email=${email}`);
+    },
+    getTeacherDetail: async () => {
+        return await axiosClient.get(`/teacher/detail`);
     }
 };

@@ -33,7 +33,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['my-videos-draft', { page }],
         // keepPreviousData: true,
-        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20, 'createDate', 'DESC')
+        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20, 'createdDate', 'DESC')
     });
 
     const { data: coursesData, isLoading } = useQuery({

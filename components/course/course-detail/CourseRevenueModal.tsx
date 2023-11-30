@@ -1,6 +1,7 @@
 'use client';
 
 import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
+import RevenueChartCourseDetail from '@/components/chart/teacher-dashboard/RevenueChartCourseDetail';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 
 interface CourseRevenueModalProps {
@@ -18,7 +19,7 @@ const CourseRevenueModal: React.FC<CourseRevenueModalProps> = ({ isOpen, onOpen,
                     <>
                         <ModalHeader className="flex flex-col gap-1">Thống kê doanh thu</ModalHeader>
                         <ModalBody>
-                            <RevenueChart courseId={courseId} />
+                            <RevenueChartCourseDetail courseId={courseId} />
                         </ModalBody>
                         <ModalFooter>
                             <Button color="danger" variant="light" onPress={onClose}>

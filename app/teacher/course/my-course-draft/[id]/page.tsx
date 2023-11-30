@@ -45,12 +45,12 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
         price: data?.price,
         subject: data?.subject,
         level: data?.level,
-        totalVideo: data?.totalVideo,
+        totalVideo: data?.courseVideoResponses?.length,
         status: data?.status
     };
     const courseContent = {
         id: data?.id,
-        totalVideo: data?.totalVideo,
+        totalVideo: data?.courseVideoResponses?.length,
         listVideo: data?.courseVideoResponses,
         totalCompleted: data?.totalCompleted
     };

@@ -169,14 +169,18 @@ const Courses: React.FC<CoursesProps> = () => {
         onOpen();
     };
 
-    const renderCell = useCallback((course: Course, columnKey: Key) => {
-        const cellValue = course[columnKey as keyof Course];
+    const renderCell = useCallback((course: any, columnKey: Key) => {
+        const cellValue = course[columnKey as keyof any];
 
         switch (columnKey) {
             case 'teacherName':
                 return (
                     <User
-                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: course.teacherAvatar ? course.teacherAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
                         classNames={{
                             description: 'text-default-500'
                         }}

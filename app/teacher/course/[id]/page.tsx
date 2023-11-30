@@ -9,7 +9,7 @@ import Feedback from '@/components/course/course-detail/Feedback';
 import { useDisclosure } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 interface CourseDetailProps {
@@ -19,20 +19,25 @@ interface CourseDetailProps {
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const router = useRouter();
     const { data, isLoading } = useQuery<any>({
-        queryKey: ['course'],
+        queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id)
     });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['teacher-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
+    });
+
     const { data: feedbacksData } = useQuery<any>({
         queryKey: ['feedbacksCourseTeacher'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
-    console.log(data);
 
     const courseInfo = {
         courseName: data?.name as string,
         subject: data?.subject,
         level: data?.level,
         teacherName: data?.teacherName,
+        teacherAvatar: data?.teacherAvatar,
         teacherEmail: data?.teacherEmail,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
@@ -48,12 +53,14 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         totalVideo: data?.totalVideo,
+        totalQuiz: quizCourse?.totalRow,
         status: data?.status
     };
     const courseContent = {
         id: data?.id,
-        totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses,
+        totalVideo: data?.courseVideoResponses?.length,
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizCourse?.data || [])],
+        totalQuiz: quizCourse?.totalRow,
         totalCompleted: data?.totalCompleted
     };
     const { isOpen, onOpen, onClose } = useDisclosure();
