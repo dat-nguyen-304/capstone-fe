@@ -55,22 +55,25 @@ const PostList: React.FC<PostListProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [selectedTopic, setSelectedTopic] = useState<Number>(1);
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const {
         status,
         error,
         data: discussionsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['discussions', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as number }],
+        queryKey: ['discussions', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as number, search }],
         queryFn: () => {
             // Check if statusFilter is -1
-            if (Array.from(statusFilter)[0] === '-1') {
-                return discussionApi.getAllOfConversation(page - 1, rowsPerPage, 'createTime', 'DESC');
-            } else {
-                // If not -1, get the topicId from statusFilter
-                const topicId = Array.from(statusFilter)[0] as number;
-                return discussionApi.getConversationsByTopicId(topicId, page - 1, rowsPerPage, 'createTime', 'DESC');
-            }
+            return discussionApi.getAllOfConversation(
+                search,
+                Array.from(statusFilter)[0] === '-1' ? '' : (Array.from(statusFilter)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            );
         }
     });
 
@@ -105,7 +108,10 @@ const PostList: React.FC<PostListProps> = ({}) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const onSearchChange = useCallback((value?: string) => {
         if (value) {
             setFilterValue(value);
@@ -178,17 +184,25 @@ const PostList: React.FC<PostListProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            variant="bordered"
-                            color="primary"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="flex">

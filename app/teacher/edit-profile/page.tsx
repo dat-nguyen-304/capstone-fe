@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { BiSolidPencil } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
-import { Button, Input, Select, SelectItem, SelectedItems, Selection } from '@nextui-org/react';
+import { Button, Chip, Input, Select, SelectItem, SelectedItems, Selection } from '@nextui-org/react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -12,6 +12,7 @@ import { PuffLoader } from 'react-spinners';
 import { useQuery } from '@tanstack/react-query';
 import { subjectApi, teacherApi } from '@/api-client';
 import { Subject } from '@/types';
+import Loader from '@/components/Loader';
 
 const Profile: React.FC = () => {
     const { data, isLoading } = useQuery({
@@ -19,11 +20,11 @@ const Profile: React.FC = () => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
-    const { data: teacherProfile } = useQuery({
-        queryKey: ['teacher-public-detail'],
-        queryFn: teacherApi.getTeacherDetail
+
+    const { data: teacherData } = useQuery({
+        queryKey: ['teacher-detail'],
+        queryFn: () => teacherApi.getTeacherDetail()
     });
-    console.log(teacherProfile);
 
     const [values, setValues] = useState<Selection>(new Set(['1']));
     const { control, handleSubmit, setError } = useForm({
@@ -33,19 +34,53 @@ const Profile: React.FC = () => {
             description: ''
         }
     });
+    const defaultSubjectIds: number[] =
+        data?.filter(subject => teacherData?.subject?.includes(subject.name)).map(subject => subject.id) ?? [];
+    console.log(defaultSubjectIds[0]);
+
+    if (!teacherData) return <Loader />;
     return (
         <div className="w-[90%] mx-auto lg:grid grid-cols-9 gap-8 my-8">
             <h4 className="sm:hidden text-xl text-blue-500 font-semibold mb-8">Ảnh đại diện</h4>
             <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
                 <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
-                    <Image src="/student.png" width={300} height={300} alt="" className="border-1 rounded-lg" />
+                    <Image
+                        src={teacherData?.url ? teacherData?.url : '/student.png'}
+                        width={300}
+                        height={300}
+                        alt=""
+                        className="border-1 rounded-lg"
+                    />
                     <div className="absolute right-2 top-2 shadow-lg rounded-full border-2 cursor-pointer w-[40px] h-[40px] flex items-center justify-center">
                         <BiSolidPencil size={20} />
                     </div>
                     <div className="hidden lg:block">
-                        <h3 className="text-blue-500 text-2xl font-semibold mt-8">Nguyễn Văn An</h3>
-                        <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>
-                        <p className="mt-4 text-sm">Giáo viên môn: Toán học - Vật lí</p>
+                        <h3 className="text-blue-500 text-2xl font-semibold mt-8">
+                            {teacherData?.fullName || 'Nguyễn Văn An'}
+                        </h3>
+                        <p className="mt-4 text-sm">Ngày tham gia: {teacherData?.createdDate || '2/12/2023'}</p>
+                        <p className="mt-4 text-sm">
+                            Giáo viên môn:{' '}
+                            {teacherData?.subject?.map((subject: any, index: number) => (
+                                <li className="inline-block" key={index}>
+                                    <Chip color="primary" variant="flat">
+                                        {subject}
+                                    </Chip>
+                                </li>
+                            ))}
+                        </p>
+                        {/* <div className="xl:flex items-center mt-4">
+                            <p className="w-[160px] font-semibold mb-2 sm:mb-0">Tổ hợp môn</p>
+                            <ul className="flex flex-wrap gap-2">
+                                {teacherData?.subject?.map((subject: any, index: number) => (
+                                    <li className="inline-block" key={index}>
+                                        <Chip color="primary" variant="flat">
+                                            {subject}
+                                        </Chip>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div> */}
                     </div>
                 </div>
             </div>
@@ -65,31 +100,31 @@ const Profile: React.FC = () => {
                                 variant="underlined"
                                 size="sm"
                                 className="max-w-xs"
+                                value={teacherData?.fullName}
                             />
                         </div>
                         <div className="2xl:flex items-center mt-8 2xl:mt-4">
                             <p className="w-[160px] font-semibold">Giáo viên môn</p>
 
                             <Select
-                                items={data}
+                                items={data.filter(subject => teacherData?.subject?.includes(subject.name))}
                                 disallowEmptySelection
                                 selectionMode="multiple"
                                 className="max-w-xs"
-                                selectedKeys={values}
+                                // selectedKeys={values}
                                 onSelectionChange={setValues}
                                 variant="underlined"
                                 size="sm"
-                                renderValue={(subjects: SelectedItems<Subject>) => {
-                                    return (
-                                        <div className="flex gap-2">
-                                            {subjects.map(subject => (
-                                                <span className="mr-1 text-sm" key={subject.key}>
-                                                    {subject.data?.name}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    );
-                                }}
+                                defaultSelectedKeys={[`${defaultSubjectIds[0]}`]}
+                                renderValue={(subjects: SelectedItems<Subject>) => (
+                                    <div className="flex gap-2">
+                                        {subjects.map(subject => (
+                                            <span className="mr-1 text-sm" key={subject.key}>
+                                                {subject.data?.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             >
                                 {subject => (
                                     <SelectItem key={subject.id} value={subject.id}>
@@ -107,6 +142,7 @@ const Profile: React.FC = () => {
                                 theme="snow"
                                 className="flex-[1]"
                                 placeholder="Giới thiệu về bạn một chút đi nào"
+                                value={teacherData?.description}
                             />
                         </div>
                         <div className="lg:absolute bottom-0 right-0 flex flex-row-reverse mt-8">

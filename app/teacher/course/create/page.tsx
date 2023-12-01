@@ -6,7 +6,7 @@ import { Button, Checkbox, Select, SelectItem, Selection, Skeleton } from '@next
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useQuery } from '@tanstack/react-query';
-import { subjectApi, topicApi, courseApi } from '@/api-client';
+import { subjectApi, topicApi, courseApi, teacherApi } from '@/api-client';
 import { Subject, Topic } from '@/types';
 import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -40,11 +40,28 @@ const CreateCourse: React.FC = () => {
         staleTime: Infinity
     });
 
+    const { data: teacherData } = useQuery({
+        queryKey: ['teacher-detail'],
+        queryFn: () => teacherApi.getTeacherDetail()
+    });
+
     const { data: topics } = useQuery({
         queryKey: ['topics', { selectedSubject }],
         queryFn: () => (selectedSubject !== 0 ? topicApi.getTopicsBySubject(selectedSubject) : [])
     });
 
+    const defaultSubjectIds: number[] =
+        subjectsData?.filter(subject => teacherData?.subject?.includes(subject.name)).map(subject => subject.id) ?? [];
+    console.log(defaultSubjectIds[0]);
+    useEffect(() => {
+        if (teacherData) {
+            const defaultSubjectIds: number[] =
+                subjectsData
+                    ?.filter(subject => teacherData?.subject?.includes(subject.name))
+                    .map(subject => subject.id) ?? [];
+            setSelectedSubject(defaultSubjectIds[0]);
+        }
+    }, [teacherData]);
     useEffect(() => {
         if (topics) {
             const newTopics = topics.map(topic => {
@@ -138,6 +155,7 @@ const CreateCourse: React.FC = () => {
     };
 
     if (!subjectsData) return <Loader />;
+    if (!teacherData) return <Loader />;
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
@@ -192,16 +210,18 @@ const CreateCourse: React.FC = () => {
                                     color="primary"
                                     variant="bordered"
                                     labelPlacement="outside"
-                                    defaultSelectedKeys={[String(selectedSubject)]}
-                                    value={selectedSubject}
+                                    defaultSelectedKeys={[`${defaultSubjectIds[0]}`]}
+                                    // value={selectedSubject}
                                     name="subject"
                                     onChange={event => setSelectedSubject(Number(event.target.value))}
                                 >
-                                    {subjectsData.map((subject: Subject) => (
-                                        <SelectItem key={subject.id} value={subject.id}>
-                                            {subject.name}
-                                        </SelectItem>
-                                    ))}
+                                    {subjectsData
+                                        .filter(subject => teacherData?.subject?.includes(subject.name))
+                                        .map((subject: Subject) => (
+                                            <SelectItem key={subject.id} value={subject.id}>
+                                                {subject.name}
+                                            </SelectItem>
+                                        ))}
                                 </Select>
                             </div>
 

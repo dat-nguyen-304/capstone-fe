@@ -12,6 +12,9 @@ export const courseStatusColorMap: Record<string, ChipProps['color']> = {
 
 export const transactionStatusColorMap: Record<string, ChipProps['color']> = {
     SUCCESS: 'success',
+    RECEIVED: 'success',
     FAIL: 'danger',
-    PENDING: 'warning'
+    PENDING: 'warning',
+    REFUND: 'warning',
+    NOTYET: 'danger'
 };

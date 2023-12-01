@@ -24,10 +24,10 @@ import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
 
-interface TransactionsProps {}
+interface StudentTransactionsProps {}
 
 const columns = [
-    // { name: 'ID', uid: 'id', sortable: true },
+    { name: 'ID', uid: 'id', sortable: true },
     { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
@@ -37,75 +37,10 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const transactions = [
-    {
-        id: 1,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 2,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 3,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 4,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 5,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 6,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    }
-];
-
-type Transaction = (typeof transactions)[0];
-
-const Transaction: React.FC<TransactionsProps> = ({}) => {
+const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set(['id', 'courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
     );
     const [adminTransactions, setAdminTransactions] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -154,6 +89,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
+    console.log(adminTransactions);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -181,25 +117,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         switch (columnKey) {
             case 'amount':
                 const changePrice = Number(cellValue) / 100;
+
                 return changePrice?.toLocaleString('vi-VN');
-            case 'teacherName':
-                return (
-                    <User
-                        avatarProps={{
-                            radius: 'full',
-                            size: 'sm',
-                            src: transaction.teacherAvatar
-                                ? transaction.teacherAvatar
-                                : 'https://i.pravatar.cc/150?img=4'
-                        }}
-                        classNames={{
-                            description: 'text-default-500'
-                        }}
-                        name={cellValue}
-                    >
-                        {transaction.teacherName}
-                    </User>
-                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -372,4 +291,4 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     );
 };
 
-export default Transaction;
+export default StudentTransaction;

@@ -17,12 +17,14 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useUser } from '@/hooks';
+import { useCustomModal, useInputModal, useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { useQuery } from '@tanstack/react-query';
 import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
+import { toast } from 'react-toastify';
+import { InputModal } from '@/components/modal/InputModal';
 
 interface TransactionsProps {}
 
@@ -37,59 +39,6 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const transactions = [
-    {
-        id: 1,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 2,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 3,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 4,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 5,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 6,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        teacher: 'Nguyễn Văn An',
-        price: 500000,
-        date: '12/12/2023 08:02:02'
-    }
-];
-
-type Transaction = (typeof transactions)[0];
-
 const Transaction: React.FC<TransactionsProps> = ({}) => {
     const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
@@ -103,12 +52,13 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
-
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
         data: transactionsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: [
             'adminTransaction',
@@ -140,7 +90,46 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
-    console.log(transactionsData);
+
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
+    const handleRequestRefund = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await transactionApi.studentRequestRefund({
+                id,
+                reason: description
+            });
+
+            if (res) {
+                toast.success('Đề nghị hoàn tiền đã gửi thành công');
+
+                toast.dismiss(toastLoading);
+                refetch();
+            }
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onWarningOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận hoàn tiền',
+            content: 'Đề nghị của bạn sẽ được gửi tới quản trị viên. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -179,10 +168,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options">
-                                <DropdownItem color="success">Duyệt</DropdownItem>
-                                <DropdownItem color="danger">Từ chối</DropdownItem>
-                                <DropdownItem color="primary">Xem chi tiết</DropdownItem>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis']}>
+                                <DropdownItem
+                                    color="warning"
+                                    onClick={() => onWarningOpen(transaction?.id)}
+                                    key={transaction.transactionStatus === 'REFUND' ? 'viewDis' : 'view'}
+                                >
+                                    Yêu cầu hoàn tiền
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -196,11 +189,13 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         variant="dot"
                     >
                         {cellValue === 'SUCCESS'
-                            ? 'Thành công'
+                            ? 'Mua thành công'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
                             : cellValue === 'FAIL'
                             ? 'Thất bại'
+                            : cellValue === 'REFUND'
+                            ? 'Chờ hoàn tiền'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -319,6 +314,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handleRequestRefund(declineId as number)} />
         </div>
     );
 };

@@ -20,8 +20,10 @@ import TableContent from '@/components/table';
 import { studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useInputModal } from '@/hooks';
 import { StudentType } from '@/types';
+import { toast } from 'react-toastify';
+import { InputModal } from '@/components/modal/InputModal';
 interface StudentsProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -32,7 +34,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
+    // { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
     { name: 'Email', uid: 'email', sortable: true },
     // { name: 'TỔ HỢP MÔN', uid: 'targets?.[0]?.name' },
@@ -45,7 +47,7 @@ const Students: React.FC<StudentsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         // new Set(['id', 'fullName', 'email', 'targets?.[0]?.name', 'createdAt', 'userStatus', 'action'])
-        new Set(['id', 'fullName', 'email', 'userStatus', 'action'])
+        new Set(['fullName', 'email', 'userStatus', 'action'])
     );
     const [students, setStudents] = useState<StudentType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -55,11 +57,13 @@ const Students: React.FC<StudentsProps> = () => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
         data: studentsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: ['students', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }],
         queryFn: () => studentApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
@@ -73,43 +77,43 @@ const Students: React.FC<StudentsProps> = () => {
         }
     }, [studentsData]);
 
-    const handleStatusChange = async (userId: number, userStatus: string) => {
-        try {
-            onLoading();
-            const res = await userApi.changeUserStatus({
-                userId,
-                userStatus
-            });
-            if (!res.data.code) {
-                if (userStatus == 'ENABLE') {
-                    onSuccess({
-                        title: 'Duyệt thành công',
-                        content: 'Tài khoản đã được kích hoạt thành công'
-                    });
-                } else if (userStatus == 'DISABLE') {
-                    onSuccess({
-                        title: 'Đã vô hiệu',
-                        content: 'Tài khoản đã được vô hiệu thành công'
-                    });
-                } else {
-                    onSuccess({
-                        title: 'Đã cấm',
-                        content: 'Tài khoản đã được cấm thành công'
-                    });
-                }
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
-                setUpdateState(prev => !prev);
-            }
-        } catch (error) {
-            // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+    const handleBanUser = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await userApi.banUser({
+                accountId: id,
+                reason: description
             });
+            if (!res?.data?.code) {
+                toast.success('Tài khoản đã được cấm thành công');
+                refetch();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error changing user status', error);
         }
     };
-
+    const onDeclineOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận cấm tài khoản',
+            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -129,31 +133,6 @@ const Students: React.FC<StudentsProps> = () => {
             setFilterValue('');
         }
     }, []);
-
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-
-    const onApproveOpen = (id: number, action: string) => {
-        if (action == 'ENABLE') {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
-            });
-        } else if (action == 'DISABLE') {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
-            });
-        } else {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
-            });
-        }
-        onOpen();
-    };
 
     const renderCell = useCallback((student: any, columnKey: Key) => {
         const cellValue = student[columnKey as keyof any];
@@ -202,34 +181,21 @@ const Students: React.FC<StudentsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'disableDis', 'bannedDis']}>
                                 <DropdownItem
                                     color="primary"
+                                    key={student.status === 'BANNED' ? 'viewDis' : 'view'}
                                     as={Link}
                                     href={`/admin/profile/student/${student.email}`}
                                 >
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
-                                    color="success"
-                                    key={student?.userStatus === 'ENABLE' ? 'enableDis' : 'enable'}
-                                    onClick={() => onApproveOpen(student.id, 'ENABLE')}
-                                >
-                                    Kích Hoạt
-                                </DropdownItem>
-                                <DropdownItem
                                     color="danger"
-                                    key={student?.userStatus === 'DISABLE' ? 'disableDis' : 'disable'}
-                                    onClick={() => onApproveOpen(student.id, 'DISABLE')}
+                                    key={student.status === 'BANNED' ? 'bannedDis' : 'banned'}
+                                    onClick={() => onDeclineOpen(student.id)}
                                 >
-                                    Vô Hiệu Hóa
-                                </DropdownItem>
-                                <DropdownItem
-                                    color="danger"
-                                    key={student?.userStatus === 'BANNED' ? 'bannedDis' : 'banned'}
-                                    onClick={() => onApproveOpen(student.id, 'BANNED')}
-                                >
-                                    Tài Khoản Bị Cấm
+                                    Cấm Người dùng
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -323,6 +289,7 @@ const Students: React.FC<StudentsProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handleBanUser(declineId as number)} />
         </div>
     );
 };

@@ -21,7 +21,9 @@ import { teacherApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { TeacherType } from '@/types';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useInputModal } from '@/hooks';
+import { toast } from 'react-toastify';
+import { InputModal } from '@/components/modal/InputModal';
 interface TeachersProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -32,7 +34,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
+    // { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
     { name: 'Email', uid: 'email', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject' },
@@ -53,7 +55,7 @@ type Teacher = {
 const Teachers: React.FC<TeachersProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'fullName', 'email', 'subject', 'createDate', 'status', 'action'])
+        new Set(['fullName', 'email', 'subject', 'createDate', 'status', 'action'])
     );
     const [teachers, setTeachers] = useState<TeacherType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -63,13 +65,18 @@ const Teachers: React.FC<TeachersProps> = () => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
         data: teachersData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: ['teachers', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }],
+        queryKey: [
+            'admin-teachers',
+            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
+        ],
         queryFn: () => teacherApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
     });
 
@@ -81,41 +88,6 @@ const Teachers: React.FC<TeachersProps> = () => {
         }
     }, [teachersData]);
     console.log(teachersData);
-
-    const handleStatusChange = async (userId: number, userStatus: string) => {
-        try {
-            const res = await userApi.changeUserStatus({
-                userId,
-                userStatus
-            });
-            if (!res.data.code) {
-                if (userStatus == 'ENABLE') {
-                    onSuccess({
-                        title: 'Duyệt thành công',
-                        content: 'Tài khoản đã được kích hoạt thành công'
-                    });
-                } else if (userStatus == 'DISABLE') {
-                    onSuccess({
-                        title: 'Đã vô hiệu',
-                        content: 'Tài khoản đã được vô hiệu thành công'
-                    });
-                } else {
-                    onSuccess({
-                        title: 'Đã cấm',
-                        content: 'Tài khoản đã được cấm thành công'
-                    });
-                }
-                setUpdateState(prev => !prev);
-            }
-        } catch (error) {
-            // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
-            });
-            console.error('Error changing user status', error);
-        }
-    };
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -138,27 +110,41 @@ const Teachers: React.FC<TeachersProps> = () => {
     }, []);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
-    const onApproveOpen = (id: number, action: string) => {
-        if (action == 'ENABLE') {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ được hoạt động sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
+    const handleBanUser = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await userApi.banUser({
+                accountId: id,
+                reason: description
             });
-        } else if (action == 'DISABLE') {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ được vô hiệu sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
-            });
-        } else {
-            onWarning({
-                title: 'Xác nhận duyệt',
-                content: 'Tài khoản sẽ bị cấm sau khi được duyệt. Bạn chắc chứ?',
-                activeFn: () => handleStatusChange(id, action)
-            });
+            if (!res?.data?.code) {
+                toast.success('Tài khoản đã được thành công');
+                refetch();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
         }
+    };
+
+    const onDeclineOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận cấm tài khoản',
+            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
         onOpen();
     };
 
@@ -236,26 +222,13 @@ const Teachers: React.FC<TeachersProps> = () => {
                                 >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem
-                                    color="success"
-                                    key={teacher.status === 'ENABLE' ? 'enableDis' : 'enable'}
-                                    onClick={() => onApproveOpen(teacher?.id, 'ENABLE')}
-                                >
-                                    Kích Hoạt
-                                </DropdownItem>
-                                <DropdownItem
-                                    color="danger"
-                                    key={teacher.status === 'DISABLE' ? 'disableDis' : 'disable'}
-                                    onClick={() => onApproveOpen(teacher.id, 'DISABLE')}
-                                >
-                                    Vô Hiệu Hóa
-                                </DropdownItem>
+
                                 <DropdownItem
                                     color="danger"
                                     key={teacher.status === 'BANNED' ? 'bannedDis' : 'banned'}
-                                    onClick={() => onApproveOpen(teacher.id, 'BANNED')}
+                                    onClick={() => onDeclineOpen(teacher.id)}
                                 >
-                                    Cấm
+                                    Cấm Người dùng
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -348,6 +321,7 @@ const Teachers: React.FC<TeachersProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handleBanUser(declineId as number)} />
         </div>
     );
 };

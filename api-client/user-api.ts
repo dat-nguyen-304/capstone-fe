@@ -7,5 +7,8 @@ export const userApi = {
     },
     changeUserStatus: async (payload: ChangeUserStatus) => {
         return await axiosClient.patch('/user/change-user-status', payload);
+    },
+    banUser: async (payload: any) => {
+        return await axiosClient.patch('/user/ban-user', payload);
     }
 };

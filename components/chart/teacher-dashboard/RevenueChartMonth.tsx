@@ -68,51 +68,37 @@ const formatCurrency = (value: number) => {
     return formattedValue.replace('₫', ' VND');
 };
 interface BarChartProps {
-    courseId?: number | undefined;
+    revenueData?: any | undefined;
 }
 
-const RevenueChart: React.FC<BarChartProps> = ({ courseId }) => {
+const RevenueChartMonth: React.FC<BarChartProps> = ({ revenueData }) => {
     const [userData, setUserData] = useState({
-        labels: UserData.map(data => data.month),
+        labels: revenueData?.map((data: any) => data?.month),
         datasets: [
             {
                 label: 'Doanh thu',
-                data: UserData.map(data => data.revenue),
+                data: revenueData?.map((data: any) => data?.revenue / 100),
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2
             }
         ]
     });
-    const { data: incomeCourseData, isLoading } = useQuery<any>({
-        queryKey: ['teacher-income-course', { courseId }],
-        queryFn: () => {
-            if (courseId) {
-                return teacherIncomeApi.getTeacherIncomeByCourse(courseId);
-            } else {
-                return [];
-            }
-        }
-    });
-
     useEffect(() => {
-        if (incomeCourseData?.data?.length) {
-            setUserData({
-                labels: incomeCourseData?.data?.map((incomeData: any) => incomeData?.monthOfYear),
-                datasets: [
-                    {
-                        label: 'Doanh thu',
-                        data: incomeCourseData?.data?.map((incomeData: any) => incomeData?.revenue),
-                        backgroundColor: ['#6395fa'],
-                        borderColor: 'black',
-                        borderWidth: 2
-                    }
-                ]
-            });
-        }
-    }, [incomeCourseData]);
-
+        setUserData({
+            labels: revenueData?.map((data: any) => data?.month) || [],
+            datasets: [
+                {
+                    label: 'Doanh thu',
+                    data: revenueData?.map((data: any) => data?.revenue / 100) || [],
+                    backgroundColor: ['#6395fa'],
+                    borderColor: 'black',
+                    borderWidth: 2
+                }
+            ]
+        });
+    }, [revenueData]);
     return <Bar data={userData} />;
 };
 
-export default RevenueChart;
+export default RevenueChartMonth;

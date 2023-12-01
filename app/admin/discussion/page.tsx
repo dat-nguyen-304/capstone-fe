@@ -52,14 +52,34 @@ const PostList: React.FC<PostListProps> = ({}) => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['-1']));
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
+    const { data: topicsData } = useQuery({
+        queryKey: ['topics'],
+        queryFn: () => discussionApi.getAll(0, 100)
+    });
     const {
         status,
         error,
         data: discussionsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['discussions', { page, rowsPerPage, updateState }],
-        queryFn: () => discussionApi.getAllOfConversation(page - 1, rowsPerPage, 'createTime', 'DESC')
+        queryKey: [
+            'admin-discussions',
+            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as number, search }
+        ],
+        queryFn: () => {
+            // Check if statusFilter is -1
+            return discussionApi.getAllOfConversation(
+                search,
+                Array.from(statusFilter)[0] === '-1' ? '' : (Array.from(statusFilter)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            );
+        }
     });
     useEffect(() => {
         if (discussionsData?.data) {
@@ -69,6 +89,12 @@ const PostList: React.FC<PostListProps> = ({}) => {
         }
     }, [discussionsData]);
 
+    const topicsOptions = useMemo(() => {
+        if (!topicsData) return [];
+        const allOption = { id: -1, name: 'Tất cả', status: 'ENABLE' };
+        const topicOptions = Array.isArray(topicsData?.data) ? [allOption, ...topicsData?.data] : [allOption];
+        return topicOptions;
+    }, [topicsData]);
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -88,7 +114,10 @@ const PostList: React.FC<PostListProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];
 
@@ -153,17 +182,25 @@ const PostList: React.FC<PostListProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="flex">
@@ -179,13 +216,13 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
+                                    closeOnSelect={true}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
+                                    {topicsOptions?.map((column: any, index: number) => (
+                                        <DropdownItem key={column?.id} className="capitalize">
                                             {capitalize(column.name)}
                                         </DropdownItem>
                                     ))}

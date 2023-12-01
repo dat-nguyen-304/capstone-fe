@@ -12,6 +12,7 @@ export const teacherApi = {
         return await axiosClient.get(`/teacher/detail/user?email=${email}`);
     },
     getTeacherDetail: async () => {
-        return await axiosClient.get(`/teacher/detail`);
+        const res = await axiosClient.get(`/teacher/detail`);
+        return res?.data;
     }
 };

@@ -20,20 +20,23 @@ import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useQuery } from '@tanstack/react-query';
-import { transactionApi } from '@/api-client';
+import { teacherIncomeApi, transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
+import { useCustomModal, useInputModalNumber } from '@/hooks';
+import { toast } from 'react-toastify';
+import { InputModalNumber } from '@/components/modal/InputModalNumber';
 
-interface TransactionsProps {}
+interface TeacherTransactionsProps {}
 
 const columns = [
-    // { name: 'ID', uid: 'id', sortable: true },
     { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
-    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
+    // { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
-    { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
+    { name: 'DOANH THU', uid: 'revenue' },
+    { name: 'TIỀN NHẬN', uid: 'receivedMoney' },
+    { name: 'TRẠNG THÁI', uid: 'teacherIncomeStatus', sortable: true },
     { name: 'NGÀY', uid: 'paymentDate', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -102,12 +105,20 @@ const transactions = [
 
 type Transaction = (typeof transactions)[0];
 
-const Transaction: React.FC<TransactionsProps> = ({}) => {
+const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set([
+            'courseName',
+            'teacherName',
+            'revenue',
+            'receivedMoney',
+            'teacherIncomeStatus',
+            'paymentDate',
+            'action'
+        ])
     );
-    const [adminTransactions, setAdminTransactions] = useState<[]>([]);
+    const [teacherIncome, setTeacherIncome] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
@@ -115,15 +126,18 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
-
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onMoney, money } = useInputModalNumber();
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
         data: transactionsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: [
-            'adminTransaction',
+            'adminTeacherIncome',
             {
                 page,
                 rowsPerPage,
@@ -132,14 +146,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             }
         ],
         queryFn: () =>
-            transactionApi.getListAdminTransaction(
+            teacherIncomeApi.getTeacherIncomeForAdmin(
                 (Array.from(statusFilter)[0] as string) == 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
                 page - 1,
                 rowsPerPage,
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateAsc'
                     ? 'paymentDate'
                     : (Array.from(sort)[0] as string) == 'PriceDesc' || (Array.from(sort)[0] as string) == 'PriceAsc'
-                    ? 'amount'
+                    ? 'revenue'
                     : 'id',
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'PriceDesc'
                     ? 'DESC'
@@ -149,11 +163,51 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
 
     useEffect(() => {
         if (transactionsData?.data) {
-            setAdminTransactions(transactionsData.data);
+            setTeacherIncome(transactionsData.data);
             setTotalPage(transactionsData.totalPage);
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
+
+    const handlePaymentTeacher = async (id: number) => {
+        let toastLoading;
+        console.log({ money, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            // const res = await transactionApi.studentRequestRefund({
+            //     id,
+            //     paymentCode:'',
+            //     paymentDate:'',
+            //     amount: money
+            // });
+
+            // if (res) {
+            //     toast.success('Đề nghị hoàn tiền đã gửi thành công');
+
+            //     refetch();
+            // }
+            onMoney?.(Number(0));
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+    const onPaymentOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận chuyển tiền',
+            content: 'Số tiền của bạn sẽ được gửi tới giáo viên. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -179,27 +233,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         const cellValue = transaction[columnKey as keyof any];
 
         switch (columnKey) {
-            case 'amount':
+            case 'revenue':
                 const changePrice = Number(cellValue) / 100;
+
                 return changePrice?.toLocaleString('vi-VN');
-            case 'teacherName':
-                return (
-                    <User
-                        avatarProps={{
-                            radius: 'full',
-                            size: 'sm',
-                            src: transaction.teacherAvatar
-                                ? transaction.teacherAvatar
-                                : 'https://i.pravatar.cc/150?img=4'
-                        }}
-                        classNames={{
-                            description: 'text-default-500'
-                        }}
-                        name={cellValue}
-                    >
-                        {transaction.teacherName}
-                    </User>
-                );
+            case 'receivedMoney':
+                const changePriceRecived = Number(cellValue) / 100;
+
+                return changePriceRecived?.toLocaleString('vi-VN');
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -209,28 +250,32 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options">
-                                <DropdownItem color="success">Duyệt</DropdownItem>
-                                <DropdownItem color="danger">Từ chối</DropdownItem>
-                                <DropdownItem color="primary">Xem chi tiết</DropdownItem>
+                            <DropdownMenu aria-label="Options" disabledKeys={['paymentDis']}>
+                                <DropdownItem
+                                    color="success"
+                                    key={transaction?.teacherIncomeStatus === 'RECEIVED' ? 'paymentDis' : 'payment'}
+                                    onClick={() => onPaymentOpen(transaction?.id)}
+                                >
+                                    Chuyển tiền
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 );
-            case 'transactionStatus':
+            case 'teacherIncomeStatus':
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={transactionStatusColorMap[transaction.transactionStatus]}
+                        color={transactionStatusColorMap[transaction?.teacherIncomeStatus]}
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'SUCCESS'
-                            ? 'Thành công'
+                        {cellValue === 'RECEIVED'
+                            ? 'Chuyển tiền thành công'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
-                            : cellValue === 'FAIL'
-                            ? 'Thất bại'
+                            : cellValue === 'NOTYET'
+                            ? 'Chưa được'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -255,7 +300,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Lịch sử giao dịch</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Lịch sử giao dịch giáo viên</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
@@ -293,14 +338,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     <DropdownItem key="ALL" className="capitalize">
                                         {capitalize('Tất Cả')}
                                     </DropdownItem>
-                                    <DropdownItem key="SUCCESS" className="capitalize">
-                                        {capitalize('Thành Công')}
+                                    <DropdownItem key="RECEIVED" className="capitalize">
+                                        {capitalize('Chuyển tiền thành Công')}
                                     </DropdownItem>
                                     <DropdownItem key="PENDING" className="capitalize">
                                         {capitalize('Đang chờ')}
                                     </DropdownItem>
-                                    <DropdownItem key="FAIL" className="capitalize">
-                                        {capitalize('Thất Bại')}
+                                    <DropdownItem key="NOTYET" className="capitalize">
+                                        {capitalize('Chưa chuyển')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -333,10 +378,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                         {capitalize('Cũ nhất')}
                                     </DropdownItem>
                                     <DropdownItem key="PriceDesc" className="capitalize">
-                                        {capitalize('Giá cao nhất')}
+                                        {capitalize('Doanh thu cao nhất')}
                                     </DropdownItem>
                                     <DropdownItem key="PriceAsc" className="capitalize">
-                                        {capitalize('Giá thấp nhất')}
+                                        {capitalize('Doanh thu thấp nhất')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -360,7 +405,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                 <TableContent
                     renderCell={renderCell}
                     headerColumns={headerColumns}
-                    items={adminTransactions}
+                    items={teacherIncome}
                     page={page}
                     setPage={setPage}
                     sortDescriptor={sortDescriptor}
@@ -368,8 +413,9 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModalNumber activeFn={() => handlePaymentTeacher(declineId as number)} />
         </div>
     );
 };
 
-export default Transaction;
+export default TeacherTransaction;

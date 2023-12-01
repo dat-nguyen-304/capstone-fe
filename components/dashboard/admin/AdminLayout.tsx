@@ -57,15 +57,19 @@ const items: MenuItem[] = [
     // ]),
     getItem(<Link href="/admin/approve/course">Phê duyệt khóa học</Link>, '11', <CheckCircleOutlined />),
     getItem(<Link href="/admin/transaction">Giao dịch</Link>, '12', <LineChartOutlined />),
-    getItem('Xử lý vi phạm', 'sub4', <StopOutlined />, [
-        getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '13'),
-        getItem(<Link href="/admin/report/exam">Bài thi</Link>, '14'),
-        getItem(<Link href="/admin/report/video">Video</Link>, '15')
+    getItem('Xử lý giao dich', 'sub4', <LineChartOutlined />, [
+        getItem(<Link href="/admin/transaction/teacher">Giáo viên</Link>, '13'),
+        getItem(<Link href="/admin/transaction/student">Học sinh</Link>, '14')
     ]),
-    getItem('Thảo luận', 'sub5', <CommentOutlined />, [
-        getItem(<Link href="/admin/discussion">Tất cả bài đăng</Link>, '16'),
-        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '17'),
-        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '18')
+    getItem('Xử lý vi phạm', 'sub5', <StopOutlined />, [
+        getItem(<Link href="/admin/report/discussion">Thảo luận</Link>, '15'),
+        getItem(<Link href="/admin/report/exam">Bài thi</Link>, '16'),
+        getItem(<Link href="/admin/report/video">Video</Link>, '17')
+    ]),
+    getItem('Thảo luận', 'sub6', <CommentOutlined />, [
+        getItem(<Link href="/admin/discussion">Tất cả bài đăng</Link>, '18'),
+        getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '19'),
+        getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '20')
     ]),
     getItem(
         <div className="relative">

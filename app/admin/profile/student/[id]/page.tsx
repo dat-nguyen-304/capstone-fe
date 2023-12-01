@@ -1,12 +1,16 @@
 'use client';
 
-import { studentApi } from '@/api-client';
+import { studentApi, userApi } from '@/api-client';
 import Loader from '@/components/Loader';
+import { InputModal } from '@/components/modal/InputModal';
+import { useCustomModal, useInputModal } from '@/hooks';
 import { Button, Card, Chip } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
+import { toast } from 'react-toastify';
 
 interface StudentProfileProps {
     params: { id: string };
@@ -14,16 +18,61 @@ interface StudentProfileProps {
 
 const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     const router = useRouter();
-
+    const [declineId, setDeclineId] = useState<number>();
     const { data } = useQuery({
         queryKey: ['student-public-detail', { params: params?.id }],
         queryFn: () => studentApi.getPublicStudent(params.id)
     });
 
-    if (!data) return <Loader />;
     console.log({ data });
     const targets = data?.data.targets;
     const studentData = data?.data.userResponse;
+    const dateValue = studentData?.createDate ? new Date(studentData?.createDate) : new Date();
+
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    })?.format(dateValue);
+
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
+
+    const handleBanUser = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await userApi.banUser({
+                accountId: id,
+                reason: description
+            });
+            if (!res?.data?.code) {
+                toast.success('Tài khoản đã được cấm thành công');
+                router.push('/admin/student');
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+    const onDeclineOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận cấm tài khoản',
+            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
+    if (!data) return <Loader />;
     if (!studentData) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
@@ -37,10 +86,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                     <span>Quay lại</span>
                 </Button>
                 <div className="flex gap-2">
-                    <Button color="danger" variant="flat" size="sm">
-                        Vô hiệu hóa
-                    </Button>
-                    <Button color="danger" variant="flat" size="sm">
+                    <Button color="danger" variant="flat" size="sm" onClick={() => onDeclineOpen(studentData?.id)}>
                         Cấm
                     </Button>
                 </div>
@@ -48,7 +94,13 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
             <Card className="md:grid grid-cols-9 gap-8 my-4 p-8">
                 <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
-                        <Image src="/student.png" width={300} height={300} alt="" className="sm:border-1 rounded-lg" />
+                        <Image
+                            src={studentData?.url ? studentData?.url : '/student.png'}
+                            width={300}
+                            height={300}
+                            alt=""
+                            className="sm:border-1 rounded-lg"
+                        />
                         <div className="hidden md:block">
                             <h3 className="text-blue-500 text-2xl font-semibold mt-8">{studentData.fullName}</h3>
                             {/* <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>
@@ -65,7 +117,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                         </div>
                         <div className="xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold">Ngày tham gia</p>
-                            <p>{studentData.createdDate || '12/12/2023'}</p>
+                            <p>{formattedDate || '12/12/2023'}</p>
                         </div>
                         <div className="xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold">Tổ hợp môn</p>
@@ -82,6 +134,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                     </div>
                 </div>
             </Card>
+            <InputModal activeFn={() => handleBanUser(declineId as number)} />
         </div>
     );
 };

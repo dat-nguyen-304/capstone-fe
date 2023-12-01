@@ -21,9 +21,24 @@ export const discussionApi = {
     deleteTopic: async (topicId: number) => {
         return await axiosClient.delete(`/discussion/topics/${topicId}`);
     },
-    getAllOfConversation: async (page: number, size: number, field: string, sort: string) => {
+    getAllOfConversation: async (
+        pattern: string,
+        topicId: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
-            `/discussion/conversations?&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/discussion/conversations${pattern !== '' ? `?pattern=${pattern}` : ''}${
+                pattern !== '' && topicId !== ''
+                    ? `&topicId=${topicId}`
+                    : pattern == '' && topicId !== ''
+                    ? `?topicId=${topicId}`
+                    : ''
+            }${
+                pattern !== '' || topicId !== '' ? `&page=${page}` : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

@@ -1,16 +1,20 @@
 'use client';
 
-import { teacherApi } from '@/api-client';
+import { teacherApi, userApi } from '@/api-client';
 import Loader from '@/components/Loader';
+import { InputModal } from '@/components/modal/InputModal';
 import CourseTab from '@/components/profile/CourseTab';
 import VideoTab from '@/components/profile/VideoTab';
+import { useCustomModal, useInputModal } from '@/hooks';
 import { Button, Card, Chip, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 import { MdVerified } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 interface TeacherProfileProps {
     params: { id: string };
@@ -18,10 +22,49 @@ interface TeacherProfileProps {
 
 const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
     const router = useRouter();
+    const [declineId, setDeclineId] = useState<number>();
     const { data } = useQuery({
         queryKey: ['teacher-public-detail', { params: params?.id }],
         queryFn: () => teacherApi.getPublicTeacher(params.id)
     });
+
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
+
+    const handleBanUser = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await userApi.banUser({
+                accountId: id,
+                reason: description
+            });
+            if (!res?.data?.code) {
+                toast.success('Tài khoản đã được cấm thành công');
+                router.push('/admin/teacher');
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+    const onDeclineOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận cấm tài khoản',
+            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
 
     if (!data) return <Loader />;
 
@@ -38,12 +81,11 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
                     <span>Quay lại</span>
                 </Button>
                 <div className="flex gap-2">
-                    <Button color="danger" variant="flat" size="sm">
-                        Vô hiệu hóa
-                    </Button>
-                    <Button color="danger" variant="flat" size="sm">
-                        Cấm
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button color="danger" variant="flat" size="sm" onClick={() => onDeclineOpen(teacherData?.id)}>
+                            Cấm
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -101,6 +143,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ params }) => {
                     </Tabs>
                 </div>
             </Card>
+            <InputModal activeFn={() => handleBanUser(declineId as number)} />
         </div>
     );
 };

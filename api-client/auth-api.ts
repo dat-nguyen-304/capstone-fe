@@ -22,8 +22,8 @@ export const authApi = {
         return await axiosClient.post('/authentication/login/google', { token });
     },
 
-    logout: async (payload: { email: string }) => {
-        return await axiosClient.post('/authentication/logout', payload);
+    logout: async () => {
+        return await axiosClient.post('/authentication/logout');
     },
 
     refreshToken: async () => {

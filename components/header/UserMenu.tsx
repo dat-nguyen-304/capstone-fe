@@ -15,7 +15,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     const { onChangeUser } = useUser();
     const router = useRouter();
     const handleLogout = async () => {
-        await authApi.logout({ email: currentUser.email });
+        await authApi.logout;
         onChangeUser(null);
         router.push('/');
     };
