@@ -81,15 +81,15 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">
                 <h2 className="text-2xl text-blue-500 font-bold">Thư viện đề thi</h2>
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                    <div className="xl:grid grid-cols-4 relative">
-                        <div className="col-span-3">
+                    <div className="relative">
+                        <div>
                             <ExamFilter
                                 selectedSubject={selectedSubject}
                                 setSelectedSubject={setSelectedSubject}
                                 setSelectedFilterSort={setSelectedFilterSort}
                                 setSearch={setSearch}
                             />
-                            <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-8 gap-2 sm:gap-4">
+                            <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 mt-8 gap-2 sm:gap-4">
                                 {exams?.length ? (
                                     exams?.map((examItem: ExamCardType) => (
                                         <ExamItem key={examItem?.id} exam={examItem} />
@@ -98,9 +98,6 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                                     <div>Chưa có bài thi</div>
                                 )}
                             </ul>
-                        </div>
-                        <div className="col-span-1 hidden xl:block ml-auto w-[90%] ">
-                            <ExamInfoCard />
                         </div>
                     </div>
                 </Spin>

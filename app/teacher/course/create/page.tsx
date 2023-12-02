@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Checkbox, Select, SelectItem, Selection, Skeleton } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem, Skeleton } from '@nextui-org/react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useQuery } from '@tanstack/react-query';
@@ -163,7 +163,7 @@ const CreateCourse: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                 <div className="md:grid grid-cols-6 mt-8">
                     <div className="md:col-span-3 lg:col-span-2">
-                        <label className="font-semibold block mb-2">Ảnh thu nhỏ</label>
+                        <label className="font-semibold block mb-2 text-[#1877f1]">Ảnh thu nhỏ</label>
                         <div className="h-[240px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} name="avatar" />
@@ -197,6 +197,7 @@ const CreateCourse: React.FC = () => {
                                 variant="bordered"
                                 name="name"
                                 color="primary"
+                                isRequired
                                 labelPlacement="outside"
                                 label="Tên khóa học"
                                 control={control}
@@ -212,6 +213,7 @@ const CreateCourse: React.FC = () => {
                                     labelPlacement="outside"
                                     defaultSelectedKeys={[`${defaultSubjectIds[0]}`]}
                                     // value={selectedSubject}
+                                    description="Bạn không thể thay đổi môn học sau khi đã tạo khóa học."
                                     name="subject"
                                     onChange={event => setSelectedSubject(Number(event.target.value))}
                                 >
@@ -231,6 +233,8 @@ const CreateCourse: React.FC = () => {
                                     color="primary"
                                     variant="bordered"
                                     labelPlacement="outside"
+                                    isRequired
+                                    description="Mức độ khó của khóa học"
                                     defaultSelectedKeys={['1']}
                                     onChange={event => setLevelId(Number(event.target.value))}
                                 >
@@ -254,7 +258,7 @@ const CreateCourse: React.FC = () => {
                     </div>
                 </div>
                 <div className="mt-8">
-                    <label className="font-semibold">Chủ đề khóa học</label>
+                    <label className="font-semibold text-[#1877f1]">Chủ đề khóa học</label>
                     {topics ? (
                         <ul className="mt-4 flex gap-2 flex-wrap">
                             {topicStates.map(topic => (
@@ -281,7 +285,7 @@ const CreateCourse: React.FC = () => {
                 </div>
 
                 <div className="mt-8">
-                    <label className="font-semibold">Mô tả</label>
+                    <label className="font-semibold text-[#1877f1]">Mô tả</label>
                     <InputDescription name="description" control={control} />
                 </div>
                 <div className="flex items-start mb-8 mt-20 sm:mt-16">
@@ -297,7 +301,7 @@ const CreateCourse: React.FC = () => {
                     </label>
                 </div>
                 <Button color="primary" type="submit" isLoading={isSubmitting}>
-                    Tạo khóa học mới
+                    Tạo bản nháp
                 </Button>
             </form>
         </div>

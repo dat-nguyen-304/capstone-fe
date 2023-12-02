@@ -19,7 +19,8 @@ const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
         queryKey: ['student-detail'],
         queryFn: () => studentApi.getStudent()
     });
-    console.log(studentData);
+
+    console.log({ studentData: studentData?.data.targets });
 
     if (!studentData) return <Loader />;
 

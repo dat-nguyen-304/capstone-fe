@@ -11,6 +11,7 @@ import { SafeUser } from '@/types';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/api-client';
+import { useQueryClient } from '@tanstack/react-query';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -25,13 +26,15 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
+    const queryClient = useQueryClient();
     const currentUser = useUser();
     const router = useRouter();
     const {
         token: { colorBgContainer }
     } = theme.useToken();
     const handleLogout = async () => {
-        await authApi.logout;
+        await authApi.logout();
+        queryClient.clear();
         currentUser.onChangeUser(null);
         router.push('/auth');
     };

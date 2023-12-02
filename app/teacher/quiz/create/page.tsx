@@ -12,6 +12,8 @@ import { useForm } from 'react-hook-form';
 import { createSkeletonArray } from '@/utils';
 import TestReviewItem from '@/components/test/TestReviewItem';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { FaPlus } from 'react-icons/fa6';
 interface CreateQuizProps {}
 
 const getSubjectNameById = (id: number): string => {
@@ -42,6 +44,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const [selectedCourse, setSelectedCourse] = useState<number>();
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -91,6 +95,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
     };
     const createQuiz = async (formData: any) => {
+        setIsSubmitting(true);
+        const toastLoading = toast.loading('Đang xử lí yêu cầu');
         try {
             const payload = {
                 name: formData?.name,
@@ -107,11 +113,16 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             const response = await examApi.createExam(payload);
 
             if (response) {
+                setIsSubmitting(false);
+                toast.dismiss(toastLoading);
+                toast.success('Tạo bài tập thành công');
                 router.push('/teacher/quiz');
             }
         } catch (error) {
             // Handle any errors that occur during the API call
             console.error('Error creating exam:', error);
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             // You can also show a user-friendly error message
         }
     };
@@ -119,7 +130,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(createQuiz)}>
-                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo khóa bài tập mới</h3>
+                <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài tập mới</h3>
                 <div className="sm:grid grid-cols-6 my-4 gap-3">
                     <div className="my-4 col-span-6 lg:col-span-3">
                         <InputText
@@ -133,42 +144,25 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         />
                     </div>
                     <div className=" my-4 col-span-3 lg:col-span-3">
-                        <Select
-                            size="sm"
-                            isRequired
-                            label="Môn học"
-                            color="primary"
-                            variant="bordered"
-                            defaultSelectedKeys={['1']}
-                            value={selectedSubject}
-                            name="subject"
-                            onChange={event => setSelectedSubject(Number(event.target.value))}
-                        >
-                            {subjectsData.map((subject: Subject) => (
-                                <SelectItem key={subject.id} value={subject.id}>
-                                    {subject.name}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </div>
-                </div>
-                <div className="sm:grid grid-cols-6 my-4 gap-3">
-                    <div className="my-4 col-span-3 lg:col-span-3">
                         <InputText
                             isRequired
                             variant="bordered"
                             name="duration"
                             size="sm"
-                            label="Thời gian"
+                            color="primary"
+                            label="Thời gian (phút)"
                             control={control}
                         />
                     </div>
+                </div>
+                <div className="sm:grid grid-cols-6 my-4 gap-3">
                     <div className="my-4 col-span-3 lg:col-span-3">
                         <Select
                             isRequired
                             size="sm"
                             label="Khóa học"
                             color="primary"
+                            description="Bài tập của bạn sẽ được đưa vào cuối danh sách của khóa học này. Bạn có thể thay đổi trình tự của bài tập trong khóa học tại phần 'Chỉnh sửa khóa học'."
                             variant="bordered"
                             onChange={event => setSelectedCourse(Number(event.target.value))}
                         >
@@ -180,8 +174,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </Select>
                     </div>
                 </div>
-                <Button onClick={handlePopUpAddQuestion} color="primary" className="mt-8">
-                    Thêm câu hỏi
+                <Button onClick={handlePopUpAddQuestion} color="success" variant="flat" className="mt-8">
+                    Thêm câu hỏi <FaPlus />
                 </Button>
                 <AddQuestionModal
                     isOpen={isOpen}
@@ -196,37 +190,27 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     <ul className="mt-8">
                         {questions?.map((question, index) => (
                             <div key={index}>
-                                <TestReviewItem questions={question} index={index} />
+                                <TestReviewItem
+                                    questions={question}
+                                    index={index}
+                                    handleEditOpen={handleEditOpen}
+                                    handleDeleteQuestion={handleDeleteQuestion}
+                                />
                                 {/* Add a delete button for each question */}
-                                <Button
-                                    onClick={() => handleEditOpen(index)}
-                                    className="mx-2"
-                                    color="warning"
-                                    size="sm"
-                                    variant="bordered"
-                                >
-                                    Chỉnh sửa
-                                </Button>
-                                <Button
-                                    onClick={() => handleDeleteQuestion(index)}
-                                    className=""
-                                    color="danger"
-                                    size="sm"
-                                    variant="bordered"
-                                >
-                                    Xóa câu hỏi
-                                </Button>
                             </div>
                         ))}
                     </ul>
-                    <Button
-                        className="w-full mt-16 font-semibold"
-                        color="primary"
-                        size="lg"
-                        onClick={handlePopUpAddQuestion}
-                    >
-                        Thêm câu hỏi
-                    </Button>
+                    {questions && questions.length > 2 && (
+                        <Button
+                            onClick={handlePopUpAddQuestion}
+                            className="w-full mt-2 font-semibold"
+                            color="success"
+                            variant="flat"
+                            size="lg"
+                        >
+                            Thêm câu hỏi <FaPlus />
+                        </Button>
+                    )}
                 </div>
                 <div className="flex items-start mb-4 mt-8 sm:mt-12">
                     <div className="flex items-center h-5">
@@ -240,8 +224,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         .
                     </label>
                 </div>
-                <Button color="primary" type="submit">
-                    Tạo bài tập mới
+                <Button className="mt-4" type="submit" color="primary" isLoading={isSubmitting}>
+                    Tạo bài thi mới
                 </Button>
             </form>
         </div>

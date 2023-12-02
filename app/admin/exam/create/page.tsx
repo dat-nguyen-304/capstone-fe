@@ -232,7 +232,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </div>
                     ))}
                 </ul>
-                {questions && questions.length > 4 && (
+                {questions && questions.length > 2 && (
                     <Button
                         onClick={handlePopUpAddQuestion}
                         className="w-full mt-2 font-semibold"

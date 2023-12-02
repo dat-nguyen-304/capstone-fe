@@ -49,7 +49,7 @@ const columns = [
     { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'ĐÃ TẠO', uid: 'createTime', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createTime', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -72,6 +72,7 @@ const Exams: React.FC<ExamsProps> = () => {
         // keepPreviousData: true,
         queryFn: () => examApi.getAllByAdmin(page - 1, rowsPerPage, 'createTime', 'DESC')
     });
+
     useEffect(() => {
         if (data?.data) {
             setExams(data.data);
@@ -79,6 +80,7 @@ const Exams: React.FC<ExamsProps> = () => {
             setTotalRow(data.totalRow);
         }
     }, [data]);
+
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({

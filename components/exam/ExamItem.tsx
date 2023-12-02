@@ -60,7 +60,7 @@ const ExamItem: React.FC<ExamItemProps> = ({ exam }) => {
     return (
         <li>
             <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">
-                <div className="flex font-semibold text-sm sm:text-base truncate2line sm:h-[50px] h-[42px]">
+                <div className="flex font-semibold text-xs sm:text-sm md:text-base truncate2line sm:h-[50px] h-[42px]">
                     {exam?.attempted && <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />}
                     <span>{exam?.name}</span>
                 </div>

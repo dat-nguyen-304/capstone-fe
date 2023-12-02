@@ -23,7 +23,7 @@ import AvgScoreMonthChart from '@/components/chart/exam-history/AvgScoreMonthCha
 import QuantityScoreChart from '@/components/chart/exam-history/QuantityScoreChart';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
-import { Spin } from 'antd';
+import { Progress, Spin } from 'antd';
 
 interface ExamHistoryProps {}
 
@@ -190,8 +190,9 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     // if (!examSubmissionStaticData) return <Loader />;
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
+            <h3 className="text-xl font-semibold text-blue-500 mt-4 sm:mt-0">Lịch sử luyện đề</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             color="primary"
@@ -270,6 +271,35 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                         <h3 className="my-4 font-semibold">Thống kê theo điểm số</h3>
                         <QuantityScoreChart quantityGrade={quantityGrade} />
                     </div>
+                </div>
+                <div className="mt-16">
+                    <h3 className="font-semibold">Thống kê theo chủ đề</h3>
+                    <ul className="mt-8">
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={30} />
+                        </li>
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={28} />
+                        </li>
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={40} />
+                        </li>
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={93} />
+                        </li>
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={87} />
+                        </li>
+                        <li className="text-xs xl:flex mt-4">
+                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
+                            <Progress className="w-full" percent={76} />
+                        </li>
+                    </ul>
                 </div>
             </Spin>
         </div>

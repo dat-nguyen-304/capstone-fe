@@ -10,5 +10,8 @@ export const userApi = {
     },
     banUser: async (payload: any) => {
         return await axiosClient.patch('/user/ban-user', payload);
+    },
+    edit: async (payload: any) => {
+        return await axiosClient.put('/user/edit-information', payload);
     }
 };

@@ -6,7 +6,7 @@ export const courseStatusColorMap: Record<string, ChipProps['color']> = {
     BANNED: 'danger',
     WAITING: 'primary',
     UPDATING: 'primary',
-    DRAFT: 'primary',
+    DRAFT: 'default',
     UNAVAILABLE: 'warning'
 };
 

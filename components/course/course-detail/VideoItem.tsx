@@ -2,17 +2,19 @@
 
 import { Button, Card, Chip } from '@nextui-org/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 import { BiSolidLike } from 'react-icons/bi';
 import { FaComments } from 'react-icons/fa';
 import { RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
     type?: 'my-video' | 'teacher-video' | 'teacher-video-draft' | 'admin-review-video' | 'admin-view-video';
-
     videoItem: any;
     index: number;
+    onPreviewOpen: () => void;
+    onPreViewUrl: Dispatch<SetStateAction<string>>;
+    onVideoName: Dispatch<SetStateAction<string>>;
 }
 
 const floatToTime = (durationFloat: number): string => {
@@ -38,7 +40,7 @@ const floatToTime = (durationFloat: number): string => {
     }
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type }) => {
+const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type, onPreviewOpen, onPreViewUrl, onVideoName }) => {
     const router = useRouter();
     let detailPage = '';
     if (type == 'teacher-video') {
@@ -87,10 +89,17 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type }) => {
     // else detailPage = `/video/${videoItem?.id}`;
 
     const goToVideo = () => {
-        if (!type && videoItem.videoStatus === 'PRIVATE') return;
+        console.log({ videoItem: videoItem.url });
+        if (!type) {
+            if (videoItem.videoStatus === 'PRIVATE') return;
+            else {
+                onPreViewUrl(videoItem.url);
+                onVideoName(videoItem.name);
+                onPreviewOpen();
+            }
+        }
         return router.push(detailPage);
     };
-    console.log(videoItem);
 
     return (
         <li className="relative w-[85%] sm:w-[90%] mx-auto mb-4 py-4 bg-white rounded-xl shadow-lg">

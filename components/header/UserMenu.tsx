@@ -7,6 +7,8 @@ import React from 'react';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+
 interface UserMenuProps {
     currentUser: CommonUser;
 }
@@ -14,8 +16,11 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     const { onChangeUser } = useUser();
     const router = useRouter();
+    const queryClient = useQueryClient();
+
     const handleLogout = async () => {
-        await authApi.logout;
+        await authApi.logout();
+        queryClient.clear();
         onChangeUser(null);
         router.push('/');
     };

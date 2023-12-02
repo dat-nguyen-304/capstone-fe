@@ -89,7 +89,7 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full rounded-xl"
+                className="w-full rounded-xl h-[200px] max-w-[400px] mx-auto object-cover object-center"
             />
             <div className="flex justify-center flex-col items-center">
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">

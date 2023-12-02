@@ -35,15 +35,15 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 const items: MenuItem[] = [
     getItem(<Link href="/teacher">Thông tin chung</Link>, '1', <BarChartOutlined />),
     getItem(<Link href="/teacher/edit-profile">Cập nhật hồ sơ</Link>, '2', <IdcardOutlined />),
-    getItem('Video', 'sub1', <PlaySquareOutlined />, [
-        getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
-        getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4'),
-        getItem(<Link href="/teacher/video/my-video-draft">Video vừa tạo</Link>, '5')
-    ]),
     getItem('Khóa học', 'sub2', <AuditOutlined />, [
         getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '6'),
         getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '7'),
         getItem(<Link href="/teacher/course/my-course-draft">Khóa học vừa tạo</Link>, '8')
+    ]),
+    getItem('Video', 'sub1', <PlaySquareOutlined />, [
+        getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
+        getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4'),
+        getItem(<Link href="/teacher/video/my-video-draft">Video vừa tạo</Link>, '5')
     ]),
     getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
         getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '9'),

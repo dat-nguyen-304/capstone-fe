@@ -78,30 +78,14 @@ const TargetTab: React.FC<TargetTabProps> = ({ target, refetch }) => {
     const onRemove = async () => {
         let toastLoading;
         try {
-            const founded = subjectTarget.find((subject: any) => subject.isValid === false);
-            if (founded) toast.error('Vui lòng điền đúng thông tin');
-            else {
-                setIsSubmitting(true);
-                toastLoading = toast.loading('Đang cập nhật');
-                const subjectTargetBody = subjectTarget.map((subject: any) => ({
-                    subjectId: subject.subjectId,
-                    grade: subject.grade
-                }));
-                console.log({
-                    hello: {
-                        targetId: target.id,
-                        studentSubjectTargetRequests: subjectTargetBody
-                    }
-                });
-                await studentApi.updateTarget({
-                    targetId: target.id,
-                    studentSubjectTargetRequests: subjectTarget
-                });
-                setIsSubmitting(false);
-                refetch();
-                toast.dismiss(toastLoading);
-                toast.success('Cập nhật thành công');
-            }
+            setIsSubmitting(true);
+            toastLoading = toast.loading('Đang cập nhật');
+            const res = await studentApi.removeTarget(target.id);
+            console.log({ res });
+            setIsSubmitting(false);
+            refetch();
+            toast.dismiss(toastLoading);
+            toast.success('Xóa thành công');
         } catch (error) {
             setIsSubmitting(false);
             toast.dismiss(toastLoading);

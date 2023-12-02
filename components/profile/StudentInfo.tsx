@@ -1,17 +1,47 @@
 'use client';
-
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import { Button, Card, Input, Select, useDisclosure } from '@nextui-org/react';
+import { Button, Card, Input, useDisclosure } from '@nextui-org/react';
 import Loader from '../Loader';
+import { userApi } from '@/api-client';
+import { useForm } from 'react-hook-form';
+import { InputText } from '../form-input';
+import { InputDescription } from '../form-input/InputDescription';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface StudentInfoProps {
     studentData: any;
 }
 
 const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { control, handleSubmit, setError } = useForm({
+        defaultValues: {
+            fullName: studentData.fullName,
+            description: studentData.description
+        }
+    });
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+    const onSubmit = async (values: any) => {
+        console.log({ values });
+        const loading = toast.loading('Đang cập nhật');
+        setIsSubmitting(true);
+        try {
+            const formDataPayload = new FormData();
+            formDataPayload.append('editUserRequest', new Blob([JSON.stringify(values)], { type: 'application/json' }));
+            const res = await userApi.edit(formDataPayload);
+            toast.dismiss(loading);
+            toast.success('Cập nhật thành công');
+            setIsSubmitting(false);
+            console.log({ res });
+        } catch (error) {
+            console.log({ error });
+            toast.dismiss(loading);
+            toast.error('Đã có lỗi xảy ra, vui lòng thử lại sau');
+            setIsSubmitting(false);
+        }
+    };
 
     if (!studentData) return <Loader />;
 
@@ -22,13 +52,13 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
             <div>
                 <div className="xl:flex items-center mt-4">
                     <p className="w-[160px] font-semibold">Họ và tên</p>
-                    <Input
-                        name="Họ và tên"
+                    <InputText
+                        name="fullName"
                         variant="underlined"
                         size="sm"
                         className="max-w-xs"
                         color="primary"
-                        value={studentData.fullName}
+                        control={control}
                     />
                 </div>
                 {/* <div className="xl:flex items-center mt-8 xl:mt-4">
@@ -62,20 +92,23 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                             </SelectItem>
                         )}
                     </Select> 
-                </div>
+                </div>*/}
                 <div className="xl:flex items-center mt-12 xl:mt-8">
                     <p className="w-[160px] mb-4 xl:mb-0 font-semibold">Giới thiệu</p>
-                    <ReactQuill
-                        theme="snow"
-                        className="flex-[1]"
-                        placeholder="Giới thiệu về bạn một chút đi nào"
-                        value={studentData?.description}
-                    />
-                </div> */}
+                    <div className="flex-[1]">
+                        <InputDescription
+                            placeholder="Giới thiệu về bạn một chút đi nào"
+                            control={control}
+                            name="description"
+                        />
+                    </div>
+                </div>
             </div>
             {/* )} */}
-            <div className="flex flex-row-reverse mt-8">
-                <Button color="primary">Lưu thay đổi</Button>
+            <div className="flex flex-row-reverse mt-16">
+                <Button color="primary" onClick={handleSubmit(onSubmit)} isLoading={isSubmitting}>
+                    Lưu thay đổi
+                </Button>
             </div>
         </Card>
     );

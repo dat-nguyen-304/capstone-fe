@@ -18,7 +18,7 @@ const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
                 width={600}
                 height={300}
                 alt=""
-                className="w-full rounded-xl h-[200px] object-cover object-center"
+                className="w-full rounded-xl h-[200px] max-w-[400px] mx-auto object-cover object-center"
             />
             <div className="hidden md:flex justify-center flex-col items-center">
                 <div>

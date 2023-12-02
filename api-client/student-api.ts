@@ -23,6 +23,9 @@ export const studentApi = {
     updateTarget: async (newTarget: any) => {
         return await axiosClient.post('/student/edit-target', newTarget);
     },
+    removeTarget: async (targetId: number) => {
+        return await axiosClient.delete(`/student/target/${targetId}`);
+    },
     getStudentTargets: async () => {
         return await axiosClient.get('/student/targets');
     }

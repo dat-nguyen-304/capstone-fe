@@ -310,14 +310,15 @@ const UploadVideo: React.FC = () => {
                             <Select
                                 isRequired
                                 size="sm"
-                                label="Trạng thái video"
+                                label="Loại video mới"
+                                description="Học sinh có thể xem video xem trước trước khi thanh toán."
                                 color="primary"
                                 variant="bordered"
                                 defaultSelectedKeys={['PUBLIC']}
                                 onChange={event => setSelectedStatusVideo(event?.target?.value)}
                             >
                                 <SelectItem key={'PUBLIC'} value={'PUBLIC'}>
-                                    Công Khai
+                                    Xem trước
                                 </SelectItem>
                                 <SelectItem key={'PRIVATE'} value={'PRIVATE'}>
                                     Không công khai
@@ -326,7 +327,7 @@ const UploadVideo: React.FC = () => {
                         </div>
                         <div className="col-span-2 my-4 sm:grid grid-cols-2 gap-4">
                             {optionCourse.length === 2 && selectedOptionCourse ? (
-                                <div className="col-span-1">
+                                <div className="col-span-2">
                                     <Select
                                         isRequired
                                         size="sm"
@@ -335,12 +336,13 @@ const UploadVideo: React.FC = () => {
                                         variant="bordered"
                                         defaultSelectedKeys={[selectedOptionCourse]}
                                         onChange={event => setSelectedOptionCourse(event?.target?.value)}
+                                        description="Khóa học đang cập nhật là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
                                     >
                                         <SelectItem key={'NEW'} value={'NEW'}>
-                                            Khóa học mới
+                                            Khóa học đang cập nhật
                                         </SelectItem>
                                         <SelectItem key={'OLD'} value={'OLD'}>
-                                            Khóa học cũ
+                                            Khóa học đang hoạt động
                                         </SelectItem>
                                     </Select>
                                 </div>
@@ -354,6 +356,7 @@ const UploadVideo: React.FC = () => {
                                 size="sm"
                                 label="Khóa học"
                                 color="primary"
+                                description="Video của bạn sẽ được đưa vào cuối danh sách của khóa học này. Bạn có thể thay đổi trình tự của video trong khóa học tại phần 'Chỉnh sửa khóa học'."
                                 variant="bordered"
                                 onChange={event => setSelectedCourse(Number(event.target.value))}
                             >
@@ -410,7 +413,7 @@ const UploadVideo: React.FC = () => {
                         </a>
                     </label>
                 </div>
-                <Button color="primary" type="submit" className="mb-4" isLoading={isSubmitting}>
+                <Button color="primary" type="submit" className="text-xs sm:text-sm mb-4" isLoading={isSubmitting}>
                     Xác nhận video mới
                 </Button>
             </form>
