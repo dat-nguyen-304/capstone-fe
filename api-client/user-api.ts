@@ -1,5 +1,6 @@
 import { ChangePasswordPayload, ChangeUserStatus } from '@/types';
 import axiosClient from './axios-client';
+import axiosFormData from './axios-form';
 
 export const userApi = {
     changePassword: async (payload: ChangePasswordPayload) => {
@@ -12,6 +13,6 @@ export const userApi = {
         return await axiosClient.patch('/user/ban-user', payload);
     },
     edit: async (payload: any) => {
-        return await axiosClient.put('/user/edit-information', payload);
+        return await axiosFormData.put('/user/edit-information', payload);
     }
 };

@@ -17,3 +17,4 @@ export * from './teacher-incomes-api';
 export * from './report-video-api';
 export * from './suggest-api';
 export * from './student-process-api';
+export * from './dashboard-api';

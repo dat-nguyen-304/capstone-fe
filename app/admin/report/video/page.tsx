@@ -87,8 +87,12 @@ const Reports: React.FC<ReportsProps> = () => {
         data: reportVideosData,
         isPreviousData
     } = useQuery({
-        queryKey: ['reportExams', { page, rowsPerPage, updateState }],
-        queryFn: () => reportVideoApi.reportsVideo(page - 1, rowsPerPage, 'reportId', 'ASC')
+        queryKey: [
+            'reportVideos',
+            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }
+        ],
+        queryFn: () =>
+            reportVideoApi.reportsVideoByType(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage, 'id', 'ASC')
     });
 
     useEffect(() => {
@@ -209,90 +213,90 @@ const Reports: React.FC<ReportsProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách báo cáo video</h3>
-            {/* <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải"> */}
-            <div className="flex flex-col gap-4 mt-8">
-                <div className="sm:flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        startContent={<BsSearch className="text-default-300" />}
-                        value={filterValue}
-                        color="primary"
-                        variant="bordered"
-                        onClear={() => setFilterValue('')}
-                        onValueChange={onSearchChange}
-                    />
-                    <div className="flex gap-3 mt-4 sm:mt-0">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    variant="bordered"
-                                    color="primary"
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="flex flex-col gap-4 mt-8">
+                    <div className="sm:flex justify-between gap-3 items-end">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1"
+                            placeholder="Tìm kiếm..."
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={filterValue}
+                            color="primary"
+                            variant="bordered"
+                            onClear={() => setFilterValue('')}
+                            onValueChange={onSearchChange}
+                        />
+                        <div className="flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Loại báo cáo
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    Loại báo cáo
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="single"
-                                onSelectionChange={setStatusFilter}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="INTEGRITY" className="capitalize">
+                                        {capitalize('Vi phạm chuẩn mực')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ACADEMIC" className="capitalize">
+                                        {capitalize('Lỗi học thuật')}
+                                    </DropdownItem>
+                                    <DropdownItem key="TECHNICAL" className="capitalize">
+                                        {capitalize('Lỗi kĩ thuật')}
+                                    </DropdownItem>
+                                    <DropdownItem key="OPINION" className="capitalize">
+                                        {capitalize('Góp ý')}
+                                    </DropdownItem>
+                                    <DropdownItem key="OTHERS" className="capitalize">
+                                        {capitalize('Khác')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <div className="sm:flex justify-between items-center">
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                            Số kết quả mỗi trang:
+                            <select
+                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                onChange={onRowsPerPageChange}
                             >
-                                <DropdownItem key="ALL" className="capitalize">
-                                    {capitalize('Tất Cả')}
-                                </DropdownItem>
-                                <DropdownItem key="INTEGRITY" className="capitalize">
-                                    {capitalize('Vi phạm chuẩn mực')}
-                                </DropdownItem>
-                                <DropdownItem key="ACADEMIC" className="capitalize">
-                                    {capitalize('Lỗi học thuật')}
-                                </DropdownItem>
-                                <DropdownItem key="TECHNICAL" className="capitalize">
-                                    {capitalize('Lỗi kĩ thuật')}
-                                </DropdownItem>
-                                <DropdownItem key="OPINION" className="capitalize">
-                                    {capitalize('Góp ý')}
-                                </DropdownItem>
-                                <DropdownItem key="OTHERS" className="capitalize">
-                                    {capitalize('Khác')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
-                <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
-                    <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                        Số kết quả mỗi trang:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <TableContent
-                renderCell={renderCell}
-                headerColumns={headerColumns}
-                items={reportVideo || []}
-                page={page}
-                setPage={setPage}
-                sortDescriptor={sortDescriptor}
-                setSortDescriptor={setSortDescriptor}
-                totalPage={totalPage || 1}
-            />
-            {/* </Spin> */}
+                <TableContent
+                    renderCell={renderCell}
+                    headerColumns={headerColumns}
+                    items={reportVideo || []}
+                    page={page}
+                    setPage={setPage}
+                    sortDescriptor={sortDescriptor}
+                    setSortDescriptor={setSortDescriptor}
+                    totalPage={totalPage || 1}
+                />
+            </Spin>
             <InputModal activeFn={() => handleStatusChange(declineId as number, 'REJECT')} />
         </div>
     );

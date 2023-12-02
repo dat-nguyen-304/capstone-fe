@@ -40,71 +40,6 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const transactions = [
-    {
-        id: 1,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 2,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 3,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 4,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 5,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 6,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    }
-];
-
-type Transaction = (typeof transactions)[0];
-
 const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -127,7 +62,14 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-    const { onOpen: onInputOpen, onClose: onInputClose, onMoney, money } = useInputModalNumber();
+    const {
+        onOpen: onInputOpen,
+        onClose: onInputClose,
+        onMoney,
+        money,
+        transactionCode,
+        onTransactionCode
+    } = useInputModalNumber();
     const [declineId, setDeclineId] = useState<number>();
     const {
         status,
@@ -171,24 +113,27 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
 
     const handlePaymentTeacher = async (id: number) => {
         let toastLoading;
-        console.log({ money, id });
+        console.log({ money, transactionCode, id });
+        const paymentDate = new Date();
+        paymentDate.setHours(paymentDate.getHours() + 7);
         try {
             onClose();
             onInputClose();
             toastLoading = toast.loading('Đang xử lí yêu cầu');
-            // const res = await transactionApi.studentRequestRefund({
-            //     id,
-            //     paymentCode:'',
-            //     paymentDate:'',
-            //     amount: money
-            // });
+            const res = await teacherIncomeApi.adminPaymentTeacher({
+                id,
+                paymentCode: transactionCode,
+                paymentDate: paymentDate,
+                amount: money
+            });
 
-            // if (res) {
-            //     toast.success('Đề nghị hoàn tiền đã gửi thành công');
+            if (res) {
+                toast.success('Sô1 tiền đã gửi cho giáo viên thành công');
 
-            //     refetch();
-            // }
+                refetch();
+            }
             onMoney?.(Number(0));
+            onTransactionCode?.('');
             toast.dismiss(toastLoading);
         } catch (error) {
             toast.dismiss(toastLoading);

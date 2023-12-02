@@ -46,6 +46,8 @@ const floatToTime = (durationFloat: number): string => {
 
 const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     const router = useRouter();
+    console.log(type);
+    console.log(video);
 
     let detailPage = '',
         teacherStatus = '',
@@ -71,6 +73,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
 
     const viewDetailVideo = () => {
         if (type === 'all' && video.videoStatus === 'PUBLIC') router.push(detailPage);
+        else if (type === 'teacher') router.push(detailPage);
+        else if (type === 'teacher-draft') router.push(detailPage);
     };
 
     return (

@@ -31,6 +31,7 @@ const columns = [
     { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
+    { name: 'HỌC SINH', uid: 'userName', sortable: true },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
     { name: 'NGÀY', uid: 'paymentDate', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
@@ -105,7 +106,16 @@ type Transaction = (typeof transactions)[0];
 const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set([
+            'courseName',
+            'subject',
+            'teacherName',
+            'userName',
+            'amount',
+            'paymentDate',
+            'transactionStatus',
+            'action'
+        ])
     );
     const [adminTransactions, setAdminTransactions] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -200,6 +210,22 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         {transaction.teacherName}
                     </User>
                 );
+            case 'userName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction.userAvatar ? transaction.userAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {transaction.userAvatar}
+                    </User>
+                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -231,6 +257,16 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             ? 'Đang chờ'
                             : cellValue === 'FAIL'
                             ? 'Thất bại'
+                            : cellValue === 'RECEIVED'
+                            ? 'Chuyển tiền thành công'
+                            : cellValue === 'REFUND_SUCCES'
+                            ? 'Hoàn tiền thành công'
+                            : cellValue === 'REFUND'
+                            ? 'Chờ hoàn tiền'
+                            : cellValue === 'REJECT_REFUND'
+                            ? 'Từ chối hoàn tiền'
+                            : cellValue === 'NOTYET'
+                            ? 'Chưa chuyển'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -296,8 +332,23 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     <DropdownItem key="SUCCESS" className="capitalize">
                                         {capitalize('Thành Công')}
                                     </DropdownItem>
+                                    <DropdownItem key="RECEIVED" className="capitalize">
+                                        {capitalize('Chuyển tiền thành Công')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REFUND_SUCCES" className="capitalize">
+                                        {capitalize('Hoàn tiền thành Công')}
+                                    </DropdownItem>
                                     <DropdownItem key="PENDING" className="capitalize">
                                         {capitalize('Đang chờ')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REFUND" className="capitalize">
+                                        {capitalize('Chờ hoàn tiền')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REJECT_REFUND" className="capitalize">
+                                        {capitalize('Từ chối hoàn tiền')}
+                                    </DropdownItem>
+                                    <DropdownItem key="NOTYET" className="capitalize">
+                                        {capitalize('Chưa được')}
                                     </DropdownItem>
                                     <DropdownItem key="FAIL" className="capitalize">
                                         {capitalize('Thất Bại')}

@@ -61,7 +61,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const courseContent = {
         id: courseData?.id,
         totalVideo: courseData?.totalVideo,
-        listVideo: [...(courseData?.courseVideoResponses || []), ...(quizCourse?.data || [])],
+        listVideo: [...(courseData?.courseVideoResponses || []), ...(quizCourse?.data || [])].sort((a, b) => {
+            const aOrder = a.ordinalNumber || a.courseOrder || 0;
+            const bOrder = b.ordinalNumber || b.courseOrder || 0;
+            return aOrder - bOrder;
+        }),
         totalQuiz: quizCourse?.totalRow,
         totalCompleted: courseData?.totalCompleted + numberOfAttemptedQuizzes
     };

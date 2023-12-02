@@ -5,7 +5,7 @@ export const commentsVideoApi = {
     },
     getCommentsVideoById: async (videoId: number, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/comments?videoId=${videoId}&page=${page}&size=${size}&field=${field}&sortType=ASC`
+            `/comments?videoId=${videoId}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     }

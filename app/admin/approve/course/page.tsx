@@ -19,7 +19,7 @@ import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useCustomModal, useInputModal } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { courseApi } from '@/api-client';
+import { courseApi, examApi } from '@/api-client';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
 import { toast } from 'react-toastify';
@@ -107,10 +107,16 @@ const Courses: React.FC<CoursesProps> = () => {
                 reason: description,
                 verifyStatus
             });
+            console.log(res);
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {
-                    toast.success('Khóa học đã được duyệt thành công');
+                    const updateRes = await examApi.updateQuizDraftToQuiz(res?.data, id);
+                    if (!updateRes) {
+                        toast.success('Khóa học đã được duyệt thành công');
+                    } else {
+                        toast.error('Khóa học duyệt thất bại');
+                    }
                 } else if (verifyStatus == 'REJECT') {
                     toast.success('Đã từ chối khóa học thành công');
                 }

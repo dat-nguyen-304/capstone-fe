@@ -33,6 +33,21 @@ export const examApi = {
         );
         return res.data;
     },
+    getQuizByOwnerId: async (
+        subject: string,
+        examType: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/examination/exams/my${subject !== '' ? `?subject=${subject}` : ''}${
+                subject !== '' ? `&examType=${examType}` : subject == '' ? `?examType=${examType}` : ''
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
     getExamBySearch: async (page: number, size: number) => {
         const res = await axiosClient.get(`/examination/exams/admin?page=${page}&size=${size}&sortType=ASC`);
         return res.data;
@@ -156,6 +171,9 @@ export const examApi = {
     createExamReport: async (payload: any, examId: number) => {
         return await axiosFormData.post(`/examination/report/${examId}`, payload);
     },
+    responseExamReport: async (response: any, reportId: number) => {
+        return await axiosClient.put(`/examination/report/${reportId}`, response);
+    },
     getListReportExam: async (reportType: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
             `/examination/report?${reportType !== '' ? `type=${reportType}` : ''}${
@@ -181,5 +199,14 @@ export const examApi = {
     getQuizCourseById: async (courseId: number) => {
         const res = await axiosClient.get(`/examination/exams/course/${courseId}`);
         return res.data;
+    },
+    updateQuizDraftToQuiz: async (courseId: number, courseDraftId: number) => {
+        const res = await axiosClient.put(
+            `/examination/exams/course?courseId=${courseId}&courseDraftId=${courseDraftId}`
+        );
+        return res.data;
+    },
+    sortQuiz: async (payload: any) => {
+        return await axiosClient.put(`/examination/exams/course/order`, payload);
     }
 };

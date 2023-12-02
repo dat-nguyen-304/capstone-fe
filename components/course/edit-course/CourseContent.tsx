@@ -18,6 +18,8 @@ import {
 import { SortableContext, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
+import { examApi, videoApi } from '@/api-client';
 
 type VideoItem = {
     id: number;
@@ -34,23 +36,19 @@ type VideoSortItemType = VideoItem & {
     index: UniqueIdentifier;
 };
 interface CourseContentProps {
-    courseContent?: {
-        teacherName: string;
-        courseName: string;
-        totalVideo: number;
-        thumbnail: string;
-        listVideo: VideoItem[];
-    };
+    courseContent: any;
     setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number; isDraft: boolean }[]>>;
+    refetch?: any;
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders }) => {
-    const arrays = courseContent?.listVideo?.map((video, index) => {
+const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders, refetch }) => {
+    const arrays = courseContent?.listVideo?.map((video: any, index: number) => {
         return {
             ...video,
             index: index + 1
         };
     });
+    const [sortOrders, setSortOrders] = useState<any[]>([]);
     const [activeItem, setActiveItem] = useState<VideoSortItemType | null>(null);
     const [items, setItems] = useState<VideoSortItemType[]>(arrays || []);
 
@@ -81,13 +79,53 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                 isDraft: video?.isDraft
             }));
             setVideoOrders(updatedVideoOrders);
+            setSortOrders(updatedVideoOrders);
         }
         setActiveItem(null);
     }
+    const handleButtonClick = async () => {
+        const case1 = sortOrders.filter(video => video.isDraft !== undefined);
+        const case2 = sortOrders
+            .filter(video => video.isDraft === undefined)
+            .map(video => ({ quizId: video.videoId, order: video.videoOrder }));
+        const toastLoading = toast.loading('Đang gửi yêu cầu');
+        try {
+            if (
+                courseContent?.status == 'DRAFT' ||
+                courseContent?.status == 'REJECT' ||
+                courseContent?.status == 'UPDATING'
+            ) {
+                await videoApi.sortVideoOrder(-1, courseContent?.id, case1);
+                console.log(case1);
+                console.log(case2);
+
+                const res = await examApi.sortQuiz(case2);
+                if (res) {
+                    toast.success('Cập nhật vị trí thành công');
+                    refetch();
+                }
+            } else {
+                await videoApi.sortVideoOrder(courseContent?.id, -1, case1);
+                const res = await examApi.sortQuiz(case2);
+                if (res) {
+                    toast.success('Cập nhật vị trí thành công');
+                    refetch();
+                }
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            console.log(error);
+
+            toast.error('Hệ thống đang gặp trục trực. Vui lòng thử lại sau ít phút');
+        }
+    };
     return (
         <>
             <div className="flex flex-row-reverse">
-                <Button color="primary">Lưu thay đổi</Button>
+                <Button color="primary" onClick={handleButtonClick}>
+                    Lưu thay đổi
+                </Button>
             </div>
             <div className="xl:grid grid-cols-10 mt-6">
                 <div className="hidden xl:block col-span-3 p-4 border-2 border-gray-200 rounded-xl sticky top-[70px] h-[420px]">

@@ -28,5 +28,8 @@ export const transactionApi = {
     },
     studentRequestRefund: async (payload: any) => {
         return await axiosClient.post(`/transaction/student/request`, payload);
+    },
+    adminRefund: async (payload: any) => {
+        return await axiosClient.post(`/transaction/admin/refund`, payload);
     }
 };

@@ -8,7 +8,7 @@ import { FaBookReader } from 'react-icons/fa';
 import { courseStatusColorMap } from '@/utils';
 import { useCustomModal, useInputModal } from '@/hooks';
 import { toast } from 'react-toastify';
-import { courseApi } from '@/api-client';
+import { courseApi, examApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { InputModal } from '@/components/modal/InputModal';
@@ -30,6 +30,7 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
     const [declineId, setDeclineId] = useState<number>();
+
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         let toastLoading;
         console.log({ description, id, verifyStatus });
@@ -42,11 +43,17 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                 reason: description,
                 verifyStatus
             });
+            console.log(res);
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {
-                    toast.success('Khóa học đã được duyệt thành công');
-                    router.push('/admin/approve/course');
+                    const updateRes = await examApi.updateQuizDraftToQuiz(res?.data, id);
+                    if (!updateRes) {
+                        toast.success('Khóa học đã được duyệt thành công');
+                        router.push('/admin/approve/course');
+                    } else {
+                        toast.error('Khóa học duyệt thất bại');
+                    }
                 } else if (verifyStatus == 'REJECT') {
                     toast.success('Đã từ chối khóa học thành công');
                     router.push('/admin/approve/course');

@@ -18,7 +18,7 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             fullName: studentData.fullName,
-            description: studentData.description
+            desciption: studentData.description
         }
     });
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -48,20 +48,20 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
     return (
         <Card className="text-sm p-4 sm:p-8">
             <h4 className="text-lg sm:text-xl text-blue-500 font-semibold mb-8">Thông tin cá nhân</h4>
-
-            <div>
-                <div className="xl:flex items-center mt-4">
-                    <p className="w-[160px] font-semibold">Họ và tên</p>
-                    <InputText
-                        name="fullName"
-                        variant="underlined"
-                        size="sm"
-                        className="max-w-xs"
-                        color="primary"
-                        control={control}
-                    />
-                </div>
-                {/* <div className="xl:flex items-center mt-8 xl:mt-4">
+            <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
+                <div>
+                    <div className="xl:flex items-center mt-4">
+                        <p className="w-[160px] font-semibold">Họ và tên</p>
+                        <InputText
+                            name="fullName"
+                            variant="underlined"
+                            size="sm"
+                            className="max-w-xs"
+                            color="primary"
+                            control={control}
+                        />
+                    </div>
+                    {/* <div className="xl:flex items-center mt-8 xl:mt-4">
                     <p className="w-[160px] font-semibold">Tổ hợp môn</p>
 
                     <Select
@@ -93,23 +93,24 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                         )}
                     </Select> 
                 </div>*/}
-                <div className="xl:flex items-center mt-12 xl:mt-8">
-                    <p className="w-[160px] mb-4 xl:mb-0 font-semibold">Giới thiệu</p>
-                    <div className="flex-[1]">
-                        <InputDescription
-                            placeholder="Giới thiệu về bạn một chút đi nào"
-                            control={control}
-                            name="description"
-                        />
+                    <div className="xl:flex items-center mt-12 xl:mt-8">
+                        <p className="w-[160px] mb-4 xl:mb-0 font-semibold">Giới thiệu</p>
+                        <div className="flex-[1]">
+                            <InputDescription
+                                placeholder="Giới thiệu về bạn một chút đi nào"
+                                control={control}
+                                name="desciption"
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-            {/* )} */}
-            <div className="flex flex-row-reverse mt-16">
-                <Button color="primary" onClick={handleSubmit(onSubmit)} isLoading={isSubmitting}>
-                    Lưu thay đổi
-                </Button>
-            </div>
+                {/* )} */}
+                <div className="flex flex-row-reverse mt-16">
+                    <Button color="primary" isLoading={isSubmitting}>
+                        Lưu thay đổi
+                    </Button>
+                </div>
+            </form>
         </Card>
     );
 };

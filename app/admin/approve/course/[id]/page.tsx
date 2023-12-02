@@ -10,24 +10,33 @@ import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import ApproveCourse from '@/components/course/course-detail/ApproveCourse';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 interface CourseApproveDetailProps {
     params: { id: number };
 }
 
 const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => {
     const router = useRouter();
+    const [quizzes, setQuizzes] = useState<any[]>([]);
     const { data, isLoading } = useQuery<any>({
         queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseDraftById(params?.id)
     });
-    const { data: feedbacksData } = useQuery<any>({
-        queryKey: ['feedbacksAdmin', { params: params?.id }],
-        queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
-    });
+
     const { data: quizCourse } = useQuery<any>({
-        queryKey: ['teacher-review-course-quiz', { params: params?.id }],
+        queryKey: ['admin-review-course-draft-quiz', { params: params?.id }],
         queryFn: () => examApi.getQuizCourseById(params?.id)
     });
+    const { data: quizCourseRealId } = useQuery<any>({
+        queryKey: ['admin-review-course-draft-realId-quiz', { params: data?.courseRealId }],
+        queryFn: () => (data?.courseRealId ? examApi.getQuizCourseById(data?.courseRealId) : Promise.resolve(null))
+    });
+    useEffect(() => {
+        if (quizCourse || quizCourseRealId) {
+            setQuizzes([...(quizCourse?.data || []), ...(quizCourseRealId?.data || [])]);
+        }
+    }, [quizCourse, quizCourseRealId]);
+
     const courseInfo = {
         courseName: data?.name as string,
         subject: data?.subject,
@@ -56,7 +65,11 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
     const courseContent = {
         id: data?.id,
         totalVideo: data?.courseVideoResponses?.length,
-        listVideo: data?.courseVideoResponses,
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizzes || [])].sort((a, b) => {
+            const aOrder = a.ordinalNumber || a.courseOrder || 0;
+            const bOrder = b.ordinalNumber || b.courseOrder || 0;
+            return aOrder - bOrder;
+        }),
         totalCompleted: data?.totalCompleted,
         totalQuiz: quizCourse?.totalRow
     };

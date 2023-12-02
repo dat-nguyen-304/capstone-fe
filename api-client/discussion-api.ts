@@ -94,6 +94,9 @@ export const discussionApi = {
     createCommentReport: async (payload: any, commentId: number) => {
         return await axiosFormData.post(`/discussion/report/comments/${commentId}`, payload);
     },
+    responseConversationReport: async (response: any, reportId: number) => {
+        return await axiosClient.put(`/discussion/report/conversations/${reportId}`, response);
+    },
     getListReportConversation: async (reportType: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
             `/discussion/report/conversations?${reportType !== '' ? `reportType=${reportType}` : ''}${

@@ -83,30 +83,42 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['exams', { page, selectedSubject, selectedFilterSort, search }],
         // keepPreviousData: true,
-        queryFn: () =>
-            examApi.getAllExamFilter(
-                search,
-                selectedFilterSort == 2 ? 'false' : selectedFilterSort == 3 ? 'true' : '',
-                getSubjectNameById(selectedSubject),
-                'QUIZ',
-                page - 1,
-                20,
-                selectedFilterSort == 1 ? 'createTime' : 'id',
-                selectedFilterSort == 1 ? 'DESC' : 'ASC'
-            )
+        queryFn: () => examApi.getQuizByOwnerId('', '', page - 1, rowsPerPage, 'createTime', 'DESC')
     });
     const { data: coursesData } = useQuery({
         queryKey: ['coursesList'],
         queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
+    const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
+        queryKey: ['draftCoursesList'],
+        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
+    });
     useEffect(() => {
         if (data?.data) {
             // Map over the data and find the corresponding course in coursesData
+            // const quizzesWithCourses = data.data.map((quiz: any) => {
+            //     const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+            //     return {
+            //         ...quiz,
+            //         course: matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null
+            //     };
+            // });
             const quizzesWithCourses = data.data.map((quiz: any) => {
-                const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+                let courseName = null;
+
+                if (quiz.examType === 'QUIZ_DRAFT' && updatingCoursesData?.data) {
+                    // If the examType is 'QUIZ_DRAFT', find the corresponding course in updatingCoursesData
+                    const matchingCourse = updatingCoursesData.data.find((course: any) => course.id === quiz.courseId);
+                    courseName = matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null;
+                } else if (coursesData?.data) {
+                    // For other examTypes, find the corresponding course in coursesData
+                    const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+                    courseName = matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null;
+                }
+
                 return {
                     ...quiz,
-                    course: matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null
+                    course: courseName
                 };
             });
 

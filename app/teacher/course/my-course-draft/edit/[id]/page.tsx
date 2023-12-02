@@ -1,6 +1,6 @@
 'use client';
 
-import { courseApi } from '@/api-client';
+import { courseApi, examApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import CommonInfo from '@/components/course/edit-course/CommonInfo';
 import CourseContent from '@/components/course/edit-course/CourseContent';
@@ -8,18 +8,33 @@ import CourseContent from '@/components/course/edit-course/CourseContent';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 interface EditDraftCourseProps {
     params: { id: number };
 }
 
 const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
     const router = useRouter();
-    const { data, isLoading, status } = useQuery<any>({
+    const [quizzes, setQuizzes] = useState<any[]>([]);
+    const { data, isLoading, status, refetch } = useQuery<any>({
         queryKey: ['editDraftCourse', { params: params?.id }],
         queryFn: () => courseApi.getCourseDraftById(params?.id),
         staleTime: 20000
     });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['edit-course-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
+    });
+    const { data: quizCourseRealId } = useQuery<any>({
+        queryKey: ['teacher-course-draft-quiz', { params: data?.courseRealId }],
+        queryFn: () => (data?.courseRealId ? examApi.getQuizCourseById(data?.courseRealId) : Promise.resolve(null))
+    });
+    useEffect(() => {
+        if (quizCourse || quizCourseRealId) {
+            setQuizzes([...(quizCourse?.data || []), ...(quizCourseRealId?.data || [])]);
+        }
+    }, [quizCourse, quizCourseRealId]);
+    console.log(quizzes);
 
     console.log(data);
     const commonInfo = {
@@ -33,10 +48,15 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         status: data?.status
     };
     const courseContent = {
+        id: data?.id,
         teacherName: data?.teacherName,
         courseName: data?.courseName,
         totalVideo: data?.totalVideo,
-        listVideo: data?.courseVideoResponses,
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizzes || [])].sort((a, b) => {
+            const aOrder = a.ordinalNumber || a.courseOrder || 0;
+            const bOrder = b.ordinalNumber || b.courseOrder || 0;
+            return aOrder - bOrder;
+        }),
         thumbnail: data?.thumbnail,
         status: data?.status
     };
@@ -65,7 +85,7 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
                     <CommonInfo commonInfo={commonInfo} videoOrders={videoOrders} />
                 </Tab>
                 <Tab key="content" title="Nội dung">
-                    <CourseContent courseContent={courseContent} setVideoOrders={setVideoOrders} />
+                    <CourseContent courseContent={courseContent} setVideoOrders={setVideoOrders} refetch={refetch} />
                 </Tab>
             </Tabs>
         </div>

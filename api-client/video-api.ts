@@ -63,5 +63,13 @@ export const videoApi = {
     },
     deleteVideoDraft: async (videoId: number) => {
         return await axiosClient.delete(`/videos/temporary-video?videoId=${videoId}`);
+    },
+    sortVideoOrder: async (courseId: number, courseDraftId: number, payload: any) => {
+        return await axiosClient.put(
+            `/videos/order${courseId !== -1 ? `?courseId=${courseId}` : ''}${
+                courseDraftId !== -1 ? `?courseTemporaryId=${courseDraftId}` : ''
+            }`,
+            payload
+        );
     }
 };

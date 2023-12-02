@@ -24,6 +24,6 @@ export const teacherIncomeApi = {
         return res?.data;
     },
     adminPaymentTeacher: async (payload: any) => {
-        return await axiosClient.get(`/teacher-incomes/admin/payment`, payload);
+        return await axiosClient.put(`/teacher-incomes/admin/payment`, payload);
     }
 };

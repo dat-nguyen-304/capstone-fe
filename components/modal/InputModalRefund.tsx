@@ -1,32 +1,24 @@
 'use client';
-import { useInputModal, useInputModalNumber } from '@/hooks';
+import { useInputModal, useInputModalNumber, useInputModalRefund } from '@/hooks';
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { InputNumber } from '../form-input/InputNumber';
 import { NumberFormatBase } from 'react-number-format';
 import { toast } from 'react-toastify';
 
-interface InputModalNumberProps {
+interface InputModalRefundProps {
     activeFn: () => void;
 }
 
-export const InputModalNumber: React.FC<InputModalNumberProps> = ({ activeFn }) => {
-    const { isOpen, onClose, money, onMoney, onTransactionCode, transactionCode } = useInputModalNumber();
-    const moneyValue = money?.toString() ?? '';
-    const formatVnd = (numStr: string) => {
-        if (numStr === '') return '';
-        return new Intl.NumberFormat('vi-VI', {
-            style: 'currency',
-            currency: 'VND',
-            maximumFractionDigits: 0
-        }).format(numStr as any);
-    };
+export const InputModalRefund: React.FC<InputModalRefundProps> = ({ activeFn }) => {
+    const { isOpen, onClose, reason, onReason, onTransactionCode, transactionCode } = useInputModalRefund();
+
     const isValidInput = () => {
-        return transactionCode.trim().length >= 6 && !isNaN(money) && money > 0;
+        return transactionCode.trim().length >= 6 && reason.trim().length > 6;
     };
     return (
         <Modal isOpen={isOpen} size="xl" onOpenChange={onClose}>
             <ModalContent>
-                <ModalHeader className="flex flex-col gap-1 text-center">Nhập thông tin chuyển tiền</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1 text-center">Nhập thông tin hoàn tiền</ModalHeader>
                 <ModalBody>
                     <label className="mb-1 block font-semibold text-[#3974f0]">
                         Mã giao dịch
@@ -40,19 +32,15 @@ export const InputModalNumber: React.FC<InputModalNumberProps> = ({ activeFn }) 
                         onChange={e => onTransactionCode(e.target.value)}
                     />
                     <label className="mb-1 block font-semibold text-[#3974f0]">
-                        Nhập số tiền
+                        Nội dung
                         <span className="text-[#f31260]">*</span>
                     </label>
-                    <NumberFormatBase
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        format={formatVnd}
-                        name="money"
-                        value={0}
-                        // onChange={e => onMoney?.(Number(e.target.value))}
-                        onValueChange={values => {
-                            const { value } = values;
-                            onMoney?.(Number(value));
-                        }}
+                    <Input
+                        value={reason}
+                        name="reason"
+                        required
+                        minLength={6}
+                        onChange={e => onReason(e.target.value)}
                     />
                 </ModalBody>
                 <ModalFooter>

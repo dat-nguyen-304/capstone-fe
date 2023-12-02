@@ -15,7 +15,7 @@ interface EditCourseProps {
 
 const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     const router = useRouter();
-    const { data, isLoading, status } = useQuery<any>({
+    const { data, isLoading, status, refetch } = useQuery<any>({
         queryKey: ['editCourse', { params: params?.id }],
         queryFn: () => courseApi.getCourseByIdForAdminAndTeacher(params?.id),
         staleTime: 20000
@@ -24,8 +24,6 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
         queryKey: ['edit-course-quiz', { params: params?.id }],
         queryFn: () => examApi.getQuizCourseById(params?.id)
     });
-    console.log(data);
-    console.log(quizCourse);
 
     const commonInfo = {
         id: data?.id,
@@ -40,6 +38,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
     };
 
     const courseContent = {
+        id: data?.id,
         teacherName: data?.teacherName,
         courseName: data?.courseName,
         totalVideo: data?.courseVideoResponses?.length,
@@ -78,7 +77,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
                     <CommonInfo commonInfo={commonInfo} videoOrders={videoOrders} />
                 </Tab>
                 <Tab key="content" title="Nội dung">
-                    <CourseContent courseContent={courseContent} setVideoOrders={setVideoOrders} />
+                    <CourseContent courseContent={courseContent} setVideoOrders={setVideoOrders} refetch={refetch} />
                 </Tab>
             </Tabs>
         </div>

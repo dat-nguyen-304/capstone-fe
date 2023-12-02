@@ -68,49 +68,24 @@ const formatCurrency = (value: number) => {
     return formattedValue.replace('₫', ' VND');
 };
 interface BarChartProps {
-    courseId?: number | undefined;
+    chartData?: any;
 }
 
-const RevenueChart: React.FC<BarChartProps> = ({ courseId }) => {
+const RevenueChart: React.FC<BarChartProps> = ({ chartData }) => {
+    console.log(chartData);
+
     const [userData, setUserData] = useState({
-        labels: UserData.map(data => data.month),
+        labels: chartData?.map((data: any) => data.monthOfYear),
         datasets: [
             {
                 label: 'Doanh thu',
-                data: UserData.map(data => data.revenue),
+                data: chartData?.map((data: any) => data.amount / 100),
                 backgroundColor: ['#6395fa'],
                 borderColor: 'black',
                 borderWidth: 2
             }
         ]
     });
-    const { data: incomeCourseData, isLoading } = useQuery<any>({
-        queryKey: ['teacher-income-course', { courseId }],
-        queryFn: () => {
-            if (courseId) {
-                return teacherIncomeApi.getTeacherIncomeByCourse(courseId);
-            } else {
-                return [];
-            }
-        }
-    });
-
-    useEffect(() => {
-        if (incomeCourseData?.data?.length) {
-            setUserData({
-                labels: incomeCourseData?.data?.map((incomeData: any) => incomeData?.monthOfYear),
-                datasets: [
-                    {
-                        label: 'Doanh thu',
-                        data: incomeCourseData?.data?.map((incomeData: any) => incomeData?.revenue),
-                        backgroundColor: ['#6395fa'],
-                        borderColor: 'black',
-                        borderWidth: 2
-                    }
-                ]
-            });
-        }
-    }, [incomeCourseData]);
 
     return <Bar data={userData} />;
 };

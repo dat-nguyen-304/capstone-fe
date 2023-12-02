@@ -8,23 +8,35 @@ import EditCourse from '@/components/course/course-detail/EditCouse';
 import Feedback from '@/components/course/course-detail/Feedback';
 import { useDisclosure } from '@nextui-org/react';
 import { BsArrowLeft } from 'react-icons/bs';
-import { courseApi, ratingCourseApi } from '@/api-client';
+import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 interface CourseDraftDetailProps {
     params: { id: number };
 }
 const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
+    const [quizzes, setQuizzes] = useState<any[]>([]);
     const router = useRouter();
     const { data, isLoading, refetch } = useQuery<any>({
         queryKey: ['course-draft', { params }],
         queryFn: () => courseApi.getCourseDraftById(params?.id)
     });
-    const { data: feedbacksData } = useQuery<any>({
-        queryKey: ['feedbacksCourseTeacher'],
-        queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
+
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['teacher-course-draft-quiz', { params: params?.id }],
+        queryFn: () => examApi.getQuizCourseById(params?.id)
     });
-    console.log(data);
+    const { data: quizCourseRealId } = useQuery<any>({
+        queryKey: ['teacher-course-draft-quiz', { params: data?.courseRealId }],
+        queryFn: () => (data?.courseRealId ? examApi.getQuizCourseById(data?.courseRealId) : Promise.resolve(null))
+    });
+    useEffect(() => {
+        if (quizCourse || quizCourseRealId) {
+            setQuizzes([...(quizCourse?.data || []), ...(quizCourseRealId?.data || [])]);
+        }
+    }, [quizCourse, quizCourseRealId]);
+    console.log(quizzes);
 
     const courseInfo = {
         courseName: data?.name as string,
@@ -46,13 +58,19 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         totalVideo: data?.courseVideoResponses?.length,
+        totalQuiz: quizzes?.length,
         status: data?.status
     };
     const courseContent = {
         id: data?.id,
         totalVideo: data?.courseVideoResponses?.length,
-        listVideo: data?.courseVideoResponses,
-        totalCompleted: data?.totalCompleted
+        listVideo: [...(data?.courseVideoResponses || []), ...(quizzes || [])].sort((a, b) => {
+            const aOrder = a.ordinalNumber || a.courseOrder || 0;
+            const bOrder = b.ordinalNumber || b.courseOrder || 0;
+            return aOrder - bOrder;
+        }),
+        totalCompleted: data?.totalCompleted,
+        totalQuiz: quizzes?.length
     };
     const { isOpen, onOpen, onClose } = useDisclosure();
     if (!data) return <Loader />;

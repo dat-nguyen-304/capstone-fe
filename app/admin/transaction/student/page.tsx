@@ -23,6 +23,10 @@ import { useQuery } from '@tanstack/react-query';
 import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
+import { useCustomModal, useInputModal, useInputModalRefund } from '@/hooks';
+import { toast } from 'react-toastify';
+import { InputModal } from '@/components/modal/InputModal';
+import { InputModalRefund } from '@/components/modal/InputModalRefund';
 
 interface StudentTransactionsProps {}
 
@@ -32,8 +36,8 @@ const columns = [
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
-    { name: 'NGÀY', uid: 'paymentDate', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
+    { name: 'NGÀY', uid: 'paymentDate', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -50,12 +54,13 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
-
+    const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
         data: transactionsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: [
             'adminTransaction',
@@ -68,7 +73,7 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
         ],
         queryFn: () =>
             transactionApi.getListAdminTransaction(
-                (Array.from(statusFilter)[0] as string) == 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                'REFUND',
                 page - 1,
                 rowsPerPage,
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateAsc'
@@ -89,7 +94,86 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
-    console.log(adminTransactions);
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const {
+        onOpen: onInputOpen,
+        onClose: onInputClose,
+        onReason,
+        reason,
+        transactionCode,
+        onTransactionCode
+    } = useInputModalRefund();
+    const { onOpen: onInputDeclineOpen, onClose: onInputDeclineClose, onDescription, description } = useInputModal();
+
+    const handlePaymentTeacher = async (id: number, verifyStatus: string) => {
+        let toastLoading;
+        console.log({ reason, transactionCode, id });
+
+        try {
+            onClose();
+
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            if (verifyStatus == 'ACCEPTED') {
+                onInputClose();
+                const res = await transactionApi.adminRefund({
+                    id,
+                    reason: reason,
+                    transactionCode: transactionCode,
+                    verifyStatus: verifyStatus
+                });
+                if (res) {
+                    toast.success('Xác nhận hoàn tiền đã gửi thành công tới người dùng');
+
+                    refetch();
+                }
+            } else {
+                onInputDeclineClose();
+                const res = await transactionApi.adminRefund({
+                    id,
+                    reason: description,
+                    transactionCode: '',
+                    verifyStatus: verifyStatus
+                });
+                if (res) {
+                    toast.success('Từ chối hoàn tiền đã gửi thành công tới người dùng');
+
+                    refetch();
+                }
+            }
+
+            onReason?.('');
+            onTransactionCode?.('');
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+    const onRefundOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận hoàn tiền',
+            content: 'Đơn hoàn tiền sẽ được xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
+    const onDeclineRefundOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận từ chối hoàn tiền',
+            content: 'Bạn sẽ từ chối đơn hoàn tiền của học sinh. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputDeclineOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -129,9 +213,12 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options">
-                                <DropdownItem color="success">Duyệt</DropdownItem>
-                                <DropdownItem color="danger">Từ chối</DropdownItem>
-                                <DropdownItem color="primary">Xem chi tiết</DropdownItem>
+                                <DropdownItem color="success" onClick={() => onRefundOpen(transaction?.id)}>
+                                    Duyệt
+                                </DropdownItem>
+                                <DropdownItem color="danger" onClick={() => onDeclineRefundOpen(transaction?.id)}>
+                                    Từ chối
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -144,12 +231,14 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'SUCCESS'
-                            ? 'Thành công'
+                        {cellValue === 'REFUND_SUCCESS'
+                            ? 'Hoàn tiền thành công'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
-                            : cellValue === 'FAIL'
-                            ? 'Thất bại'
+                            : cellValue === 'REFUND'
+                            ? 'Chờ hoàn tiền'
+                            : cellValue === 'REJECT_REFUND'
+                            ? 'Hoàn tiền thất bại'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -174,7 +263,7 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Lịch sử giao dịch</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Xử lý hoàn tiền học sinh</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
@@ -190,39 +279,6 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
                             onValueChange={onSearchChange}
                         />
                         <div className="flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
-                                <DropdownTrigger className="hidden sm:flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Trạng thái
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={statusFilter}
-                                    selectionMode="single"
-                                    onSelectionChange={setStatusFilter}
-                                >
-                                    <DropdownItem key="ALL" className="capitalize">
-                                        {capitalize('Tất Cả')}
-                                    </DropdownItem>
-                                    <DropdownItem key="SUCCESS" className="capitalize">
-                                        {capitalize('Thành Công')}
-                                    </DropdownItem>
-                                    <DropdownItem key="PENDING" className="capitalize">
-                                        {capitalize('Đang chờ')}
-                                    </DropdownItem>
-                                    <DropdownItem key="FAIL" className="capitalize">
-                                        {capitalize('Thất Bại')}
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -287,6 +343,8 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handlePaymentTeacher(declineId as number, 'REJECT')} />
+            <InputModalRefund activeFn={() => handlePaymentTeacher(declineId as number, 'ACCEPTED')} />
         </div>
     );
 };

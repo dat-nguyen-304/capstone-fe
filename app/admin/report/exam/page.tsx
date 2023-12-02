@@ -18,10 +18,13 @@ import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useInputModal } from '@/hooks';
 import { StudentType } from '@/types';
 import { examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
+import { InputModal } from '@/components/modal/InputModal';
+import { toast } from 'react-toastify';
+import { reportColorMap } from '@/utils';
 interface ReportsProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -58,6 +61,7 @@ const columns = [
     { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: true },
     { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: true },
     { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -81,9 +85,9 @@ const Reports: React.FC<ReportsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const visibleColumns = new Set(['id', 'examName', 'type', 'reportMsg', 'ownerFullName', 'action']);
+    const visibleColumns = new Set(['id', 'examName', 'type', 'reportMsg', 'ownerFullName', 'status', 'action']);
     const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
-
+    const [declineId, setDeclineId] = useState<number>();
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
@@ -93,7 +97,8 @@ const Reports: React.FC<ReportsProps> = () => {
         status,
         error,
         data: reportExams,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: ['reportExams', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () =>
@@ -123,6 +128,43 @@ const Reports: React.FC<ReportsProps> = () => {
     }, []);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
+    const handleResponse = async (id: number) => {
+        let toastLoading;
+
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await examApi.responseExamReport(description, id);
+
+            if (!res.data.code) {
+                toast.success('Phản hồi nội dung báo cáo thành công');
+
+                refetch();
+            }
+
+            toast.dismiss(toastLoading);
+            onDescription('');
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onDeclineOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận phản hồi',
+            content: 'Nội dung phản hồi sẽ gửi đến người báo cáo. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
 
     const renderCell = useCallback((student: any, columnKey: Key) => {
         const cellValue = student[columnKey as keyof any];
@@ -130,6 +172,21 @@ const Reports: React.FC<ReportsProps> = () => {
         switch (columnKey) {
             case 'type':
                 return getTypeName(cellValue);
+            case 'status':
+                return (
+                    <Chip
+                        className="capitalize border-none gap-1 text-default-600"
+                        color={reportColorMap[student?.status]}
+                        size="sm"
+                        variant="dot"
+                    >
+                        {cellValue === 'DONE'
+                            ? 'Phản hồi thành công'
+                            : cellValue === 'NEW'
+                            ? 'Chưa phản hồi'
+                            : 'Vô hiệu'}
+                    </Chip>
+                );
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -143,19 +200,8 @@ const Reports: React.FC<ReportsProps> = () => {
                                 <DropdownItem color="primary" as={Link} href={`/admin/exam/${student?.examId}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem
-                                    color="success"
-                                    key={student?.userStatus === 'ENABLE' ? 'enableDis' : 'enable'}
-                                    onClick={() => {}}
-                                >
-                                    Kích Hoạt
-                                </DropdownItem>
-                                <DropdownItem
-                                    color="danger"
-                                    key={student?.userStatus === 'DISABLE' ? 'disableDis' : 'disable'}
-                                    onClick={() => {}}
-                                >
-                                    Vô Hiệu Hóa
+                                <DropdownItem color="warning" onClick={() => onDeclineOpen(student?.id)}>
+                                    Phản hồi
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -252,6 +298,7 @@ const Reports: React.FC<ReportsProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
+            <InputModal activeFn={() => handleResponse(declineId as number)} />
         </div>
     );
 };

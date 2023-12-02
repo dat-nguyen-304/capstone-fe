@@ -45,7 +45,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     });
     const { data: commentsData, refetch } = useQuery<any>({
         queryKey: ['commentsVideo', updateState],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createDate', 'DESC')
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createdDate', 'DESC')
     });
 
     const handleProgress = (progress: OnProgressProps) => {

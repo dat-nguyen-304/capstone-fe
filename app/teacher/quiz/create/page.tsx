@@ -16,25 +16,19 @@ import { toast } from 'react-toastify';
 import { FaPlus } from 'react-icons/fa6';
 interface CreateQuizProps {}
 
-const getSubjectNameById = (id: number): string => {
-    if (id == 1) {
-        return 'MATHEMATICS';
-    } else if (id == 2) {
-        return 'PHYSICS';
-    } else if (id == 3) {
-        return 'CHEMISTRY';
-    } else if (id == 4) {
-        return 'ENGLISH';
-    } else if (id == 5) {
-        return 'BIOLOGY';
-    } else if (id == 6) {
-        return 'HISTORY';
-    } else if (id == 7) {
-        return 'GEOGRAPHY';
-    } else {
-        return '';
-    }
-};
+function getSubjectName(subjectCode: string) {
+    const subjectNames: { [key: string]: string | null } = {
+        'Toán học': 'MATHEMATICS',
+        'Tiếng anh': 'ENGLISH',
+        'Vật lí': 'PHYSICS',
+        'Hóa học': 'CHEMISTRY',
+        'Sinh học': 'BIOLOGY',
+        'Lịch sử': 'HISTORY',
+        'Địa lý': 'GEOGRAPHY'
+    };
+
+    return subjectNames[subjectCode] || null;
+}
 
 const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const router = useRouter();
@@ -45,7 +39,10 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+    const [selectedOptionCourse, setSelectedOptionCourse] = useState<string>();
+    const [optionCourse, setOptionCourse] = useState<string[]>([]);
+    const [courses, setCourses] = useState<any[]>([]);
+    const [courseDetail, setCourseDetail] = useState<any>();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -60,10 +57,68 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
-    const { data: coursesData } = useQuery({
+    const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
+        queryKey: ['draftCoursesList'],
+        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
+    });
+
+    const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
         queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
+
+    const getCourseById = (courseId: number, selectedOptionCourse: string) => {
+        let getCourseDetail: any;
+        if (selectedOptionCourse == 'OLD') {
+            getCourseDetail = activatedCoursesData?.data?.find((course: any) => course.id === courseId);
+        }
+        if (selectedOptionCourse == 'NEW') {
+            getCourseDetail = updatingCoursesData?.data?.find((course: any) => course.id === courseId);
+        }
+
+        // Search for the course by ID in both activated and updating courses
+
+        // Return the found course or null if not found
+        return getCourseDetail || null;
+    };
+    useEffect(() => {
+        // Example: Fetch details of the selected course when selectedCourse changes
+        if (selectedOptionCourse == 'OLD') {
+            if (selectedCourse) {
+                const courseDetails = getCourseById(selectedCourse, 'OLD');
+                console.log('Selected Course Details:', courseDetails);
+                setCourseDetail(courseDetails);
+            }
+        }
+        if (selectedOptionCourse == 'NEW') {
+            if (selectedCourse) {
+                const courseDetails = getCourseById(selectedCourse, 'NEW');
+                console.log('Selected Course Details:', courseDetails);
+                setCourseDetail(courseDetails);
+            }
+        }
+    }, [selectedOptionCourse, selectedCourse, activatedCoursesData, updatingCoursesData]);
+
+    useEffect(() => {
+        let arr: string[] = [];
+        if (activatedCoursesData?.data?.length) {
+            arr.push('OLD');
+            setSelectedOptionCourse('OLD');
+        }
+        if (updatingCoursesData?.data?.length) {
+            arr.push('NEW');
+            setSelectedOptionCourse('NEW');
+        }
+        setOptionCourse(arr);
+    }, [activatedCoursesData, updatingCoursesData]);
+
+    useEffect(() => {
+        if (selectedOptionCourse) {
+            if (selectedOptionCourse === 'NEW') setCourses(updatingCoursesData?.data);
+            else setCourses(activatedCoursesData?.data);
+        }
+    }, [selectedOptionCourse]);
+
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);
         setEditQuestion(null);
@@ -103,8 +158,10 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 description: formData?.description || 'Miêu Tả',
                 duration: Number(formData?.duration || 60),
                 courseId: selectedCourse,
-                subject: getSubjectNameById(selectedSubject),
-                examType: 'QUIZ',
+                courseOrder: 100,
+                subject: getSubjectName(courseDetail?.subject),
+                // examType: 'QUIZ_DRAFT',
+                examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
                 questionList: questions
             };
             console.log(payload);
@@ -132,7 +189,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             <form onSubmit={handleSubmit(createQuiz)}>
                 <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Tạo bài tập mới</h3>
                 <div className="sm:grid grid-cols-6 my-4 gap-3">
-                    <div className="my-4 col-span-6 lg:col-span-3">
+                    <div className="my-4 col-span-3 lg:col-span-3">
                         <InputText
                             isRequired
                             variant="bordered"
@@ -157,6 +214,31 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 </div>
                 <div className="sm:grid grid-cols-6 my-4 gap-3">
                     <div className="my-4 col-span-3 lg:col-span-3">
+                        {optionCourse.length === 2 && selectedOptionCourse ? (
+                            <div className="col-span-2">
+                                <Select
+                                    isRequired
+                                    size="sm"
+                                    label="Bài tập này thuộc"
+                                    color="primary"
+                                    variant="bordered"
+                                    defaultSelectedKeys={[selectedOptionCourse]}
+                                    onChange={event => setSelectedOptionCourse(event?.target?.value)}
+                                    description="Khóa học đang cập nhật là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
+                                >
+                                    <SelectItem key={'NEW'} value={'NEW'}>
+                                        Khóa học đang cập nhật
+                                    </SelectItem>
+                                    <SelectItem key={'OLD'} value={'OLD'}>
+                                        Khóa học đang hoạt động
+                                    </SelectItem>
+                                </Select>
+                            </div>
+                        ) : (
+                            <></>
+                        )}
+                    </div>
+                    <div className="my-4 col-span-3 lg:col-span-3">
                         <Select
                             isRequired
                             size="sm"
@@ -166,7 +248,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             variant="bordered"
                             onChange={event => setSelectedCourse(Number(event.target.value))}
                         >
-                            {coursesData?.data?.map((course: Course) => (
+                            {courses?.map((course: Course) => (
                                 <SelectItem key={course?.id} value={course?.id}>
                                     {course?.courseName}
                                 </SelectItem>
@@ -181,7 +263,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     isOpen={isOpen}
                     onClose={onClose}
                     onAddQuestion={handleAddQuestion}
-                    subject={getSubjectNameById(selectedSubject)}
+                    subject={String(getSubjectName(courseDetail?.subject))}
                     editIndex={editIndex}
                     editQuestion={editQuestion}
                     onEditQuestion={handleEditQuestion}
