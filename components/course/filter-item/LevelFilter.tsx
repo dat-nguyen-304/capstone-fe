@@ -4,17 +4,18 @@ import { Checkbox, CheckboxGroup } from '@nextui-org/react';
 import { Dispatch, SetStateAction } from 'react';
 
 interface LevelFilterProps {
-    setFilterLevel: Dispatch<SetStateAction<string[]>>;
-    setFilterChange: Dispatch<SetStateAction<string>>;
+    setFilterLevel: Dispatch<SetStateAction<number[]>>;
+    filterLevel: any[];
 }
 
-const LevelFilter: React.FC<LevelFilterProps> = ({ setFilterLevel, setFilterChange }) => {
+const LevelFilter: React.FC<LevelFilterProps> = ({ setFilterLevel, filterLevel }) => {
     const handleFilterLevel = (value: any) => {
         setFilterLevel(value);
-        setFilterChange('LEVEL');
     };
+    console.log(filterLevel);
+
     return (
-        <CheckboxGroup size="sm" label="" className="mb-4" onValueChange={handleFilterLevel}>
+        <CheckboxGroup size="sm" label="" className="mb-4" defaultValue={filterLevel} onValueChange={handleFilterLevel}>
             <Checkbox value="1">Cơ bản</Checkbox>
             <Checkbox value="2">Trung bình</Checkbox>
             <Checkbox value="3">Nâng cao</Checkbox>

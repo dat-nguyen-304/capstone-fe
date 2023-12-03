@@ -70,6 +70,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [avgGrade, setAvgGrade] = useState<any[]>();
+    const [userStatistic, setUserStatistic] = useState<any[]>();
     const [times, setTimes] = useState<any[]>();
     const [quantityGrade, setQuantityGrade] = useState<any[]>();
     const [filterValue, setFilterValue] = useState('');
@@ -108,11 +109,34 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
         queryKey: ['examSubmissionStaticData', { statusFilter: Array.from(selectedSubject)[0] as number }],
         queryFn: () => examApi.getExamSubmissionStatistic(getSubjectNameById(Array.from(selectedSubject)[0] as number))
     });
+    const { data: userStatisticBySubject } = useQuery({
+        queryKey: ['userStaticDataBySubject', { statusFilter: Array.from(selectedSubject)[0] as number }],
+        queryFn: () => {
+            if (Array.from(selectedSubject)[0] !== '0') {
+                return examApi.getExamSubmissionStatisticBySubject(
+                    getSubjectNameById(Array.from(selectedSubject)[0] as number),
+                    0,
+                    100,
+                    'id',
+                    'ASC'
+                );
+            } else {
+                return [];
+            }
+        }
+    });
+    useEffect(() => {
+        if (userStatisticBySubject?.data) {
+            setUserStatistic(userStatisticBySubject?.data);
+        }
+    }, [userStatisticBySubject]);
+
     useEffect(() => {
         if (examSubmissionStaticData) {
             setAvgGrade(examSubmissionStaticData?.avgGrade);
             setQuantityGrade(examSubmissionStaticData?.quantityGrade);
             setTimes(examSubmissionStaticData?.times);
+            setPage(1);
         }
     }, [examSubmissionStaticData]);
     useEffect(() => {
@@ -142,15 +166,12 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
             setFilterValue('');
         }
     }, []);
-    console.log(avgGrade);
-    console.log(times);
-    console.log(quantityGrade);
 
     const renderCell = useCallback((exam: any, columnKey: Key) => {
         const cellValue = exam[columnKey as keyof any];
         switch (columnKey) {
             case 'examName':
-                return <Link href={`/exam/${exam?.id}`}>{cellValue}</Link>;
+                return <Link href={`/exam/${exam?.examId}/result/${exam?.id}`}>{cellValue}</Link>;
             case 'subject':
                 return getSubjectName(cellValue);
             case 'finishTime':
@@ -272,35 +293,32 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                         <QuantityScoreChart quantityGrade={quantityGrade} />
                     </div>
                 </div>
-                <div className="mt-16">
-                    <h3 className="font-semibold">Thống kê theo chủ đề</h3>
-                    <ul className="mt-8">
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={30} />
-                        </li>
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={28} />
-                        </li>
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={40} />
-                        </li>
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={93} />
-                        </li>
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={87} />
-                        </li>
-                        <li className="text-xs xl:flex mt-4">
-                            <h3 className="w-[500px] truncate">Chủ đề 1</h3>
-                            <Progress className="w-full" percent={76} />
-                        </li>
-                    </ul>
-                </div>
+                {Array.from(selectedSubject)[0] !== '0' ? (
+                    <div className="mt-16">
+                        <h3 className="font-semibold">Thống kê theo chủ đề</h3>
+                        <ul className="mt-8">
+                            {userStatistic?.length ? (
+                                userStatistic?.map(userStat => (
+                                    <li key={userStat?.id} className="text-xs xl:flex mt-4">
+                                        <h3 className="w-[500px] truncate">{userStat?.topic?.name}</h3>
+                                        <Progress
+                                            className="w-full"
+                                            percent={Number(
+                                                (
+                                                    (userStat?.correctCount /
+                                                        (userStat?.correctCount + userStat?.incorrectCount)) *
+                                                    100
+                                                )?.toFixed(2)
+                                            )}
+                                        />
+                                    </li>
+                                ))
+                            ) : (
+                                <>Chưa có dữ liệu</>
+                            )}
+                        </ul>
+                    </div>
+                ) : null}
             </Spin>
         </div>
     );

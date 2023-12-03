@@ -46,7 +46,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
+    // { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime', sortable: true },
@@ -57,20 +57,27 @@ const columns = [
 const Exams: React.FC<ExamsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'subject', 'createTime', 'status', 'action'])
+        new Set(['name', 'subject', 'createTime', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['exams', { page, rowsPerPage, updateState }],
+        queryKey: ['exams', { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }],
         // keepPreviousData: true,
-        queryFn: () => examApi.getAllByAdmin(page - 1, rowsPerPage, 'createTime', 'DESC')
+        queryFn: () =>
+            examApi.getAllByAdmin(
+                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            )
     });
 
     useEffect(() => {
@@ -244,14 +251,32 @@ const Exams: React.FC<ExamsProps> = () => {
                                     aria-label="Table Columns"
                                     closeOnSelect={false}
                                     selectedKeys={statusFilter}
-                                    selectionMode="multiple"
+                                    selectionMode="single"
                                     onSelectionChange={setStatusFilter}
                                 >
-                                    <DropdownItem key="active" className="capitalize">
-                                        {capitalize('hoạt động')}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
                                     </DropdownItem>
-                                    <DropdownItem key="unActive" className="capitalize">
-                                        {capitalize('vô hiệu hóa')}
+                                    <DropdownItem key="MATHEMATICS" className="capitalize">
+                                        {capitalize('Toán học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENGLISH" className="capitalize">
+                                        {capitalize('Tiếng anh')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PHYSICS" className="capitalize">
+                                        {capitalize('Vật lí')}
+                                    </DropdownItem>
+                                    <DropdownItem key="CHEMISTRY" className="capitalize">
+                                        {capitalize('Hóa học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BIOLOGY" className="capitalize">
+                                        {capitalize('Sinh học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="HISTORY" className="capitalize">
+                                        {capitalize('Lịch hsử')}
+                                    </DropdownItem>
+                                    <DropdownItem key="GEOGRAPHY" className="capitalize">
+                                        {capitalize('Địa lý')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

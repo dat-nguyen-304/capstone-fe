@@ -2,14 +2,12 @@
 
 import { examApi } from '@/api-client';
 import Loader from '@/components/Loader';
-import SubmissionStatisticModal from '@/components/exam/SubmissionStatisticModal';
 import TestResultItem from '@/components/test/TestResultItem';
-import { Button, useDisclosure } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { RefObject, createRef, useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
-import { SiGoogleanalytics } from 'react-icons/si';
 
 interface ResultExamProps {
     params: {
@@ -18,24 +16,19 @@ interface ResultExamProps {
     };
 }
 
-const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
+const ResultQuiz: React.FC<ResultExamProps> = ({ params }) => {
     const router = useRouter();
     const [questions, setQuestions] = useState<any[]>([]);
     const [totalQuestion, setTotalQuestion] = useState<number>();
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         data: examSubmissionData,
         isLoading,
         status
     } = useQuery<any>({
-        queryKey: ['exam-submission-info', { params: params.id }],
+        queryKey: ['quiz-submission-info', { params: params?.id }],
         queryFn: () => examApi.getExamSubmissionById(params?.assignmentId)
     });
-    const { data: SubmissionStatisticData } = useQuery<any>({
-        queryKey: ['exam-submission-statistic', { params: params.id }],
-        queryFn: () => examApi.getSubmissionStatisticBySubId(params?.assignmentId)
-    });
-
+    console.log(examSubmissionData);
     useEffect(() => {
         if (examSubmissionData) {
             setQuestions(examSubmissionData?.selectionList);
@@ -121,23 +114,11 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                                 <span className="ml-1">Quay lại</span>
                             </div>
                         </Button>
-                        <Button onClick={onOpen} className="mt-4 mx-2" size="sm" variant="bordered" color="primary">
-                            <div className="flex items-center">
-                                <SiGoogleanalytics />
-                                <span className="ml-1">Thông kê</span>
-                            </div>
-                        </Button>
                     </div>
                 </div>
-                <SubmissionStatisticModal
-                    isOpen={isOpen}
-                    onOpen={onOpen}
-                    onClose={onClose}
-                    submission={SubmissionStatisticData}
-                />
             </div>
         </>
     );
 };
 
-export default ResultExam;
+export default ResultQuiz;

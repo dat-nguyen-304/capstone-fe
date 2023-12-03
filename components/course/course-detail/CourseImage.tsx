@@ -38,12 +38,14 @@ const CourseImage: React.FC<CourseImageProps> = ({ courseImage }) => {
                     </div>
                     <div className="flex items-center my-4">
                         <FaCheckDouble className="mr-8" />
-                        <span className="text-sm">Đã hoàn thành: 0/{courseImage.totalVideo}</span>
+                        <span className="text-sm">
+                            Đã hoàn thành: {courseImage?.totalCompleted || 0}/{courseImage.totalVideo}
+                        </span>
                     </div>
                     <div className="flex items-center my-4">
                         <SiProgress className="mr-8" />
                         <div className="flex-[1]">
-                            <Progress percent={0} />
+                            <Progress percent={Number(courseImage?.progress?.toFixed(2)) || 0} />
                         </div>
                     </div>
                 </div>

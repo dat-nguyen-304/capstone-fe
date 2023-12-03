@@ -14,17 +14,25 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 interface FilterDrawerProps {
     onClose: () => void;
     open: boolean;
-    setFilter: Dispatch<SetStateAction<{ type: string; value: any[] }>>;
+    setFilter: Dispatch<
+        SetStateAction<{
+            subjectList: [] | any;
+            minPrice: number;
+            maxPrice: number;
+            minRate: number;
+            maxRate: number;
+            levelList: [] | any;
+        }>
+    >;
     onFilterQuantity: Dispatch<SetStateAction<number>>;
 }
 
 const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, onFilterQuantity }) => {
     const [filterRating, setFilterRating] = useState<number>(0);
-    const [filterSubject, setFilterSubject] = useState<string[]>([]);
-    const [filterLevel, setFilterLevel] = useState<string[]>([]);
+    const [filterSubject, setFilterSubject] = useState<number[]>([]);
+    const [filterLevel, setFilterLevel] = useState<number[]>([]);
     const [filterPriceStart, setFilterPriceStart] = useState<number>(0);
     const [filterPriceEnd, setFilterPriceEnd] = useState<number>(5000000);
-    const [filterChange, setFilterChange] = useState<string>('');
 
     useEffect(() => {
         let quantity = 1;
@@ -35,23 +43,47 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
     }, [filterRating, filterSubject, filterLevel]);
 
     const onSearch = () => {
-        if (filterChange == 'RATE') {
-            console.log(filterRating);
-            setFilter({ type: filterChange, value: [filterRating] });
-        } else if (filterChange == 'SUBJECT') {
-            console.log(filterSubject);
-            setFilter({ type: filterChange, value: filterSubject });
-        } else if (filterChange == 'LEVEL') {
-            console.log(filterLevel);
-            setFilter({ type: filterChange, value: filterLevel });
-        } else if (filterChange == 'PRICE') {
-            setFilter({ type: filterChange, value: [filterPriceStart, filterPriceEnd] });
-        } else {
-            setFilter({ type: '', value: [] });
-        }
+        setFilter({
+            subjectList: filterSubject,
+            minPrice: filterPriceStart,
+            maxPrice: filterPriceEnd,
+            minRate: filterRating,
+            maxRate: 5,
+            levelList: filterLevel
+        });
+        // if (filterChange == 'RATE') {
+        //     console.log(filterRating);
+        //     setFilter({ type: filterChange, value: [filterRating] });
+        // } else if (filterChange == 'SUBJECT') {
+        //     console.log(filterSubject);
+        //     setFilter({ type: filterChange, value: filterSubject });
+        // } else if (filterChange == 'LEVEL') {
+        //     console.log(filterLevel);
+        //     setFilter({ type: filterChange, value: filterLevel });
+        // } else if (filterChange == 'PRICE') {
+        //     setFilter({ type: filterChange, value: [filterPriceStart, filterPriceEnd] });
+        // } else {
+        //     setFilter({ type: '', value: [] });
+        // }
         onClose();
     };
+    const onClear = () => {
+        setFilterLevel([]);
+        setFilterSubject([]);
+        setFilterPriceStart(0);
+        setFilterPriceEnd(5000000);
+        setFilterRating(0);
 
+        setFilter({
+            subjectList: [],
+            minPrice: 0,
+            maxPrice: 0,
+            minRate: 0,
+            maxRate: 0,
+            levelList: []
+        });
+        onClose();
+    };
     console.log({ filterPriceStart });
 
     return (
@@ -64,7 +96,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
                     title="Đánh giá"
                     subtitle={`>= ${filterRating} sao`}
                 >
-                    <RatingFilter setFilterRating={setFilterRating} setFilterChange={setFilterChange} />
+                    <RatingFilter filterRating={filterRating} setFilterRating={setFilterRating} />
                 </AccordionItem>
                 <AccordionItem
                     key="2"
@@ -73,7 +105,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
                     title="Môn học"
                     subtitle={`Đã chọn ${filterSubject.length} môn học`}
                 >
-                    <SubjectFilter setFilterSubject={setFilterSubject} setFilterChange={setFilterChange} />
+                    <SubjectFilter filterSubject={filterSubject} setFilterSubject={setFilterSubject} />
                 </AccordionItem>
                 <AccordionItem
                     key="3"
@@ -82,7 +114,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
                     subtitle={`Đã chọn ${filterLevel.length} mức độ`}
                     title="Trình độ"
                 >
-                    <LevelFilter setFilterLevel={setFilterLevel} setFilterChange={setFilterChange} />
+                    <LevelFilter filterLevel={filterLevel} setFilterLevel={setFilterLevel} />
                 </AccordionItem>
                 <AccordionItem
                     key="4"
@@ -98,7 +130,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
                         filterPriceEnd={filterPriceEnd}
                         setFilterPriceStart={setFilterPriceStart}
                         setFilterPriceEnd={setFilterPriceEnd}
-                        setFilterChange={setFilterChange}
                     />
                 </AccordionItem>
             </Accordion>
@@ -106,7 +137,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
                 <Button color="primary" onClick={onSearch}>
                     Tìm kiếm
                 </Button>
-                <Button color="danger" variant="bordered" className="ml-4">
+                <Button color="danger" variant="bordered" className="ml-4" onClick={onClear}>
                     Xóa bộ lọc
                 </Button>
             </div>

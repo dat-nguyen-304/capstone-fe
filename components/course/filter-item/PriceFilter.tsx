@@ -8,13 +8,12 @@ interface PriceFilterProps {
     filterPriceEnd: number;
     setFilterPriceStart: Dispatch<SetStateAction<number>>;
     setFilterPriceEnd: Dispatch<SetStateAction<number>>;
-    setFilterChange: Dispatch<SetStateAction<string>>;
 }
 
 const PriceFilter: React.FC<PriceFilterProps> = ({
     setFilterPriceStart,
     setFilterPriceEnd,
-    setFilterChange,
+
     filterPriceStart,
     filterPriceEnd
 }) => {
@@ -29,7 +28,6 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
     const handleFilterPriceEnd = (value: any) => {
         setFilterPriceEnd(value);
         if (value < filterPriceStart) setFilterPriceStart(value - 500000);
-        setFilterChange('PRICE');
     };
     return (
         <div className="w-[94%] mx-auto">

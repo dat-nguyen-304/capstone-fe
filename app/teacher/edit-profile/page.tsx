@@ -15,6 +15,7 @@ import { Subject } from '@/types';
 import Loader from '@/components/Loader';
 import { toast } from 'react-toastify';
 import { InputDescription } from '@/components/form-input/InputDescription';
+import { InputText } from '@/components/form-input';
 
 const Profile: React.FC = () => {
     const { data, isLoading } = useQuery({
@@ -32,14 +33,14 @@ const Profile: React.FC = () => {
     const [teacherDescription, setTeacherDescription] = useState<string>('');
     const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
-            name: '',
+            fullName: '',
             course: '',
             desciption: ''
         }
     });
     useEffect(() => {
         if (teacherData) {
-            setValue('name', teacherData?.fullName);
+            setValue('fullName', teacherData?.fullName);
             setValue('desciption', teacherData?.description);
         }
     }, [teacherData]);
@@ -127,12 +128,13 @@ const Profile: React.FC = () => {
                         <div>
                             <div className="2xl:flex items-center mt-4">
                                 <p className="w-[160px] font-semibold">Họ và tên</p>
-                                <Input
-                                    name="Họ và tên"
+                                <InputText
                                     color="primary"
                                     variant="underlined"
                                     size="sm"
                                     className="max-w-xs"
+                                    control={control}
+                                    name="fullName"
                                     value={teacherData?.fullName}
                                 />
                             </div>
@@ -140,7 +142,8 @@ const Profile: React.FC = () => {
                                 <p className="w-[160px] font-semibold">Giáo viên môn</p>
 
                                 <Select
-                                    items={data.filter(subject => teacherData?.subject?.includes(subject.name))}
+                                    // items={data.filter(subject => teacherData?.subject?.includes(subject.name))}
+                                    items={data}
                                     disallowEmptySelection
                                     selectionMode="multiple"
                                     className="max-w-xs"

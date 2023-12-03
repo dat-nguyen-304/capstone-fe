@@ -12,6 +12,7 @@ interface VideoItemProps {
     type?: 'my-video' | 'teacher-video' | 'teacher-video-draft' | 'admin-review-video' | 'admin-view-video';
     videoItem: any;
     index: number;
+    courseId?: any;
     onPreviewOpen: () => void;
     onPreViewUrl: Dispatch<SetStateAction<string>>;
     onVideoName: Dispatch<SetStateAction<string>>;
@@ -40,7 +41,15 @@ const floatToTime = (durationFloat: number): string => {
     }
 };
 
-const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type, onPreviewOpen, onPreViewUrl, onVideoName }) => {
+const VideoItem: React.FC<VideoItemProps> = ({
+    videoItem,
+    index,
+    type,
+    onPreviewOpen,
+    onPreViewUrl,
+    onVideoName,
+    courseId
+}) => {
     const router = useRouter();
     let detailPage = '';
     if (type == 'teacher-video') {
@@ -57,9 +66,13 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type, onPreview
         }
     } else if (type == 'my-video') {
         if (videoItem?.examType) {
-            detailPage = `/quiz/${videoItem?.id}`;
+            if (courseId) {
+                detailPage = `/my-course/${courseId}/quiz/${videoItem?.id}`;
+            }
         } else {
-            detailPage = `/video/${videoItem?.id}`;
+            if (courseId) {
+                detailPage = `/my-course/${courseId}/video/${videoItem?.id}`;
+            }
         }
     } else if (type == 'admin-review-video') {
         if (videoItem?.examType) {
@@ -93,9 +106,13 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, type, onPreview
         if (!type) {
             if (videoItem.videoStatus === 'PRIVATE') return;
             else {
-                onPreViewUrl(videoItem.url);
-                onVideoName(videoItem.name);
-                onPreviewOpen();
+                if (videoItem?.examType) {
+                    return;
+                } else {
+                    onPreViewUrl(videoItem.url);
+                    onVideoName(videoItem.name);
+                    onPreviewOpen();
+                }
             }
         }
         return router.push(detailPage);

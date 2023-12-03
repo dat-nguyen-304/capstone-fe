@@ -205,9 +205,9 @@ const Courses: React.FC<CoursesProps> = () => {
                             : cellValue === 'REJECT'
                             ? 'Đã từ chối'
                             : cellValue === 'BANNED'
+                            ? 'Bị Cấm'
+                            : cellValue === 'DELETED'
                             ? 'Đã Xóa'
-                            : cellValue === 'UPDATING'
-                            ? 'Chờ cập nhật'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -300,14 +300,8 @@ const Courses: React.FC<CoursesProps> = () => {
                                     <DropdownItem key="AVAILABLE" className="capitalize">
                                         {capitalize('Hoạt Động')}
                                     </DropdownItem>
-                                    <DropdownItem key="UNAVAILABLE" className="capitalize">
-                                        {capitalize('Vô Hiệu')}
-                                    </DropdownItem>
-                                    <DropdownItem key="REJECT" className="capitalize">
-                                        {capitalize('Bị Từ Chối')}
-                                    </DropdownItem>
-                                    <DropdownItem key="BANNED" className="capitalize">
-                                        {capitalize('Bị Xóa')}
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã Xóa')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

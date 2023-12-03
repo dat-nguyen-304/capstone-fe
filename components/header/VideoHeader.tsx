@@ -12,13 +12,15 @@ import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
 import { ReportModal } from '../modal';
 import { toast } from 'react-toastify';
-import { reportVideoApi } from '@/api-client';
+import { courseApi, examApi, reportVideoApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
 interface VideoHeaderProps {
     children: React.ReactNode;
     id?: number;
+    courseId?: number;
 }
 
-const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
+const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -35,8 +37,28 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
         file
     } = useReportModal();
     const router = useRouter();
+    const { data: courseData } = useQuery<any>({
+        queryKey: ['my-course-detail', { courseId }],
+        queryFn: () => {
+            if (courseId) {
+                return courseApi.getCourseById(courseId);
+            }
+        }
+    });
+    const { data: quizCourse } = useQuery<any>({
+        queryKey: ['my-course-quiz', { courseId }],
+        queryFn: () => {
+            if (courseId) {
+                return examApi.getQuizCourseById(courseId);
+            }
+        }
+    });
     const goBack = () => {
-        router.back();
+        if (courseId) {
+            router.push(`/my-course/${courseId}`);
+        } else {
+            router.back();
+        }
     };
     useEffect(() => {
         const handleReload = async () => {
@@ -120,18 +142,18 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
                         alt=""
                         className="hidden sm:block"
                     />
-                    <p className="text-white text-xs sm:text-sm">Khóa học lấy gốc thần tốc</p>
+                    <p className="text-white text-xs sm:text-sm">{courseData?.name || 'Khóa học lấy gốc thần tốc'}</p>
                 </div>
                 <div className="flex justify-center items-center text-white">
                     <div className="hidden lg:block">
                         <span className="inline-flex items-center text-xs">
-                            <span className="font-bold mr-1">20</span>
+                            <span className="font-bold mr-1">{courseData?.totalVideo || '20'}</span>
                             <span>Bài giảng</span>
                             <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
                         </span>
                         <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
                             <span className="inline-flex items-center text-xs">
-                                <span className="font-bold mr-1">0</span>
+                                <span className="font-bold mr-1">{quizCourse?.totalRow || 0}</span>
                                 <span>Bài tập</span>
                                 <Image src="/video-number/red.svg" width={30} height={30} alt="" />
                             </span>
@@ -139,7 +161,9 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id }) => {
                         <span className="before:content-['•'] before:inline-block before:text-white before:mx-2">
                             <span className="inline-flex items-center text-xs">
                                 <span className="mr-1">Đã học</span>
-                                <span className="font-bold">(5/10)</span>
+                                <span className="font-bold">
+                                    {`${courseData?.totalCompleted || 5} /${courseData?.totalVideo || 10}`}
+                                </span>
                                 <Image src="/video-number/green.svg" width={30} height={30} alt="" />
                             </span>
                         </span>

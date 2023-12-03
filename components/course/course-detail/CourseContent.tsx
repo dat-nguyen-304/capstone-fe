@@ -38,9 +38,11 @@ const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) =>
                         <span className="mt-2 sm:mt-0 inline-flex items-center">
                             <span>Hoàn thành</span>
                             <span className="font-bold mx-1">
-                                {type == 'my-course' ? courseContent?.totalCompleted : 0}
+                                {type == 'my-course' && courseContent?.totalCompleted
+                                    ? courseContent?.totalCompleted
+                                    : 0}
                             </span>
-                            <span>/{courseContent?.totalVideo + courseContent?.totalQuiz}</span>
+                            <span>/{courseContent?.totalVideo}</span>
                             <Image src="/video-number/green.svg" width={30} height={30} alt="" />
                         </span>
                     </span>
@@ -55,6 +57,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ type, courseContent }) =>
                         onPreviewOpen={onOpen}
                         videoItem={videoItem}
                         index={index}
+                        courseId={courseContent?.id}
                         type={
                             type === 'teacher-course'
                                 ? 'teacher-video'

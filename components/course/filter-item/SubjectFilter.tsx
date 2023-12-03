@@ -8,11 +8,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { PuffLoader } from 'react-spinners';
 
 interface SubjectFilterProps {
-    setFilterSubject: Dispatch<SetStateAction<string[]>>;
-    setFilterChange: Dispatch<SetStateAction<string>>;
+    setFilterSubject: Dispatch<SetStateAction<number[]>>;
+    filterSubject: any[];
 }
 
-const SubjectFilter: React.FC<SubjectFilterProps> = ({ setFilterSubject, setFilterChange }) => {
+const SubjectFilter: React.FC<SubjectFilterProps> = ({ setFilterSubject, filterSubject }) => {
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -20,16 +20,21 @@ const SubjectFilter: React.FC<SubjectFilterProps> = ({ setFilterSubject, setFilt
     });
     const handleFilterSubject = (value: any) => {
         setFilterSubject(value);
-        setFilterChange('SUBJECT');
     };
     return (
-        <CheckboxGroup size="sm" label="" className="mb-4" onValueChange={handleFilterSubject}>
+        <CheckboxGroup
+            size="sm"
+            label=""
+            className="mb-4"
+            onValueChange={handleFilterSubject}
+            defaultValue={filterSubject}
+        >
             {isLoading ? (
                 <PuffLoader size={100} color="blue" />
             ) : (
                 <>
                     {data?.map((SubjectFilter: Subject) => (
-                        <Checkbox key={SubjectFilter.name} value={SubjectFilter.name.toString()}>
+                        <Checkbox key={SubjectFilter.id} value={SubjectFilter.id.toString()}>
                             {SubjectFilter.name}
                         </Checkbox>
                     ))}

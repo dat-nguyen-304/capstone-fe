@@ -6,14 +6,13 @@ import { Dispatch, SetStateAction } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 
 interface RatingFilterProps {
+    filterRating: number;
     setFilterRating: Dispatch<SetStateAction<number>>;
-    setFilterChange: Dispatch<SetStateAction<string>>;
 }
 
-const RatingFilter: React.FC<RatingFilterProps> = ({ setFilterRating, setFilterChange }) => {
+const RatingFilter: React.FC<RatingFilterProps> = ({ setFilterRating, filterRating }) => {
     const handleFilterRating = (value: number) => {
         setFilterRating(value);
-        setFilterChange('RATE');
     };
     return (
         <RadioGroup
@@ -22,6 +21,7 @@ const RatingFilter: React.FC<RatingFilterProps> = ({ setFilterRating, setFilterC
             defaultValue="london"
             className="mb-4"
             onChange={event => handleFilterRating(Number(event?.target?.value))}
+            value={filterRating?.toString()}
         >
             <Radio value="4.5" className="flex items-center">
                 <Rate allowHalf disabled defaultValue={4.5} className="!text-yellow-500 !text-xs !mb-2 !mx-2" />

@@ -2,14 +2,23 @@ import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { AiFillStar } from 'react-icons/ai';
 import { CiFilter } from 'react-icons/ci';
 import { BiCoin, BiCoinStack, BiSearch } from 'react-icons/bi';
-import { FaUsersLine } from 'react-icons/fa6';
+import { FaBook, FaBookBookmark, FaUsersLine } from 'react-icons/fa6';
 import FilterDrawer from './FilterDrawer';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface CourseFilterProps {
     onSearch: (searchTerm: string) => void;
     setSortType: Dispatch<SetStateAction<number>>;
-    setFilter: Dispatch<SetStateAction<{ type: string; value: any[] }>>;
+    setFilter: Dispatch<
+        SetStateAction<{
+            subjectList: [] | any;
+            minPrice: number;
+            maxPrice: number;
+            minRate: number;
+            maxRate: number;
+            levelList: [] | any;
+        }>
+    >;
 }
 
 const CourseFilter: React.FC<CourseFilterProps> = ({ onSearch, setSortType, setFilter }) => {
@@ -76,6 +85,12 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ onSearch, setSortType, setF
                     </SelectItem>
                     <SelectItem key={2} value={2} startContent={<BiCoin className="text-yellow-500" />}>
                         Giá mua thấp nhất
+                    </SelectItem>
+                    <SelectItem key={3} value={3} startContent={<FaBook className="text-yellow-500" />}>
+                        Khóa học mới nhất
+                    </SelectItem>
+                    <SelectItem key={4} value={4} startContent={<FaBookBookmark className="text-yellow-500" />}>
+                        Khóa học cũ nhất
                     </SelectItem>
                     {/* <SelectItem key={4} value={4} startContent={<FaUsersLine className="text-yellow-500" />}>
                         Nhiều đánh giá nhất

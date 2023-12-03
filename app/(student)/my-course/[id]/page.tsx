@@ -55,7 +55,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         level: courseData?.level,
         totalVideo: courseData?.totalVideo,
         progress: courseData?.progress,
-        totalQuiz: quizCourse?.totalRow
+        totalQuiz: quizCourse?.totalRow,
+        totalCompleted: courseData?.totalCompleted
     };
 
     const courseContent = {
@@ -67,7 +68,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
             return aOrder - bOrder;
         }),
         totalQuiz: quizCourse?.totalRow,
-        totalCompleted: courseData?.totalCompleted + numberOfAttemptedQuizzes
+        totalCompleted: courseData?.totalCompleted
     };
     console.log(courseData);
     console.log(feedbacksData);
@@ -96,7 +97,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     if (!courseData) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">
-            <div onClick={() => router.back()} className="mt-4 flex items-center gap-2 text-sm cursor-pointer">
+            <div
+                onClick={() => router.push('/my-course')}
+                className="mt-4 flex items-center gap-2 text-sm cursor-pointer"
+            >
                 <BsArrowLeft />
                 <span>Quay lại</span>
             </div>

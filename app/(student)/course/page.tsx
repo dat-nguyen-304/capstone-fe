@@ -14,6 +14,14 @@ interface SelectedFilter {
     type: string;
     value: [] | any;
 }
+interface SelectedFilterAll {
+    subjectList: [] | any;
+    minPrice: number;
+    maxPrice: number;
+    minRate: number;
+    maxRate: number;
+    levelList: [] | any;
+}
 const CourseList: React.FC<CourseListProps> = ({}) => {
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
@@ -22,10 +30,18 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [type, setType] = useState<number>(0);
     const [selectedFilter, setSelectedFilter] = useState<SelectedFilter>({ type: '', value: [] });
-    console.log(selectedFilter);
+    const [selectedFilterALL, setSelectedFilterALL] = useState<SelectedFilterAll>({
+        subjectList: [],
+        minPrice: 0,
+        maxPrice: 0,
+        minRate: 0,
+        maxRate: 0,
+        levelList: []
+    });
+    console.log(selectedFilterALL);
 
     const { status, error, data, isPreviousData, refetch } = useQuery({
-        queryKey: ['courses', { page, searchTerm, type, selectedFilter }],
+        queryKey: ['courses', { page, searchTerm, type, selectedFilterALL }],
         // keepPreviousData: true,
         queryFn: () => {
             if (searchTerm !== '') {
@@ -34,25 +50,29 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
                     searchTerm,
                     page - 1,
                     20,
-                    type == 1 || type == 2 ? 'price' : 'id',
-                    type == 1 ? 'DESC' : 'ASC'
+                    type == 1 || type == 2 ? 'price' : type == 3 || type == 4 ? 'createdDate' : 'id',
+                    type == 1 || type == 3 ? 'DESC' : 'ASC'
                 );
-            } else if (selectedFilter.type !== '' && selectedFilter?.value?.length > 0) {
-                return courseApi.filterCourse(
-                    selectedFilter?.type,
-                    selectedFilter?.value as [],
+            } else if (selectedFilterALL?.maxRate !== 0) {
+                return courseApi.filterCourseForUser(
+                    selectedFilterALL?.subjectList as [],
+                    selectedFilterALL?.minPrice,
+                    selectedFilterALL?.maxPrice,
+                    selectedFilterALL?.minRate,
+                    selectedFilterALL?.maxRate,
+                    selectedFilterALL?.levelList as [],
                     page - 1,
                     20,
-                    type == 1 || type == 2 ? 'price' : 'id',
-                    type == 1 ? 'DESC' : 'ASC'
+                    type == 1 || type == 2 ? 'price' : type == 3 || type == 4 ? 'createdDate' : 'id',
+                    type == 1 || type == 3 ? 'DESC' : 'ASC'
                 );
             } else {
                 // If searchTerm is empty, call courseApi.getAll
                 return courseApi.getAll(
                     page - 1,
                     20,
-                    type == 1 || type == 2 ? 'price' : 'id',
-                    type == 1 ? 'DESC' : 'ASC'
+                    type == 1 || type == 2 ? 'price' : type == 3 || type == 4 ? 'createdDate' : 'id',
+                    type == 1 || type == 3 ? 'DESC' : 'ASC'
                 );
             }
         }
@@ -82,7 +102,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     return (
         <div className="background-xl">
             <div className="w-[90%] 2xl:w-[85%] 3xl:w-[90%] mx-auto pt-8">
-                <CourseFilter onSearch={handleSearch} setSortType={setType} setFilter={setSelectedFilter} />
+                <CourseFilter onSearch={handleSearch} setSortType={setType} setFilter={setSelectedFilterALL} />
                 <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                     {totalRow ? (
                         <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>

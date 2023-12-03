@@ -2,6 +2,7 @@ import { ChipProps } from '@nextui-org/react';
 
 export const courseStatusColorMap: Record<string, ChipProps['color']> = {
     AVAILABLE: 'success',
+    DELETED: 'danger',
     REJECT: 'danger',
     BANNED: 'danger',
     WAITING: 'primary',

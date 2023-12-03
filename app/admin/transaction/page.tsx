@@ -34,88 +34,16 @@ const columns = [
     { name: 'HỌC SINH', uid: 'userName', sortable: true },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
     { name: 'NGÀY', uid: 'paymentDate', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
-    { name: 'THAO TÁC', uid: 'action', sortable: false }
+    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true }
+    // { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const transactions = [
-    {
-        id: 1,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 2,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 3,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 4,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 5,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    },
-    {
-        id: 6,
-        name: 'Khóa học lấy gốc',
-        subject: 'Toán',
-        student: 'Nguyễn Văn An',
-        teacher: 'Nguyễn Văn Bê',
-        coursePrice: 500000,
-        revenue: 50000,
-        date: '12/12/2023 08:02:02'
-    }
-];
-
-type Transaction = (typeof transactions)[0];
+// type Transaction = (typeof transactions)[0];
 
 const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set([
-            'courseName',
-            'subject',
-            'teacherName',
-            'userName',
-            'amount',
-            'paymentDate',
-            'transactionStatus',
-            'action'
-        ])
+        new Set(['courseName', 'subject', 'teacherName', 'userName', 'amount', 'paymentDate', 'transactionStatus'])
     );
     const [adminTransactions, setAdminTransactions] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);

@@ -19,6 +19,61 @@ export const courseApi = {
         );
         return res.data;
     },
+    filterCourseForUser: async (
+        subjectList: [],
+        minPrice: number,
+        maxPrice: number,
+        minRate: number,
+        maxRate: number,
+        levelList: [],
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        let value = subjectList?.length ? `?subjectList=${subjectList.join('&subjectList=')}` : '';
+        if (minPrice != 0 && maxPrice != 0) {
+            if (value == '') {
+                value += `?minPrice=${minPrice}&maxPrice=${maxPrice}`;
+            } else {
+                value += `&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+            }
+        } else if (maxPrice != 0) {
+            if (value == '') {
+                value += `?maxPrice=${maxPrice}`;
+            } else {
+                value += `&maxPrice=${maxPrice}`;
+            }
+        } else {
+            value += '';
+        }
+        if (minRate != 0) {
+            if (value == '') {
+                value += `?minRate=${minRate}&maxRate=${maxRate}`;
+            } else {
+                value += `&minRate=${minRate}&maxRate=${maxRate}`;
+            }
+        } else {
+            value += '';
+        }
+        if (levelList?.length > 0) {
+            if (value == '') {
+                value += `?levelList=${levelList.join('&levelList=')}`;
+            } else {
+                value += `&levelList=${levelList.join('&levelList=')}`;
+            }
+        } else {
+            value += '';
+        }
+        console.log({ value });
+
+        const res = await axiosClient.get(
+            `/courses/user/filter${value}${
+                value !== '' ? `&page=${page}` : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
     getCourseById: async (courseId: number) => {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;

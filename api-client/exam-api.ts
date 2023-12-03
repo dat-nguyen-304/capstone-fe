@@ -58,9 +58,11 @@ export const examApi = {
         );
         return res.data;
     },
-    getAllByAdmin: async (page: number, size: number, field: string, sort: string) => {
+    getAllByAdmin: async (subject: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/examination/exams/admin?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/examination/exams/admin?${subject !== '' ? `subject=${subject}` : ''}${
+                subject !== '' ? `&page=${page}` : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -164,8 +166,12 @@ export const examApi = {
         sort: string
     ) => {
         const res = await axiosClient.get(
-            `/examination/exams/submission/statistic?subject=${subject}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/examination/statistic?subject=${subject}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
+        return res.data;
+    },
+    getSubmissionStatisticBySubId: async (submissionId: number) => {
+        const res = await axiosClient.get(`/examination/exams/submission/${submissionId}/statistic`);
         return res.data;
     },
     createExamReport: async (payload: any, examId: number) => {
