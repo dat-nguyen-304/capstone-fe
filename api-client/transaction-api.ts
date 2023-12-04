@@ -14,9 +14,9 @@ export const transactionApi = {
         );
         return res.data;
     },
-    getListStudentTransaction: async (page: number, size: number, field: string, sort: string) => {
+    getListStudentTransaction: async (status: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/transaction/user?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/transaction/user?status=${status}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

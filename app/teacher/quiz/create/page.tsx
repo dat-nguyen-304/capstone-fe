@@ -7,13 +7,17 @@ import AddQuestionModal from '@/components/test/AddQuestionModal';
 import { Course, Subject, Topic } from '@/types';
 import { Button, Checkbox, Chip, Select, SelectItem, useDisclosure, Skeleton } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createSkeletonArray } from '@/utils';
 import TestReviewItem from '@/components/test/TestReviewItem';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { FaPlus } from 'react-icons/fa6';
+import { BiUpArrowAlt } from 'react-icons/bi';
+import * as XLSX from 'xlsx';
+import { FiDelete } from 'react-icons/fi';
+import { useCustomModal } from '@/hooks';
 interface CreateQuizProps {}
 
 function getSubjectName(subjectCode: string) {
@@ -29,13 +33,25 @@ function getSubjectName(subjectCode: string) {
 
     return subjectNames[subjectCode] || null;
 }
+const getSubjectNameById = (id: number): string => {
+    const subjectMap: Record<number, string> = {
+        1: 'MATHEMATICS',
+        2: 'PHYSICS',
+        3: 'CHEMISTRY',
+        4: 'ENGLISH',
+        5: 'BIOLOGY',
+        6: 'HISTORY',
+        7: 'GEOGRAPHY'
+    };
 
+    return subjectMap[id] || '';
+};
 const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const router = useRouter();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [questions, setQuestions] = useState<any[]>([]);
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
-    const [selectedCourse, setSelectedCourse] = useState<number>();
+    const [selectedCourse, setSelectedCourse] = useState<number>(0);
     const [editIndex, setEditIndex] = useState<number | undefined>();
     const [editQuestion, setEditQuestion] = useState<any | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -43,6 +59,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const [optionCourse, setOptionCourse] = useState<string[]>([]);
     const [courses, setCourses] = useState<any[]>([]);
     const [courseDetail, setCourseDetail] = useState<any>();
+    const [excelFile, setExcelFile] = useState(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -56,6 +74,10 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         queryKey: ['subjectsQuiz'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
+    });
+    const { data: topicsData } = useQuery({
+        queryKey: ['topicsAddQuestionQuiz', { selectedSubject }],
+        queryFn: () => examApi.getAllTopicBySubject(getSubjectNameById(selectedSubject), 0, 100)
     });
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
@@ -118,7 +140,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             else setCourses(activatedCoursesData?.data);
         }
     }, [selectedOptionCourse]);
-
+    const { onOpen: onConfirmOpen, onDanger, onClose: onConfirmClose } = useCustomModal();
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);
         setEditQuestion(null);
@@ -147,7 +169,107 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     const handleDeleteQuestion = (index: number) => {
         // Delete the question at the specified index
-        setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+        onConfirmOpen();
+        onDanger({
+            content: 'Bạn có chắc muốn xóa câu hỏi',
+            title: 'Xác nhận xóa câu hỏi',
+            activeFn: () => {
+                setQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
+                onConfirmClose();
+            }
+        });
+    };
+    const handleDeleteAllQuestions = () => {
+        // Delete the question at the specified index
+        onConfirmOpen();
+        onDanger({
+            content: 'Bạn có chắc muốn xóa toàn bộ câu hỏi',
+            title: 'Xác nhận xóa toàn bộ câu hỏi',
+            activeFn: () => {
+                setQuestions([]);
+                onConfirmClose();
+            }
+        });
+    };
+    const handleFile = (e: any) => {
+        let fileType = [
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'text/csv'
+        ];
+        let selectedFile = e.target.files[0];
+        if (selectedFile) {
+            if (selectedFile && fileType.includes(selectedFile?.type)) {
+                let reader = new FileReader();
+                reader.readAsArrayBuffer(selectedFile);
+                reader.onload = (e: any) => {
+                    setExcelFile(e.target.result);
+                };
+            } else {
+                toast.error('Vui lòng chọn file excel');
+                setExcelFile(null);
+            }
+        } else {
+            console.log('Please select your file');
+        }
+    };
+
+    const handleFileSubmit = (e: any) => {
+        if (excelFile !== null) {
+            const workbook = XLSX.read(excelFile, { type: 'buffer' });
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const headers: any = data[0];
+            const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
+            const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
+            if (missingHeaders.length > 0) {
+                toast.error('Error file input');
+            } else {
+                const statementIndex = headers.indexOf('statement');
+                const explanationIndex = headers.indexOf('explanation');
+                const answerIndices = ['A', 'B', 'C', 'D'];
+                const topicIndex = headers.indexOf('topic');
+                const correctAnswerIndex = headers.indexOf('correctAnswer');
+                const levelIndex = headers.indexOf('level');
+
+                const questions = data.slice(1).map((row: any) => {
+                    const statement = row[statementIndex];
+                    const explanation = row[explanationIndex];
+                    const answerList = answerIndices.map(answer => String(row[headers.indexOf(answer)]));
+                    const topicName = row[topicIndex];
+                    const correctAnswer = row[correctAnswerIndex];
+                    const level = row[levelIndex];
+                    const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
+                    if (matchedTopic) {
+                        const topicId = matchedTopic.id;
+
+                        return {
+                            statement,
+                            explanation,
+                            answerList,
+                            topicId,
+                            correctAnswer,
+                            level
+                        };
+                    } else {
+                        return null;
+                    }
+                });
+                const validQuestions = questions.filter((question: any) => question !== null);
+                if (validQuestions?.length > 0) {
+                    setQuestions(prevQuestions => [...prevQuestions, ...validQuestions]);
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+                    setExcelFile(null);
+                } else {
+                    toast.error('File bài tập của bạn không phù hợp với môn hiện tại vui lòng chọn file khác');
+                }
+            }
+        } else {
+            toast.error('Vui lòng chọn file trước khi thêm câu hỏi');
+        }
     };
     const createQuiz = async (formData: any) => {
         setIsSubmitting(true);
@@ -217,6 +339,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         {optionCourse.length === 2 && selectedOptionCourse ? (
                             <div className="col-span-2">
                                 <Select
+                                    isDisabled={questions?.length > 0 ? true : false}
                                     isRequired
                                     size="sm"
                                     label="Bài tập này thuộc"
@@ -240,6 +363,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     </div>
                     <div className="my-4 col-span-3 lg:col-span-3">
                         <Select
+                            // disabled={questions?.length > 0 ? true : false}
+                            isDisabled={questions?.length > 0 ? true : false}
                             isRequired
                             size="sm"
                             label="Khóa học"
@@ -256,14 +381,72 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </Select>
                     </div>
                 </div>
-                <Button onClick={handlePopUpAddQuestion} color="success" variant="flat" className="mt-8">
-                    Thêm câu hỏi <FaPlus />
-                </Button>
+                <div className="flex justify-between items-center">
+                    <div className="">
+                        <Button
+                            onClick={handlePopUpAddQuestion}
+                            color="success"
+                            variant="flat"
+                            className="mt-8"
+                            disabled={selectedCourse != 0 ? false : true}
+                        >
+                            Thêm câu hỏi <FaPlus />
+                        </Button>
+                        {questions?.length > 0 && (
+                            <Button
+                                onClick={handleDeleteAllQuestions}
+                                color="danger"
+                                variant="flat"
+                                className="mt-8 mx-2"
+                            >
+                                Xóa toàn bộ câu hỏi <FiDelete />
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="flex justify-center items-center">
+                        <a
+                            href={'/file/sample.xlsx'}
+                            download={'sample.xlsx'}
+                            className="mt-8 bg-green-100 hover:bg-green-300 py-3 px-4 rounded-md decoration-black text-green-500"
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            Tải file mẫu
+                        </a>
+                        <div className="mt-8 mx-2">
+                            <label htmlFor="file-input" className="sr-only">
+                                Choose file
+                            </label>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                disabled={selectedCourse != 0 ? false : true}
+                                name="file-input"
+                                id="file-input"
+                                className="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600
+                                file:bg-gray-50 file:border-0
+                                file:bg-gray-100 file:me-4
+                                file:py-3 file:px-4
+                                dark:file:bg-gray-700 dark:file:text-gray-400"
+                                onChange={handleFile}
+                            />
+                        </div>
+                        <Button
+                            onClick={handleFileSubmit}
+                            color="success"
+                            variant="flat"
+                            className="mt-8"
+                            disabled={selectedCourse != 0 ? false : true}
+                        >
+                            Tải câu hỏi <BiUpArrowAlt />
+                        </Button>
+                    </div>
+                </div>
                 <AddQuestionModal
                     isOpen={isOpen}
                     onClose={onClose}
                     onAddQuestion={handleAddQuestion}
-                    subject={String(getSubjectName(courseDetail?.subject))}
+                    subject={String(getSubjectName(courseDetail?.subject || 'Toán học'))}
                     editIndex={editIndex}
                     editQuestion={editQuestion}
                     onEditQuestion={handleEditQuestion}
@@ -306,8 +489,14 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         .
                     </label>
                 </div>
-                <Button className="mt-4" type="submit" color="primary" isLoading={isSubmitting}>
-                    Tạo bài thi mới
+                <Button
+                    className="mt-4"
+                    type="submit"
+                    color="primary"
+                    isDisabled={questions?.length > 0 ? false : true}
+                    isLoading={isSubmitting}
+                >
+                    Tạo bài tập mới
                 </Button>
             </form>
         </div>

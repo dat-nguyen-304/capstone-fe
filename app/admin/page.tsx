@@ -8,6 +8,16 @@ import TopContributorItem from '@/components/dashboard/teacher/TopContributorIte
 import { Card, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 
+const formatCurrency = (value: number) => {
+    const formattedValue = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0
+    }).format(value);
+
+    return formattedValue.replace('₫', ' VND');
+};
+
 const AdminDashboard: React.FC = () => {
     const { data: dashboardData } = useQuery({
         queryKey: ['adminDashboard'],
@@ -23,7 +33,9 @@ const AdminDashboard: React.FC = () => {
                         <h1 className="text-[14px] text-gray-500">Doanh thu tháng</h1>
                     </div>
                     <div className="my-2">
-                        <span className="text-[30px]">{dashboardData?.monthlyIncome}</span>
+                        <span className="text-[30px]">
+                            {formatCurrency(Number(dashboardData?.monthlyIncome / 100))}
+                        </span>
                     </div>
                     {/* <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
                         <h2>Hôm nay</h2>

@@ -53,6 +53,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
     const [declineId, setDeclineId] = useState<number>();
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const {
         status,
         error,
@@ -61,15 +62,17 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         refetch
     } = useQuery({
         queryKey: [
-            'adminTransaction',
+            'studentTransaction',
             {
                 page,
                 rowsPerPage,
-                sort: Array.from(sort)[0] as string
+                sort: Array.from(sort)[0] as string,
+                statusFilter: Array.from(statusFilter)[0] as string
             }
         ],
         queryFn: () =>
             transactionApi.getListStudentTransaction(
+                Array.from(statusFilter)[0] as string,
                 page - 1,
                 rowsPerPage,
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateAsc'
@@ -172,7 +175,14 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                 <DropdownItem
                                     color="warning"
                                     onClick={() => onWarningOpen(transaction?.id)}
-                                    key={transaction.transactionStatus === 'REFUND' ? 'viewDis' : 'view'}
+                                    key={
+                                        transaction.transactionStatus === 'REFUND' ||
+                                        transaction.transactionStatus === 'REFUND_SUCCES' ||
+                                        transaction.transactionStatus === 'PENDING' ||
+                                        transaction.transactionStatus === 'REJECT_REFUND'
+                                            ? 'viewDis'
+                                            : 'view'
+                                    }
                                 >
                                     Yêu cầu hoàn tiền
                                 </DropdownItem>
@@ -196,6 +206,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             ? 'Thất bại'
                             : cellValue === 'REFUND'
                             ? 'Chờ hoàn tiền'
+                            : cellValue === 'REFUND_SUCCES'
+                            ? 'Hoàn tiền thành công'
+                            : cellValue === 'REJECT_REFUND'
+                            ? 'Hoàn tiền thất bại'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -250,6 +264,45 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             onValueChange={onSearchChange}
                         />
                         <div className="flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="SUCCESS" className="capitalize">
+                                        {capitalize('Thành Công')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REFUND_SUCCES" className="capitalize">
+                                        {capitalize('Hoàn tiền thành Công')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PENDING" className="capitalize">
+                                        {capitalize('Đang chờ')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REFUND" className="capitalize">
+                                        {capitalize('Chờ hoàn tiền')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REJECT_REFUND" className="capitalize">
+                                        {capitalize('Từ chối hoàn tiền')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
