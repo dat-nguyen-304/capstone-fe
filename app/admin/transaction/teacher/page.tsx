@@ -128,7 +128,7 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
             });
 
             if (res) {
-                toast.success('Sô1 tiền đã gửi cho giáo viên thành công');
+                toast.success('Số tiền đã gửi cho giáo viên thành công');
 
                 refetch();
             }

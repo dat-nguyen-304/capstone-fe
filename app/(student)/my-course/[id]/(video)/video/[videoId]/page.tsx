@@ -73,6 +73,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         const threshold = 5;
         setCurrentTime(timeString);
         console.log(videoDuration - progress.playedSeconds <= threshold);
+        console.log(videoDuration);
         console.log(data?.isWatched);
         console.log(hasCalledProgressApi);
 

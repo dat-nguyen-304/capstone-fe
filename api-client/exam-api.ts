@@ -58,10 +58,30 @@ export const examApi = {
         );
         return res.data;
     },
-    getAllByAdmin: async (subject: string, page: number, size: number, field: string, sort: string) => {
+    getAllByAdmin: async (
+        subject: string,
+        examType: string,
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
             `/examination/exams/admin?${subject !== '' ? `subject=${subject}` : ''}${
-                subject !== '' ? `&page=${page}` : `page=${page}`
+                subject !== '' && examType !== ''
+                    ? `&examType=${examType}`
+                    : subject == '' && examType !== ''
+                    ? `examType=${examType}`
+                    : ``
+            }${
+                (subject !== '' || examType !== '') && status !== ''
+                    ? `&status=${status}`
+                    : subject == '' && examType == '' && status !== ''
+                    ? `status=${status}`
+                    : ``
+            }${
+                subject !== '' || examType !== '' || status !== '' ? `&page=${page}` : `page=${page}`
             }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;

@@ -62,11 +62,11 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                 <p className="text-center text-2xl text-orange-500 mt-4 font-bold">
                     ₫ {buyCourse?.price?.toLocaleString('vi-VN')}
                 </p>
-                {user?.role === 'STUDENT' && (
+                {user?.role === 'STUDENT' && !buyCourse?.isAccess ? (
                     <Button color="primary" onPress={onOpen} className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base">
                         Mua ngay
                     </Button>
-                )}
+                ) : null}
                 <div className="hidden md:block">
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />

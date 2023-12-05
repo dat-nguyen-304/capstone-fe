@@ -10,6 +10,8 @@ import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
+import WriteFeedback from '@/components/course/course-detail/WriteFeedback';
+import { toast } from 'react-toastify';
 interface CourseDetailProps {
     params: { id: number };
 }
@@ -25,7 +27,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryFn: () => examApi.getQuizCourseById(params?.id)
     });
 
-    const { data: feedbacksData } = useQuery<any>({
+    const { data: feedbacksData, refetch } = useQuery<any>({
         queryKey: ['feedbacksCourse'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
@@ -52,7 +54,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         subject: data?.subject,
         level: data?.level,
         totalVideo: data?.totalVideo,
-        totalQuiz: quizCourse?.totalRow
+        totalQuiz: quizCourse?.totalRow,
+        isAccess: data?.isAccess
     };
     const courseContent = {
         id: data?.id,
@@ -65,7 +68,28 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalCompleted: data?.totalCompleted,
         totalQuiz: quizCourse?.totalRow
     };
-
+    const handleFeedbackSubmission = async (feedback: { rating: number; comment: string }) => {
+        let toastLoading;
+        try {
+            toastLoading = toast.loading('Đang tạo bài đăng');
+            const ratingCourse = {
+                courseId: Number(params?.id),
+                rating: Number(feedback.rating),
+                content: feedback.comment
+            };
+            const res = await ratingCourseApi.createRating(ratingCourse);
+            if (res) {
+                toast.success('Bình luận khóa học thành công');
+                refetch();
+            }
+            toast.dismiss(toastLoading);
+            // console.log(ratingCourse);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error submitting feedback:', error);
+        }
+    };
     if (!data) return <Loader />;
     return (
         <div className="w-[90%] lg:w-4/5 mx-auto">
@@ -77,6 +101,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 <div className="col-span-10 order-last md:col-span-7 md:order-first">
                     <CourseInfo courseInfo={courseInfo} />
                     <CourseContent courseContent={courseContent} />
+                    {data?.isAccess ? <WriteFeedback onSubmit={handleFeedbackSubmission} /> : null}
                     <Feedback feedbacksData={feedbacksData} />
                 </div>
                 <div className="col-span-10 order-first md:col-span-3 md:order-last">

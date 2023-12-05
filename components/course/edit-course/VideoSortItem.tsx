@@ -14,6 +14,33 @@ interface VideoSortItemProps {
     index: UniqueIdentifier;
 }
 
+const calculateTimeDifference = (postTime: any) => {
+    const currentTime = new Date();
+    const postDateTime = postTime === null ? new Date() : new Date(postTime);
+    const timeDifference = currentTime.getTime() - postDateTime.getTime();
+
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30); // Approximate months
+    const years = Math.floor(days / 365); // Approximate years
+
+    if (years > 0) {
+        return `${years} năm trước`;
+    } else if (months > 0) {
+        return `${months} tháng trước`;
+    } else if (days > 0) {
+        return `${days} ngày trước`;
+    } else if (hours > 0) {
+        return `${hours} giờ trước`;
+    } else if (minutes > 0) {
+        return `${minutes} phút trước`;
+    } else {
+        return 'Vừa xong';
+    }
+};
+
 const floatToTime = (durationFloat: number): string => {
     if (durationFloat > 10) {
         const hours = Math.floor(durationFloat / 3600);
@@ -77,15 +104,17 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
             />
             <div className="h-[50px] w-[100px] ml-0 sm:ml-4 relative">
                 <Image src={videoItem?.thumbnail || '/banner/slide-1.png'} alt="" width={300} height={240} />
-                <span className="absolute bottom-0 text-white bg-gray-700 px-1 rounded-md right-0 text-xs">
-                    {floatToTime(videoItem?.duration)}
-                </span>
+                {videoItem?.examType ? null : (
+                    <span className="absolute bottom-0 text-white bg-gray-700 px-1 rounded-md right-0 text-xs">
+                        {floatToTime(videoItem?.duration)}
+                    </span>
+                )}
             </div>
             <div className="max-w-[50%] flex flex-col justify-between ml-1 sm:ml-4">
                 <h3 className="font-semibold truncate text-xs sm:text-sm">{videoItem?.name}</h3>
-                <div>
+                {/* <div>
                     <span className="text-xs"> 7 ngày trước</span>
-                </div>
+                </div> */}
             </div>
             <div className="ml-auto flex items-center gap-2">
                 <div className="block sm:hidden" {...listeners}>

@@ -7,7 +7,16 @@ import { courseApi } from '@/api-client';
 import { CourseCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination } from '@nextui-org/react';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Pagination,
+    Selection
+} from '@nextui-org/react';
 import { useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
@@ -20,10 +29,19 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const currentUser = useUser();
+    const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['courses', { page }],
+        queryKey: ['courses', { page, sortFilter: Array.from(sortFilter)[0] as string }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacher(page - 1, 20, 'createdDate', 'DESC')
+        queryFn: () =>
+            courseApi.getAllOfTeacher(
+                page - 1,
+                20,
+                Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
+                    ? 'createdDate'
+                    : 'price',
+                Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'PRICE_DESC' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -77,7 +95,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 sm:flex justify-between gap-3 items-end">
-                    <Input
+                    {/* <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
@@ -87,9 +105,9 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                         variant="bordered"
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
-                    />
+                    /> */}
                     <div className="flex gap-3 mt-4 sm:mt-0">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
                                     color="primary"
@@ -114,7 +132,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
@@ -123,22 +141,29 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                                     color="primary"
                                     variant="bordered"
                                 >
-                                    Trạng thái
+                                    Sắp Xếp Theo
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
-                                // selectedKeys={() => {}}
+                                selectedKeys={sortFilter}
                                 selectionMode="single"
-                                onSelectionChange={() => {}}
+                                onSelectionChange={setSortFilter}
                             >
-                                {statusArr.map(statusItem => (
-                                    <DropdownItem key={statusItem.value} className="capitalize">
-                                        {capitalize(statusItem.name)}
-                                    </DropdownItem>
-                                ))}
+                                <DropdownItem key="DEFAULT" className="capitalize">
+                                    {capitalize('Khóa học mới nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="CREATEDDATE" className="capitalize">
+                                    {capitalize('Khóa học cũ nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="PRICE_DESC" className="capitalize">
+                                    {capitalize('Giá cao nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="PRICE_ASC" className="capitalize">
+                                    {capitalize('Giá thấp nhất')}
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

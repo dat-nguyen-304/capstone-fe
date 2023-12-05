@@ -1,6 +1,6 @@
 'use client';
 
-import { teacherIncomeApi } from '@/api-client';
+import { dashboardApi, teacherIncomeApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
 import RevenueChartMonth from '@/components/chart/teacher-dashboard/RevenueChartMonth';
@@ -20,22 +20,17 @@ const formatCurrency = (value: number) => {
 };
 
 const TeacherDashboard: React.FC = () => {
-    const { data: incomeForMonth, isLoading } = useQuery<any>({
-        queryKey: ['teacher-income-course-for-month'],
-        queryFn: teacherIncomeApi.getTeacherRevenue
-    });
-    const { data: incomeData } = useQuery<any>({
-        queryKey: ['teacher-income'],
-        queryFn: teacherIncomeApi.getTeacherIncome
-    });
     const { data: topIncomeData } = useQuery<any>({
         queryKey: ['teacher-top-income'],
         queryFn: () => teacherIncomeApi.getTeacherTopIncome('RECEIVED', 0, 5, 'revenue', 'DESC')
     });
-    console.log(topIncomeData);
+    const { data: dashboardData } = useQuery({
+        queryKey: ['teacherDashboard'],
+        queryFn: dashboardApi.getAllTeacher
+    });
+    console.log(dashboardData);
 
-    const totalRevenue = incomeData ? incomeData.reduce((acc: any, item: any) => acc + item.revenue, 0) : 0;
-    if (!incomeForMonth) return <Loader />;
+    if (!dashboardData) return <Loader />;
     return (
         <div>
             <div className="sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
@@ -44,57 +39,59 @@ const TeacherDashboard: React.FC = () => {
                         <h1 className="text-[14px] text-gray-500">Doanh thu tháng</h1>
                     </div>
                     <div className="my-2">
-                        <span className="text-[30px]">{formatCurrency(totalRevenue / 100)}</span>
+                        <span className="text-[30px]">
+                            {formatCurrency(Number(dashboardData?.monthlyIncome / 100))}
+                        </span>
                     </div>
-                    <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
+                    {/* <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
                         <h2>Hôm nay</h2>
                         <span className="ml-2">{formatCurrency(totalRevenue / 100)}</span>
-                    </div>
+                    </div> */}
                 </Card>
                 <Card className="p-4 mt-4 sm:mt-0">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Khóa học</h1>
                     </div>
                     <div className="my-2">
-                        <span className="text-[30px]">5.000</span>
+                        <span className="text-[30px]">{dashboardData?.totalCourse || 0}</span>
                     </div>
-                    <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
+                    {/* <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
                         <h2>Hôm nay</h2>
                         <span className="ml-2">4</span>
-                    </div>
+                    </div> */}
                 </Card>
                 <Card className="p-4 mt-4 sm:mt-0">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Video</h1>
                     </div>
                     <div className="my-2">
-                        <span className="text-[30px]">12.000</span>
+                        <span className="text-[30px]">{dashboardData?.totalVideo || 0}</span>
                     </div>
-                    <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
+                    {/* <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
                         <h2>Hôm nay</h2>
                         <span className="ml-2">40</span>
-                    </div>
+                    </div> */}
                 </Card>
                 <Card className="p-4 mt-4 sm:mt-0">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Học sinh mới</h1>
                     </div>
                     <div className="my-2">
-                        <span className="text-[30px]">12.000</span>
+                        <span className="text-[30px]">{dashboardData?.totalStudent || 0}</span>
                     </div>
-                    <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
+                    {/* <div className="flex border-t-1 pt-2 text-[14px] border-gray-200">
                         <h2>Hôm nay</h2>
                         <span className="ml-2">120</span>
-                    </div>
+                    </div> */}
                 </Card>
             </div>
             <div className="lg:grid lg:grid-cols-10 gap-4 mt-8 px-0">
                 <Card className="lg:col-span-7 p-4">
                     <Tabs color="primary" variant="underlined" aria-label="Tabs variants">
                         <Tab key="revenue" title="Doanh thu">
-                            <RevenueChartMonth revenueData={incomeForMonth} />
+                            <RevenueChartMonth revenueData={dashboardData?.courseRevenueByMonths} />
                         </Tab>
-                        <Tab key="course" title="Khóa học">
+                        {/* <Tab key="course" title="Khóa học">
                             <RevenueChart />
                         </Tab>
                         <Tab key="video" title="Video">
@@ -102,7 +99,7 @@ const TeacherDashboard: React.FC = () => {
                         </Tab>
                         <Tab key="student" title="Học sinh">
                             <RevenueChart />
-                        </Tab>
+                        </Tab> */}
                     </Tabs>
                 </Card>
                 <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0">

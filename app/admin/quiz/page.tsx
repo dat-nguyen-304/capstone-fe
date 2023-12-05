@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, Key, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -17,25 +17,41 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
+import { useQuery } from '@tanstack/react-query';
+import { courseApi, examApi } from '@/api-client';
+import { useCustomModal } from '@/hooks';
+import { Spin } from 'antd';
 
 interface VideosProps {}
 
+function getSubjectName(subjectCode: string) {
+    const subjectNames: { [key: string]: string | null } = {
+        MATHEMATICS: 'Toán học',
+        ENGLISH: 'Tiếng anh',
+        PHYSICS: 'Vật lí',
+        CHEMISTRY: 'Hóa học',
+        BIOLOGY: 'Sinh học',
+        HISTORY: 'Lịch sử',
+        GEOGRAPHY: 'Địa lý'
+    };
+
+    return subjectNames[subjectCode] || null;
+}
 const statusColorMap: Record<string, ChipProps['color']> = {
-    active: 'success',
-    unActive: 'danger',
-    updating: 'primary',
-    waiting: 'warning'
+    ENABLE: 'success',
+    DISABLE: 'danger',
+    DELETED: 'danger',
+    BANNED: 'danger'
 };
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN QUIZ', uid: 'quizName', sortable: true },
-    { name: 'KHÓA HỌC', uid: 'courseName' },
+    { name: 'TÊN QUIZ', uid: 'name', sortable: true },
+    { name: 'KHÓA HỌC', uid: 'course' },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'GIÁO VIÊN', uid: 'teacher' },
-    { name: 'SỐ CÂU HỎI', uid: 'numberOfQuestion' },
-    { name: 'NGÀY TẠO', uid: 'createdAt', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updatedAt', sortable: true },
+    { name: 'GIÁO VIÊN', uid: 'ownerFullName' },
+    // { name: 'SỐ CÂU HỎI', uid: 'numberOfQuestion' },
+    { name: 'NGÀY TẠO', uid: 'createTime', sortable: true },
+    { name: 'CẬP NHẬT', uid: 'lastUpdateTime', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -115,22 +131,66 @@ const Quizzes: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set([
-            'id',
-            'quizName',
-            'courseName',
-            'teacher',
+            'name',
+            'course',
+            'ownerFullName',
             'subject',
-            'numberOfQuestion',
-            'createdAt',
-            'updatedAt',
+            // 'numberOfQuestion',
+            'createTime',
+            'lastUpdateTime',
             'status',
             'action'
         ])
     );
+
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
+    const [quizzesData, setQuizzesData] = useState<any[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
-    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const { status, error, data, isPreviousData, refetch } = useQuery({
+        queryKey: [
+            'exams',
+            {
+                page,
+                rowsPerPage,
+                statusFilter: Array.from(statusFilter)[0] as string,
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
+            }
+        ],
+        // keepPreviousData: true,
+        queryFn: () =>
+            examApi.getAllByAdmin(
+                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                'QUIZ',
+                Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            )
+    });
+    const { data: coursesData } = useQuery({
+        queryKey: ['quizzescoursesAdmin'],
+        queryFn: () => courseApi.getAllOfAdmin('ALL', 0, 100)
+    });
+    useEffect(() => {
+        if (data?.data) {
+            const quizzesWithCourses = data?.data?.map((quiz: any) => {
+                const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+                return {
+                    ...quiz,
+                    course: matchingCourse?.id === quiz.courseId ? matchingCourse?.courseName : null
+                };
+            });
+            setQuizzesData(quizzesWithCourses);
+            setTotalPage(data.totalPage);
+            setTotalRow(data.totalRow);
+        }
+    }, [data, coursesData]);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -151,27 +211,54 @@ const Quizzes: React.FC<VideosProps> = () => {
             setFilterValue('');
         }
     }, []);
-    const renderCell = useCallback((quiz: Quiz, columnKey: Key) => {
-        const cellValue = quiz[columnKey as keyof Quiz];
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+
+    const handleStatusChange = async (id: number) => {
+        try {
+            onLoading();
+            const res = await examApi.deleteExam(id);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Đã xóa bài thi thành công',
+                    content: 'Bài thi đã được xóa thành công'
+                });
+                refetch();
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onDeactivateOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận vô hiệu hóa',
+            content: 'Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id)
+        });
+        onOpen();
+    };
+    const renderCell = useCallback((quiz: any, columnKey: Key) => {
+        const cellValue = quiz[columnKey as keyof any];
 
         switch (columnKey) {
-            case 'teacher':
-                return (
-                    <User
-                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-                        classNames={{
-                            description: 'text-default-500'
-                        }}
-                        name={cellValue}
-                    />
-                );
+            // case 'teacher':
+            //     return (
+            //         <User
+            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+            //             classNames={{
+            //                 description: 'text-default-500'
+            //             }}
+            //             name={cellValue}
+            //         />
+            //     );
+            case 'subject':
+                return getSubjectName(cellValue);
             case 'status':
-                let statusName = '';
-                if (cellValue === 'active') statusName = 'Hoạt động';
-                else if (cellValue === 'unActive') statusName = 'Vô hiệu';
-                else if (cellValue === 'updating') statusName = 'Chờ cập nhật';
-                else if (cellValue === 'waiting') statusName = 'Chờ phê duyệt';
-
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
@@ -179,9 +266,21 @@ const Quizzes: React.FC<VideosProps> = () => {
                         size="sm"
                         variant="dot"
                     >
-                        {statusName}
+                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
                     </Chip>
                 );
+
+            case 'createTime':
+            case 'lastUpdateTime':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                })?.format(dateValue);
+
+                return formattedDate;
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -191,11 +290,22 @@ const Quizzes: React.FC<VideosProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem as={Link} href="/teacher/quiz/1">
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'bannedDis']}>
+                                <DropdownItem
+                                    key={quiz?.status === 'DISABLE' || quiz?.status === 'DELETED' ? 'viewDis' : 'view'}
+                                    color="primary"
+                                    as={Link}
+                                    href={`/admin/exam/${quiz?.id}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem>Vô hiệu hóa</DropdownItem>
+                                {/* <DropdownItem
+                                    key={quiz?.status === 'DISABLE' ? 'bannedDis' : 'ban'}
+                                    color="danger"
+                                    onClick={() => onDeactivateOpen(quiz?.id)}
+                                >
+                                    Vô hiệu hóa
+                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -207,101 +317,130 @@ const Quizzes: React.FC<VideosProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách câu hỏi ôn tập</h3>
-            <div className="flex flex-col gap-4 mt-8">
-                <div className="sm:flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        startContent={<BsSearch className="text-default-300" />}
-                        value={filterValue}
-                        color="primary"
-                        variant="bordered"
-                        onClear={() => setFilterValue('')}
-                        onValueChange={onSearchChange}
-                    />
-                    <div className="flex gap-3 mt-4 sm:mt-0">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    variant="bordered"
-                                    color="primary"
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="flex flex-col gap-4 mt-8">
+                    <div className="sm:flex justify-between gap-3 items-end">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1"
+                            placeholder="Tìm kiếm..."
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={filterValue}
+                            color="primary"
+                            variant="bordered"
+                            onClear={() => setFilterValue('')}
+                            onValueChange={onSearchChange}
+                        />
+                        <div className="flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Môn học
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
-                                </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
-                                </DropdownItem>
-                                <DropdownItem key="updating" className="capitalize">
-                                    {capitalize('Chờ cập nhật')}
-                                </DropdownItem>
-                                <DropdownItem key="waiting" className="capitalize">
-                                    {capitalize('Chờ phê duyệt')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="flex">
-                                <Button endContent={<BsChevronDown className="text-small" />} size="sm" variant="flat">
-                                    Cột
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map(column => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
                                     </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                                    <DropdownItem key="MATHEMATICS" className="capitalize">
+                                        {capitalize('Toán học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENGLISH" className="capitalize">
+                                        {capitalize('Tiếng anh')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PHYSICS" className="capitalize">
+                                        {capitalize('Vật lí')}
+                                    </DropdownItem>
+                                    <DropdownItem key="CHEMISTRY" className="capitalize">
+                                        {capitalize('Hóa học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BIOLOGY" className="capitalize">
+                                        {capitalize('Sinh học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="HISTORY" className="capitalize">
+                                        {capitalize('Lịch sử')}
+                                    </DropdownItem>
+                                    <DropdownItem key="GEOGRAPHY" className="capitalize">
+                                        {capitalize('Địa lý')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterStatus}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterStatus}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt động')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô hiệu')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã xóa')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Cấm')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <div className="sm:flex justify-between items-center">
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                            Số kết quả mỗi trang:
+                            <select
+                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                onChange={onRowsPerPageChange}
+                            >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
-                <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {quizzes.length} kết quả</span>
-                    <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                        Số kết quả mỗi trang:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <TableContent
-                renderCell={renderCell}
-                headerColumns={headerColumns}
-                items={quizzes}
-                page={page}
-                setPage={setPage}
-                sortDescriptor={sortDescriptor}
-                setSortDescriptor={setSortDescriptor}
-                totalPage={2}
-            />
+                <TableContent
+                    renderCell={renderCell}
+                    headerColumns={headerColumns}
+                    items={quizzesData || []}
+                    page={page}
+                    setPage={setPage}
+                    sortDescriptor={sortDescriptor}
+                    setSortDescriptor={setSortDescriptor}
+                    totalPage={totalPage || 1}
+                />
+            </Spin>
         </div>
     );
 };

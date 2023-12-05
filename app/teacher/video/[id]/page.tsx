@@ -169,7 +169,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                     ))
                                 ) : (
                                     <>
-                                        <CommentItem commentInfo={commonInfo} />
+                                        {/* <CommentItem commentInfo={commonInfo} /> */}
+                                        Chưa có bình luận
                                     </>
                                 )}
                             </ul>

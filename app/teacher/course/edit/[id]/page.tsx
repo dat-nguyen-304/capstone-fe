@@ -47,8 +47,10 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
             const bOrder = b.ordinalNumber || b.courseOrder || 0;
             return aOrder - bOrder;
         }),
+        updateDate: data?.updateDate,
         thumbnail: data?.thumbnail,
-        status: data?.status
+        status: data?.status,
+        totalQuiz: quizCourse?.data?.length
     };
 
     const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number; isDraft: boolean }[]>(

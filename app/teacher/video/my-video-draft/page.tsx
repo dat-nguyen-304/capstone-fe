@@ -100,7 +100,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video nháp</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="mt-8 sm:flex items-center justify-between gap-3 ">
+                {/* <div className="mt-8 sm:flex items-center justify-between gap-3 ">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
@@ -157,7 +157,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
                             ))}
                         </DropdownMenu>
                     </Dropdown>
-                </div>
+                </div> */}
                 <p className="mt-4 text-default-400 text-xs sm:text-sm">
                     {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
                 </p>

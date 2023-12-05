@@ -34,7 +34,6 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
             setQuizzes([...(quizCourse?.data || []), ...(quizCourseRealId?.data || [])]);
         }
     }, [quizCourse, quizCourseRealId]);
-    console.log(quizzes);
 
     console.log(data);
     const commonInfo = {
@@ -51,14 +50,16 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         id: data?.id,
         teacherName: data?.teacherName,
         courseName: data?.courseName,
-        totalVideo: data?.totalVideo,
+        totalVideo: data?.courseVideoResponses?.length,
         listVideo: [...(data?.courseVideoResponses || []), ...(quizzes || [])].sort((a, b) => {
             const aOrder = a.ordinalNumber || a.courseOrder || 0;
             const bOrder = b.ordinalNumber || b.courseOrder || 0;
             return aOrder - bOrder;
         }),
+        updateDate: data?.updateDate,
         thumbnail: data?.thumbnail,
-        status: data?.status
+        status: data?.status,
+        totalQuiz: quizzes?.length
     };
 
     const [videoOrders, setVideoOrders] = useState<{ videoId: number; videoOrder: number; isDraft: boolean }[]>(

@@ -7,7 +7,16 @@ import { courseApi } from '@/api-client';
 import { CourseCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination } from '@nextui-org/react';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Pagination,
+    Selection
+} from '@nextui-org/react';
 import { useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
@@ -19,11 +28,20 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
+    const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['coursesDraft', { page }],
+        queryKey: ['coursesDraft', { page, sortFilter: Array.from(sortFilter)[0] as string }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getAllOfTeacherDraft(page - 1, 20, 'createdDate', 'DESC')
+        queryFn: () =>
+            courseApi.getAllOfTeacherDraft(
+                page - 1,
+                20,
+                Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
+                    ? 'createdDate'
+                    : 'price',
+                Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'PRICE_DESC' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -66,7 +84,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học vừa tạo</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 sm:flex justify-between gap-3 items-end">
-                    <Input
+                    {/* <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
@@ -76,9 +94,9 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                         variant="bordered"
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
-                    />
+                    /> */}
                     <div className="flex gap-3 mt-4 sm:mt-0">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
                                     color="primary"
@@ -103,7 +121,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
@@ -112,27 +130,36 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                                     color="primary"
                                     variant="bordered"
                                 >
-                                    Trạng thái
+                                    Sắp Xếp Theo
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
-                                // selectedKeys={() => {}}
+                                selectedKeys={sortFilter}
                                 selectionMode="single"
-                                onSelectionChange={() => {}}
+                                onSelectionChange={setSortFilter}
                             >
-                                {statusArr.map(statusItem => (
-                                    <DropdownItem key={statusItem.value} className="capitalize">
-                                        {capitalize(statusItem.name)}
-                                    </DropdownItem>
-                                ))}
+                                <DropdownItem key="DEFAULT" className="capitalize">
+                                    {capitalize('Khóa học mới nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="CREATEDDATE" className="capitalize">
+                                    {capitalize('Khóa học cũ nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="PRICE_DESC" className="capitalize">
+                                    {capitalize('Giá cao nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="PRICE_ASC" className="capitalize">
+                                    {capitalize('Giá thấp nhất')}
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 </div>
-                {totalRow && <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>}
+                {totalRow ? (
+                    <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</p>
+                ) : null}
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-3">
                     {courses.length ? (
                         courses.map((courseItem: CourseCardType) => (
@@ -142,11 +169,11 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                         <></>
                     )}
                 </div>
-                {totalPage && totalPage > 1 && (
+                {totalPage && totalPage > 1 ? (
                     <div className="flex justify-center my-8">
                         <Pagination page={page} total={totalPage} onChange={value => scrollToTop(value)} showControls />
                     </div>
-                )}
+                ) : null}
             </Spin>
         </div>
     );

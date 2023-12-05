@@ -9,7 +9,7 @@ interface VideoCardProps {
     type?: 'teacher' | 'teacher-draft' | 'admin' | 'all';
     isTeacherVideo?: boolean;
     isTeacherVideoDraft?: boolean;
-    video: VideoCardType;
+    video: any;
 }
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -18,7 +18,36 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     BANNED: 'danger',
     WAITING: 'primary',
     UPDATING: 'primary',
-    UNAVAILABLE: 'warning'
+    UNAVAILABLE: 'warning',
+    PUBLIC: 'success',
+    PRIVATE: 'danger'
+};
+
+const calculateTimeDifference = (postTime: any) => {
+    const currentTime = new Date();
+    const postDateTime = postTime === null ? new Date() : new Date(postTime);
+    const timeDifference = currentTime.getTime() - postDateTime.getTime();
+
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30); // Approximate months
+    const years = Math.floor(days / 365); // Approximate years
+
+    if (years > 0) {
+        return `${years} năm trước`;
+    } else if (months > 0) {
+        return `${months} tháng trước`;
+    } else if (days > 0) {
+        return `${days} ngày trước`;
+    } else if (hours > 0) {
+        return `${hours} giờ trước`;
+    } else if (minutes > 0) {
+        return `${minutes} phút trước`;
+    } else {
+        return 'Vừa xong';
+    }
 };
 
 const floatToTime = (durationFloat: number): string => {
@@ -54,14 +83,20 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         profileStatus;
     if (type === 'teacher') {
         detailPage = `/teacher/video/${video?.id}`;
-        if (video.status === 'AVAILABLE') teacherStatus = 'Hoạt động';
-        else if (video.status === 'WAITING') teacherStatus = 'Chờ xác thực';
-        else if (video.status === 'REJECT') teacherStatus = 'Đã từ chối';
-        else if (video.status === 'BANNED') teacherStatus = 'Đã xóa';
-        else if (video.status === 'UPDATING') teacherStatus = 'Chờ cập nhật';
+        if (video.videoStatus === 'PUBLIC') teacherStatus = 'Công Khai';
+        else if (video.videoStatus === 'PRIVATE') teacherStatus = 'Không Công Khai';
+        // if (video.status === 'AVAILABLE') teacherStatus = 'Hoạt động';
+        // else if (video.status === 'WAITING') teacherStatus = 'Chờ xác thực';
+        // else if (video.status === 'REJECT') teacherStatus = 'Đã từ chối';
+        // else if (video.status === 'BANNED') teacherStatus = 'Đã xóa';
+        // else if (video.status === 'UPDATING') teacherStatus = 'Chờ cập nhật';
         else teacherStatus = 'Vô hiệu';
-    } else if (type === 'teacher-draft') detailPage = `/teacher/video/my-video-draft/${video?.id}`;
-    else detailPage = `/video/${video.id}`;
+    } else if (type === 'teacher-draft') {
+        detailPage = `/teacher/video/my-video-draft/${video?.id}`;
+        if (video.videoStatus === 'PUBLIC') teacherStatus = 'Công Khai';
+        else if (video.videoStatus === 'PRIVATE') teacherStatus = 'Không Công Khai';
+        else teacherStatus = 'Vô hiệu';
+    } else detailPage = `/video/${video.id}`;
     if (type === 'all') {
         if (video.videoStatus === 'PUBLIC') profileStatus = 'Xem trước';
         else if (video.isAccess === true) profileStatus = 'Đã mua';
@@ -100,16 +135,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                     <CardBody className="text-small justify-between p-3">
                         <b className="text-[14px] h-[40px] font-semibold truncate2line text-black">{video?.name}</b>
                         <div className="mt-[7px] text-xs">
-                            <span className="text-black">2 tháng trước</span>
+                            <span className="text-black">{calculateTimeDifference(video?.createdDate)}</span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 inline-flex item before:mx-2 text-black">
                                 <span className="text-black">{video?.like}</span>
                                 <BiSolidLike className="text-sm text-blue-300 ml-2" />
                             </span>
                         </div>
-                        {type === 'teacher' ? (
+                        {type === 'teacher' || type === 'teacher-draft' ? (
                             <Chip
                                 className="capitalize border-none p-0 mt-3 ml-[-4px] text-default-600 !text-xs"
-                                color={statusColorMap[video?.status as string]}
+                                color={statusColorMap[video?.videoStatus as string]}
                                 size="sm"
                                 variant="dot"
                             >

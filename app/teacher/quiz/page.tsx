@@ -20,6 +20,7 @@ import TableContent from '@/components/table';
 import { useCustomModal } from '@/hooks';
 import { courseApi, examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
+import { Spin } from 'antd';
 
 interface MyQuizProps {}
 
@@ -60,6 +61,7 @@ const columns = [
     { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
     { name: 'KHÓA HỌC', uid: 'course', sortable: true },
+    { name: 'KIỂU BÀI THI', uid: 'examType' },
     { name: 'ĐÃ TẠO', uid: 'createTime', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
@@ -68,12 +70,13 @@ const columns = [
 const MyQuiz: React.FC<MyQuizProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'course', 'createTime', 'status', 'action'])
+        new Set(['id', 'name', 'course', 'examType', 'createTime', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['active', 'unActive']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [statusFilterExamType, setStatusFilterExamType] = useState<Selection>(new Set(['ALL']));
     const [selectedSubject, setSelectedSubject] = useState(0);
     const [selectedFilterSort, setSelectedFilterSort] = useState(0);
     const [totalPage, setTotalPage] = useState<number>();
@@ -81,9 +84,27 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     const [search, setSearch] = useState<string>('');
     const [quizzes, setQuizzes] = useState<any[]>([]);
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['exams', { page, selectedSubject, selectedFilterSort, search }],
+        queryKey: [
+            'examsByTeacher',
+            {
+                page,
+                selectedSubject,
+                selectedFilterSort,
+                search,
+                statusFilter: Array.from(statusFilter)[0] as string,
+                statusFilterExamType: Array.from(statusFilterExamType)[0] as string
+            }
+        ],
         // keepPreviousData: true,
-        queryFn: () => examApi.getQuizByOwnerId('', '', page - 1, rowsPerPage, 'createTime', 'DESC')
+        queryFn: () =>
+            examApi.getQuizByOwnerId(
+                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                Array.from(statusFilterExamType)[0] === 'ALL' ? '' : (Array.from(statusFilterExamType)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            )
     });
     const { data: coursesData } = useQuery({
         queryKey: ['coursesList'],
@@ -95,14 +116,6 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     });
     useEffect(() => {
         if (data?.data) {
-            // Map over the data and find the corresponding course in coursesData
-            // const quizzesWithCourses = data.data.map((quiz: any) => {
-            //     const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
-            //     return {
-            //         ...quiz,
-            //         course: matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null
-            //     };
-            // });
             const quizzesWithCourses = data.data.map((quiz: any) => {
                 let courseName = null;
 
@@ -165,6 +178,11 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         const cellValue = quiz[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'examType':
+                let type =
+                    cellValue === 'QUIZ' ? 'Bài tập' : cellValue === 'QUIZ_DRAFT' ? 'Bài tập chờ duyệt' : 'Vô Hiệu';
+
+                return type;
             case 'status':
                 return (
                     <Chip
@@ -216,9 +234,10 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách bài tập</h3>
-            <div className="flex flex-col gap-4 mt-8">
-                <div className="sm:flex justify-between gap-3 items-end">
-                    <Input
+            <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
+                <div className="flex flex-col gap-4 mt-8">
+                    <div className="sm:flex justify-between gap-3 items-end">
+                        {/* <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
@@ -228,88 +247,111 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         variant="bordered"
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}
-                    />
-                    <div className="flex gap-3 mt-4 sm:mt-0">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    variant="bordered"
-                                    color="primary"
+                    /> */}
+                        <div className="flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Môn học
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    Trạng thái
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="active" className="capitalize">
-                                    {capitalize('hoạt động')}
-                                </DropdownItem>
-                                <DropdownItem key="unActive" className="capitalize">
-                                    {capitalize('vô hiệu hóa')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    variant="bordered"
-                                    color="primary"
-                                >
-                                    Cột
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map(column => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
                                     </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                                    <DropdownItem key="MATHEMATICS" className="capitalize">
+                                        {capitalize('Toán học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENGLISH" className="capitalize">
+                                        {capitalize('Tiếng anh')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PHYSICS" className="capitalize">
+                                        {capitalize('Vật lí')}
+                                    </DropdownItem>
+                                    <DropdownItem key="CHEMISTRY" className="capitalize">
+                                        {capitalize('Hóa học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BIOLOGY" className="capitalize">
+                                        {capitalize('Sinh học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="HISTORY" className="capitalize">
+                                        {capitalize('Lịch sử')}
+                                    </DropdownItem>
+                                    <DropdownItem key="GEOGRAPHY" className="capitalize">
+                                        {capitalize('Địa lý')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Loại bài thi
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterExamType}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterExamType}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="QUIZ" className="capitalize">
+                                        {capitalize('Bài tập')}
+                                    </DropdownItem>
+                                    <DropdownItem key="QUIZ_DRAFT" className="capitalize">
+                                        {capitalize('Bài tập chờ duyệt')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <div className="sm:flex justify-between items-center">
+                        <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
+                        <label className="flex items-center text-default-400 text-xs sm:text-sm">
+                            Số kết quả mỗi trang:
+                            <select
+                                className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
+                                onChange={onRowsPerPageChange}
+                            >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
-                <div className="sm:flex justify-between items-center">
-                    <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
-                    <label className="flex items-center text-default-400 text-xs sm:text-sm">
-                        Số kết quả mỗi trang:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-xs sm:text-sm"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <TableContent
-                renderCell={renderCell}
-                headerColumns={headerColumns}
-                items={quizzes}
-                page={page}
-                setPage={setPage}
-                sortDescriptor={sortDescriptor}
-                setSortDescriptor={setSortDescriptor}
-                totalPage={totalPage || 1}
-            />
+                <TableContent
+                    renderCell={renderCell}
+                    headerColumns={headerColumns}
+                    items={quizzes}
+                    page={page}
+                    setPage={setPage}
+                    sortDescriptor={sortDescriptor}
+                    setSortDescriptor={setSortDescriptor}
+                    totalPage={totalPage || 1}
+                />
+            </Spin>
         </div>
     );
 };

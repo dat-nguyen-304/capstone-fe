@@ -17,7 +17,8 @@ import {
     Input,
     Pagination,
     Select,
-    SelectItem
+    SelectItem,
+    Selection
 } from '@nextui-org/react';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
@@ -28,19 +29,32 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [selectedCourse, setSelectedCourse] = useState<number>(0);
+    const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
     const [page, setPage] = useState(1);
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
         queryKey:
             selectedCourse == 0
-                ? ['videoList', { page, selectedCourse }]
-                : ['videoListCourse', { page, selectedCourse }],
+                ? ['videoList', { page, selectedCourse, sortFilter: Array.from(sortFilter)[0] as string }]
+                : ['videoListCourse', { page, selectedCourse, sortFilter: Array.from(sortFilter)[0] as string }],
         // keepPreviousData: true,
         queryFn: () => {
             if (selectedCourse != 0) {
-                return videoApi.getByCourseId(selectedCourse, page - 1, 20, 'createdDate', 'DESC');
+                return videoApi.getByCourseId(
+                    selectedCourse,
+                    page - 1,
+                    20,
+                    'createdDate',
+                    Array.from(sortFilter)[0] === 'DEFAULT' ? 'DESC' : 'ASC'
+                );
             } else {
-                return videoApi.getAllOfTeacher('ALL', page - 1, 20, 'createdDate', 'DESC');
+                return videoApi.getAllOfTeacher(
+                    'ALL',
+                    page - 1,
+                    20,
+                    'createdDate',
+                    Array.from(sortFilter)[0] === 'DEFAULT' ? 'DESC' : 'ASC'
+                );
             }
         }
     });
@@ -97,8 +111,8 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                <div className="mt-8 sm:flex items-center justify-between gap-3">
-                    <Input
+                <div className="mt-8 sm:flex justify-between gap-3 items-end">
+                    {/* <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
@@ -108,15 +122,15 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                         variant="bordered"
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
-                    />
-                    <div className="flex-[1] flex flex-row-reverse">
+                    /> */}
+                    <div className="flex-[1] flex flex-row">
                         <Select
                             size="sm"
                             labelPlacement="inside"
                             label="Khóa học"
                             color="primary"
                             variant="bordered"
-                            className="w-4/5"
+                            className="w-4/5 mx-6"
                             onChange={event => setSelectedCourse(Number(event.target.value))}
                         >
                             {coursesData?.data?.map((course: Course) => (
@@ -125,10 +139,37 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                                 </SelectItem>
                             ))}
                         </Select>
+                        <Dropdown>
+                            <DropdownTrigger className="flex">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="lg"
+                                    color="primary"
+                                    variant="bordered"
+                                >
+                                    Sắp Xếp Theo
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={sortFilter}
+                                selectionMode="single"
+                                onSelectionChange={setSortFilter}
+                            >
+                                <DropdownItem key="DEFAULT" className="capitalize">
+                                    {capitalize('Video mới nhất')}
+                                </DropdownItem>
+                                <DropdownItem key="CREATEDDATE" className="capitalize">
+                                    {capitalize('Video cũ nhất')}
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                 </div>
 
-                <div className="flex flex-row-reverse mt-4">
+                {/* <div className="flex flex-row-reverse mt-4">
                     <Dropdown>
                         <DropdownTrigger className="flex">
                             <Button
@@ -155,14 +196,14 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                             ))}
                         </DropdownMenu>
                     </Dropdown>
-                </div>
+                </div> */}
 
                 <p className="mt-4 text-default-400 text-xs sm:text-sm">
                     {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
                 </p>
                 <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     {videos.length
-                        ? videos.map((videoItem: VideoCardType) => (
+                        ? videos.map((videoItem: any) => (
                               <VideoCard type="teacher" key={videoItem?.id} video={videoItem} />
                           ))
                         : null}

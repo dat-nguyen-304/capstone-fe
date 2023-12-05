@@ -50,6 +50,7 @@ const columns = [
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
     { name: 'MÔN HỌC', uid: 'subject', sortable: true },
     { name: 'NGÀY TẠO', uid: 'createTime', sortable: true },
+    { name: 'KIỂU BÀI THI', uid: 'examType' },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -57,22 +58,36 @@ const columns = [
 const Exams: React.FC<ExamsProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['name', 'subject', 'createTime', 'status', 'action'])
+        new Set(['name', 'subject', 'createTime', 'examType', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [statusFilterExamType, setStatusFilterExamType] = useState<Selection>(new Set(['ALL']));
+    const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['exams', { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }],
+        queryKey: [
+            'exams',
+            {
+                page,
+                rowsPerPage,
+                updateState,
+                statusFilter: Array.from(statusFilter)[0] as string,
+                statusFilterExamType: Array.from(statusFilterExamType)[0] as string,
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
+            }
+        ],
         // keepPreviousData: true,
         queryFn: () =>
             examApi.getAllByAdmin(
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                Array.from(statusFilterExamType)[0] === 'ALL' ? '' : (Array.from(statusFilterExamType)[0] as string),
+                Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
                 page - 1,
                 rowsPerPage,
                 'createTime',
@@ -164,6 +179,20 @@ const Exams: React.FC<ExamsProps> = () => {
                         {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
                     </Chip>
                 );
+            case 'examType':
+                let type =
+                    cellValue === 'ENTRANCE_EXAM'
+                        ? 'Bài thi đầu vào'
+                        : cellValue === 'PUBLIC_EXAM'
+                        ? 'Bài thi'
+                        : cellValue === 'QUIZ'
+                        ? 'Bài tập'
+                        : cellValue === 'QUIZ_DRAFT'
+                        ? 'Bài tập chờ duyệt'
+                        : 'Vô Hiệu';
+
+                return type;
+
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -243,7 +272,7 @@ const Exams: React.FC<ExamsProps> = () => {
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Trạng thái
+                                        Môn học
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -273,10 +302,82 @@ const Exams: React.FC<ExamsProps> = () => {
                                         {capitalize('Sinh học')}
                                     </DropdownItem>
                                     <DropdownItem key="HISTORY" className="capitalize">
-                                        {capitalize('Lịch hsử')}
+                                        {capitalize('Lịch sử')}
                                     </DropdownItem>
                                     <DropdownItem key="GEOGRAPHY" className="capitalize">
                                         {capitalize('Địa lý')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterStatus}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterStatus}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt động')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô hiệu')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã xóa')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Cấm')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Loại bài thi
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterExamType}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterExamType}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENTRANCE_EXAM" className="capitalize">
+                                        {capitalize('Bài thi đầu vào')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PUBLIC_EXAM" className="capitalize">
+                                        {capitalize('Bài thi')}
+                                    </DropdownItem>
+                                    <DropdownItem key="QUIZ" className="capitalize">
+                                        {capitalize('Bài tập')}
+                                    </DropdownItem>
+                                    <DropdownItem key="QUIZ_DRAFT" className="capitalize">
+                                        {capitalize('Bài tập chờ duyệt')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

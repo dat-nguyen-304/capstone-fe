@@ -122,6 +122,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     >
                         {cellValue === 'SUCCESS'
                             ? 'Thành công'
+                            : cellValue === 'REFUND_SUCCES'
+                            ? 'Hoàn tiền thành công'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
                             : cellValue === 'FAIL'

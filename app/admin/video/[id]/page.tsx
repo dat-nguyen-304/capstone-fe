@@ -96,7 +96,8 @@ const AdminViewVideo: React.FC<AdminViewVideoProps> = ({ params }) => {
                                     ))
                                 ) : (
                                     <>
-                                        <CommentItem commentInfo={commonInfo} />
+                                        {/* <CommentItem commentInfo={commonInfo} /> */}
+                                        Chưa có bình luận
                                     </>
                                 )}
                             </ul>

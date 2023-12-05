@@ -61,7 +61,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, type }) => {
                             </div>
                         ) : null}
                         <div className="mt-1 text-xs">
-                            <span className="text-black">{course.totalVideo} bài giảng</span>
+                            <span className="text-black">
+                                {course.totalVideo} bài giảng {type == 'teacher-course-draft' ? ' mới' : ''}{' '}
+                            </span>
                             <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2 text-black">
                                 {course.subject}
                             </span>

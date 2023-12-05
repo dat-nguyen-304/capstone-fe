@@ -105,7 +105,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                             ))
                         ) : (
                             <>
-                                <CommentItem commentInfo={commonInfo} />
+                                {/* <CommentItem commentInfo={commonInfo} /> */}
+                                Chưa có bình luận
                             </>
                         )}
                         {totalPage && totalPage > 1 ? (

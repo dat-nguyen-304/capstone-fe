@@ -40,7 +40,32 @@ interface CourseContentProps {
     setVideoOrders: React.Dispatch<React.SetStateAction<{ videoId: number; videoOrder: number; isDraft: boolean }[]>>;
     refetch?: any;
 }
+const calculateTimeDifference = (postTime: any) => {
+    const currentTime = new Date();
+    const postDateTime = postTime === null ? new Date() : new Date(postTime);
+    const timeDifference = currentTime.getTime() - postDateTime.getTime();
 
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30); // Approximate months
+    const years = Math.floor(days / 365); // Approximate years
+
+    if (years > 0) {
+        return `${years} năm trước`;
+    } else if (months > 0) {
+        return `${months} tháng trước`;
+    } else if (days > 0) {
+        return `${days} ngày trước`;
+    } else if (hours > 0) {
+        return `${hours} giờ trước`;
+    } else if (minutes > 0) {
+        return `${minutes} phút trước`;
+    } else {
+        return 'Vừa xong';
+    }
+};
 const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOrders, refetch }) => {
     const arrays = courseContent?.listVideo?.map((video: any, index: number) => {
         return {
@@ -145,13 +170,13 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                         </span>
                         <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2">
                             <span className="inline-flex items-center">
-                                <span className="text-sm font-bold mr-1">5</span>
+                                <span className="text-sm font-bold mr-1">{courseContent?.totalQuiz}</span>
                                 <span className="text-sm mr-1">Bài tập</span>
                                 <Image src="/video-number/red.svg" width={25} height={25} alt="" />
                             </span>
                         </span>
                     </div>
-                    <div className="mt-1 text-xs">Cập nhật 6 giờ trước</div>
+                    <div className="mt-1 text-xs">Cập nhật {calculateTimeDifference(courseContent?.updateDate)}</div>
                     <div className="mt-6 flex justify-evenly">
                         <Button as={Link} href="/teacher/video/upload" color="primary" size="sm">
                             Thêm video
