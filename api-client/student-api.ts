@@ -27,6 +27,7 @@ export const studentApi = {
         return await axiosClient.delete(`/student/target/${targetId}`);
     },
     getStudentTargets: async () => {
-        return await axiosClient.get('/student/targets');
+        const res = await axiosClient.get('/student/targets');
+        return res?.data;
     }
 };

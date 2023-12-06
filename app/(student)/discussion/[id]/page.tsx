@@ -207,7 +207,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </Button>
-                {currentUser.user && currentUser?.user?.fullName !== discussionData?.ownerFullName && (
+                {!discussionData?.owner && (
                     <Button color="danger" onClick={openReportModal}>
                         Báo cáo
                     </Button>

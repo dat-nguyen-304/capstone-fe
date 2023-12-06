@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BiSolidPencil } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
 import { Button, Chip, Input, Select, SelectItem, SelectedItems, Selection } from '@nextui-org/react';
@@ -16,15 +16,29 @@ import Loader from '@/components/Loader';
 import { toast } from 'react-toastify';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { InputText } from '@/components/form-input';
+import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 
 const Profile: React.FC = () => {
+    const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
+    const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+        setUploadedFiles(acceptedFiles);
+    }, []);
+    const { getRootProps, getInputProps, fileRejections }: DropzoneRootProps = useDropzone({
+        onDrop,
+        accept: {
+            'image/png': ['.png', '.jpg', '.jpeg']
+        },
+        maxFiles: 1,
+        multiple: false
+    });
+
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
 
-    const { data: teacherData } = useQuery({
+    const { data: teacherData, refetch } = useQuery({
         queryKey: ['teacher-detail'],
         queryFn: () => teacherApi.getTeacherDetail()
     });
@@ -53,11 +67,15 @@ const Profile: React.FC = () => {
             console.log(values);
 
             const formDataPayload = new FormData();
+            if (uploadedFiles !== undefined) {
+                formDataPayload.append('avatar', uploadedFiles[0]);
+            }
             formDataPayload.append('editUserRequest', new Blob([JSON.stringify(values)], { type: 'application/json' }));
             const res = await userApi.edit(formDataPayload);
             toast.dismiss(loading);
             toast.success('Cập nhật thành công');
             setIsSubmitting(false);
+            refetch();
             console.log({ res });
         } catch (error) {
             console.log({ error });
@@ -79,14 +97,23 @@ const Profile: React.FC = () => {
                 <div className="col-span-4 xl:col-span-3 py-8 px-4 border-1 rounded-xl">
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
                         <Image
-                            src={teacherData?.url ? teacherData?.url : '/student.png'}
+                            src={
+                                uploadedFiles.length > 0
+                                    ? URL.createObjectURL(uploadedFiles[0])
+                                    : teacherData?.url
+                                    ? teacherData?.url
+                                    : '/student.png'
+                            }
                             width={300}
                             height={300}
                             alt=""
                             className="border-1 rounded-lg"
                         />
-                        <div className="absolute right-2 top-2 shadow-lg rounded-full border-2 cursor-pointer w-[40px] h-[40px] flex items-center justify-center">
-                            <BiSolidPencil size={20} />
+                        <div {...getRootProps()}>
+                            <div className="absolute right-2 top-2 shadow-lg rounded-full border-2 border-blue-700 bg-blue-300 cursor-pointer w-[40px] h-[40px] flex items-center justify-center">
+                                <div {...getInputProps()}></div>
+                                <BiSolidPencil size={20} className="text-blue-500" />
+                            </div>
                         </div>
                         <div className="hidden lg:block">
                             <h3 className="text-blue-500 text-2xl font-semibold mt-8">
@@ -151,7 +178,7 @@ const Profile: React.FC = () => {
                                     onSelectionChange={setValues}
                                     variant="underlined"
                                     size="sm"
-                                    defaultSelectedKeys={[`${defaultSubjectIds[0]}`]}
+                                    defaultSelectedKeys={defaultSubjectIds.map(id => `${id}`)}
                                     renderValue={(subjects: SelectedItems<Subject>) => (
                                         <div className="flex gap-2">
                                             {subjects.map(subject => (
@@ -184,7 +211,19 @@ const Profile: React.FC = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="lg:absolute bottom-0 right-0 flex flex-row-reverse mt-8">
+
+                            {/* <div className="lg:absolute bottom-0 right-0 flex flex-row-reverse mt-8">
+                                <Button color="warning" className="mx-3" type="submit">
+                                    Xác nhận giáo viên
+                                </Button>
+                                <Button color="primary" type="submit">
+                                    Lưu thay đổi
+                                </Button>
+                            </div> */}
+                            <div className=" flex flex-row-reverse mt-16">
+                                {/* <Button color="warning" className="mx-3" type="submit">
+                                    Xác nhận giáo viên
+                                </Button> */}
                                 <Button color="primary" type="submit">
                                     Lưu thay đổi
                                 </Button>

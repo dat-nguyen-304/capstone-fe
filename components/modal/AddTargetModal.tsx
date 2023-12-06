@@ -111,6 +111,7 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
                                 selectionMode="single"
                                 className="max-w-xs"
                                 variant="underlined"
+                                aria-label="select combination"
                                 size="sm"
                                 defaultSelectedKeys={[combinationId]}
                                 onChange={e => setCombinationId(e.target.value)}
@@ -127,7 +128,11 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
                                 }}
                             >
                                 {combination => (
-                                    <SelectItem key={combination.name} value={combination.name}>
+                                    <SelectItem
+                                        key={combination.name}
+                                        value={combination.name}
+                                        textValue={combination.name}
+                                    >
                                         {combination.name} - {combination.description}
                                     </SelectItem>
                                 )}

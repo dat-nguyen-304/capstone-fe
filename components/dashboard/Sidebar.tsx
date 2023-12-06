@@ -33,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
         token: { colorBgContainer }
     } = theme.useToken();
     const handleLogout = async () => {
-        await authApi.logout;
+        await authApi.logout();
         queryClient.clear();
         currentUser.onChangeUser(null);
         router.push('/auth');

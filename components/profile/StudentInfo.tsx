@@ -9,12 +9,16 @@ import { InputText } from '../form-input';
 import { InputDescription } from '../form-input/InputDescription';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 interface StudentInfoProps {
     studentData: any;
+    refetch: any;
+    getUploadFile?: any;
 }
 
-const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
+const StudentInfo: React.FC<StudentInfoProps> = ({ studentData, refetch, getUploadFile }) => {
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             fullName: studentData.fullName,
@@ -29,10 +33,15 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
         setIsSubmitting(true);
         try {
             const formDataPayload = new FormData();
+
+            if (getUploadFile !== undefined) {
+                formDataPayload.append('avatar', getUploadFile[0]);
+            }
             formDataPayload.append('editUserRequest', new Blob([JSON.stringify(values)], { type: 'application/json' }));
             const res = await userApi.edit(formDataPayload);
             toast.dismiss(loading);
             toast.success('Cập nhật thành công');
+            refetch();
             setIsSubmitting(false);
             console.log({ res });
         } catch (error) {
@@ -106,7 +115,7 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData }) => {
                 </div>
                 {/* )} */}
                 <div className="flex flex-row-reverse mt-16">
-                    <Button color="primary" isLoading={isSubmitting}>
+                    <Button color="primary" type="submit" isLoading={isSubmitting}>
                         Lưu thay đổi
                     </Button>
                 </div>

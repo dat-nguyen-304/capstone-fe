@@ -85,11 +85,17 @@ export const discussionApi = {
     discussionReact: async (discussionId: number) => {
         return await axiosClient.post(`/discussion/conversation/react/${discussionId}`);
     },
+    discussionRemoveReact: async (discussionId: number) => {
+        return await axiosClient.delete(`/discussion/conversation/react/${discussionId}`);
+    },
     createConversationReport: async (payload: any, discussionId: number) => {
         return await axiosFormData.post(`/discussion/report/conversations/${discussionId}`, payload);
     },
     commentReact: async (commentId: number) => {
         return await axiosClient.put(`/discussion/comments/react/${commentId}`);
+    },
+    commentRemoveReact: async (commentId: number) => {
+        return await axiosClient.delete(`/discussion/comments/react/${commentId}`);
     },
     createCommentReport: async (payload: any, commentId: number) => {
         return await axiosFormData.post(`/discussion/report/comments/${commentId}`, payload);

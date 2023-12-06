@@ -21,8 +21,8 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
 
     if (!data) return <Loader />;
 
-    const targets = data?.data.targets;
-    const studentData = data?.data.userResponse;
+    const targets = data?.data?.targets;
+    const studentData = data?.data?.userResponse;
 
     return (
         <div className="w-[90%] xl:w-4/5 mx-auto my-8">
@@ -39,7 +39,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
                         <Image src="/student.png" width={300} height={300} alt="" className="sm:border-1 rounded-lg" />
                         <div className="hidden md:block">
-                            <h3 className="text-blue-500 text-2xl font-semibold mt-8">{studentData.fullName}</h3>
+                            <h3 className="text-blue-500 text-2xl font-semibold mt-8">{studentData?.fullName}</h3>
                             {/* <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>
                         <p className="mt-4 text-sm">Tổ hợp môn: A00 - B00</p> */}
                         </div>
@@ -50,19 +50,19 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                     <div>
                         <div className="xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold">Họ và tên</p>
-                            <p>{studentData.fullName}</p>
+                            <p>{studentData?.fullName}</p>
                         </div>
                         <div className="xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold">Ngày tham gia</p>
-                            <p>{studentData.createdDate || '12/12/2023'}</p>
+                            <p>{studentData?.createdDate || '12/12/2023'}</p>
                         </div>
                         <div className="xl:flex items-center mt-4">
                             <p className="w-[160px] font-semibold mb-2 sm:mb-0">Tổ hợp môn</p>
                             <ul className="flex flex-wrap gap-2">
-                                {targets.map((target: any) => (
-                                    <li className="inline-block" key={target.id}>
+                                {targets?.map((target: any) => (
+                                    <li className="inline-block" key={target?.id}>
                                         <Chip color="primary" variant="flat">
-                                            {target.name}
+                                            {target?.name}
                                         </Chip>
                                     </li>
                                 ))}

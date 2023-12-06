@@ -125,6 +125,8 @@ const PostList: React.FC<PostListProps> = ({}) => {
         const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'title':
+                return <Link href={`/discussion/${post?.id}`}>{cellValue}</Link>;
             case 'ownerFullName':
                 return (
                     <User
