@@ -5,7 +5,9 @@ import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup, useDisclosur
 import HTMLReactParser from 'html-react-parser';
 import AddQuestionModal from './AddQuestionModal';
 import { useState } from 'react';
-
+import Image from 'next/image';
+import { Gallery, Item } from 'react-photoswipe-gallery';
+import 'photoswipe/dist/photoswipe.css';
 interface TestEditItemProps {
     index: number;
     questions: QuestionType | any;
@@ -45,6 +47,8 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
         setEditQuestion(questions);
         onOpen(); // Open the modal
     };
+    console.log(questions);
+
     return (
         <li className="mt-4">
             <span className="text-sm">
@@ -65,7 +69,25 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                         Xóa câu hỏi
                     </Button>
                 </div>
-                <p className="ml-1 mt-1">{HTMLReactParser(questions?.statement)}</p>
+                <span className="ml-1 mt-1">{HTMLReactParser(questions?.statement)}</span>
+                {questions?.imageUrl !== '' && questions?.imageUrl !== null ? (
+                    <div className="group relative my-2">
+                        <Gallery>
+                            <Item original={questions?.imageUrl} width="1024" height="768">
+                                {({ open }) => (
+                                    <Image
+                                        onClick={open}
+                                        src={questions?.imageUrl}
+                                        className="object-cover rounded-md h-[150px] cursor-pointer"
+                                        width={140}
+                                        height={140}
+                                        alt="question image"
+                                    />
+                                )}
+                            </Item>
+                        </Gallery>
+                    </div>
+                ) : null}
             </span>
             <AddQuestionModal
                 isOpen={isOpen}

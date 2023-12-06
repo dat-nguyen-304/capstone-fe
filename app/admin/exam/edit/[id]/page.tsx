@@ -102,7 +102,8 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 topicId: question?.topic?.id, // Assuming `topic` is an object with an `id` property
                 answerList: question?.answerList,
                 level: question?.level,
-                correctAnswer: question?.correctAnswer
+                correctAnswer: question?.correctAnswer,
+                imageUrl: question?.imageUrl
             }));
 
             setQuestions(formattedQuestions);
@@ -189,7 +190,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
             const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
             const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
             if (missingHeaders.length > 0) {
-                toast.error('Error file input');
+                toast.error('File không đúng yêu cầu');
             } else {
                 const statementIndex = headers.indexOf('statement');
                 const explanationIndex = headers.indexOf('explanation');
@@ -197,6 +198,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 const topicIndex = headers.indexOf('topic');
                 const correctAnswerIndex = headers.indexOf('correctAnswer');
                 const levelIndex = headers.indexOf('level');
+                const imageUrlIndex = headers.indexOf('imageUrl');
 
                 const questions = data.slice(1).map((row: any) => {
                     const statement = row[statementIndex];
@@ -205,6 +207,16 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                     const topicName = row[topicIndex];
                     const correctAnswer = row[correctAnswerIndex];
                     const level = row[levelIndex];
+                    const imageUrl =
+                        imageUrlIndex !== -1
+                            ? row[imageUrlIndex] !== undefined
+                                ? (String(row[imageUrlIndex])?.startsWith('http://') ||
+                                      String(row[imageUrlIndex])?.startsWith('https://')) &&
+                                  String(row[imageUrlIndex]).length > 8
+                                    ? row[imageUrlIndex]
+                                    : null
+                                : null
+                            : null;
                     const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
                     if (matchedTopic) {
                         const topicId = matchedTopic.id;
@@ -215,7 +227,8 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                             answerList,
                             topicId,
                             correctAnswer,
-                            level
+                            level,
+                            imageUrl
                         };
                     } else {
                         return null;

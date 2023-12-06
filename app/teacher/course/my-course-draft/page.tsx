@@ -77,7 +77,6 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             top: 0
         });
     };
-    console.log(data?.data);
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">

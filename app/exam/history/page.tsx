@@ -74,6 +74,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     const [times, setTimes] = useState<any[]>();
     const [quantityGrade, setQuantityGrade] = useState<any[]>();
     const [filterValue, setFilterValue] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(['id', 'examName', 'subject', 'grade', 'finishTime'])
     );
@@ -194,7 +195,10 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
                 return cellValue;
         }
     }, []);
-
+    const handleSearch = () => {
+        // Set the search state
+        setFilterValue(searchInput);
+    };
     if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
 
     if (!data) return <Loader />;
@@ -215,18 +219,21 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            color="primary"
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
-
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                color="primary"
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1 mb-2 sm:mb-0"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                variant="bordered"
+                                onClear={() => setFilterValue('')}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={handleSearch}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="flex gap-3">
                             <Dropdown>
                                 <DropdownTrigger className="flex">

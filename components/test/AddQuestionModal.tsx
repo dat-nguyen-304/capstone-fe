@@ -22,6 +22,8 @@ import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { FaCheck } from 'react-icons/fa6';
 import { RxCross2 } from 'react-icons/rx';
+import { InputText } from '../form-input';
+import { toast } from 'react-toastify';
 
 interface AddQuestionModalProps {
     isOpen: boolean;
@@ -64,6 +66,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             isCorrect: false
         }
     ]);
+    const [imageUrl, setImageUrl] = useState<string>('');
     const [level, setLevel] = useState<string>('EASY');
     const { control, handleSubmit, setError, reset, setValue, getValues } = useForm({
         defaultValues: {
@@ -74,7 +77,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             A: '',
             B: '',
             C: '',
-            D: ''
+            D: '',
+            imageUrl: ''
         }
     });
     const { data: topicsData } = useQuery({
@@ -94,8 +98,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         if (editQuestion) {
             setValue('questionContent', editQuestion?.statement);
             setValue('resultContent', editQuestion?.explanation);
+            setValue('imageUrl', editQuestion?.imageUrl);
             setLevel(editQuestion?.level);
             setSelectTopic(editQuestion?.topicId);
+            setImageUrl(editQuestion?.imageUrl);
             const correctAnswer = editQuestion?.correctAnswer;
             editQuestion.answerList.forEach((answerHtml: any, index: any) => {
                 const fieldName = String.fromCharCode(65 + index) as 'A' | 'B' | 'C' | 'D';
@@ -138,24 +144,54 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     });
 
     const onSubmit = (values: any) => {
-        const correctAnswerIndex = answerList.findIndex(answer => answer.isCorrect);
-        const correctAnswerLetter = ['A', 'B', 'C', 'D'][correctAnswerIndex];
-        const question = {
-            statement: values.questionContent,
-            explanation: values.resultContent,
-            answerList: answerList.map((answer, index) => values[answer.name]),
-            topicId: selectTopic || 1,
-            correctAnswer: correctAnswerLetter,
-            level: level
-        };
-
-        if (editIndex !== undefined) {
-            onEditQuestion(question, editIndex);
+        if (
+            selectTopic == 0 ||
+            level == '' ||
+            values?.questionContent == '' ||
+            values.resultContent == '' ||
+            values?.A == '' ||
+            values?.B == '' ||
+            values?.C == '' ||
+            values?.D == ''
+        ) {
+            toast.error('Vui lòng chọn điền đầy đủ thông tin cho câu hỏi');
         } else {
-            onAddQuestion(question);
+            const correctAnswerIndex = answerList.findIndex(answer => answer.isCorrect);
+            const correctAnswerLetter = ['A', 'B', 'C', 'D'][correctAnswerIndex];
+            const question = {
+                statement: values.questionContent,
+                explanation: values.resultContent,
+                answerList: answerList.map((answer, index) => values[String(answer?.name)]),
+                topicId: selectTopic || 1,
+                correctAnswer: correctAnswerLetter,
+                level: level,
+                imageUrl: imageUrl
+            };
+
+            if (editIndex !== undefined) {
+                onEditQuestion(question, editIndex);
+            } else {
+                onAddQuestion(question);
+            }
+
+            reset();
+            onClose();
         }
-        reset();
-        onClose();
+    };
+    const handleShowImage = () => {
+        const enteredWebLink = getValues('imageUrl');
+
+        const minUrlLength = 8;
+
+        if (enteredWebLink && enteredWebLink.length > minUrlLength) {
+            if (enteredWebLink.startsWith('http://') || enteredWebLink.startsWith('https://')) {
+                setImageUrl(enteredWebLink);
+            } else {
+                toast.error('Đường dẫn sai, hình ảnh cần bắt đầu vớ "http://" hoặc "https://".');
+            }
+        } else {
+            toast.error('Đường dẫn sai, hình ảnh cần bắt đầu với "http://" hoặc "https://".');
+        }
     };
 
     return (
@@ -208,6 +244,60 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                                 Nâng cao
                                             </SelectItem>
                                         </Select>
+                                    </div>
+                                    <div className="col-span-5 sm:grid grid-cols-3 gap-4 my-5">
+                                        <div className="flex col-span-1 items-center">
+                                            <div className="flex mt-4 mb-2 mx-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
+                                                {imageUrl ? (
+                                                    // Display the image from the web link
+                                                    <Image
+                                                        className="object-cover w-full h-[120px]"
+                                                        src={imageUrl}
+                                                        alt="Image Preview"
+                                                        width={240}
+                                                        height={240}
+                                                    />
+                                                ) : (
+                                                    // Default message when no image is present
+                                                    <div className="flex flex-col justify-center items-center">
+                                                        <RiImageAddLine size={40} />
+                                                        <span className="text-sm">Tải lên ảnh câu hỏi</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div
+                                            className="col-span-2 my-4 items-center justify-center"
+                                            suppressContentEditableWarning={true}
+                                        >
+                                            <div className="w-full my-4">
+                                                <label>Đường link ảnh (nếu có)</label>
+                                                <InputText
+                                                    name="imageUrl"
+                                                    control={control}
+                                                    placeholder="Nhập đường link ảnh"
+                                                    className="w-full"
+                                                    value={imageUrl}
+                                                />
+                                            </div>
+                                            <div>
+                                                <div className=""> </div>
+                                                <Button onClick={handleShowImage} className="mr-4" color="success">
+                                                    Hiển thị ảnh
+                                                </Button>
+                                                {imageUrl !== '' ? (
+                                                    <Button
+                                                        onClick={() => {
+                                                            setImageUrl('');
+                                                            setValue('imageUrl', '');
+                                                        }}
+                                                        color="danger"
+                                                    >
+                                                        Xóa ảnh
+                                                    </Button>
+                                                ) : null}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label>Nội dung câu hỏi</label>
@@ -302,7 +392,14 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                             <Button variant="light" onClick={onClose}>
                                 Đóng
                             </Button>
-                            <Button color="danger" variant="light" onClick={() => reset()}>
+                            <Button
+                                color="danger"
+                                variant="light"
+                                onClick={() => {
+                                    reset();
+                                    setImageUrl('');
+                                }}
+                            >
                                 Đặt lại
                             </Button>
                             <Button color={editQuestion ? 'warning' : 'primary'} onClick={handleSubmit(onSubmit)}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { subjectApi } from '@/api-client';
+import { examApi, subjectApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -111,19 +111,9 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                 }
 
                 const filteredVideoOrders = videoOrders.filter(item => item.isDraft !== undefined);
-                console.log(filteredVideoOrders);
-
-                if (!filteredVideoOrders) {
-                    formDataPayload.append(
-                        'videoOrders',
-                        new Blob([JSON.stringify(null)], { type: 'application/json' })
-                    );
-                } else {
-                    formDataPayload.append(
-                        'videoOrders',
-                        new Blob([JSON.stringify(filteredVideoOrders)], { type: 'application/json' })
-                    );
-                }
+                const filteredQuizOrders = videoOrders
+                    .filter(video => video.isDraft === undefined)
+                    .map(video => ({ quizId: video.videoId, order: video.videoOrder }));
 
                 if (
                     commonInfo?.status == 'DRAFT' ||
@@ -136,9 +126,10 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         name: formData?.name,
                         price: Number(formData?.price),
                         levelId: selectedLevel,
-                        subject: getObjectSubjectById(selectedSubject)
+                        subject: getObjectSubjectById(selectedSubject),
+                        videoOrders: filteredVideoOrders?.length > 0 ? filteredVideoOrders : null
                     };
-                    console.log(courseTemporaryUpdateRequest);
+                    console.log({ courseTemporaryUpdateRequest });
 
                     formDataPayload.append(
                         'courseTemporaryUpdateRequest',
@@ -147,10 +138,19 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
 
                     const response = await courseApi.updateDraftCourse(formDataPayload);
                     if (response) {
-                        setIsSubmitting(false);
-                        console.log('Course draft update successfully:', response);
-                        toast.success('Khóa học đã được chỉnh sửa thành công');
-                        router.push('/teacher/course/my-course-draft');
+                        if (filteredQuizOrders?.length > 0) {
+                            const res = await examApi.sortQuiz(filteredQuizOrders);
+                            if (res) {
+                                setIsSubmitting(false);
+                                toast.success('Khóa học đã chỉnh sửa thành công');
+                                router.push('/teacher/course/my-course-draft');
+                            }
+                        } else {
+                            setIsSubmitting(false);
+
+                            toast.success('Khóa học đã chỉnh sửa thành công');
+                            router.push('/teacher/course/my-course-draft');
+                        }
                     }
                 } else {
                     const courseRequest = {
@@ -158,9 +158,10 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         description: formData.description,
                         name: formData.name,
                         price: Number(formData.price),
-                        levelId: levelId
+                        levelId: levelId,
+                        videoOrders: filteredVideoOrders?.length > 0 ? filteredVideoOrders : null
                     };
-                    console.log(courseRequest);
+                    console.log({ courseRequest });
                     formDataPayload.append(
                         'courseRequest',
                         new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
@@ -168,10 +169,19 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
 
                     const response = await courseApi.updateCourse(formDataPayload);
                     if (response) {
-                        setIsSubmitting(false);
-                        console.log('Course update successfully:', response);
-                        toast.success('Khóa học đã chỉnh sửa thành công');
-                        router.push('/teacher/course/my-course-draft');
+                        if (filteredQuizOrders?.length > 0) {
+                            const res = await examApi.sortQuiz(filteredQuizOrders);
+                            if (res) {
+                                setIsSubmitting(false);
+                                toast.success('Khóa học đã chỉnh sửa thành công');
+                                router.push('/teacher/course/my-course-draft');
+                            }
+                        } else {
+                            setIsSubmitting(false);
+
+                            toast.success('Khóa học đã chỉnh sửa thành công');
+                            router.push('/teacher/course/my-course-draft');
+                        }
                     }
                 }
                 toast.dismiss(toastLoading);

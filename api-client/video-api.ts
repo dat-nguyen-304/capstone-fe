@@ -67,7 +67,11 @@ export const videoApi = {
     sortVideoOrder: async (courseId: number, courseDraftId: number, payload: any) => {
         return await axiosClient.put(
             `/videos/order${courseId !== -1 ? `?courseId=${courseId}` : ''}${
-                courseDraftId !== -1 ? `?courseTemporaryId=${courseDraftId}` : ''
+                courseId !== -1 && courseDraftId !== -1
+                    ? `&courseTemporaryId=${courseDraftId}`
+                    : courseId == -1 && courseDraftId !== -1
+                    ? `?courseTemporaryId=${courseDraftId}`
+                    : ''
             }`,
             payload
         );

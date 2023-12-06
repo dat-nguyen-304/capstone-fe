@@ -40,9 +40,9 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
     useEffect(() => {
         const createAttempt = async () => {
             try {
-                const res = await examApi.createAttempt(params?.quizId);
+                const res = await examApi?.createAttempt(params?.quizId);
                 console.log(res);
-                const data = res.data;
+                const data = res?.data;
                 if (data) {
                     setQuestions(data?.selectionList);
                     setTotalQuestion(data?.selectionList?.length);
@@ -173,7 +173,7 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
                     </div>
                     <ul className="flex gap-2 flex-wrap mt-2">
                         {totalQuestion &&
-                            Array.from({ length: totalQuestion }).map((_, index) => (
+                            Array?.from({ length: totalQuestion }).map((_, index) => (
                                 <li
                                     key={index}
                                     onClick={() => scrollToQuestion(index + 1)}

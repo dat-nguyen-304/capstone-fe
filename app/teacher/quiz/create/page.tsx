@@ -33,6 +33,7 @@ function getSubjectName(subjectCode: string) {
 
     return subjectNames[subjectCode] || null;
 }
+
 const getSubjectNameById = (id: number): string => {
     const subjectMap: Record<number, string> = {
         1: 'MATHEMATICS',
@@ -70,15 +71,11 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         }
     });
 
-    const { data: subjectsData, isLoading } = useQuery({
-        queryKey: ['subjectsQuiz'],
-        queryFn: subjectApi.getAll,
-        staleTime: Infinity
-    });
     const { data: topicsData } = useQuery({
-        queryKey: ['topicsAddQuestionQuiz', { selectedSubject }],
-        queryFn: () => examApi.getAllTopicBySubject(getSubjectNameById(selectedSubject), 0, 100)
+        queryKey: ['topicsAddQuestionQuiz', { courseDetail }],
+        queryFn: () => examApi.getAllTopicBySubject(getSubjectName(courseDetail?.subject) || 'MATHEMATICS', 0, 100)
     });
+
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
         queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
@@ -224,7 +221,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
             const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
             if (missingHeaders.length > 0) {
-                toast.error('Error file input');
+                toast.error('File không đúng yêu cầu');
             } else {
                 const statementIndex = headers.indexOf('statement');
                 const explanationIndex = headers.indexOf('explanation');
@@ -232,6 +229,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 const topicIndex = headers.indexOf('topic');
                 const correctAnswerIndex = headers.indexOf('correctAnswer');
                 const levelIndex = headers.indexOf('level');
+                const imageUrlIndex = headers.indexOf('imageUrl');
 
                 const questions = data.slice(1).map((row: any) => {
                     const statement = row[statementIndex];
@@ -240,6 +238,17 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     const topicName = row[topicIndex];
                     const correctAnswer = row[correctAnswerIndex];
                     const level = row[levelIndex];
+                    const imageUrl =
+                        imageUrlIndex !== -1
+                            ? row[imageUrlIndex] !== undefined
+                                ? (String(row[imageUrlIndex])?.startsWith('http://') ||
+                                      String(row[imageUrlIndex])?.startsWith('https://')) &&
+                                  String(row[imageUrlIndex]).length > 8
+                                    ? row[imageUrlIndex]
+                                    : null
+                                : null
+                            : null;
+
                     const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
                     if (matchedTopic) {
                         const topicId = matchedTopic.id;
@@ -250,7 +259,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             answerList,
                             topicId,
                             correctAnswer,
-                            level
+                            level,
+                            imageUrl
                         };
                     } else {
                         return null;
@@ -305,7 +315,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             // You can also show a user-friendly error message
         }
     };
-    if (!subjectsData) return <Loader />;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <form onSubmit={handleSubmit(createQuiz)}>

@@ -120,7 +120,11 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                 courseContent?.status == 'REJECT' ||
                 courseContent?.status == 'UPDATING'
             ) {
-                await videoApi.sortVideoOrder(-1, courseContent?.id, case1);
+                await videoApi.sortVideoOrder(
+                    courseContent?.courseRealId !== null ? courseContent?.courseRealId : -1,
+                    courseContent?.id,
+                    case1
+                );
                 console.log(case1);
                 console.log(case2);
 

@@ -93,23 +93,14 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
         queryKey: ['exam-detail', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
-    const {
-        status,
-        error,
-        data: subjectsData,
-        isPreviousData
-    } = useQuery({
-        queryKey: ['subjects'],
-        queryFn: () => subjectApi.getAll(),
-        staleTime: Infinity
-    });
+
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
         queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
     });
     const { data: topicsData } = useQuery({
-        queryKey: ['topicsEditQuestionQuiz', { selectedSubject }],
-        queryFn: () => examApi.getAllTopicBySubject(getSubjectNameById(selectedSubject), 0, 100)
+        queryKey: ['topicsEditQuestionQuiz', { courseDetail }],
+        queryFn: () => examApi.getAllTopicBySubject(getSubjectName(courseDetail?.subject) || 'MATHEMATICS', 0, 100)
     });
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
@@ -165,7 +156,8 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                 topicId: question?.topic?.id, // Assuming `topic` is an object with an `id` property
                 level: question?.level, // Assuming `topic` is an object with an `id` property
                 answerList: question?.answerList,
-                correctAnswer: question?.correctAnswer
+                correctAnswer: question?.correctAnswer,
+                imageUrl: question?.imageUrl
             }));
             if (examDetail?.examType == 'QUIZ_DRAFT') {
                 setSelectedOptionCourse('NEW');
@@ -260,7 +252,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
             const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
             const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
             if (missingHeaders.length > 0) {
-                toast.error('Error file input');
+                toast.error('File không đúng yêu cầu');
             } else {
                 const statementIndex = headers.indexOf('statement');
                 const explanationIndex = headers.indexOf('explanation');
@@ -268,6 +260,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                 const topicIndex = headers.indexOf('topic');
                 const correctAnswerIndex = headers.indexOf('correctAnswer');
                 const levelIndex = headers.indexOf('level');
+                const imageUrlIndex = headers.indexOf('imageUrl');
 
                 const questions = data.slice(1).map((row: any) => {
                     const statement = row[statementIndex];
@@ -276,6 +269,16 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                     const topicName = row[topicIndex];
                     const correctAnswer = row[correctAnswerIndex];
                     const level = row[levelIndex];
+                    const imageUrl =
+                        imageUrlIndex !== -1
+                            ? row[imageUrlIndex] !== undefined
+                                ? (String(row[imageUrlIndex])?.startsWith('http://') ||
+                                      String(row[imageUrlIndex])?.startsWith('https://')) &&
+                                  String(row[imageUrlIndex]).length > 8
+                                    ? row[imageUrlIndex]
+                                    : null
+                                : null
+                            : null;
                     const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
                     if (matchedTopic) {
                         const topicId = matchedTopic.id;
@@ -286,7 +289,8 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                             answerList,
                             topicId,
                             correctAnswer,
-                            level
+                            level,
+                            imageUrl
                         };
                     } else {
                         return null;
@@ -343,7 +347,6 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
         }
     };
 
-    if (!subjectsData) return <Loader />;
     if (!examDetail) return <Loader />;
     if (!updatingCoursesData) return <Loader />;
     if (!activatedCoursesData) return <Loader />;

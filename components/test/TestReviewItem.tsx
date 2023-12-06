@@ -3,7 +3,9 @@
 import { QuestionType } from '@/types';
 import { Accordion, AccordionItem, Button, Chip, Radio, RadioGroup } from '@nextui-org/react';
 import HTMLReactParser from 'html-react-parser';
-
+import Image from 'next/image';
+import { Gallery, Item } from 'react-photoswipe-gallery';
+import 'photoswipe/dist/photoswipe.css';
 interface TestReviewItemProps {
     index: number;
     questions: QuestionType | any;
@@ -44,9 +46,34 @@ const TestReviewItem: React.FC<TestReviewItemProps> = ({ questions, index, handl
                         )}
                     </div>
                 </div>
-                <p className="ml-1 mt-1" suppressContentEditableWarning={true}>
+                <span className="ml-1 mt-1" suppressContentEditableWarning={true}>
                     {HTMLReactParser(questions?.statement)}
-                </p>
+                </span>
+                {questions?.imageUrl !== '' && questions?.imageUrl !== null ? (
+                    <div className="my-2">
+                        {/* <Image
+                            alt="image"
+                            className="object-cover rounded-md h-[150px]"
+                            src={questions?.imageUrl}
+                            width={140}
+                            height={140}
+                        /> */}
+                        <Gallery>
+                            <Item original={questions?.imageUrl} width="1024" height="768">
+                                {({ open }) => (
+                                    <Image
+                                        onClick={open}
+                                        src={questions?.imageUrl}
+                                        className="object-cover rounded-md h-[150px] cursor-pointer"
+                                        width={140}
+                                        height={140}
+                                        alt="question image"
+                                    />
+                                )}
+                            </Item>
+                        </Gallery>
+                    </div>
+                ) : null}
             </div>
             {questions?.answerList?.map((answerList: any, index: number) => (
                 <div key={index} suppressContentEditableWarning={true}>
