@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { useCustomModal } from '@/hooks';
 interface DoExamProps {
-    params: { id: number };
+    params: { courseId: number; id: number };
 }
 
 const formatTime = (seconds: number | null): string => {
@@ -105,7 +105,7 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
             setIsSubmitting(false);
             console.log(res);
             if (res) {
-                router?.push(`/quiz/${params?.id}`);
+                router?.push(`/quiz/${params?.courseId}/${params?.id}`);
             }
         } catch (error) {
             console.log(error);

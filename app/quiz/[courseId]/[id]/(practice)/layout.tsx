@@ -6,7 +6,13 @@ export const metadata = {
     description: 'Nền tảng ôn thi Đại học số 1 Việt Nam'
 };
 
-const PracticeQuizLayout = ({ children, params }: { children: React.ReactNode; params: { id: number } }) => (
+const PracticeQuizLayout = ({
+    children,
+    params
+}: {
+    children: React.ReactNode;
+    params: { courseId: number; id: number };
+}) => (
     <div className="mb-16">
         <DoTestHeader type="quiz" id={params.id}>
             {children}

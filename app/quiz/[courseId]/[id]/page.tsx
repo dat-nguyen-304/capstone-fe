@@ -9,12 +9,13 @@ import { BsBook, BsQuestionOctagon } from 'react-icons/bs';
 import { CiTimer } from 'react-icons/ci';
 import Link from 'next/link';
 import { FiRotateCw } from 'react-icons/fi';
-import { examApi } from '@/api-client';
+import { examApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import TestResultLine from '@/components/test/TestResultLine';
+import Loader from '@/components/Loader';
 
 interface QuizProps {
-    params: { id: number };
+    params: { courseId: number; id: number };
 }
 function getSubjectName(subjectCode: string) {
     const subjectNames: { [key: string]: string | null } = {
@@ -32,6 +33,7 @@ function getSubjectName(subjectCode: string) {
 const Quiz: React.FC<QuizProps> = ({ params }) => {
     const [openVideoList, setOpenVideoList] = useState(false);
     const [submissions, setSubmissions] = useState<any[]>([]);
+    const [listVideo, setListVideo] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
@@ -47,6 +49,26 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
         queryKey: ['quiz-detail-info', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
+    const { data: quizzesData } = useQuery<any>({
+        queryKey: ['quiz-by-course', { params: params?.courseId }],
+        queryFn: () => examApi.getQuizCourseById(params?.courseId)
+    });
+    const { data: videosCourse } = useQuery<any>({
+        queryKey: ['my-course-videos', { params: params?.courseId }],
+        queryFn: () => videoApi.getByCourseId(params?.courseId, 0, 100, 'id', 'ASC')
+    });
+    useEffect(() => {
+        if (quizzesData?.data || videosCourse?.data) {
+            const mergedList = [...(videosCourse?.data || []), ...(quizzesData?.data || [])].sort((a, b) => {
+                const aOrder = a.ordinalNumber || a.courseOrder || 0;
+                const bOrder = b.ordinalNumber || b.courseOrder || 0;
+                return aOrder - bOrder;
+            });
+            setListVideo(mergedList);
+        }
+    }, [quizzesData, videosCourse]);
+    console.log(listVideo);
+
     const {
         data: quizzesSubmission,
         isLoading: examLoading,
@@ -71,8 +93,9 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
     };
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+    if (!quizData) return <Loader />;
     return (
-        <VideoHeader>
+        <VideoHeader courseId={params?.courseId}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -101,7 +124,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                                     <span className="text-sm sm:text-base">Đã làm {totalRow || 0} lần</span>
                                     <Button
                                         as={Link}
-                                        href={`/quiz/${params.id}/practice`}
+                                        href={`/quiz/${params?.courseId}/${params.id}/practice`}
                                         size="sm"
                                         color="primary"
                                         className="flex items-center gap-2 sm:w-[120px] sm:h-[36px] sm:text-sm"
@@ -141,7 +164,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                         ) : (
                             <Button
                                 as={Link}
-                                href={`/quiz/${params.id}/practice`}
+                                href={`/quiz/${params?.courseId}/${params.id}/practice`}
                                 size="sm"
                                 color="primary"
                                 className="flex items-center mt-4 gap-2 sm:w-[150px] sm:h-[36px] sm:text-sm"
@@ -154,7 +177,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                         </Button>
                     </div>
                     <div className="hidden md:block h-full col-span-3">
-                        <VideoList />
+                        <VideoList video={listVideo} courseId={params?.courseId} />
                     </div>
                     <Drawer
                         title="Nội dung khóa học"
@@ -164,7 +187,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                         onClose={() => setOpenVideoList(false)}
                         className="block md:hidden"
                     >
-                        <VideoList isOnDrawer={true} />
+                        <VideoList isOnDrawer={true} video={listVideo} courseId={params?.courseId} />
                     </Drawer>
                 </div>
             </div>

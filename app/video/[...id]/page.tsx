@@ -18,9 +18,10 @@ import { ReportModal } from '@/components/modal';
 import { BiSolidLike } from 'react-icons/bi';
 import HTMLReactParser from 'html-react-parser';
 import Link from 'next/link';
+import Home from '@/app/page';
 
 interface VideoProps {
-    params: { id: number };
+    params: { id: number[] };
 }
 
 const Video: React.FC<VideoProps> = ({ params }) => {
@@ -40,40 +41,32 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         setOpenVideoList(true);
     };
 
-    const { data, isLoading } = useQuery<any>({
-        queryKey: ['video-detail', { params: params?.id }],
-        queryFn: () => videoApi.getVideoDetailById(params?.id)
+    const {
+        data,
+        isLoading,
+        refetch: videoRefetch
+    } = useQuery<any>({
+        queryKey: ['video-detail', { params: params?.id[1] }],
+        queryFn: () => videoApi.getVideoDetailById(params?.id[1])
     });
     const { data: commentsData, refetch } = useQuery<any>({
         queryKey: ['commentsVideo', updateState],
-        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id, 0, 100, 'createdDate', 'DESC')
+        queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id[1], 0, 100, 'createdDate', 'DESC')
     });
-    const quizzesQuery = useQuery<any>({
-        queryKey: ['video-quiz-by-course', { courseId: data?.courseId }],
-        queryFn: () => examApi.getQuizCourseById(data?.courseId),
-        enabled: false // Do not automatically fetch data; wait for refetch to be called
+    const { data: quizzesData } = useQuery<any>({
+        queryKey: ['video-quiz-by-course', { params: params?.id[0] }],
+        queryFn: () => examApi.getQuizCourseById(params?.id[0])
     });
     useEffect(() => {
-        if (data) {
-            // Call the second API to get quizzes
-            quizzesQuery.refetch(); // This will trigger the second API call
-        }
-    }, [data]);
-    console.log(quizzesQuery?.data);
-
-    useEffect(() => {
-        if (quizzesQuery?.data?.data || data?.videoItemResponses) {
-            const mergedList = [...(data?.videoItemResponses || []), ...(quizzesQuery?.data?.data || [])].sort(
-                (a, b) => {
-                    const aOrder = a.ordinalNumber || a.courseOrder || 0;
-                    const bOrder = b.ordinalNumber || b.courseOrder || 0;
-                    return aOrder - bOrder;
-                }
-            );
+        if (quizzesData?.data || data?.videoItemResponses) {
+            const mergedList = [...(data?.videoItemResponses || []), ...(quizzesData?.data || [])].sort((a, b) => {
+                const aOrder = a.ordinalNumber || a.courseOrder || 0;
+                const bOrder = b.ordinalNumber || b.courseOrder || 0;
+                return aOrder - bOrder;
+            });
             setListVideo(mergedList);
         }
-    }, [data]);
-    console.log(listVideo);
+    }, [quizzesData, data]);
 
     const handleProgress = (progress: OnProgressProps) => {
         const timeString = convertSeconds(progress.playedSeconds);
@@ -81,11 +74,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         const threshold = 5;
         setCurrentTime(timeString);
         console.log(videoDuration - progress.playedSeconds <= threshold);
+        console.log(videoDuration);
         console.log(data?.isWatched);
         console.log(hasCalledProgressApi);
 
         if (videoDuration - progress.playedSeconds <= threshold && !isWatched && !hasCalledProgressApi) {
-            callProgressApi(params?.id);
+            callProgressApi(params?.id[1]);
             setHasCalledProgressApi(true); // Set the state to indicate that the API has been called
         } else {
         }
@@ -95,6 +89,9 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         try {
             // Call your API here
             const res = await progressVideoApi.progressApi(videoId);
+            if (res) {
+                videoRefetch();
+            }
         } catch (error) {
             console.error('Error calling progress API:', error);
         }
@@ -112,7 +109,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         try {
             setIsSubmitting(true);
             const commentVideo = {
-                videoId: Number(params?.id),
+                videoId: Number(params?.id[1]),
                 commentContent: comment
             };
 
@@ -131,7 +128,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const onSubmitLike = async () => {
         try {
             const reactVideo = {
-                videoId: Number(params?.id),
+                videoId: Number(params?.id[1]),
                 status: isLike ? 'DISLIKE' : 'LIKE'
             };
 
@@ -159,16 +156,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             ownerAvatar: commentData?.avatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c'
         };
     };
-    const commonInfo = {
-        id: 1,
-        ownerFullName: 'Nguyễn Văn A',
-        content: 'Nội dung rất hay'
-    };
 
+    if (params?.id?.length <= 1) return <Home />;
     if (!data) return <Loader />;
 
     return (
-        <VideoHeader id={params?.id}>
+        <VideoHeader courseId={params?.id[0]} id={params?.id[1]}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -202,7 +195,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                             Danh sách bài học
                         </Button>
                         <h3 className="mt-8 mb-4 font-semibold text-lg text-slate-800">Mô tả video</h3>
-                        <h2>{HTMLReactParser(data?.description)}</h2>
+                        <p>{HTMLReactParser(data?.description)}</p>
                         {data?.material ? (
                             <p className="mt-16 mb-8 font-semibold text-lg text-slate-800">
                                 Tài liệu đính kèm:
@@ -216,7 +209,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <div className="mt-8 px-0">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
-                                    <Note currentTime={currentTime} videoId={params?.id} />
+                                    <Note currentTime={currentTime} videoId={params?.id[1]} />
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
                                     <Textarea
@@ -257,7 +250,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         </div>
                     </div>
                     <div className="hidden md:block h-full col-span-3">
-                        <VideoList video={listVideo} />
+                        <VideoList video={listVideo} courseId={params?.id[0]} />
                     </div>
                     <Drawer
                         title="Nội dung khóa học"
@@ -267,7 +260,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         onClose={() => setOpenVideoList(false)}
                         className="block md:hidden"
                     >
-                        <VideoList isOnDrawer={true} video={listVideo} />
+                        <VideoList isOnDrawer={true} video={listVideo} courseId={params?.id[0]} />
                     </Drawer>
                 </div>
             </div>

@@ -67,11 +67,11 @@ const VideoItem: React.FC<VideoItemProps> = ({
     } else if (type == 'my-video') {
         if (videoItem?.examType) {
             if (courseId) {
-                detailPage = `/my-course/${courseId}/quiz/${videoItem?.id}`;
+                detailPage = `/quiz/${courseId}/${videoItem?.id}`;
             }
         } else {
             if (courseId) {
-                detailPage = `/my-course/${courseId}/video/${videoItem?.id}`;
+                detailPage = `/video/${courseId}/${videoItem?.id}`;
             }
         }
     } else if (type == 'admin-review-video') {

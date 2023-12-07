@@ -39,8 +39,8 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, courseId }) => 
             href={
                 courseId
                     ? videoItem?.examType
-                        ? `/my-course/${courseId}/quiz/${videoItem?.id}`
-                        : `/my-course/${courseId}/video/${videoItem?.id}`
+                        ? `/quiz/${courseId}/${videoItem?.id}`
+                        : `/video/${courseId}/${videoItem?.id}`
                     : `/video/${videoItem?.id}`
             }
         >
