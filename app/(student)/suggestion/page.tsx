@@ -197,7 +197,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         getSuggestCourseCombination();
     }, [filteredSubjectsDone]);
 
-    const skeletonArray = createSkeletonArray(16);
+    const skeletonArray = createSkeletonArray(5);
     const skeletonEntranceExamArray = createSkeletonArray(3);
     const skeletonCourseArray = createSkeletonArray(1);
     if (!user) {
@@ -206,14 +206,14 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
     if (!subjectsData) return <Loader />;
 
     return (
-        <div>
-            <ul className="flex gap-4 mt-8 flex-wrap justify-center">
+        <div className="my-4 sm:mt-4 sm:mb-12">
+            <ul className="flex gap-4 flex-wrap justify-center">
                 {!isLoading ? (
                     <>
                         {showCombination
                             ? targetData?.map((combination: any) => (
                                   <Tooltip key={combination.id} color="primary" content={combination?.name}>
-                                      <li>
+                                      <li className="mt-8">
                                           <Card
                                               isPressable
                                               id={combination.name}
@@ -250,7 +250,8 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                         onClick={handleSelectButtonClick}
                         variant="bordered"
                         color="primary"
-                        className="w-1/2 mx-7"
+                        className="w-1/2 m-8 cursor-pointer"
+                        size="lg"
                         disabled={!selectedCombination}
                     >
                         Chọn tổ hợp
@@ -281,16 +282,16 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
             <div className="w-[90%] 2xl:w-4/5 mx-auto my-8">
                 {showEntranceExam ? (
                     <div>
-                        <Card className=" sm:p-8 mt-8 my-2">
-                            <div className="text-center mt-4">
-                                <h2 className="m-4 font-bold">Mục tiêu của bạn </h2>
-                                <div>
+                        <Card className="sm:p-8 mt-8 my-2">
+                            <div className="text-center">
+                                <h2 className="font-semibold text-medium sm:text-2xl">Mục tiêu của bạn </h2>
+                                <div className="flex gap-2 justify-center flex-wrap mt-8">
                                     {selectedTarget && selectedTarget?.subjectTargetResponses
                                         ? selectedTarget?.subjectTargetResponses.map((response: any) => (
                                               <Button
                                                   key={response.id}
                                                   variant="bordered"
-                                                  color="primary"
+                                                  color="default"
                                                   className="mx-2"
                                                   disabled
                                               >
@@ -304,9 +305,9 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                         // Add logic to navigate to the create target page
                                         setShowCombination(true), setShowEntranceExam(false);
                                     }}
-                                    className="m-2   items-center justify-center"
+                                    className="mt-4  items-center justify-center"
                                     variant="bordered"
-                                    color="default"
+                                    color="primary"
                                 >
                                     Chọn tổ hợp khác
                                 </Button>
@@ -419,7 +420,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                             />
                                         ))
                                     ) : (
-                                        <>Hiện tại chưa có khóa học dành cho bạn</>
+                                        <div className="text-xs sm:text-sm">Hiện tại chưa có khóa học dành cho bạn</div>
                                     )}
                                 </div>
                             ) : (

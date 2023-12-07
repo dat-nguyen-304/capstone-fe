@@ -104,7 +104,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                         color="primary"
                         isRequired
                         items={data?.data}
-                        label="Chọn môn"
+                        label="Chọn chủ đề"
                         variant="bordered"
                         size="sm"
                         className="max-w-xs"

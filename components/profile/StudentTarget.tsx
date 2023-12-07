@@ -5,7 +5,6 @@ import Loader from '../Loader';
 import { useQuery } from '@tanstack/react-query';
 import { combinationApi } from '@/api-client';
 import { AddTargetModal } from '../modal/AddTargetModal';
-import { useEffect, useState } from 'react';
 import UpdatingTargetTab from './UpdatingTargetTab';
 import TargetTab from './TargetTab';
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
@@ -20,16 +19,12 @@ interface StudentTargetProps {
 
 const StudentTarget: React.FC<StudentTargetProps> = ({ targets, refetch }) => {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const [targetData, setTargetData] = useState(targets);
 
     const { data: combinationsData, isLoading } = useQuery({
         queryKey: ['combinations'],
         queryFn: combinationApi.getAll,
         staleTime: Infinity
     });
-    useEffect(() => {
-        setTargetData(targets);
-    }, [targets]);
     const targetNameList = targets?.map((target: any) => target.name);
     const addTargetItems = combinationsData?.filter(combination => !targetNameList.includes(combination.name));
 
@@ -44,18 +39,17 @@ const StudentTarget: React.FC<StudentTargetProps> = ({ targets, refetch }) => {
                 </Button>
             </div>
             <Tabs color="primary" variant="underlined" aria-label="Tabs variants">
-                {targetData?.length >= 1 &&
-                    targetData?.map((target: any) =>
-                        target.grade === 0 ? (
-                            <Tab key={target.id} title={`${target.name} (Chưa cập nhật)`}>
-                                <UpdatingTargetTab refetch={refetch} target={target} />
-                            </Tab>
-                        ) : (
-                            <Tab key={target.id} title={`${target.name} (${target.grade})`}>
-                                <TargetTab refetch={refetch} target={target} />
-                            </Tab>
-                        )
-                    )}
+                {targets?.map((target: any) =>
+                    target.grade === 0 ? (
+                        <Tab key={target.id} title={`${target.name} (Chưa cập nhật)`}>
+                            <UpdatingTargetTab refetch={refetch} target={target} />
+                        </Tab>
+                    ) : (
+                        <Tab key={target.id} title={`${target.name} (${target.grade})`}>
+                            <TargetTab refetch={refetch} target={target} />
+                        </Tab>
+                    )
+                )}
             </Tabs>
 
             <AddTargetModal

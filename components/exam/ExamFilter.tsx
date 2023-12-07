@@ -80,7 +80,7 @@ const ExamFilter: React.FC<ExamFilterProps> = ({
                 <div className="w-[212px] md:mt-0 mt-4">
                     <Select
                         size="sm"
-                        label="Sắp xếp theo"
+                        label="Loại bài thi"
                         color="primary"
                         variant="bordered"
                         defaultSelectedKeys={['0']}
