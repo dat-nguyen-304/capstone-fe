@@ -28,6 +28,7 @@ import { useRouter } from 'next/navigation';
 import { BiUpArrowAlt } from 'react-icons/bi';
 import { BsArrowLeft } from 'react-icons/bs';
 import { toast } from 'react-toastify';
+import VideoRuleModal from '@/components/rule/VideoRuleModal';
 interface UpdateVideoDraftProps {
     params: { id: number };
 }
@@ -44,7 +45,8 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+    const [openVideo, setOpenVideo] = useState(false);
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
     }, []);
@@ -108,53 +110,51 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const onSubmit = async (formData: any) => {
-        const toastLoading = toast.loading('Đang xử lí yêu cầu');
-        try {
-            setIsSubmitting(true);
-            const videoRequest = {
-                name: formData?.name,
-                videoTemporaryId: Number(params?.id),
-                description: formData?.description,
-                videoStatus: selectedVideoStatus
-            };
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else {
+            const toastLoading = toast.loading('Đang xử lí yêu cầu');
+            try {
+                setIsSubmitting(true);
+                const videoRequest = {
+                    name: formData?.name,
+                    videoTemporaryId: Number(params?.id),
+                    description: formData?.description,
+                    videoStatus: selectedVideoStatus
+                };
 
-            console.log(videoRequest);
-            console.log(uploadedImageFile);
-            console.log(uploadedVideoFile);
-            console.log(uploadedAttachedFiles);
-            console.log(videoRequest);
-            const formDataPayload = new FormData();
-            formDataPayload.append(
-                'videoRequest',
-                new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
-            );
-            if (uploadedVideoFile) {
-                formDataPayload.append('video', uploadedVideoFile);
-            }
+                const formDataPayload = new FormData();
+                formDataPayload.append(
+                    'videoRequest',
+                    new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
+                );
+                if (uploadedVideoFile) {
+                    formDataPayload.append('video', uploadedVideoFile);
+                }
 
-            if (uploadedImageFile) {
-                formDataPayload.append('thumbnail', uploadedImageFile);
-            }
+                if (uploadedImageFile) {
+                    formDataPayload.append('thumbnail', uploadedImageFile);
+                }
 
-            if (uploadedAttachedFiles !== undefined) {
-                formDataPayload.append('material', uploadedAttachedFiles[0]);
-            }
+                if (uploadedAttachedFiles !== undefined) {
+                    formDataPayload.append('material', uploadedAttachedFiles[0]);
+                }
 
-            const response = await videoApi.updateVideoDraft(formDataPayload);
+                const response = await videoApi.updateVideoDraft(formDataPayload);
 
-            if (response) {
+                if (response) {
+                    toast.dismiss(toastLoading);
+                    setIsSubmitting(false);
+                    toast.success('Video đã được cập nhật thành công');
+                    router.push('/teacher/video/my-video-draft');
+                }
+                // Handle the response as needed
+            } catch (error) {
                 toast.dismiss(toastLoading);
                 setIsSubmitting(false);
-                toast.success('Video đã được cập nhật thành công');
-                router.push('/teacher/video/my-video-draft');
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.error('Error creating course:', error);
+                // Handle error
             }
-            // Handle the response as needed
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            setIsSubmitting(false);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error creating course:', error);
-            // Handle error
         }
     };
 
@@ -326,6 +326,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                     <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
                         <div className="col-span-1 my-4 sm:my-0">
                             <InputText
+                                isRequired
                                 color="primary"
                                 variant="bordered"
                                 name="name"
@@ -336,6 +337,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                         </div>
                         <div className="col-span-1 my-4 sm:my-0">
                             <Select
+                                isRequired
                                 size="sm"
                                 label="Trạng Thái Video"
                                 color="primary"
@@ -393,11 +395,14 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                 </div>
                 <div className="flex items-start mb-8 mt-20 sm:mt-16">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        <a
+                            className="text-blue-600 hover:underline dark:text-blue-500"
+                            onClick={() => setOpenVideo(true)}
+                        >
                             chính sách và điều khoản của CEPA.
                         </a>
                     </label>
@@ -406,6 +411,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
                     Xác nhận thay đổi
                 </Button>
             </form>
+            <VideoRuleModal isOpen={openVideo} onOpen={() => setOpenVideo(true)} onClose={() => setOpenVideo(false)} />
         </div>
     );
 };

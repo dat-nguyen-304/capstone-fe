@@ -5,12 +5,13 @@ import Link from 'next/link';
 
 interface TestResultItemProps {
     type: 'quiz' | 'exam';
+    courseId?: number;
     examsSubmissionInfo: any;
     index: number;
     examId: number;
 }
 
-const TestResultLine: React.FC<TestResultItemProps> = ({ type, examsSubmissionInfo, index, examId }) => {
+const TestResultLine: React.FC<TestResultItemProps> = ({ type, examsSubmissionInfo, index, examId, courseId }) => {
     const finishTime = examsSubmissionInfo ? new Date(examsSubmissionInfo?.finishTime) : new Date();
 
     // Get the user's time zone
@@ -44,7 +45,11 @@ const TestResultLine: React.FC<TestResultItemProps> = ({ type, examsSubmissionIn
                 Điểm số <span className="font-bold mr-4">{examsSubmissionInfo?.grade.toFixed(1)}</span>
                 <Link
                     className="text-xs sm:text-sm underline text-blue-500"
-                    href={`/${type}/${examId}/result/${examsSubmissionInfo?.id}`}
+                    href={`${
+                        type == 'quiz'
+                            ? `/${type}/${courseId}/${examId}/result/${examsSubmissionInfo?.id}`
+                            : `/${type}/${examId}/result/${examsSubmissionInfo?.id}`
+                    }`}
                 >
                     Xem chi tiết
                 </Link>

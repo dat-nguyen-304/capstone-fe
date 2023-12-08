@@ -18,6 +18,7 @@ import { BiUpArrowAlt } from 'react-icons/bi';
 import * as XLSX from 'xlsx';
 import { FiDelete } from 'react-icons/fi';
 import { useCustomModal } from '@/hooks';
+import QuizRuleModal from '@/components/rule/QuizRuleModal';
 interface CreateQuizProps {}
 
 function getSubjectName(subjectCode: string) {
@@ -62,6 +63,8 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
     const [courseDetail, setCourseDetail] = useState<any>();
     const [excelFile, setExcelFile] = useState(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [openQuizRule, setOpenQuizRule] = useState(false);
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -105,14 +108,14 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         if (selectedOptionCourse == 'OLD') {
             if (selectedCourse) {
                 const courseDetails = getCourseById(selectedCourse, 'OLD');
-                console.log('Selected Course Details:', courseDetails);
+
                 setCourseDetail(courseDetails);
             }
         }
         if (selectedOptionCourse == 'NEW') {
             if (selectedCourse) {
                 const courseDetails = getCourseById(selectedCourse, 'NEW');
-                console.log('Selected Course Details:', courseDetails);
+
                 setCourseDetail(courseDetails);
             }
         }
@@ -137,6 +140,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             else setCourses(activatedCoursesData?.data);
         }
     }, [selectedOptionCourse]);
+
     const { onOpen: onConfirmOpen, onDanger, onWarning, onClose: onConfirmClose } = useCustomModal();
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);
@@ -207,37 +211,40 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         handleFileSubmitSelection(excelFile, setExcelFile, fileInputRef, topicsData, setQuestions);
     };
     const createQuiz = async (formData: any) => {
-        setIsSubmitting(true);
-        const toastLoading = toast.loading('Đang xử lí yêu cầu');
-        try {
-            const payload = {
-                name: formData?.name,
-                description: formData?.description || 'Miêu Tả',
-                duration: Number(formData?.duration || 60),
-                courseId: selectedCourse,
-                courseOrder: 100,
-                subject: getSubjectName(courseDetail?.subject),
-                // examType: 'QUIZ_DRAFT',
-                examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
-                questionList: questions
-            };
-            console.log(payload);
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else {
+            setIsSubmitting(true);
+            const toastLoading = toast.loading('Đang xử lí yêu cầu');
+            try {
+                const payload = {
+                    name: formData?.name,
+                    description: formData?.description || 'Miêu Tả',
+                    duration: Number(formData?.duration || 60),
+                    courseId: selectedCourse,
+                    courseOrder: 100,
+                    subject: getSubjectName(courseDetail?.subject),
+                    // examType: 'QUIZ_DRAFT',
+                    examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
+                    questionList: questions
+                };
+                console.log(payload);
 
-            // Call the API to create the exam
-            const response = await examApi.createExam(payload);
+                // Call the API to create the exam
+                const response = await examApi.createExam(payload);
 
-            if (response) {
-                setIsSubmitting(false);
+                if (response) {
+                    setIsSubmitting(false);
+                    toast.dismiss(toastLoading);
+                    toast.success('Tạo bài tập thành công');
+                    router.push('/teacher/quiz');
+                }
+            } catch (error) {
+                // Handle any errors that occur during the API call
+                console.error('Error creating exam:', error);
                 toast.dismiss(toastLoading);
-                toast.success('Tạo bài tập thành công');
-                router.push('/teacher/quiz');
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                // You can also show a user-friendly error message
             }
-        } catch (error) {
-            // Handle any errors that occur during the API call
-            console.error('Error creating exam:', error);
-            toast.dismiss(toastLoading);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            // You can also show a user-friendly error message
         }
     };
 
@@ -415,14 +422,16 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                 </div>
                 <div className="flex items-start mb-4 mt-8 sm:mt-12">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                            chính sách và điều khoản của CEPA
+                        <a
+                            className="text-blue-600 hover:underline dark:text-blue-500"
+                            onClick={() => setOpenQuizRule(true)}
+                        >
+                            chính sách và điều khoản của CEPA.
                         </a>
-                        .
                     </label>
                 </div>
                 <Button
@@ -435,6 +444,11 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     Tạo bài tập mới
                 </Button>
             </form>
+            <QuizRuleModal
+                isOpen={openQuizRule}
+                onOpen={() => setOpenQuizRule(true)}
+                onClose={() => setOpenQuizRule(false)}
+            />
         </div>
     );
 };

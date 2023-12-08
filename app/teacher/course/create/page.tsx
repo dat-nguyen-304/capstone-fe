@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Checkbox, Select, SelectItem, Skeleton } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem, Skeleton, useDisclosure } from '@nextui-org/react';
 import Image from 'next/image';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { useDropzone, FileWithPath, DropzoneRootProps } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
 import { createSkeletonArray } from '@/utils';
 import { toast } from 'react-toastify';
+import CourseRuleModal from '@/components/rule/CourseRuleModal';
 
 const CreateCourse: React.FC = () => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
@@ -23,7 +24,8 @@ const CreateCourse: React.FC = () => {
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
     const [levelId, setLevelId] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -52,7 +54,6 @@ const CreateCourse: React.FC = () => {
 
     const defaultSubjectIds: number[] =
         subjectsData?.filter(subject => teacherData?.subject?.includes(subject.name)).map(subject => subject.id) ?? [];
-    console.log(defaultSubjectIds[0]);
     useEffect(() => {
         if (teacherData) {
             const defaultSubjectIds: number[] =
@@ -109,48 +110,56 @@ const CreateCourse: React.FC = () => {
 
     const onSubmit = async (formData: any) => {
         let toastLoading;
-        setIsSubmitting(true);
-        try {
-            toastLoading = toast.loading('Đang xử lí yêu cầu');
-            const selectedTopics = topicStates
-                .filter(topic => {
-                    return topic.isSelected;
-                })
-                .map(topic => {
-                    return { id: topic.id, name: topic.name };
-                });
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else if (uploadedFiles[0] === undefined) {
+            toast.error('Bạn cần chọn thumnail cho khóa học');
+        } else {
+            try {
+                const selectedTopics = topicStates
+                    .filter(topic => {
+                        return topic.isSelected;
+                    })
+                    .map(topic => {
+                        return { id: topic.id, name: topic.name };
+                    });
+                if (selectedTopics?.length == 0) {
+                    toast.error('Bạn cần chọn chủ đề cho khóa học');
+                } else {
+                    setIsSubmitting(true);
+                    toastLoading = toast.loading('Đang xử lí yêu cầu');
+                    const courseRequest = {
+                        description: formData.description,
+                        name: formData.name,
+                        price: formData.price,
+                        subject: getObjectSubjectById(selectedSubject),
+                        levelId: levelId,
+                        topic: selectedTopics
+                    };
 
-            const courseRequest = {
-                description: formData.description,
-                name: formData.name,
-                price: formData.price,
-                subject: getObjectSubjectById(selectedSubject),
-                levelId: levelId,
-                topic: selectedTopics
-            };
+                    const formDataPayload = new FormData();
+                    formDataPayload.append(
+                        'courseRequest',
+                        new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
+                    );
+                    formDataPayload.append('thumbnail', uploadedFiles[0]);
 
-            const formDataPayload = new FormData();
-            formDataPayload.append(
-                'courseRequest',
-                new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })
-            );
-            formDataPayload.append('thumbnail', uploadedFiles[0]);
-
-            const response = await courseApi.createCourse(formDataPayload);
-            if (response) {
+                    const response = await courseApi.createCourse(formDataPayload);
+                    if (response) {
+                        setIsSubmitting(false);
+                        toast.success('Khóa học đã được tạo thành công');
+                        console.log('Course created successfully:', response);
+                        router.push('/teacher/course/my-course-draft');
+                    }
+                    toast.dismiss(toastLoading);
+                }
+                // Handle the response as needed
+            } catch (error) {
+                toast.dismiss(toastLoading);
                 setIsSubmitting(false);
-                toast.success('Khóa học đã được tạo thành công');
-                console.log('Course created successfully:', response);
-                router.push('/teacher/course/my-course-draft');
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.error('Error creating course:', error);
+                // Handle error
             }
-            toast.dismiss(toastLoading);
-            // Handle the response as needed
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            setIsSubmitting(false);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error creating course:', error);
-            // Handle error
         }
     };
 
@@ -290,11 +299,11 @@ const CreateCourse: React.FC = () => {
                 </div>
                 <div className="flex items-start mb-8 mt-20 sm:mt-16">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        <a className="text-blue-600 hover:underline dark:text-blue-500" onClick={onOpen}>
                             chính sách và điều khoản của CEPA
                         </a>
                         .
@@ -304,6 +313,7 @@ const CreateCourse: React.FC = () => {
                     Tạo bản nháp
                 </Button>
             </form>
+            <CourseRuleModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
         </div>
     );
 };

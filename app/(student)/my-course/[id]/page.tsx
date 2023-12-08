@@ -70,8 +70,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         totalQuiz: quizCourse?.totalRow,
         totalCompleted: courseData?.totalCompleted
     };
-    console.log(courseData);
-    console.log(feedbacksData);
+
     const handleFeedbackSubmission = async (feedback: { rating: number; comment: string }) => {
         let toastLoading;
         try {
@@ -87,7 +86,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 refetch();
             }
             toast.dismiss(toastLoading);
-            // console.log(ratingCourse);
         } catch (error) {
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');

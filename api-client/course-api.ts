@@ -65,7 +65,6 @@ export const courseApi = {
         } else {
             value += '';
         }
-        console.log({ value });
 
         const res = await axiosClient.get(
             `/courses/user/filter${value}${

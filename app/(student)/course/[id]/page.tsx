@@ -31,7 +31,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
         queryKey: ['feedbacksCourse'],
         queryFn: () => ratingCourseApi.getRatingCourseById(params?.id, 0, 100)
     });
-    console.log(data);
 
     const courseInfo = {
         courseName: data?.name as string,
@@ -83,7 +82,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
                 refetch();
             }
             toast.dismiss(toastLoading);
-            // console.log(ratingCourse);
         } catch (error) {
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');

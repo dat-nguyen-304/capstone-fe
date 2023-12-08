@@ -22,7 +22,6 @@ const StudentProfile: React.FC<StudentProfileProps> = ({}) => {
         queryFn: () => studentApi.getStudent()
     });
     const [getUploadFile, setGetUploadedFiles] = useState<FileWithPath[]>([]);
-    console.log({ studentData: studentData?.data.targets });
 
     if (!studentData) return <Loader />;
 

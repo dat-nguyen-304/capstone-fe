@@ -74,8 +74,6 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
         totalQuiz: quizzes?.length
     };
 
-    console.log(data);
-
     if (!data) return <Loader />;
 
     return (

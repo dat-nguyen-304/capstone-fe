@@ -155,9 +155,6 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         }
     };
     const getSuggestCourseCombination = async () => {
-        console.log('filteredSubjectsDone');
-        console.log(filteredSubjectsDone);
-
         const subject1 = filteredSubjectsDone[0]?.id || 0;
         const subject2 = filteredSubjectsDone[1]?.id || 0;
         const subject3 = filteredSubjectsDone[2]?.id || 0;

@@ -40,7 +40,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
 
     const handleBanUser = async (id: number) => {
         let toastLoading;
-        console.log({ description, id });
+
         try {
             onClose();
             onInputClose();

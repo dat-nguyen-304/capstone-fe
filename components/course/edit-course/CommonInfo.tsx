@@ -6,7 +6,7 @@ import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { InputNumber } from '@/components/form-input/InputNumber';
 import { Subject } from '@/types';
-import { Button, Checkbox, Input, Select, SelectItem } from '@nextui-org/react';
+import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import { courseApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import CourseRuleModal from '@/components/rule/CourseRuleModal';
 interface CommonInfoProps {
     commonInfo?:
         | {
@@ -35,7 +36,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
     const [selectedLevel, setSelectedLevel] = useState<number>(1);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { data, isLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: subjectApi.getAll,
@@ -330,16 +331,17 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        <a className="text-blue-600 hover:underline dark:text-blue-500" onClick={onOpen}>
                             chính sách và điều khoản của CEPA
                         </a>
                         .
                     </label>
                 </div>
-                <Button color="primary" type="submit" isLoading={isSubmitting}>
+                <Button color="warning" type="submit" isLoading={isSubmitting}>
                     Lưu thay đổi
                 </Button>
             </form>
+            <CourseRuleModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
         </>
     );
 };

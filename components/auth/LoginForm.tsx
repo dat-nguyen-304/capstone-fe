@@ -47,11 +47,10 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
         try {
             const { email, password } = values;
             const res = await authApi.login({ email, password });
-            console.log({ res });
+
             if (res.status === 200 && !res.data.code) {
                 setMessage('');
                 const userSession: SafeUser = res.data.userSession;
-                console.log({ userSession });
 
                 if (userSession.role === 'STUDENT') {
                     if (!userSession.avatar) userSession.avatar = '/student.png';
@@ -84,7 +83,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
         setMessage('');
         try {
             const res = await authApi.loginWithGoogle(credentialResponse.credential as string);
-            console.log({ res });
+
             if (res.status === 200 && !res.data.code) {
                 setMessage('');
                 const userSession: SafeUser = res.data.userSession;

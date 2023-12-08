@@ -8,7 +8,7 @@ export const metadata = {
 
 const ExamResultLayout = ({ children, params }: { children: React.ReactNode; params: { id: number } }) => (
     <div className="mb-8">
-        <TestResultHeader type="exam" id={params.id}>
+        <TestResultHeader type="exam" id={params?.id}>
             {children}
         </TestResultHeader>
     </div>

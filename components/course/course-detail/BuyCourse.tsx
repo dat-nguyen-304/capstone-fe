@@ -16,11 +16,14 @@ import {
     ModalFooter,
     useDisclosure,
     SelectItem,
-    Select
+    Select,
+    Checkbox
 } from '@nextui-org/react';
 import { transactionApi } from '@/api-client';
 import { Transaction } from '@/types';
 import { useState } from 'react';
+import BuyCourseRuleModal from '@/components/rule/BuyCourseRuleModal';
+import { toast } from 'react-toastify';
 interface BuyCourseProps {
     buyCourse: any;
 }
@@ -28,24 +31,29 @@ interface BuyCourseProps {
 const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
     const { user } = useUser();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+    const [openBuyCourseRule, setOpenBuyCourseRule] = useState(false);
     const [bankCode, setBankCode] = useState<string>('ncb');
     const handleConfirmButtonClick = async () => {
         // Assuming you have the necessary data for the payload
-        const paymentPayload: Transaction = {
-            courseId: buyCourse?.id,
-            bankCode: bankCode,
-            language: 'vn'
-        };
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else {
+            const paymentPayload: Transaction = {
+                courseId: buyCourse?.id,
+                bankCode: bankCode,
+                language: 'vn'
+            };
 
-        try {
-            const res = await transactionApi.createPayment(paymentPayload);
-            // window.location.href = res?.data;
-            // window.open(res?.data, '_blank');
-            window.open(res?.data);
-            onOpenChange();
-        } catch (error) {
-            // Handle errors here, e.g., show an error message
-            console.error('Error creating payment:', error);
+            try {
+                const res = await transactionApi.createPayment(paymentPayload);
+                window.location.href = res?.data;
+                // window.open(res?.data, '_blank');
+                // window.open(res?.data);
+                onOpenChange();
+            } catch (error) {
+                // Handle errors here, e.g., show an error message
+                console.error('Error creating payment:', error);
+            }
         }
     };
 
@@ -116,6 +124,24 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                                         United States (US)
                                     </SelectItem>
                                 </Select>
+                                <div className="flex items-start ">
+                                    <div className="flex items-center h-5">
+                                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
+                                    </div>
+                                    <label
+                                        htmlFor="remember"
+                                        className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                    >
+                                        Tôi đồng ý với{' '}
+                                        <a
+                                            className="text-blue-600 hover:underline dark:text-blue-500 cursor-pointer"
+                                            onClick={() => setOpenBuyCourseRule(true)}
+                                        >
+                                            chính sách và điều khoản của CEPA
+                                        </a>
+                                        .
+                                    </label>
+                                </div>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
@@ -128,6 +154,11 @@ const BuyCourse: React.FC<BuyCourseProps> = ({ buyCourse }) => {
                         </>
                     )}
                 </ModalContent>
+                <BuyCourseRuleModal
+                    isOpen={openBuyCourseRule}
+                    onOpen={() => setOpenBuyCourseRule(true)}
+                    onClose={() => setOpenBuyCourseRule(false)}
+                />
             </Modal>
         </div>
     );

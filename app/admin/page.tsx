@@ -23,7 +23,7 @@ const AdminDashboard: React.FC = () => {
         queryKey: ['adminDashboard'],
         queryFn: dashboardApi.getAll
     });
-    console.log(dashboardData);
+
     if (!dashboardData) return <Loader />;
     return (
         <div>

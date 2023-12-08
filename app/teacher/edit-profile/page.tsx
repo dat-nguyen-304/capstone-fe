@@ -60,12 +60,9 @@ const Profile: React.FC = () => {
     }, [teacherData]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const onSubmit = async (values: any) => {
-        console.log({ values });
         const loading = toast.loading('Đang cập nhật');
         setIsSubmitting(true);
         try {
-            console.log(values);
-
             const formDataPayload = new FormData();
             if (uploadedFiles !== undefined) {
                 formDataPayload.append('avatar', uploadedFiles[0]);
@@ -76,7 +73,6 @@ const Profile: React.FC = () => {
             toast.success('Cập nhật thành công');
             setIsSubmitting(false);
             refetch();
-            console.log({ res });
         } catch (error) {
             console.log({ error });
             toast.dismiss(loading);
@@ -87,7 +83,6 @@ const Profile: React.FC = () => {
 
     const defaultSubjectIds: number[] =
         data?.filter(subject => teacherData?.subject?.includes(subject.name)).map(subject => subject.id) ?? [];
-    console.log(defaultSubjectIds[0]);
 
     if (!teacherData) return <Loader />;
     return (

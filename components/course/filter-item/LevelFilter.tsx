@@ -12,7 +12,6 @@ const LevelFilter: React.FC<LevelFilterProps> = ({ setFilterLevel, filterLevel }
     const handleFilterLevel = (value: any) => {
         setFilterLevel(value);
     };
-    console.log(filterLevel);
 
     return (
         <CheckboxGroup size="sm" label="" className="mb-4" defaultValue={filterLevel} onValueChange={handleFilterLevel}>

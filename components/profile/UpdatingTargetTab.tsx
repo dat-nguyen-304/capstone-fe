@@ -102,8 +102,6 @@ const UpdatingTargetTab: React.FC<UpdatingTargetTabProps> = ({ target, refetch }
     };
 
     // console.log({ subjects: getSubjectList(target.id) });
-    console.log({ target });
-    console.log({ subjectTarget });
 
     if (!target) return <Loader />;
 

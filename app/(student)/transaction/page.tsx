@@ -98,7 +98,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
     const handleRequestRefund = async (id: number) => {
         let toastLoading;
-        console.log({ description, id });
+
         try {
             onClose();
             onInputClose();

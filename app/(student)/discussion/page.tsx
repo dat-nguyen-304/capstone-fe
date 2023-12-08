@@ -102,7 +102,6 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
         return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
-    console.log(statusFilter);
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));

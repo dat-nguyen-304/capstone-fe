@@ -11,7 +11,7 @@ import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
 import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
-import { commentsVideoApi, examApi, progressVideoApi, reactVideoApi, videoApi } from '@/api-client';
+import { commentsVideoApi, courseApi, examApi, progressVideoApi, reactVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { ReportModal } from '@/components/modal';
@@ -57,6 +57,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryKey: ['video-quiz-by-course', { params: params?.id[0] }],
         queryFn: () => examApi.getQuizCourseById(params?.id[0])
     });
+
+    const { data: courseData, refetch: courseRefetch } = useQuery<any>({
+        queryKey: ['my-course-video-detail', { params: params?.id[0] }],
+        queryFn: () => courseApi.getCourseById(params?.id[0])
+    });
+
     useEffect(() => {
         if (quizzesData?.data || data?.videoItemResponses) {
             const mergedList = [...(data?.videoItemResponses || []), ...(quizzesData?.data || [])].sort((a, b) => {
@@ -73,10 +79,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         const videoDuration = data?.duration || 0;
         const threshold = 5;
         setCurrentTime(timeString);
-        console.log(videoDuration - progress.playedSeconds <= threshold);
-        console.log(videoDuration);
-        console.log(data?.isWatched);
-        console.log(hasCalledProgressApi);
 
         if (videoDuration - progress.playedSeconds <= threshold && !isWatched && !hasCalledProgressApi) {
             callProgressApi(params?.id[1]);
@@ -91,6 +93,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             const res = await progressVideoApi.progressApi(videoId);
             if (res) {
                 videoRefetch();
+                courseRefetch();
             }
         } catch (error) {
             console.error('Error calling progress API:', error);
@@ -141,9 +144,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                     setNumberLike(prev => prev - 1);
                 }
             }
-            // console.log(res);
-
-            // console.log(ratingCourse);
         } catch (error) {
             console.error('Error submitting feedback:', error);
         }
@@ -161,7 +161,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     if (!data) return <Loader />;
 
     return (
-        <VideoHeader courseId={params?.id[0]} id={params?.id[1]}>
+        <VideoHeader type="video" id={params?.id[1]} course={courseData}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">

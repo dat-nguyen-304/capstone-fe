@@ -7,7 +7,7 @@ import AddQuestionModal from '@/components/test/AddQuestionModal';
 import TestEditItem from '@/components/test/TestEditItem';
 import { Course, Subject } from '@/types';
 // import EditExamItem from '@/components/quiz/EditExamItem';
-import { Button, Select, SelectItem, useDisclosure } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -21,6 +21,7 @@ import * as XLSX from 'xlsx';
 import { FiDelete } from 'react-icons/fi';
 import { BiUpArrowAlt } from 'react-icons/bi';
 import { handleFileSelection, handleFileSubmitSelection } from '@/utils';
+import QuizRuleModal from '@/components/rule/QuizRuleModal';
 
 interface EditQuizProps {
     params: { id: number };
@@ -78,6 +79,8 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
     const [courseDetail, setCourseDetail] = useState<any>();
     const [excelFile, setExcelFile] = useState(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [openQuizRule, setOpenQuizRule] = useState(false);
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
     const { data: examDetail, isLoading } = useQuery<any>({
         queryKey: ['exam-detail', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
@@ -110,14 +113,14 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
         if (selectedOptionCourse == 'OLD') {
             if (selectedCourse) {
                 const courseDetails = getCourseById(selectedCourse, 'OLD');
-                console.log('Selected Course Details:', courseDetails);
+
                 setCourseDetail(courseDetails);
             }
         }
         if (selectedOptionCourse == 'NEW') {
             if (selectedCourse) {
                 const courseDetails = getCourseById(selectedCourse, 'NEW');
-                console.log('Selected Course Details:', courseDetails);
+
                 setCourseDetail(courseDetails);
             }
         }
@@ -228,37 +231,40 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
     };
 
     const updateExam = async (formData: any) => {
-        setIsSubmitting(true);
-        const toastLoading = toast.loading('Đang xử lí yêu cầu');
-        try {
-            const payload = {
-                name: formData?.name,
-                description: formData?.description || 'Miêu Tả',
-                duration: Number(formData?.duration || 60),
-                courseId: selectedCourse,
-                subject: getSubjectNameById(selectedSubject),
-                examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
-                questionList: questions.map(({ id, ...rest }) => rest)
-            };
-            console.log(payload);
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else {
+            setIsSubmitting(true);
+            const toastLoading = toast.loading('Đang xử lí yêu cầu');
+            try {
+                const payload = {
+                    name: formData?.name,
+                    description: formData?.description || 'Miêu Tả',
+                    duration: Number(formData?.duration || 60),
+                    courseId: selectedCourse,
+                    subject: getSubjectNameById(selectedSubject),
+                    examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
+                    questionList: questions.map(({ id, ...rest }) => rest)
+                };
+                console.log(payload);
 
-            // Call the API to update the exam
-            const response = await examApi.updateExam(params?.id, payload);
+                // Call the API to update the exam
+                const response = await examApi.updateExam(params?.id, payload);
 
-            if (response) {
-                toast.success('Cập nhật bài quiz thành công');
-                router.push('/teacher/quiz');
+                if (response) {
+                    toast.success('Cập nhật bài quiz thành công');
+                    router.push('/teacher/quiz');
+                }
+                setIsSubmitting(false);
+                toast.dismiss(toastLoading);
+            } catch (error) {
+                toast.dismiss(toastLoading);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+
+                // Handle any errors that occur during the API call
+                setIsSubmitting(false);
+                console.error('Error creating exam:', error);
+                // You can also show a user-friendly error message
             }
-            setIsSubmitting(false);
-            toast.dismiss(toastLoading);
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-
-            // Handle any errors that occur during the API call
-            setIsSubmitting(false);
-            console.error('Error creating exam:', error);
-            // You can also show a user-friendly error message
         }
     };
 
@@ -453,6 +459,20 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                         </Button>
                     )}
                 </div>
+                <div className="flex items-start mb-4 mt-8 sm:mt-12">
+                    <div className="flex items-center h-5">
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
+                    </div>
+                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Tôi đồng ý với{' '}
+                        <a
+                            className="text-blue-600 hover:underline dark:text-blue-500"
+                            onClick={() => setOpenQuizRule(true)}
+                        >
+                            chính sách và điều khoản của CEPA.
+                        </a>
+                    </label>
+                </div>
                 <Button
                     color="warning"
                     type="submit"
@@ -463,6 +483,11 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                     Xác nhận thay đổi
                 </Button>
             </form>
+            <QuizRuleModal
+                isOpen={openQuizRule}
+                onOpen={() => setOpenQuizRule(true)}
+                onClose={() => setOpenQuizRule(false)}
+            />
         </div>
     );
 };

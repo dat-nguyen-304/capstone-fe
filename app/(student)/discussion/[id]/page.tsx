@@ -107,7 +107,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const onSubmit = async (formData: any) => {
         try {
             setIsSubmitting(true);
-            console.log(formData.response);
+
             const formDataWithImage = new FormData();
             formDataWithImage.append('content', formData.response);
             formDataWithImage.append('commentParentId', '-1');

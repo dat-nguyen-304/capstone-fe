@@ -97,7 +97,7 @@ const Courses: React.FC<CoursesProps> = () => {
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         let toastLoading;
-        console.log({ description, id, verifyStatus });
+
         try {
             onClose();
             onInputClose();
@@ -107,7 +107,6 @@ const Courses: React.FC<CoursesProps> = () => {
                 reason: description,
                 verifyStatus
             });
-            console.log(res);
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {
@@ -239,8 +238,6 @@ const Courses: React.FC<CoursesProps> = () => {
                 return cellValue;
         }
     }, []);
-
-    console.log({ courses });
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">

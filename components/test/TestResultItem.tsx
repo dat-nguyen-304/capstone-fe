@@ -16,8 +16,6 @@ const TestResultItem = forwardRef(function MyComponent(
     { questions, index }: TestResultItemProps,
     ref: ForwardedRef<HTMLLIElement>
 ) {
-    console.log(questions);
-    console.log(questions?.statement);
     const isCorrectAnswer = questions?.selectedAnswer === questions?.question?.correctAnswer;
     return (
         <li className="mt-4" ref={ref}>

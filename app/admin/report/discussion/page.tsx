@@ -60,12 +60,12 @@ const reports = [
 ];
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
     { name: 'TIÊU ĐỀ', uid: 'title' },
     { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: true },
     { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: true },
     { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
+    { name: 'NGÀY', uid: 'createTime', sortable: true },
     // { name: 'MÔ TẢ', uid: 'description' },
     // { name: 'CHỦ ĐỀ', uid: 'title' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
@@ -91,7 +91,7 @@ const Reports: React.FC<ReportsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const visibleColumns = new Set(['id', 'title', 'type', 'reportMsg', 'ownerFullName', 'status', 'action']);
+    const visibleColumns = new Set(['title', 'type', 'reportMsg', 'ownerFullName', 'status', 'createTime', 'action']);
     const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     const [reportDiscussions, setReportDiscussions] = useState<any[]>([]);
     const [declineId, setDeclineId] = useState<number>();
@@ -108,8 +108,8 @@ const Reports: React.FC<ReportsProps> = () => {
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
                 page - 1,
                 rowsPerPage,
-                'id',
-                'ASC'
+                'createTime',
+                'DESC'
             )
     });
 
@@ -222,6 +222,20 @@ const Reports: React.FC<ReportsProps> = () => {
                             : 'Vô hiệu'}
                     </Chip>
                 );
+            case 'createTime':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false
+                })?.format(dateValue);
+
+                return formattedDate;
             case 'action':
                 return (
                     <div className="relative flex justify-start items-center gap-2">

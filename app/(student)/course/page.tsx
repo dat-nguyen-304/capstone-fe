@@ -38,7 +38,6 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
         maxRate: 0,
         levelList: []
     });
-    console.log(selectedFilterALL);
 
     const { status, error, data, isPreviousData, refetch } = useQuery({
         queryKey: ['courses', { page, searchTerm, type, selectedFilterALL }],
@@ -94,7 +93,6 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     };
     const handleSearch = (newSearchTerm: string) => {
         setSearchTerm(newSearchTerm);
-        console.log(searchTerm);
 
         setPage(1);
     };

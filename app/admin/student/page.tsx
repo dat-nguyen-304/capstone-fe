@@ -82,7 +82,7 @@ const Students: React.FC<StudentsProps> = () => {
 
     const handleBanUser = async (id: number) => {
         let toastLoading;
-        console.log({ description, id });
+
         try {
             onClose();
             onInputClose();

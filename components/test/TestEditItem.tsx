@@ -41,13 +41,10 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
     const handleAddQuestion = (question: any) => {};
     const handleEditOpen = (index: number) => {
         setEditIndex(index);
-        console.log('questions');
-        console.log(questions);
 
         setEditQuestion(questions);
         onOpen(); // Open the modal
     };
-    console.log(questions);
 
     return (
         <li className="mt-4">

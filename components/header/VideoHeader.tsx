@@ -16,11 +16,13 @@ import { courseApi, examApi, reportVideoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 interface VideoHeaderProps {
     children: React.ReactNode;
-    id?: number;
-    courseId?: number;
+    id: number;
+
+    course: any;
+    type: 'video' | 'quiz';
 }
 
-const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => {
+const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, type, course }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -30,6 +32,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
         onClose,
         onContentType,
         onReportType,
+        contentType,
         onDescription,
         onFile,
         description,
@@ -37,25 +40,16 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
         file
     } = useReportModal();
     const router = useRouter();
-    const { data: courseData } = useQuery<any>({
-        queryKey: ['my-course-detail', { courseId }],
-        queryFn: () => {
-            if (courseId) {
-                return courseApi.getCourseById(courseId);
-            }
-        }
-    });
+
+    console.log(course);
+
     const { data: quizCourse } = useQuery<any>({
-        queryKey: ['my-course-quiz', { courseId }],
-        queryFn: () => {
-            if (courseId) {
-                return examApi.getQuizCourseById(courseId);
-            }
-        }
+        queryKey: ['my-course-quiz', { course }],
+        queryFn: () => examApi.getQuizCourseById(course?.id)
     });
     const goBack = () => {
-        if (courseId) {
-            router.push(`/my-course/${courseId}`);
+        if (course?.id) {
+            router.push(`/my-course/${course?.id}`);
         } else {
             router.back();
         }
@@ -86,31 +80,43 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
         let toastLoading;
         try {
             toastLoading = toast.loading('Đang xử lí yêu cầu');
-            const reportRequest = {
-                content: description,
-                objectId: id,
-                reportType: reportType.toUpperCase()
-            };
-
             const formDataPayload = new FormData();
-            formDataPayload.append(
-                'reportRequest',
-                new Blob([JSON.stringify(reportRequest)], { type: 'application/json' })
-            );
             if (file) {
-                formDataPayload.append('image', file); // assuming 'image' is the field name expected by the server
+                formDataPayload.append('image', file);
             }
-            console.log(id);
-            const response = await reportVideoApi.createVideoReport(formDataPayload);
+            if (contentType == 'video') {
+                const reportRequest = {
+                    content: description,
+                    objectId: id,
+                    reportType: reportType.toUpperCase()
+                };
+                formDataPayload.append(
+                    'reportRequest',
+                    new Blob([JSON.stringify(reportRequest)], { type: 'application/json' })
+                );
+                const response = await reportVideoApi.createVideoReport(formDataPayload);
 
-            if (response) {
-                onDescription('');
-                onReportType('integrity');
-                onFile(null);
-                toast.success('Báo cáo video thành công');
-                onClose();
+                if (response) {
+                    onDescription('');
+                    onReportType('integrity');
+                    onFile(null);
+                    toast.success('Báo cáo video thành công');
+                    onClose();
+                }
+                toast.dismiss(toastLoading);
+            } else if (contentType == 'quiz') {
+                formDataPayload.append('reportMsg', description);
+                formDataPayload.append('reportType', reportType.toUpperCase());
+                const response = await examApi.createExamReport(formDataPayload, id);
+                if (response) {
+                    onDescription('');
+                    onReportType('integrity');
+                    onFile(null);
+                    toast.success('Bài kiểm tra được báo cáo thành công');
+                    onClose();
+                }
+                toast.dismiss(toastLoading);
             }
-            toast.dismiss(toastLoading);
         } catch (error) {
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
@@ -118,7 +124,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
         }
     };
     const openReportModal = () => {
-        onContentType('video');
+        onContentType(type);
         onOpen();
     };
 
@@ -142,12 +148,12 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
                         alt=""
                         className="hidden sm:block"
                     />
-                    <p className="text-white text-xs sm:text-sm">{courseData?.name || 'Khóa học lấy gốc thần tốc'}</p>
+                    <p className="text-white text-xs sm:text-sm">{course?.name || 'Khóa học lấy gốc thần tốc'}</p>
                 </div>
                 <div className="flex justify-center items-center text-white">
                     <div className="hidden lg:block">
                         <span className="inline-flex items-center text-xs">
-                            <span className="font-bold mr-1">{courseData?.totalVideo || '20'}</span>
+                            <span className="font-bold mr-1">{course?.totalVideo || '20'}</span>
                             <span>Bài giảng</span>
                             <Image src="/video-number/blue.svg" width={30} height={30} alt="" />
                         </span>
@@ -162,7 +168,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, courseId }) => 
                             <span className="inline-flex items-center text-xs">
                                 <span className="mr-1">Đã học</span>
                                 <span className="font-bold">
-                                    {`${courseData?.totalCompleted || 5} /${courseData?.totalVideo || 10}`}
+                                    {`${course?.totalCompleted || 5} / ${course?.totalVideo || 10}`}
                                 </span>
                                 <Image src="/video-number/green.svg" width={30} height={30} alt="" />
                             </span>

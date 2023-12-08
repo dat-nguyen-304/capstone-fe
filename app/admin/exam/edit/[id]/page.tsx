@@ -191,7 +191,6 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                 examType: examType,
                 questionList: questions.map(({ id, ...rest }) => rest)
             };
-            console.log(payload);
 
             // Call the API to update the exam
             const response = await examApi.updateExam(params?.id, payload);

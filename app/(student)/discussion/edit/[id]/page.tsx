@@ -83,9 +83,6 @@ const EditPost: React.FC<EditPostProps> = ({ params }) => {
                 toast.success('Chỉnh sửa thành công');
                 router.push('/discussion/my-post');
             }
-            // console.log(formData.title);
-            // console.log(formData.content);
-            // console.log(selectedTopic);
         } catch (error) {
             toast.dismiss(toastLoading);
             setIsSubmitting(false);

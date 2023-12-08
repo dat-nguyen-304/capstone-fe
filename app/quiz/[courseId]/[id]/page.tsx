@@ -9,7 +9,7 @@ import { BsBook, BsQuestionOctagon } from 'react-icons/bs';
 import { CiTimer } from 'react-icons/ci';
 import Link from 'next/link';
 import { FiRotateCw } from 'react-icons/fi';
-import { examApi, videoApi } from '@/api-client';
+import { courseApi, examApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import TestResultLine from '@/components/test/TestResultLine';
 import Loader from '@/components/Loader';
@@ -40,7 +40,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
     const showDrawerVideoList = () => {
         setOpenVideoList(true);
     };
-    console.log(params?.id);
+
     const {
         data: quizData,
         isLoading,
@@ -57,6 +57,10 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
         queryKey: ['my-course-videos', { params: params?.courseId }],
         queryFn: () => videoApi.getByCourseId(params?.courseId, 0, 100, 'id', 'ASC')
     });
+    const { data: courseData, refetch: courseRefetch } = useQuery<any>({
+        queryKey: ['my-course-quiz-detail', { params: params?.courseId }],
+        queryFn: () => courseApi.getCourseById(params?.courseId)
+    });
     useEffect(() => {
         if (quizzesData?.data || videosCourse?.data) {
             const mergedList = [...(videosCourse?.data || []), ...(quizzesData?.data || [])].sort((a, b) => {
@@ -67,7 +71,6 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
             setListVideo(mergedList);
         }
     }, [quizzesData, videosCourse]);
-    console.log(listVideo);
 
     const {
         data: quizzesSubmission,
@@ -77,7 +80,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
         queryKey: ['quiz-history-submission-info', { params: params.id, page }],
         queryFn: () => examApi.getExamSubmissionByExamId(params?.id, page - 1, 5)
     });
-    console.log(quizData);
+
     useEffect(() => {
         if (quizzesSubmission?.data) {
             setSubmissions(quizzesSubmission.data);
@@ -95,7 +98,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     if (!quizData) return <Loader />;
     return (
-        <VideoHeader courseId={params?.courseId}>
+        <VideoHeader type="quiz" id={params?.id} course={courseData}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
@@ -146,6 +149,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                                               type="quiz"
                                               index={submissions.length - index}
                                               examId={params?.id}
+                                              courseId={params?.courseId}
                                               examsSubmissionInfo={examsSubmissionInfo}
                                           />
                                       ))

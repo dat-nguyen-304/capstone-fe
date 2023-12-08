@@ -75,8 +75,6 @@ const floatToTime = (durationFloat: number): string => {
 
 const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     const router = useRouter();
-    console.log(type);
-    console.log(video);
 
     let detailPage = '',
         teacherStatus = '',

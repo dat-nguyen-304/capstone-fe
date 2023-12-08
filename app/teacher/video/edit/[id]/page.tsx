@@ -3,7 +3,7 @@
 import { InputText } from '@/components/form-input';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { BsArrowLeft } from 'react-icons/bs';
+import VideoRuleModal from '@/components/rule/VideoRuleModal';
 interface UploadVideoProps {
     params: { id: number };
 }
@@ -26,7 +27,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
         queryKey: ['course'],
         queryFn: () => videoApi.getVideoDetailByIdForAdminAndTeacher(params?.id)
     });
-
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [uploadedImageFile, setUploadedImageFile] = useState<FileWithPath>();
     const onImageDrop = useCallback((acceptedFile: FileWithPath[]) => {
         setUploadedImageFile(acceptedFile[0]);
@@ -34,7 +35,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
     const [selectedVideoStatus, setSelectedVideoStatus] = useState<string>('PUBLIC');
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
     const { getRootProps: getImageRootProps, getInputProps: getImageInputProps }: DropzoneRootProps = useDropzone({
         onDrop: onImageDrop,
         accept: {
@@ -50,7 +51,6 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
             description: data?.description
         }
     });
-    console.log(data);
 
     useEffect(() => {
         if (data) {
@@ -62,34 +62,35 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
     }, [data]);
 
     const onSubmit = async (formData: any) => {
-        let toastLoading;
-        try {
-            setIsSubmitting(true);
-            toastLoading = toast.loading('Đang xử lí yêu cầu');
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else {
+            let toastLoading;
+            try {
+                setIsSubmitting(true);
+                toastLoading = toast.loading('Đang xử lí yêu cầu');
 
-            const videoRequest = {
-                name: formData?.name,
-                videoId: params?.id,
-                description: formData?.description,
-                videoStatus: selectedVideoStatus
-            };
+                const videoRequest = {
+                    name: formData?.name,
+                    videoId: params?.id,
+                    description: formData?.description,
+                    videoStatus: selectedVideoStatus
+                };
 
-            console.log(videoRequest);
+                const response = await videoApi.updateVideo(videoRequest);
 
-            const response = await videoApi.updateVideo(videoRequest);
-
-            if (response) {
-                setIsSubmitting(false);
+                if (response) {
+                    setIsSubmitting(false);
+                    toast.dismiss(toastLoading);
+                    toast.success('Video đã được chỉnh sửa thành công');
+                    router.push('/teacher/video/my-video');
+                }
+            } catch (error) {
                 toast.dismiss(toastLoading);
-                toast.success('Video đã được chỉnh sửa thành công');
-                router.push('/teacher/video/my-video');
+                setIsSubmitting(false);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.error('Error creating course:', error);
+                // Handle error
             }
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            setIsSubmitting(false);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error creating course:', error);
-            // Handle error
         }
     };
     if (!data) return <Loader />;
@@ -161,6 +162,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                     <div className="col-span-4 sm:grid grid-cols-2 gap-2 my-4">
                         <div className="col-span-1 my-4 sm:my-0">
                             <InputText
+                                isRequired
                                 color="primary"
                                 variant="bordered"
                                 name="name"
@@ -171,6 +173,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                         </div>
                         <div className="col-span-1 my-4 sm:my-0">
                             <Select
+                                isRequired
                                 size="sm"
                                 label="Trạng Thái Video"
                                 color="primary"
@@ -194,11 +197,11 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                 </div>
                 <div className="flex items-start mb-8 mt-20 sm:mt-16">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        <a className="text-blue-600 hover:underline dark:text-blue-500" onClick={onOpen}>
                             chính sách và điều khoản của CEPA.
                         </a>
                     </label>
@@ -207,6 +210,7 @@ const UploadVideo: React.FC<UploadVideoProps> = ({ params }) => {
                     Xác nhận thay đổi
                 </Button>
             </form>
+            <VideoRuleModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
         </div>
     );
 };

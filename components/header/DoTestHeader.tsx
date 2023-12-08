@@ -12,6 +12,8 @@ import { SafeUser } from '@/types';
 import { useEffect, useState } from 'react';
 import { examApi } from '@/api-client';
 import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 interface DoTestHeaderProps {
     type: 'quiz' | 'exam';
@@ -23,6 +25,7 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
     const currentUser = useUser();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const router = useRouter();
     const {
         isOpen,
         onOpen,
@@ -35,7 +38,10 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
         reportType,
         file
     } = useReportModal();
-
+    const { data: examData, status } = useQuery<any>({
+        queryKey: ['exam-header-detail-info', { id }],
+        queryFn: () => examApi.getExamById(id)
+    });
     useEffect(() => {
         const handleReload = async () => {
             if (!currentUser.user && user) {
@@ -105,14 +111,18 @@ const DoTestHeader: React.FC<DoTestHeaderProps> = ({ type, id, children }) => {
                         className="hidden sm:block"
                     />
                     <span className="text-sm max-w-[120px] sm:max-w-[300px] xl:max-w-[600px] truncate">
-                        Bài kiểm tra
+                        {examData?.name || 'Bài kiểm tra'}
                     </span>
                 </div>
                 <div className="">
                     <Button size="sm" className="mr-4" color="danger" variant="solid" onClick={openReportModal}>
                         Báo cáo
                     </Button>
-                    <Button as={Link} href={type === 'quiz' ? `/quiz/${id}` : `/exam/${id}`} size="sm">
+                    {/* <Button as={Link} href={type === 'quiz' ? `/quiz/${id}` : `/exam/${id}`} size="sm">
+                        Thoát
+                    </Button> */}
+
+                    <Button onClick={() => router.back()} size="sm">
                         Thoát
                     </Button>
                 </div>

@@ -125,8 +125,6 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                     courseContent?.id,
                     case1
                 );
-                console.log(case1);
-                console.log(case2);
 
                 const res = await examApi.sortQuiz(case2);
                 if (res) {

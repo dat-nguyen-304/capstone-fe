@@ -86,8 +86,6 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
             )
     });
 
-    console.log(topicsData);
-
     useEffect(() => {
         if (topicsData?.data) {
             setTopics(topicsData.data);

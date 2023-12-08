@@ -41,7 +41,7 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
         const createAttempt = async () => {
             try {
                 const res = await examApi.createAttempt(params?.id);
-                console.log(res);
+
                 const data = res.data;
                 if (data) {
                     setQuestions(data?.selectionList);
@@ -100,10 +100,10 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
         onClose();
         try {
             setExamSubmitted(true);
-            console.log(selectedAnswers);
+
             const res = await examApi.submitExam(params?.id, selectedAnswers);
             setIsSubmitting(false);
-            console.log(res);
+
             if (res) {
                 router?.push(`/quiz/${params?.courseId}/${params?.id}`);
             }

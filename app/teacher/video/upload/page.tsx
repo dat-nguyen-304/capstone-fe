@@ -29,6 +29,7 @@ import { Course } from '@/types';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import VideoRuleModal from '@/components/rule/VideoRuleModal';
 
 const UploadVideo: React.FC = () => {
     const router = useRouter();
@@ -36,6 +37,8 @@ const UploadVideo: React.FC = () => {
     const [optionCourse, setOptionCourse] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [courses, setCourses] = useState<any[]>([]);
+    const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
+    const [openVideo, setOpenVideo] = useState(false);
     const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             name: '',
@@ -138,74 +141,68 @@ const UploadVideo: React.FC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const onSubmit = async (formData: any) => {
-        const toastLoading = toast.loading('Đang xử lí yêu cầu');
-        try {
-            setIsSubmitting(true);
-            const videoRequest = {
-                name: formData.name,
-                courseId: selectedCourse,
-                description: formData.description,
-                videoStatus: selectedStatusVideo,
-                order: 0
-            };
-            const formDataPayload = new FormData();
-            formDataPayload.append(
-                'videoRequest',
-                new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
-            );
-            if (uploadedVideoFile) {
-                formDataPayload.append('video', uploadedVideoFile);
-            }
-
-            if (uploadedImageFile) {
-                formDataPayload.append('thumbnail', uploadedImageFile);
-            }
-
-            if (uploadedAttachedFiles !== undefined) {
-                formDataPayload.append('material', uploadedAttachedFiles[0]);
-            }
-            let apiUrl = '';
-
-            if (selectedOptionCourse == 'NEW') {
-                const response = await videoApi.createVideoForNewCourse(formDataPayload);
-                // apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos';
-                // const response = await axios.post(apiUrl, formDataPayload, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //         // Add any additional headers as needed (e.g., authorization)
-                //         // 'Authorization': `Bearer ${yourAuthToken}`,
-                //     }
-                // });
-                if (response) {
-                    setIsSubmitting(false);
-                    toast.success('Video đã được tạo thành công');
-                    router.push('/teacher/video/my-video-draft');
+        if (!isCheckedPolicy) toast.error('Bạn cần đồng ý với điều khoản và chính sách của CEPA');
+        else if (!uploadedVideoFile) {
+            toast.error('Bạn cần chọn video để đăng tải');
+        } else if (!uploadedImageFile) {
+            toast.error('Bạn cần chọn thumbnail cho video');
+        } else {
+            const toastLoading = toast.loading('Đang xử lí yêu cầu');
+            try {
+                setIsSubmitting(true);
+                const videoRequest = {
+                    name: formData.name,
+                    courseId: selectedCourse,
+                    description: formData.description,
+                    videoStatus: selectedStatusVideo,
+                    order: 0
+                };
+                const formDataPayload = new FormData();
+                formDataPayload.append(
+                    'videoRequest',
+                    new Blob([JSON.stringify(videoRequest)], { type: 'application/json' })
+                );
+                if (uploadedVideoFile) {
+                    formDataPayload.append('video', uploadedVideoFile);
                 }
-            } else if (selectedOptionCourse == 'OLD') {
-                apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos/teacher/upload';
-                const response = await videoApi.createVideo(formDataPayload);
-                // const response = await axios.put(apiUrl, formDataPayload, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //         // Add any additional headers as needed (e.g., authorization)
-                //         // 'Authorization': `Bearer ${yourAuthToken}`,
-                //     }
-                // });
-                if (response) {
-                    setIsSubmitting(false);
-                    toast.success('Video đã được tạo thành công');
-                    router.push('/teacher/video/my-video-draft');
+
+                if (uploadedImageFile) {
+                    formDataPayload.append('thumbnail', uploadedImageFile);
                 }
-            } else {
-                toast.error('Cần phải chọn khóa học để tạo video');
+
+                if (uploadedAttachedFiles !== undefined) {
+                    formDataPayload.append('material', uploadedAttachedFiles[0]);
+                }
+                let apiUrl = '';
+
+                if (selectedOptionCourse == 'NEW') {
+                    const response = await videoApi.createVideoForNewCourse(formDataPayload);
+
+                    if (response) {
+                        setIsSubmitting(false);
+                        toast.success('Video đã được tạo thành công');
+                        router.push('/teacher/video/my-video-draft');
+                    }
+                } else if (selectedOptionCourse == 'OLD') {
+                    apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos/teacher/upload';
+                    const response = await videoApi.createVideo(formDataPayload);
+
+                    if (response) {
+                        setIsSubmitting(false);
+                        toast.success('Video đã được tạo thành công');
+                        router.push('/teacher/video/my-video-draft');
+                    }
+                } else {
+                    toast.error('Cần phải chọn khóa học để tạo video');
+                }
+                toast.dismiss(toastLoading);
+            } catch (error) {
+                toast.dismiss(toastLoading);
+                setIsSubmitting(false);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.error('Error creating course:', error);
+                // Handle error
             }
-            toast.dismiss(toastLoading);
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            setIsSubmitting(false);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error creating course:', error);
-            // Handle error
         }
     };
     if (isActivatedCourseLoading || isUpdatingCourseLoading) return <Loader />;
@@ -404,11 +401,14 @@ const UploadVideo: React.FC = () => {
                 </div>
                 <div className="flex items-start mb-8 mt-16">
                     <div className="flex items-center h-5">
-                        <Checkbox />
+                        <Checkbox isSelected={isCheckedPolicy} onValueChange={setIsCheckPolicy} />
                     </div>
                     <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Tôi đồng ý với{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+                        <a
+                            className="text-blue-600 hover:underline dark:text-blue-500"
+                            onClick={() => setOpenVideo(true)}
+                        >
                             chính sách và điều khoản của CEPA.
                         </a>
                     </label>
@@ -417,6 +417,7 @@ const UploadVideo: React.FC = () => {
                     Xác nhận video mới
                 </Button>
             </form>
+            <VideoRuleModal isOpen={openVideo} onOpen={() => setOpenVideo(true)} onClose={() => setOpenVideo(false)} />
         </div>
     );
 };

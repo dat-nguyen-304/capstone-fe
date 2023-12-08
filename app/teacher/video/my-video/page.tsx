@@ -105,7 +105,6 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
             top: 0
         });
     };
-    console.log(videos);
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">

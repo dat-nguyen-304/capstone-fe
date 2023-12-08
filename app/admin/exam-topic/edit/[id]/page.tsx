@@ -29,7 +29,6 @@ const EditExamTopic: React.FC<EditExamTopicProps> = ({ params }) => {
         queryKey: ['topicExamDetail', { params: params?.id }],
         queryFn: () => examApi.getTopicExamById(params?.id)
     });
-    console.log(examTopic);
 
     const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {

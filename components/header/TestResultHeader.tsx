@@ -11,6 +11,9 @@ import { handleUserReload } from '@/utils/handleUserReload';
 import { useEffect, useState } from 'react';
 import { ReportModal } from '../modal';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { examApi } from '@/api-client';
+import { toast } from 'react-toastify';
 
 interface TestResultHeaderProps {
     type: 'quiz' | 'exam';
@@ -23,7 +26,23 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
     const router = useRouter();
     const [user, setUser] = useState<SafeUser | null>(currentUser.user);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { onOpen, onContentType } = useReportModal();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        onContentType,
+        onReportType,
+        onDescription,
+        onFile,
+        description,
+        reportType,
+        file
+    } = useReportModal();
+
+    const { data: examData, status } = useQuery<any>({
+        queryKey: ['exam-submission-header-detail-info', { id }],
+        queryFn: () => examApi.getExamById(id)
+    });
 
     useEffect(() => {
         const handleReload = async () => {
@@ -48,10 +67,36 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
     }, [currentUser.user]);
 
     const openReportModal = () => {
-        onContentType('discussion');
+        onContentType('exam');
         onOpen();
     };
-    const onSubmitReport = async () => {};
+    const onSubmitReport = async () => {
+        let toastLoading;
+        try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const formDataWithImage = new FormData();
+            formDataWithImage.append('reportMsg', description);
+            formDataWithImage.append('reportType', reportType.toUpperCase());
+            if (file) {
+                formDataWithImage.append('image', file); // assuming 'image' is the field name expected by the server
+            }
+
+            const response = await examApi.createExamReport(formDataWithImage, id);
+
+            if (response) {
+                onDescription('');
+                onReportType('integrity');
+                onFile(null);
+                toast.success('Bài kiểm tra được báo cáo thành công');
+                onClose();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error creating course:', error);
+        }
+    };
     if (isLoading) return <Loader />;
 
     if (user?.role !== 'STUDENT') return <NotFound />;
@@ -68,7 +113,7 @@ const TestResultHeader: React.FC<TestResultHeaderProps> = ({ type, id, children 
                         className="hidden sm:block"
                     />
                     <span className="text-sm max-w-[120px] sm:max-w-[300px] xl:max-w-[600px] truncate">
-                        Kết Quả Bài Kiểm Tra
+                        Kết Quả {examData?.name || 'Bài Kiểm Tra'}
                     </span>
                 </div>
                 <div className="">

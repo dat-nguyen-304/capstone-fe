@@ -109,8 +109,6 @@ const Exams: React.FC<ExamsProps> = () => {
         });
     };
 
-    console.log(exams);
-
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
