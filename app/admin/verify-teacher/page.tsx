@@ -17,16 +17,14 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
+import { teacherApi, userApi } from '@/api-client';
+import { useQuery } from '@tanstack/react-query';
+import { TeacherType } from '@/types';
 import { Spin } from 'antd';
 import { useCustomModal, useInputModal } from '@/hooks';
-import { StudentType } from '@/types';
-import { useQuery } from '@tanstack/react-query';
-import { discussionApi } from '@/api-client';
-import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { InputModal } from '@/components/modal/InputModal';
-import { reportColorMap } from '@/utils';
-interface ReportsProps {}
+interface TeachersVerifyProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',
@@ -35,157 +33,67 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     BANNED: 'danger'
 };
 
-const reports = [
-    {
-        id: 1,
-        reportType: 'Lỗi kĩ thuật',
-        contentType: 'video',
-        title: 'hello',
-        description: 'abc'
-    },
-    {
-        id: 2,
-        reportType: 'Lỗi học thuật',
-        contentType: 'video',
-        title: 'hello',
-        description: 'abc'
-    },
-    {
-        id: 3,
-        reportType: 'Vi phạm chuẩn mực',
-        contentType: 'video',
-        title: 'hello',
-        description: 'abc'
-    }
-];
-
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'title' },
-    { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: true },
-    { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: true },
-    { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
-    // { name: 'MÔ TẢ', uid: 'description' },
-    // { name: 'CHỦ ĐỀ', uid: 'title' },
+    // { name: 'ID', uid: 'id', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
+    { name: 'Email', uid: 'email', sortable: true },
+    { name: 'MÔN HỌC', uid: 'subject' },
+    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-function getTypeName(type: string) {
-    const reportTy: { [key: string]: string | null } = {
-        INTEGRITY: 'Vi phạm chuẩn mực',
-        ACADEMIC: 'Lỗi học thuật',
-        TECHNICAL: 'Lỗi kĩ thuật',
-        OPINION: 'Góp ý',
-        OTHERS: 'Khác'
-    };
+type Teacher = {
+    id: number;
+    name: string;
+    subject: string[];
+    createdAt: string;
+    status: string;
+    email: string;
+};
 
-    return reportTy[type] || null;
-}
-
-const Reports: React.FC<ReportsProps> = () => {
+const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
     const [filterValue, setFilterValue] = useState('');
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(
+        new Set(['fullName', 'email', 'subject', 'createDate', 'status', 'action'])
+    );
+    const [teachers, setTeachers] = useState<TeacherType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const visibleColumns = new Set(['id', 'title', 'type', 'reportMsg', 'ownerFullName', 'status', 'action']);
-    const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
-    const [reportDiscussions, setReportDiscussions] = useState<any[]>([]);
     const [declineId, setDeclineId] = useState<number>();
     const {
         status,
         error,
-        data: reportDiscussionsData,
+        data: teachersData,
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['reportDiscussions', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
-        queryFn: () =>
-            discussionApi.getListReportConversation(
-                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
-                page - 1,
-                rowsPerPage,
-                'id',
-                'ASC'
-            )
+        queryKey: [
+            'admin-teachers',
+            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
+        ],
+        queryFn: () => teacherApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
     });
 
     useEffect(() => {
-        if (reportDiscussionsData?.data) {
-            setReportDiscussions(reportDiscussionsData.data);
-            setTotalPage(reportDiscussionsData.totalPage);
-            setTotalRow(reportDiscussionsData.totalRow);
+        if (teachersData?.data) {
+            setTeachers(teachersData.data);
+            setTotalPage(teachersData.totalPage);
+            setTotalRow(teachersData.totalRow);
         }
-    }, [reportDiscussionsData]);
+    }, [teachersData]);
+    console.log(teachersData);
 
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
-    const handleResponse = async (id: number) => {
-        let toastLoading;
+    const headerColumns = useMemo(() => {
+        if (visibleColumns === 'all') return columns;
 
-        try {
-            onClose();
-            onInputClose();
-            toastLoading = toast.loading('Đang xử lí yêu cầu');
-            const res = await discussionApi.responseConversationReport(description, id);
-
-            if (!res.data.code) {
-                toast.success('Phản hồi nội dung báo cáo thành công');
-
-                refetch();
-            }
-
-            toast.dismiss(toastLoading);
-            onDescription('');
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error changing user status', error);
-        }
-    };
-    const handleStatusChange = async (id: number, status: string) => {
-        try {
-            onLoading();
-            const res = await discussionApi.updateStatusDiscussion(id, status);
-            if (!res.data.code) {
-                onSuccess({
-                    title: `${'Đã cấm bài đăng thành công'} `,
-                    content: `${'Bài đăng đã bị cấm thành công'} `
-                });
-                refetch();
-            }
-        } catch (error) {
-            // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
-            });
-            console.error('Error changing user status', error);
-        }
-    };
-    const onDeclineOpen = (id: number) => {
-        onWarning({
-            title: 'Xác nhận phản hồi',
-            content: 'Nội dung phản hồi sẽ gửi đến người báo cáo. Bạn chắc chứ?',
-            activeFn: () => {
-                onClose();
-                onInputOpen();
-            }
-        });
-        setDeclineId(id);
-        onOpen();
-    };
-    const onBanDiscussionOpen = (id: number, status: string) => {
-        onWarning({
-            title: 'Xác nhận cấm bài đăng',
-            content: 'Bài đăng sẽ không được hiển thị. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, status)
-        });
-        onOpen();
-    };
+        return columns.filter(column => Array.from(visibleColumns).includes(column.uid));
+    }, [visibleColumns]);
 
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
@@ -201,25 +109,100 @@ const Reports: React.FC<ReportsProps> = () => {
         }
     }, []);
 
-    const renderCell = useCallback((student: any, columnKey: Key) => {
-        const cellValue = student[columnKey as keyof any];
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
+    const handleBanUser = async (id: number) => {
+        let toastLoading;
+        console.log({ description, id });
+        try {
+            onClose();
+            onInputClose();
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
+            const res = await userApi.banUser({
+                accountId: id,
+                reason: description
+            });
+            if (!res?.data?.code) {
+                toast.success('Tài khoản đã được thành công');
+                refetch();
+            }
+            toast.dismiss(toastLoading);
+        } catch (error) {
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onDeclineOpen = (id: number) => {
+        onDanger({
+            title: 'Xác nhận cấm tài khoản',
+            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            activeFn: () => {
+                onClose();
+                onInputOpen();
+            }
+        });
+        setDeclineId(id);
+        onOpen();
+    };
+
+    const renderCell = useCallback((teacher: any, columnKey: Key) => {
+        let res: string | number;
+        const cellValue = teacher[columnKey as keyof any];
+        if (Array.isArray(cellValue) || cellValue === undefined) res = '';
+        else res = cellValue;
         switch (columnKey) {
-            case 'type':
-                return getTypeName(cellValue);
+            case 'fullName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: teacher?.url ? teacher?.url : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    />
+                );
+            case 'subject':
+                return (
+                    <div>
+                        {(cellValue as string[]).map(sub => (
+                            <Chip size="sm" color="primary" variant="flat" key={sub}>
+                                {sub}
+                            </Chip>
+                        ))}
+                    </div>
+                );
+            case 'createDate':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                })?.format(dateValue);
+
+                return formattedDate;
             case 'status':
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={reportColorMap[student?.status]}
+                        color={statusColorMap[teacher.status]}
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'DONE'
-                            ? 'Phản hồi thành công'
-                            : cellValue === 'NEW'
-                            ? 'Chưa phản hồi'
-                            : 'Vô hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'WAITTING'
+                            ? 'Chờ Xác Thực'
+                            : cellValue === 'BANNED'
+                            ? 'Tài Khoản Bị Cấm'
+                            : 'Vô Hiệu'}
                     </Chip>
                 );
             case 'action':
@@ -231,34 +214,34 @@ const Reports: React.FC<ReportsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options">
+                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
                                 <DropdownItem
                                     color="primary"
                                     as={Link}
-                                    href={`/admin/discussion/${student?.conversationId}`}
+                                    href={`/admin/profile/teacher/${teacher.email}`}
                                 >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" onClick={() => onDeclineOpen(student?.id)}>
-                                    Phản hồi
-                                </DropdownItem>
+
                                 <DropdownItem
                                     color="danger"
-                                    onClick={() => onBanDiscussionOpen(student?.conversationId, 'BANNED')}
+                                    key={teacher.status === 'BANNED' ? 'bannedDis' : 'banned'}
+                                    onClick={() => onDeclineOpen(teacher.id)}
                                 >
-                                    Cấm bài đăng
+                                    Cấm Người dùng
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 );
             default:
-                return cellValue;
+                return res;
         }
     }, []);
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách báo cáo thảo luận</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách giáo viên</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
@@ -282,7 +265,7 @@ const Reports: React.FC<ReportsProps> = () => {
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Loại báo cáo
+                                        Trạng Thái
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -296,20 +279,17 @@ const Reports: React.FC<ReportsProps> = () => {
                                     <DropdownItem key="ALL" className="capitalize">
                                         {capitalize('Tất Cả')}
                                     </DropdownItem>
-                                    <DropdownItem key="INTEGRITY" className="capitalize">
-                                        {capitalize('Vi phạm chuẩn mực')}
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt Động')}
                                     </DropdownItem>
-                                    <DropdownItem key="ACADEMIC" className="capitalize">
-                                        {capitalize('Lỗi học thuật')}
+                                    <DropdownItem key="WAITTING" className="capitalize">
+                                        {capitalize('Đợi Xác Thực')}
                                     </DropdownItem>
-                                    <DropdownItem key="TECHNICAL" className="capitalize">
-                                        {capitalize('Lỗi kĩ thuật')}
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô Hiệu')}
                                     </DropdownItem>
-                                    <DropdownItem key="OPINION" className="capitalize">
-                                        {capitalize('Góp ý')}
-                                    </DropdownItem>
-                                    <DropdownItem key="OTHERS" className="capitalize">
-                                        {capitalize('Khác')}
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Tài Khoản Bị Cấm')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -326,8 +306,6 @@ const Reports: React.FC<ReportsProps> = () => {
                                 <option value="5">5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
                             </select>
                         </label>
                     </div>
@@ -335,7 +313,7 @@ const Reports: React.FC<ReportsProps> = () => {
                 <TableContent
                     renderCell={renderCell}
                     headerColumns={headerColumns}
-                    items={reportDiscussions || []}
+                    items={teachers || []}
                     page={page}
                     setPage={setPage}
                     sortDescriptor={sortDescriptor}
@@ -343,9 +321,9 @@ const Reports: React.FC<ReportsProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
-            <InputModal activeFn={() => handleResponse(declineId as number)} />
+            <InputModal activeFn={() => handleBanUser(declineId as number)} />
         </div>
     );
 };
 
-export default Reports;
+export default VerifyTeachers;

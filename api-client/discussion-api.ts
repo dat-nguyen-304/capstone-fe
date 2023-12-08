@@ -110,5 +110,8 @@ export const discussionApi = {
             }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
+    },
+    updateStatusDiscussion: async (discussionId: number, status: string) => {
+        return await axiosClient.put(`/discussion/conversations/status/${discussionId}?status=${status}`);
     }
 };

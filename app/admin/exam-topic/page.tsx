@@ -39,30 +39,25 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     DELETED: 'danger',
     BANNED: 'danger'
 };
+
 function getSubjectName(subjectCode: string) {
-    switch (subjectCode) {
-        case 'MATHEMATICS':
-            return 'Toán học';
-        case 'ENGLISH':
-            return 'Tiếng anh';
-        case 'PHYSICS':
-            return 'Vật lí';
-        case 'CHEMISTRY':
-            return 'Hóa học';
-        case 'BIOLOGY':
-            return 'Sinh học';
-        case 'HISTORY':
-            return 'Lịch sử';
-        case 'GEOGRAPHY':
-            return 'Địa lý';
-        default:
-            return null;
-    }
+    const subjectNames: { [key: string]: string | null } = {
+        MATHEMATICS: 'Toán học',
+        ENGLISH: 'Tiếng anh',
+        PHYSICS: 'Vật lí',
+        CHEMISTRY: 'Hóa học',
+        BIOLOGY: 'Sinh học',
+        HISTORY: 'Lịch sử',
+        GEOGRAPHY: 'Địa lý'
+    };
+
+    return subjectNames[subjectCode] || null;
 }
 const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['name', 'subject', 'status', 'action']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [topics, setTopics] = useState<TopicType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -70,15 +65,27 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
     const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+
     const {
         status,
         error,
         data: topicsData,
         isPreviousData
     } = useQuery({
-        queryKey: ['exam-topics', { page, rowsPerPage, updateState }],
-        queryFn: () => examApi.getAllTopicAdmin(page - 1, rowsPerPage, 'id', 'DESC')
+        queryKey: [
+            'exam-topics',
+            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }
+        ],
+        queryFn: () =>
+            examApi.getAllTopicAdmin(
+                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'id',
+                'DESC'
+            )
     });
+
     console.log(topicsData);
 
     useEffect(() => {
@@ -194,7 +201,7 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -203,7 +210,52 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
+                        /> */}
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
+                                <Button
+                                    endContent={<BsChevronDown className="text-small" />}
+                                    size="sm"
+                                    variant="bordered"
+                                    color="primary"
+                                >
+                                    Môn học
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={statusFilter}
+                                selectionMode="single"
+                                onSelectionChange={setStatusFilter}
+                            >
+                                <DropdownItem key="ALL" className="capitalize">
+                                    {capitalize('Tất cả')}
+                                </DropdownItem>
+                                <DropdownItem key="MATHEMATICS" className="capitalize">
+                                    {capitalize('Toán học')}
+                                </DropdownItem>
+                                <DropdownItem key="ENGLISH" className="capitalize">
+                                    {capitalize('Tiếng anh')}
+                                </DropdownItem>
+                                <DropdownItem key="PHYSICS" className="capitalize">
+                                    {capitalize('Vật lí')}
+                                </DropdownItem>
+                                <DropdownItem key="CHEMISTRY" className="capitalize">
+                                    {capitalize('Hóa học')}
+                                </DropdownItem>
+                                <DropdownItem key="BIOLOGY" className="capitalize">
+                                    {capitalize('Sinh học')}
+                                </DropdownItem>
+                                <DropdownItem key="HISTORY" className="capitalize">
+                                    {capitalize('Lịch sử')}
+                                </DropdownItem>
+                                <DropdownItem key="GEOGRAPHY" className="capitalize">
+                                    {capitalize('Địa lý')}
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>

@@ -9,7 +9,7 @@ import { Button, Checkbox, Chip, Select, SelectItem, useDisclosure, Skeleton } f
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { createSkeletonArray } from '@/utils';
+import { createSkeletonArray, handleFileSelection, handleFileSubmitSelection } from '@/utils';
 import TestReviewItem from '@/components/test/TestReviewItem';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
@@ -137,7 +137,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             else setCourses(activatedCoursesData?.data);
         }
     }, [selectedOptionCourse]);
-    const { onOpen: onConfirmOpen, onDanger, onClose: onConfirmClose } = useCustomModal();
+    const { onOpen: onConfirmOpen, onDanger, onWarning, onClose: onConfirmClose } = useCustomModal();
     const handlePopUpAddQuestion = () => {
         setEditIndex(undefined);
         setEditQuestion(null);
@@ -188,98 +188,23 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
             }
         });
     };
-    const handleFile = (e: any) => {
-        let fileType = [
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'text/csv'
-        ];
-        let selectedFile = e.target.files[0];
-        if (selectedFile) {
-            if (selectedFile && fileType.includes(selectedFile?.type)) {
-                let reader = new FileReader();
-                reader.readAsArrayBuffer(selectedFile);
-                reader.onload = (e: any) => {
-                    setExcelFile(e.target.result);
-                };
-            } else {
-                toast.error('Vui lòng chọn file excel');
-                setExcelFile(null);
+    const handleSubmitQuestions = () => {
+        // Delete the question at the specified index
+        onConfirmOpen();
+        onWarning({
+            content: 'Bạn có chắc muốn thêm toàn bộ câu hỏi trong file',
+            title: 'Xác nhận tải toàn bộ câu hỏi',
+            activeFn: () => {
+                handleFileUpload();
+                onConfirmClose();
             }
-        } else {
-            console.log('Please select your file');
-        }
+        });
     };
-
-    const handleFileSubmit = (e: any) => {
-        if (excelFile !== null) {
-            const workbook = XLSX.read(excelFile, { type: 'buffer' });
-            const worksheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[worksheetName];
-            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            const headers: any = data[0];
-            const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
-            const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
-            if (missingHeaders.length > 0) {
-                toast.error('File không đúng yêu cầu');
-            } else {
-                const statementIndex = headers.indexOf('statement');
-                const explanationIndex = headers.indexOf('explanation');
-                const answerIndices = ['A', 'B', 'C', 'D'];
-                const topicIndex = headers.indexOf('topic');
-                const correctAnswerIndex = headers.indexOf('correctAnswer');
-                const levelIndex = headers.indexOf('level');
-                const imageUrlIndex = headers.indexOf('imageUrl');
-
-                const questions = data.slice(1).map((row: any) => {
-                    const statement = row[statementIndex];
-                    const explanation = row[explanationIndex];
-                    const answerList = answerIndices.map(answer => String(row[headers.indexOf(answer)]));
-                    const topicName = row[topicIndex];
-                    const correctAnswer = row[correctAnswerIndex];
-                    const level = row[levelIndex];
-                    const imageUrl =
-                        imageUrlIndex !== -1
-                            ? row[imageUrlIndex] !== undefined
-                                ? (String(row[imageUrlIndex])?.startsWith('http://') ||
-                                      String(row[imageUrlIndex])?.startsWith('https://')) &&
-                                  String(row[imageUrlIndex]).length > 8
-                                    ? row[imageUrlIndex]
-                                    : null
-                                : null
-                            : null;
-
-                    const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
-                    if (matchedTopic) {
-                        const topicId = matchedTopic.id;
-
-                        return {
-                            statement,
-                            explanation,
-                            answerList,
-                            topicId,
-                            correctAnswer,
-                            level,
-                            imageUrl
-                        };
-                    } else {
-                        return null;
-                    }
-                });
-                const validQuestions = questions.filter((question: any) => question !== null);
-                if (validQuestions?.length > 0) {
-                    setQuestions(prevQuestions => [...prevQuestions, ...validQuestions]);
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = '';
-                    }
-                    setExcelFile(null);
-                } else {
-                    toast.error('File bài tập của bạn không phù hợp với môn hiện tại vui lòng chọn file khác');
-                }
-            }
-        } else {
-            toast.error('Vui lòng chọn file trước khi thêm câu hỏi');
-        }
+    const handleFileChange = (e: any) => {
+        handleFileSelection(e, setExcelFile);
+    };
+    const handleFileUpload = () => {
+        handleFileSubmitSelection(excelFile, setExcelFile, fileInputRef, topicsData, setQuestions);
     };
     const createQuiz = async (formData: any) => {
         setIsSubmitting(true);
@@ -398,7 +323,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             color="success"
                             variant="flat"
                             className="mt-8"
-                            disabled={selectedCourse != 0 ? false : true}
+                            isDisabled={selectedCourse != 0 ? false : true}
                         >
                             Thêm câu hỏi <FaPlus />
                         </Button>
@@ -430,7 +355,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                disabled={selectedCourse != 0 ? false : true}
+                                disabled={selectedCourse !== 0 ? false : true}
                                 name="file-input"
                                 id="file-input"
                                 className="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600
@@ -438,15 +363,16 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                                 file:bg-gray-100 file:me-4
                                 file:py-3 file:px-4
                                 dark:file:bg-gray-700 dark:file:text-gray-400"
-                                onChange={handleFile}
+                                onChange={handleFileChange}
                             />
                         </div>
+
                         <Button
-                            onClick={handleFileSubmit}
+                            onClick={handleFileUpload}
                             color="success"
                             variant="flat"
                             className="mt-8"
-                            disabled={selectedCourse != 0 ? false : true}
+                            isDisabled={selectedCourse != 0 && excelFile !== null ? false : true}
                         >
                             Tải câu hỏi <BiUpArrowAlt />
                         </Button>

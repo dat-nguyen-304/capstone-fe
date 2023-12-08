@@ -45,7 +45,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         isLoading,
         status
     } = useQuery<any>({
-        queryKey: ['exam-detail-info', { params }],
+        queryKey: ['exam-detail-info', { params: params.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
     const {
@@ -53,7 +53,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
         isLoading: examLoading,
         status: examStatus
     } = useQuery<any>({
-        queryKey: ['exam-submission-info', { page }],
+        queryKey: ['exam-history-submission-info', { params: params.id, page }],
         queryFn: () => examApi.getExamSubmissionByExamId(params?.id, page - 1, 5)
     });
 

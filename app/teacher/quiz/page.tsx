@@ -83,7 +83,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     const [totalRow, setTotalRow] = useState<number>();
     const [search, setSearch] = useState<string>('');
     const [quizzes, setQuizzes] = useState<any[]>([]);
-    const { status, error, data, isPreviousData } = useQuery({
+    const { status, error, data, isPreviousData, refetch } = useQuery({
         queryKey: [
             'examsByTeacher',
             {
@@ -121,11 +121,13 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
 
                 if (quiz.examType === 'QUIZ_DRAFT' && updatingCoursesData?.data) {
                     // If the examType is 'QUIZ_DRAFT', find the corresponding course in updatingCoursesData
-                    const matchingCourse = updatingCoursesData.data.find((course: any) => course.id === quiz.courseId);
+                    const matchingCourse = updatingCoursesData?.data?.find(
+                        (course: any) => course.id === quiz.courseId
+                    );
                     courseName = matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null;
                 } else if (coursesData?.data) {
                     // For other examTypes, find the corresponding course in coursesData
-                    const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+                    const matchingCourse = coursesData?.data?.find((course: any) => course.id === quiz.courseId);
                     courseName = matchingCourse?.id === quiz.courseId ? matchingCourse.courseName : null;
                 }
 
@@ -165,11 +167,32 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
-    const onDeactivateOpen = () => {
+    const handleStatusChange = async (id: number) => {
+        try {
+            onLoading();
+            const res = await examApi.deleteExam(id);
+            if (!res.data.code) {
+                onSuccess({
+                    title: 'Đã vô hiệu hóa bài tập thành công',
+                    content: 'Bài tập đã bị vô hiệu hóa thành công'
+                });
+                refetch();
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onDeactivateOpen = (id: number) => {
         onDanger({
-            title: 'Xác nhận vô hiệu hóa',
-            content: 'Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?'
-            // activeFn: () => handleStatusChange(id, action)
+            title: `Xác nhận vô hiệu hóa`,
+            content: `Bài tập này sẽ không được hiện thị sau khi vô hiệu hóa Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id)
         });
         onOpen();
     };
@@ -213,14 +236,39 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem color="primary" as={Link} href={`/teacher/quiz/${quiz?.id}`}>
+                            <DropdownMenu
+                                aria-label="Options"
+                                disabledKeys={['viewDis', 'editDis', 'enableDis', 'bannedDis']}
+                            >
+                                <DropdownItem
+                                    key={
+                                        quiz?.status === 'DISABLE' ||
+                                        quiz?.status === 'BANNED' ||
+                                        quiz?.status === 'DELETED'
+                                            ? 'viewDis'
+                                            : 'view'
+                                    }
+                                    color="primary"
+                                    as={Link}
+                                    href={`/teacher/quiz/${quiz?.id}`}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" as={Link} href={`/teacher/quiz/edit/${quiz?.id}`}>
+                                <DropdownItem
+                                    color="warning"
+                                    key={
+                                        quiz?.status === 'DISABLE' ||
+                                        quiz?.status === 'BANNED' ||
+                                        quiz?.status === 'DELETED'
+                                            ? 'editDis'
+                                            : 'edit'
+                                    }
+                                    as={Link}
+                                    href={`/teacher/quiz/edit/${quiz?.id}`}
+                                >
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={onDeactivateOpen}>
+                                <DropdownItem color="danger" onClick={() => onDeactivateOpen(quiz?.id)}>
                                     Vô hiệu hóa
                                 </DropdownItem>
                             </DropdownMenu>

@@ -74,7 +74,7 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
         isLoading: examLoading,
         status: examStatus
     } = useQuery<any>({
-        queryKey: ['exam-submission-info', { page }],
+        queryKey: ['quiz-history-submission-info', { params: params.id, page }],
         queryFn: () => examApi.getExamSubmissionByExamId(params?.id, page - 1, 5)
     });
     console.log(quizData);

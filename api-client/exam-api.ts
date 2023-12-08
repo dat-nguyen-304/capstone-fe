@@ -126,9 +126,11 @@ export const examApi = {
             return res.data;
         }
     },
-    getAllTopicAdmin: async (page: number, size: number, field: string, sort: string) => {
+    getAllTopicAdmin: async (subject: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/examination/topics/admin?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/examination/topics/admin?${
+                subject !== '' ? `subject=${subject}&page=${page}` : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -234,5 +236,8 @@ export const examApi = {
     },
     sortQuiz: async (payload: any) => {
         return await axiosClient.put(`/examination/exams/course/order`, payload);
+    },
+    updateStatusExam: async (examId: number, status: string) => {
+        return await axiosClient.put(`/examination/exams/status/${examId}?status=${status}`);
     }
 };

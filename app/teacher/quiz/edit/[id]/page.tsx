@@ -20,28 +20,23 @@ import { BsArrowLeft } from 'react-icons/bs';
 import * as XLSX from 'xlsx';
 import { FiDelete } from 'react-icons/fi';
 import { BiUpArrowAlt } from 'react-icons/bi';
+import { handleFileSelection, handleFileSubmitSelection } from '@/utils';
 
 interface EditQuizProps {
     params: { id: number };
 }
-const getSubjectIdByName = (subjectName: string): number => {
-    if (subjectName == 'MATHEMATICS') {
-        return 1;
-    } else if (subjectName == 'PHYSICS') {
-        return 2;
-    } else if (subjectName == 'CHEMISTRY') {
-        return 3;
-    } else if (subjectName == 'ENGLISH') {
-        return 4;
-    } else if (subjectName == 'BIOLOGY') {
-        return 5;
-    } else if (subjectName == 'HISTORY') {
-        return 6;
-    } else if (subjectName == 'GEOGRAPHY') {
-        return 7;
-    } else {
-        return 0;
-    }
+const getSubjectIdByName = (subject: string): number => {
+    const subjectMap: Record<string, number> = {
+        MATHEMATICS: 1,
+        PHYSICS: 2,
+        CHEMISTRY: 3,
+        ENGLISH: 4,
+        BIOLOGY: 5,
+        HISTORY: 6,
+        GEOGRAPHY: 7
+    };
+
+    return subjectMap[subject] || 0;
 };
 function getSubjectName(subjectCode: string) {
     const subjectNames: { [key: string]: string | null } = {
@@ -57,23 +52,17 @@ function getSubjectName(subjectCode: string) {
     return subjectNames[subjectCode] || null;
 }
 const getSubjectNameById = (id: number): string => {
-    if (id == 1) {
-        return 'MATHEMATICS';
-    } else if (id == 2) {
-        return 'PHYSICS';
-    } else if (id == 3) {
-        return 'CHEMISTRY';
-    } else if (id == 4) {
-        return 'ENGLISH';
-    } else if (id == 5) {
-        return 'BIOLOGY';
-    } else if (id == 6) {
-        return 'HISTORY';
-    } else if (id == 7) {
-        return 'GEOGRAPHY';
-    } else {
-        return '';
-    }
+    const subjectMap: Record<number, string> = {
+        1: 'MATHEMATICS',
+        2: 'PHYSICS',
+        3: 'CHEMISTRY',
+        4: 'ENGLISH',
+        5: 'BIOLOGY',
+        6: 'HISTORY',
+        7: 'GEOGRAPHY'
+    };
+
+    return subjectMap[id] || '';
 };
 const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
     const router = useRouter();
@@ -176,7 +165,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
         }
     }, [examDetail]);
 
-    const { onOpen: onConfirmOpen, onDanger, onClose: onConfirmClose } = useCustomModal();
+    const { onOpen: onConfirmOpen, onDanger, onWarning, onClose: onConfirmClose } = useCustomModal();
 
     const handleEditQuestion = (editedQuestion: any, index: number) => {
         setQuestions(prevQuestions => {
@@ -219,97 +208,23 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
             }
         });
     };
-    const handleFile = (e: any) => {
-        let fileType = [
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'text/csv'
-        ];
-        let selectedFile = e.target.files[0];
-        if (selectedFile) {
-            if (selectedFile && fileType.includes(selectedFile?.type)) {
-                let reader = new FileReader();
-                reader.readAsArrayBuffer(selectedFile);
-                reader.onload = (e: any) => {
-                    setExcelFile(e.target.result);
-                };
-            } else {
-                toast.error('Vui lòng chọn file excel');
-                setExcelFile(null);
+    const handleSubmitQuestions = () => {
+        // Delete the question at the specified index
+        onConfirmOpen();
+        onWarning({
+            content: 'Bạn có chắc muốn thêm toàn bộ câu hỏi trong file',
+            title: 'Xác nhận tải toàn bộ câu hỏi',
+            activeFn: () => {
+                handleFileUpload();
+                onConfirmClose();
             }
-        } else {
-            console.log('Please select your file');
-        }
+        });
     };
-
-    const handleFileSubmit = (e: any) => {
-        if (excelFile !== null) {
-            const workbook = XLSX.read(excelFile, { type: 'buffer' });
-            const worksheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[worksheetName];
-            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            const headers: any = data[0];
-            const requiredHeaders = ['statement', 'explanation', 'A', 'B', 'C', 'D', 'topic', 'correctAnswer', 'level'];
-            const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
-            if (missingHeaders.length > 0) {
-                toast.error('File không đúng yêu cầu');
-            } else {
-                const statementIndex = headers.indexOf('statement');
-                const explanationIndex = headers.indexOf('explanation');
-                const answerIndices = ['A', 'B', 'C', 'D'];
-                const topicIndex = headers.indexOf('topic');
-                const correctAnswerIndex = headers.indexOf('correctAnswer');
-                const levelIndex = headers.indexOf('level');
-                const imageUrlIndex = headers.indexOf('imageUrl');
-
-                const questions = data.slice(1).map((row: any) => {
-                    const statement = row[statementIndex];
-                    const explanation = row[explanationIndex];
-                    const answerList = answerIndices.map(answer => String(row[headers.indexOf(answer)]));
-                    const topicName = row[topicIndex];
-                    const correctAnswer = row[correctAnswerIndex];
-                    const level = row[levelIndex];
-                    const imageUrl =
-                        imageUrlIndex !== -1
-                            ? row[imageUrlIndex] !== undefined
-                                ? (String(row[imageUrlIndex])?.startsWith('http://') ||
-                                      String(row[imageUrlIndex])?.startsWith('https://')) &&
-                                  String(row[imageUrlIndex]).length > 8
-                                    ? row[imageUrlIndex]
-                                    : null
-                                : null
-                            : null;
-                    const matchedTopic = topicsData?.data?.find((topic: any) => String(topic.name).includes(topicName));
-                    if (matchedTopic) {
-                        const topicId = matchedTopic.id;
-
-                        return {
-                            statement,
-                            explanation,
-                            answerList,
-                            topicId,
-                            correctAnswer,
-                            level,
-                            imageUrl
-                        };
-                    } else {
-                        return null;
-                    }
-                });
-                const validQuestions = questions.filter((question: any) => question !== null);
-                if (validQuestions?.length > 0) {
-                    setQuestions(prevQuestions => [...prevQuestions, ...validQuestions]);
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = '';
-                    }
-                    setExcelFile(null);
-                } else {
-                    toast.error('File bài tập của bạn không phù hợp với môn hiện tại vui lòng chọn file khác');
-                }
-            }
-        } else {
-            toast.error('Vui lòng chọn file trước khi thêm câu hỏi');
-        }
+    const handleFileChange = (e: any) => {
+        handleFileSelection(e, setExcelFile);
+    };
+    const handleFileUpload = () => {
+        handleFileSubmitSelection(excelFile, setExcelFile, fileInputRef, topicsData, setQuestions);
     };
 
     const updateExam = async (formData: any) => {
@@ -448,7 +363,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                             color="success"
                             variant="flat"
                             className="mt-8"
-                            disabled={selectedCourse != 0 ? false : true}
+                            isDisabled={selectedCourse != 0 ? false : true}
                         >
                             Thêm câu hỏi <FaPlus />
                         </Button>
@@ -488,15 +403,15 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                                 file:bg-gray-100 file:me-4
                                 file:py-3 file:px-4
                                 dark:file:bg-gray-700 dark:file:text-gray-400"
-                                onChange={handleFile}
+                                onChange={handleFileChange}
                             />
                         </div>
                         <Button
-                            onClick={handleFileSubmit}
+                            onClick={handleSubmitQuestions}
                             color="success"
                             variant="flat"
                             className="mt-8"
-                            disabled={selectedCourse != 0 ? false : true}
+                            isDisabled={selectedCourse != 0 && excelFile !== null ? false : true}
                         >
                             Tải câu hỏi <BiUpArrowAlt />
                         </Button>
@@ -538,7 +453,13 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                         </Button>
                     )}
                 </div>
-                <Button color="primary" type="submit" className="mt-12" isLoading={isSubmitting}>
+                <Button
+                    color="warning"
+                    type="submit"
+                    isDisabled={questions?.length > 0 ? false : true}
+                    className="mt-12"
+                    isLoading={isSubmitting}
+                >
                     Xác nhận thay đổi
                 </Button>
             </form>

@@ -59,7 +59,7 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
         level: data?.level,
         totalVideo: data?.courseVideoResponses?.length,
         status: data?.status,
-        totalQuiz: quizCourse?.totalRow
+        totalQuiz: quizzes?.length
     };
 
     const courseContent = {
@@ -71,7 +71,7 @@ const CourseApproveDetail: React.FC<CourseApproveDetailProps> = ({ params }) => 
             return aOrder - bOrder;
         }),
         totalCompleted: data?.totalCompleted,
-        totalQuiz: quizCourse?.totalRow
+        totalQuiz: quizzes?.length
     };
 
     console.log(data);

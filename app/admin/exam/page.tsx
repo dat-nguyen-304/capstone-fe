@@ -66,17 +66,16 @@ const Exams: React.FC<ExamsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [statusFilterExamType, setStatusFilterExamType] = useState<Selection>(new Set(['ALL']));
     const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
+
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const { status, error, data, isPreviousData } = useQuery({
+    const { status, error, data, isPreviousData, refetch } = useQuery({
         queryKey: [
             'exams',
             {
                 page,
                 rowsPerPage,
-                updateState,
                 statusFilter: Array.from(statusFilter)[0] as string,
                 statusFilterExamType: Array.from(statusFilterExamType)[0] as string,
                 statusFilterStatus: Array.from(statusFilterStatus)[0] as string
@@ -134,16 +133,28 @@ const Exams: React.FC<ExamsProps> = () => {
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
-    const handleStatusChange = async (id: number) => {
+    const handleStatusChange = async (id: number, status: string) => {
         try {
             onLoading();
-            const res = await examApi.deleteExam(id);
+            const res = await examApi.updateStatusExam(id, status);
             if (!res.data.code) {
                 onSuccess({
-                    title: 'Đã xóa bài thi thành công',
-                    content: 'Bài thi đã được xóa thành công'
+                    title: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Đã cấm bài tập thành công'
+                            : 'Đã vô hiệu hóa bài thi thành công'
+                    } `,
+                    content: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Bài tập đã bị cấm thành công'
+                            : 'Bài thi đã bị vô hiệu hóa thành công'
+                    } `
                 });
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error
@@ -155,11 +166,21 @@ const Exams: React.FC<ExamsProps> = () => {
         }
     };
 
-    const onDeactivateOpen = (id: number) => {
+    const onActivateOpen = (id: number, status: string) => {
+        onWarning({
+            title: `Xác nhận kích hoạt`,
+            content: `Bài thi này sẽ được hiện thị sau khi kích hoạt. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
+    };
+    const onDeactivateOpen = (id: number, status: string) => {
         onDanger({
-            title: 'Xác nhận vô hiệu hóa',
-            content: 'Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id)
+            title: `Xác nhận ${status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'}`,
+            content: `Bài thi này sẽ không được hiện thị sau khi  ${
+                status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'
+            }. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
         });
         onOpen();
     };
@@ -176,7 +197,13 @@ const Exams: React.FC<ExamsProps> = () => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'DELETED'
+                            ? 'Đã xóa'
+                            : cellValue === 'BANNED'
+                            ? 'Bị cấm'
+                            : 'Vô Hiệu'}
                     </Chip>
                 );
             case 'examType':
@@ -202,9 +229,18 @@ const Exams: React.FC<ExamsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'bannedDis']}>
+                            <DropdownMenu
+                                aria-label="Options"
+                                disabledKeys={['viewDis', 'editDis', 'enableDis', 'bannedDis']}
+                            >
                                 <DropdownItem
-                                    key={exam?.status === 'DISABLE' ? 'viewDis' : 'view'}
+                                    key={
+                                        exam?.status === 'DISABLE' ||
+                                        exam?.status === 'BANNED' ||
+                                        exam?.status === 'DELETED'
+                                            ? 'viewDis'
+                                            : 'view'
+                                    }
                                     color="primary"
                                     as={Link}
                                     href={`/admin/exam/${exam?.id}`}
@@ -212,7 +248,13 @@ const Exams: React.FC<ExamsProps> = () => {
                                     Xem chi tiết
                                 </DropdownItem>
                                 <DropdownItem
-                                    key={exam?.status === 'DISABLE' ? 'editDis' : 'edit'}
+                                    key={
+                                        exam?.status === 'DISABLE' ||
+                                        exam?.examType === 'QUIZ' ||
+                                        exam?.examType === 'QUIZ_DRAFT'
+                                            ? 'editDis'
+                                            : 'edit'
+                                    }
                                     color="warning"
                                     as={Link}
                                     href={`/admin/exam/edit/${exam?.id}`}
@@ -220,11 +262,35 @@ const Exams: React.FC<ExamsProps> = () => {
                                     Chỉnh sửa
                                 </DropdownItem>
                                 <DropdownItem
-                                    key={exam?.status === 'DISABLE' ? 'bannedDis' : 'ban'}
-                                    color="danger"
-                                    onClick={() => onDeactivateOpen(exam?.id)}
+                                    key={
+                                        exam?.status === 'ENABLE' || exam?.status === 'DELETED' ? 'enableDis' : 'enable'
+                                    }
+                                    color="success"
+                                    onClick={() => onActivateOpen(exam?.id, 'ENABLE')}
                                 >
-                                    Vô hiệu hóa
+                                    Kích hoạt
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={
+                                        exam?.status === 'DISABLE' ||
+                                        exam?.status === 'BANNED' ||
+                                        exam?.status === 'DELETED'
+                                            ? 'bannedDis'
+                                            : 'ban'
+                                    }
+                                    color="danger"
+                                    onClick={() =>
+                                        onDeactivateOpen(
+                                            exam?.id,
+                                            exam?.examType === 'QUIZ' || exam?.examType === 'QUIZ_DRAFT'
+                                                ? 'BANNED'
+                                                : 'DELETED'
+                                        )
+                                    }
+                                >
+                                    {exam?.examType === 'QUIZ' || exam?.examType === 'QUIZ_DRAFT'
+                                        ? 'Cấm'
+                                        : 'Vô hiệu hóa'}
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

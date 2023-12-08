@@ -180,7 +180,7 @@ const Quizzes: React.FC<VideosProps> = () => {
     useEffect(() => {
         if (data?.data) {
             const quizzesWithCourses = data?.data?.map((quiz: any) => {
-                const matchingCourse = coursesData.data.find((course: any) => course.id === quiz.courseId);
+                const matchingCourse = coursesData?.data?.find((course: any) => course.id === quiz.courseId);
                 return {
                     ...quiz,
                     course: matchingCourse?.id === quiz.courseId ? matchingCourse?.courseName : null
@@ -213,14 +213,26 @@ const Quizzes: React.FC<VideosProps> = () => {
     }, []);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
-    const handleStatusChange = async (id: number) => {
+    const handleStatusChange = async (id: number, status: string) => {
         try {
             onLoading();
-            const res = await examApi.deleteExam(id);
+            const res = await examApi.updateStatusExam(id, status);
             if (!res.data.code) {
                 onSuccess({
-                    title: 'Đã xóa bài thi thành công',
-                    content: 'Bài thi đã được xóa thành công'
+                    title: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Đã cấm bài tập thành công'
+                            : 'Đã vô hiệu hóa bài thi thành công'
+                    } `,
+                    content: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Bài tập đã bị cấm thành công'
+                            : 'Bài thi đã bị vô hiệu hóa thành công'
+                    } `
                 });
                 refetch();
             }
@@ -234,11 +246,21 @@ const Quizzes: React.FC<VideosProps> = () => {
         }
     };
 
-    const onDeactivateOpen = (id: number) => {
+    const onActivateOpen = (id: number, status: string) => {
+        onWarning({
+            title: `Xác nhận kích hoạt`,
+            content: `Bài thi này sẽ được hiện thị sau khi kích hoạt. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
+    };
+    const onDeactivateOpen = (id: number, status: string) => {
         onDanger({
-            title: 'Xác nhận vô hiệu hóa',
-            content: 'Bài thi này sẽ không được hiện thị sau khi vô hiệu hóa. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id)
+            title: `Xác nhận ${status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'}`,
+            content: `Bài thi này sẽ không được hiện thị sau khi  ${
+                status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'
+            }. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
         });
         onOpen();
     };
@@ -266,7 +288,13 @@ const Quizzes: React.FC<VideosProps> = () => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'DELETED'
+                            ? 'Đã xóa'
+                            : cellValue === 'BANNED'
+                            ? 'Bị cấm'
+                            : 'Vô Hiệu'}
                     </Chip>
                 );
 
@@ -290,14 +318,54 @@ const Quizzes: React.FC<VideosProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'bannedDis']}>
+                            <DropdownMenu
+                                aria-label="Options"
+                                disabledKeys={['viewDis', 'enableDis', 'editDis', 'bannedDis']}
+                            >
                                 <DropdownItem
-                                    key={quiz?.status === 'DISABLE' || quiz?.status === 'DELETED' ? 'viewDis' : 'view'}
+                                    key={
+                                        quiz?.status === 'DISABLE' ||
+                                        quiz?.status === 'BANNED' ||
+                                        quiz?.status === 'DELETED'
+                                            ? 'viewDis'
+                                            : 'view'
+                                    }
                                     color="primary"
                                     as={Link}
                                     href={`/admin/exam/${quiz?.id}`}
                                 >
                                     Xem chi tiết
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={
+                                        quiz?.status === 'ENABLE' || quiz?.status === 'DELETED' ? 'enableDis' : 'enable'
+                                    }
+                                    color="success"
+                                    onClick={() => onActivateOpen(quiz?.id, 'ENABLE')}
+                                >
+                                    Kích hoạt
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={
+                                        quiz?.status === 'DISABLE' ||
+                                        quiz?.status === 'BANNED' ||
+                                        quiz?.status === 'DELETED'
+                                            ? 'bannedDis'
+                                            : 'ban'
+                                    }
+                                    color="danger"
+                                    onClick={() =>
+                                        onDeactivateOpen(
+                                            quiz?.id,
+                                            quiz?.examType === 'QUIZ' || quiz?.examType === 'QUIZ_DRAFT'
+                                                ? 'BANNED'
+                                                : 'DELETED'
+                                        )
+                                    }
+                                >
+                                    {quiz?.examType === 'QUIZ' || quiz?.examType === 'QUIZ_DRAFT'
+                                        ? 'Cấm'
+                                        : 'Vô hiệu hóa'}
                                 </DropdownItem>
                                 {/* <DropdownItem
                                     key={quiz?.status === 'DISABLE' ? 'bannedDis' : 'ban'}

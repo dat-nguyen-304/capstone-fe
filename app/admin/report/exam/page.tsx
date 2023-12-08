@@ -152,7 +152,26 @@ const Reports: React.FC<ReportsProps> = () => {
             console.error('Error changing user status', error);
         }
     };
-
+    const handleStatusChange = async (id: number, status: string) => {
+        try {
+            onLoading();
+            const res = await examApi.updateStatusExam(id, status);
+            if (!res.data.code) {
+                onSuccess({
+                    title: `${'Đã cấm bài kiểm tra thành công'} `,
+                    content: `${'Bài kiểm tra đã bị cấm thành công'} `
+                });
+                refetch();
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
     const onDeclineOpen = (id: number) => {
         onWarning({
             title: 'Xác nhận phản hồi',
@@ -165,7 +184,14 @@ const Reports: React.FC<ReportsProps> = () => {
         setDeclineId(id);
         onOpen();
     };
-
+    const onBanExamOpen = (id: number, status: string) => {
+        onWarning({
+            title: 'Xác nhận cấm bài kiểm tra',
+            content: 'Bài kiểm tra sẽ không được hiển thị phía học sinh. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
+    };
     const renderCell = useCallback((student: any, columnKey: Key) => {
         const cellValue = student[columnKey as keyof any];
 
@@ -202,6 +228,9 @@ const Reports: React.FC<ReportsProps> = () => {
                                 </DropdownItem>
                                 <DropdownItem color="warning" onClick={() => onDeclineOpen(student?.id)}>
                                     Phản hồi
+                                </DropdownItem>
+                                <DropdownItem color="danger" onClick={() => onBanExamOpen(student?.examId, 'BANNED')}>
+                                    Cấm bài kiểm tra
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

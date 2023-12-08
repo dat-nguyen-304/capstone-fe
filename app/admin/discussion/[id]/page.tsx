@@ -4,8 +4,9 @@ import { discussionApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import PostTitle from '@/components/discussion/PostTitle';
 import CommentItem from '@/components/video/CommentItem';
+import { useCustomModal } from '@/hooks';
 import { CommentCardType } from '@/types';
-import { Card, Pagination, Select, SelectItem } from '@nextui-org/react';
+import { Button, Card, Pagination, Select, SelectItem } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -58,17 +59,41 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
-    const commonInfo = {
-        id: 1,
-        ownerFullName: 'Nguyễn Văn A',
-        imageUrl: '/banner/slide-1.png',
-        content: 'Nội dung rất hay'
-    };
+
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
             top: 0
         });
+    };
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+    const handleStatusChange = async (id: number, status: string) => {
+        try {
+            onLoading();
+            const res = await discussionApi.updateStatusDiscussion(id, status);
+            if (!res.data.code) {
+                onSuccess({
+                    title: `${'Đã cấm bài đăng thành công'} `,
+                    content: `${'Bài đăng đã bị cấm thành công'} `
+                });
+                router.back();
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+    const onDeactivateOpen = (id: number, status: string) => {
+        onDanger({
+            title: `Xác nhận cấm`,
+            content: `Bài đăng này sẽ không được hiện thị sau khi cấm. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
     };
     if (!discussionData) return <Loader />;
     return (
@@ -78,6 +103,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     <BsArrowLeft />
                     <span>Quay lại</span>
                 </div>
+                <Button
+                    color="danger"
+                    variant="bordered"
+                    size="sm"
+                    onClick={() => onDeactivateOpen(discussionData?.id, 'BANNED')}
+                >
+                    Cấm bài đăng
+                </Button>
             </div>
             <PostTitle postContent={postContent} from="admin" />
             <div className="w-full mt-12">
