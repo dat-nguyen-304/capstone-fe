@@ -41,8 +41,6 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, type, course })
     } = useReportModal();
     const router = useRouter();
 
-    console.log(course);
-
     const { data: quizCourse } = useQuery<any>({
         queryKey: ['my-course-quiz', { course }],
         queryFn: () => examApi.getQuizCourseById(course?.id)

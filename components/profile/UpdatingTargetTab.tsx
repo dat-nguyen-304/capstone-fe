@@ -62,12 +62,7 @@ const UpdatingTargetTab: React.FC<UpdatingTargetTabProps> = ({ target, refetch }
                     subjectId: subject.subjectId,
                     grade: subject.grade
                 }));
-                console.log({
-                    hello: {
-                        targetId: target.id,
-                        studentSubjectTargetRequests: subjectTargetBody
-                    }
-                });
+
                 const res = await studentApi.updateTarget({
                     targetId: target.id,
                     studentSubjectTargetRequests: subjectTarget
@@ -100,8 +95,6 @@ const UpdatingTargetTab: React.FC<UpdatingTargetTabProps> = ({ target, refetch }
             toast.error('Hệ thống gặp trục trặc. Vui lòng thử lại sau ít phút.');
         }
     };
-
-    // console.log({ subjects: getSubjectList(target.id) });
 
     if (!target) return <Loader />;
 

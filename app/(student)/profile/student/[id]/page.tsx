@@ -37,7 +37,13 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
             <Card className="md:grid grid-cols-9 gap-8 my-4 p-8">
                 <div className="col-span-4 xl:col-span-3 py-8 px-4 rounded-xl">
                     <div className="w-full max-w-[200px] lg:max-w-[300px] mx-auto relative">
-                        <Image src="/student.png" width={300} height={300} alt="" className="sm:border-1 rounded-lg" />
+                        <Image
+                            src={studentData?.url || '/student.png'}
+                            width={300}
+                            height={300}
+                            alt="student avatar"
+                            className="sm:border-1 rounded-lg"
+                        />
                         <div className="hidden md:block">
                             <h3 className="text-blue-500 text-2xl font-semibold mt-8">{studentData?.fullName}</h3>
                             {/* <p className="mt-4 text-sm">Ngày tham gia: 21/10/2023</p>

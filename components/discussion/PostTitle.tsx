@@ -9,20 +9,12 @@ import 'photoswipe/dist/photoswipe.css';
 import Link from 'next/link';
 import HTMLReactParser from 'html-react-parser';
 import { discussionApi } from '@/api-client';
+import { toast } from 'react-toastify';
 
 interface PostTitleProps {
-    postContent: {
-        id: number;
-        title: string;
-        content: string;
-        imageUrl?: string;
-        owner?: boolean;
-        auth: string;
-        like: number;
-        avatar: string;
-        createTime: string;
-    };
+    postContent: any;
     from: 'student' | 'teacher' | 'admin';
+    refetch?: any;
 }
 const calculateTimeDifference = (postTime: any) => {
     const currentTime = new Date().getTime();
@@ -45,15 +37,31 @@ const calculateTimeDifference = (postTime: any) => {
     }
 };
 
-const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
+const PostTitle: React.FC<PostTitleProps> = ({ postContent, from, refetch }) => {
     const handleLikeClick = async () => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             // Assuming postContent.id is the discussionId
-            const response = await discussionApi.discussionReact(postContent?.id);
-            // Handle the response as needed
-            console.log('API response:', response);
+            if (postContent?.reacted) {
+                const response = await discussionApi.discussionReact(postContent?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
+            } else {
+                const response = await discussionApi.discussionRemoveReact(postContent?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
+            }
         } catch (error) {
             // Handle errors
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error reacting to discussion:', error);
         }
     };
@@ -127,12 +135,17 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from }) => {
                                     <BiSolidPencil className="cursor-pointer " />
                                 </Button>
                             </>
-                        ) : (
-                            <>
-                                <AiOutlineLike className="cursor-pointer text-blue-500" onClick={handleLikeClick} />
-                            </>
-                        )}
-
+                        ) : null}
+                        <AiOutlineLike
+                            className={`${
+                                !postContent?.reacted
+                                    ? 'cursor-pointer hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : postContent?.reacted
+                                    ? 'cursor-pointer text-blue-500 hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : ''
+                            }`}
+                            onClick={handleLikeClick}
+                        />
                         <span className="text-sm text-blue-500">{postContent?.like}</span>
                     </div>
                 </div>

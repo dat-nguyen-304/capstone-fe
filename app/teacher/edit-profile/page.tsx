@@ -83,7 +83,13 @@ const Profile: React.FC = () => {
 
     const defaultSubjectIds: number[] =
         data?.filter(subject => teacherData?.subject?.includes(subject.name)).map(subject => subject.id) ?? [];
+    const dateValue = teacherData?.createDate ? new Date(teacherData?.createDate) : new Date();
 
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    })?.format(dateValue);
     if (!teacherData) return <Loader />;
     return (
         <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
@@ -114,7 +120,7 @@ const Profile: React.FC = () => {
                             <h3 className="text-blue-500 text-2xl font-semibold mt-8">
                                 {teacherData?.fullName || 'Nguyễn Văn An'}
                             </h3>
-                            <p className="mt-4 text-sm">Ngày tham gia: {teacherData?.createdDate || '2/12/2023'}</p>
+                            <p className="mt-4 text-sm">Ngày tham gia: {formattedDate}</p>
                             <p className="mt-4 text-sm">
                                 Giáo viên môn:{' '}
                                 {teacherData?.subject?.map((subject: any, index: number) => (

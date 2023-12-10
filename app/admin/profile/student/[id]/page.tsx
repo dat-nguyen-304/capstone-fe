@@ -24,7 +24,6 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
         queryFn: () => studentApi.getPublicStudent(params.id)
     });
 
-    console.log({ data });
     const targets = data?.data.targets;
     const studentData = data?.data.userResponse;
     const dateValue = studentData?.createDate ? new Date(studentData?.createDate) : new Date();

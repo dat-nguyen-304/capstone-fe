@@ -38,7 +38,20 @@ const columns = [
     { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
+const isPaymentDateRefundable = (paymentDate: Date) => {
+    const currentDate = new Date();
 
+    // Calculate the difference in milliseconds
+    const timeDifference = currentDate.getTime() - paymentDate.getTime();
+
+    // Convert the difference to days
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+    // Set the refund window (e.g., 3 days)
+    const refundWindow = 3;
+
+    return daysDifference > refundWindow;
+};
 const Transaction: React.FC<TransactionsProps> = ({}) => {
     const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
@@ -179,7 +192,9 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                         transaction.transactionStatus === 'REFUND' ||
                                         transaction.transactionStatus === 'REFUND_SUCCES' ||
                                         transaction.transactionStatus === 'PENDING' ||
-                                        transaction.transactionStatus === 'REJECT_REFUND'
+                                        transaction.transactionStatus === 'REJECT_REFUND' ||
+                                        (transaction?.transactionStatus == 'SUCCESS' &&
+                                            isPaymentDateRefundable(new Date(transaction?.paymentDate)))
                                             ? 'viewDis'
                                             : 'view'
                                     }
@@ -226,19 +241,27 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     hour12: false
                 })?.format(dateValue);
 
-                return formattedDate;
-            // case 'teacher':
-            //     return (
-            //         <User
-            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-            //             classNames={{
-            //                 description: 'text-default-500'
-            //             }}
-            //             name={cellValue}
-            //         >
-            //             {transaction.teacher}
-            //         </User>
-            //     );
+                const isRefundable = transaction?.transactionStatus == 'SUCCESS' && isPaymentDateRefundable(dateValue);
+
+                return <span style={{ color: isRefundable ? 'red' : '' }}>{formattedDate}</span>;
+            case 'teacherName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction?.teacherAvatar
+                                ? transaction?.teacherAvatar
+                                : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {transaction.teacherName}
+                    </User>
+                );
             default:
                 return cellValue;
         }

@@ -60,12 +60,21 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
         try {
             toastLoading = toast.loading('Đang xử lí yêu cầu');
             // Assuming postContent.id is the discussionId
-            const response = await discussionApi.commentReact(commentInfo?.id);
-            refetch();
-            if (response) {
-                toast.success('Tương tác thành công');
+            if (commentInfo?.reacted) {
+                const response = await discussionApi.commentRemoveReact(commentInfo?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
+            } else {
+                const response = await discussionApi.commentReact(commentInfo?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
             }
-            toast.dismiss(toastLoading);
         } catch (error) {
             // Handle errors
             toast.dismiss(toastLoading);
@@ -117,7 +126,11 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                     <span className="flex items-center gap-2">
                         <AiOutlineLike
                             className={`${
-                                !commentInfo?.reacted && !commentInfo?.owner ? 'cursor-pointer text-blue-500' : ''
+                                !commentInfo?.reacted
+                                    ? 'cursor-pointer hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : commentInfo?.reacted
+                                    ? 'cursor-pointer text-blue-500 hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : ''
                             }`}
                             onClick={handleLikeClick}
                         />
@@ -183,7 +196,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                     <ul className="mt-2">
                         {commentInfo?.subComments && showSubComment
                             ? commentInfo?.subComments?.map((subCommentInfo: any, index: number) => (
-                                  <SubCommentItem key={index} subCommentInfo={subCommentInfo} />
+                                  <SubCommentItem key={index} subCommentInfo={subCommentInfo} refetch={refetch} />
                               ))
                             : null}
                     </ul>

@@ -14,19 +14,23 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteProps {
     currentTime: string;
     videoId: number;
+    setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+    handleButtonClick: any;
 }
 
-const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
+const Note: React.FC<NoteProps> = ({ currentTime, videoId, setIsPlaying, handleButtonClick }) => {
     const [open, setOpen] = useState(false);
     const [noteContent, setNoteContent] = useState('');
     const [editNoteData, setEditNoteData] = useState(null);
     const [editNoteId, setEditNoteId] = useState(null);
     const [editNoteDuration, setEditNoteDuration] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const showDrawer = (editData: any) => {
         setNoteContent(editData?.note);
         setEditNoteData(editData);
         setEditNoteId(editData?.id);
         setEditNoteDuration(editData?.duration);
+        setIsPlaying(false);
         setOpen(true);
     };
 
@@ -35,6 +39,7 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
         queryFn: () => studentNoteApi.getVideoNote(videoId)
     });
     const handleSaveNote = async () => {
+        setIsSubmitting(true);
         try {
             if (editNoteData && editNoteId) {
                 // If editing an existing note
@@ -49,6 +54,7 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
                     setEditNoteData(null);
                     setEditNoteDuration(null);
                     setEditNoteId(null);
+                    setIsSubmitting(false);
                     refetch();
                 }
             } else {
@@ -62,17 +68,18 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
                 });
 
                 if (response) {
+                    setIsSubmitting(false);
                     refetch();
                     setNoteContent('');
                 }
             }
         } catch (error) {
+            setIsSubmitting(false);
             console.error('Error saving note:', error);
         }
 
         setOpen(false); // Close the drawer after saving
     };
-    // console.log(editNoteData);
 
     return (
         <div className="mt-4">
@@ -92,10 +99,22 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
             >
                 <ReactQuill theme="snow" value={noteContent} onChange={content => setNoteContent(content)} />
                 <div className="mt-4 gap-4 flex justify-end ">
-                    <Button size="sm" onClick={() => setOpen(false)}>
+                    <Button
+                        size="sm"
+                        onClick={() => {
+                            setOpen(false);
+                            setIsPlaying(true);
+                        }}
+                    >
                         Hủy bỏ
                     </Button>
-                    <Button size="sm" color="primary" onClick={handleSaveNote}>
+                    <Button
+                        size="sm"
+                        color="primary"
+                        isLoading={isSubmitting}
+                        isDisabled={noteContent === '' ? true : false}
+                        onClick={handleSaveNote}
+                    >
                         Lưu
                     </Button>
                 </div>
@@ -109,6 +128,7 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId }) => {
                               noteData={note}
                               onEditNote={() => showDrawer(note)}
                               refetch={refetch}
+                              handleButtonClick={handleButtonClick}
                           />
                       ))
                     : null}

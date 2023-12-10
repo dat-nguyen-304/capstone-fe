@@ -111,12 +111,13 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
             setExamSubmitted(true);
 
             const res = await examApi.submitExam(params?.id, selectedAnswers);
-            setIsSubmitting(false);
 
             if (res) {
+                setIsSubmitting(false);
                 router?.push(`/exam/${params?.id}`);
             }
         } catch (error) {
+            setIsSubmitting(false);
             console.log(error);
         }
     };

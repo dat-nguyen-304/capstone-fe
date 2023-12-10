@@ -13,9 +13,13 @@ interface NoteItemProps {
     noteData: any;
     onEditNote: () => void;
     refetch?: any;
+    handleButtonClick: any;
 }
-
-const NoteItem: React.FC<NoteItemProps> = ({ time, noteData, onEditNote, refetch }) => {
+const convertTimeToSeconds = (timeString: string) => {
+    const [hours, minutes, seconds] = timeString.split(':').map(Number);
+    return hours * 3600 + minutes * 60 + seconds;
+};
+const NoteItem: React.FC<NoteItemProps> = ({ time, noteData, onEditNote, refetch, handleButtonClick }) => {
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const handleDeleteNote = async (id: number) => {
@@ -51,7 +55,12 @@ const NoteItem: React.FC<NoteItemProps> = ({ time, noteData, onEditNote, refetch
     return (
         <li className="mt-8">
             <div className="flex justify-between items-center">
-                <Chip size="sm" className="text-sm sm:text-base cursor-pointer" color="primary">
+                <Chip
+                    size="sm"
+                    className="text-sm sm:text-base cursor-pointer"
+                    onClick={() => handleButtonClick(convertTimeToSeconds(noteData?.duration))}
+                    color="primary"
+                >
                     {noteData?.duration}
                 </Chip>
                 <div className="flex items-center text-lg gap-5">

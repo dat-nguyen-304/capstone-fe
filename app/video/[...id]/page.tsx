@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import VideoHeader from '@/components/header/VideoHeader';
 import { Button, Tab, Tabs, Textarea } from '@nextui-org/react';
 import CommentItem from '@/components/video/CommentItem';
-import { useEffect, useState } from 'react';
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
+import { useEffect, useRef, useState } from 'react';
+const VideoPlayer = dynamic(() => import('@/components/video/VideoPlayer'), { ssr: false });
 import { OnProgressProps } from 'react-player/base';
 import { convertSeconds } from '@/utils';
 import Note from '@/components/video/Note';
@@ -25,6 +25,7 @@ interface VideoProps {
 }
 
 const Video: React.FC<VideoProps> = ({ params }) => {
+    const playerRef = useRef<any>();
     const [isPlaying, setIsPlaying] = useState(false);
     const [openVideoList, setOpenVideoList] = useState(false);
     const [comment, setComment] = useState<string>('');
@@ -32,7 +33,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [isLike, setIsLike] = useState(false);
     const [isWatched, setIsWatched] = useState(false);
     const [numberLike, setNumberLike] = useState<number>(0);
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [hasCalledProgressApi, setHasCalledProgressApi] = useState(false);
@@ -50,7 +50,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         queryFn: () => videoApi.getVideoDetailById(params?.id[1])
     });
     const { data: commentsData, refetch } = useQuery<any>({
-        queryKey: ['commentsVideo', updateState],
+        queryKey: ['commentsVideo', { params: params?.id[1] }],
         queryFn: () => commentsVideoApi.getCommentsVideoById(params?.id[1], 0, 100, 'createdDate', 'DESC')
     });
     const { data: quizzesData } = useQuery<any>({
@@ -159,14 +159,21 @@ const Video: React.FC<VideoProps> = ({ params }) => {
 
     if (params?.id?.length <= 1) return <Home />;
     if (!data) return <Loader />;
-
+    const handleButtonClick = (timeNote: number) => {
+        // Use the seekTo method to go to the specified time (in seconds)
+        if (playerRef.current && playerRef.current.seekTo) {
+            // Use the seekTo method to go to the specified time (in seconds)
+            playerRef.current.seekTo(timeNote, 'seconds');
+            console.log(timeNote);
+        }
+    };
     return (
         <VideoHeader type="video" id={params?.id[1]} course={courseData}>
             <div className="w-[95%] 2xl:w-4/5 mx-auto">
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     <div className="col-span-7">
                         <div className="object-contain">
-                            <ReactPlayer
+                            {/* <ReactPlayer
                                 playing={isPlaying}
                                 width="100%"
                                 height="450px"
@@ -179,6 +186,13 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                     'https://www.youtube.com/watch?v=0SJE9dYdpps&list=PL_-VfJajZj0VgpFpEVFzS5Z-lkXtBe-x5'
                                 }
                                 onProgress={progress => handleProgress(progress)}
+                            /> */}
+                            <VideoPlayer
+                                playerRef={playerRef}
+                                isPlaying={isPlaying}
+                                setIsPlaying={setIsPlaying}
+                                url={data?.url}
+                                handleProgress={handleProgress}
                             />
                         </div>
                         <div className="mt-4 flex items-center">
@@ -195,7 +209,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                             Danh sách bài học
                         </Button>
                         <h3 className="mt-8 mb-4 font-semibold text-lg text-slate-800">Mô tả video</h3>
-                        <p>{HTMLReactParser(data?.description)}</p>
+                        <span>{HTMLReactParser(data?.description)}</span>
                         {data?.material ? (
                             <p className="mt-16 mb-8 font-semibold text-lg text-slate-800">
                                 Tài liệu đính kèm:
@@ -209,7 +223,12 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                         <div className="mt-8 px-0">
                             <Tabs aria-label="Options" color="primary" variant="underlined">
                                 <Tab key="note" title="Ghi chú">
-                                    <Note currentTime={currentTime} videoId={params?.id[1]} />
+                                    <Note
+                                        currentTime={currentTime}
+                                        videoId={params?.id[1]}
+                                        setIsPlaying={setIsPlaying}
+                                        handleButtonClick={handleButtonClick}
+                                    />
                                 </Tab>
                                 <Tab key="comment" title="Bình luận">
                                     <Textarea

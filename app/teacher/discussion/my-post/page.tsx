@@ -120,6 +120,8 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'title':
+                return <Link href={`/teacher/discussion/${post?.id}`}>{cellValue}</Link>;
             case 'ownerFullName':
                 return (
                     <User
@@ -136,6 +138,20 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                         {post.ownerFullName}
                     </User>
                 );
+            case 'createTime':
+                const dateValue = cellValue ? new Date(cellValue) : new Date();
+
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false
+                })?.format(dateValue);
+
+                return formattedDate;
             case 'status':
                 return (
                     <Chip

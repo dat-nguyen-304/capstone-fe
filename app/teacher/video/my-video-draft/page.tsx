@@ -82,7 +82,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             top: 0
         });
     };
-    console.log(videos);
+
     const mapCommentToCommonInfo = (videos: any) => {
         return {
             id: videos?.id,

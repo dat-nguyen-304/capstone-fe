@@ -28,7 +28,7 @@ interface PostDetailProps {
 const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const router = useRouter();
     const [comments, setComments] = useState<[]>([]);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
@@ -37,8 +37,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const currentUser = useUser();
 
-    const { data: discussionData } = useQuery({
-        queryKey: ['discussionDetail', { params }],
+    const { data: discussionData, refetch: refetchDiscussion } = useQuery({
+        queryKey: ['discussionDetail', { params: params?.id }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
@@ -48,7 +48,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         refetch,
         isLoading
     } = useQuery({
-        queryKey: ['commentsByDiscussion', { page, filter }],
+        queryKey: ['commentsByDiscussion', { params: params?.id, page, filter }],
         queryFn: () =>
             discussionApi.getCommentsByDiscussionId(
                 params?.id,
@@ -194,6 +194,13 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         createTime: discussionData?.createTime
     };
 
+    const scrollToTop = (value: number) => {
+        setPage(value);
+        window.scrollTo({
+            top: 0
+        });
+    };
+
     if (!discussionData) return <Loader />;
 
     return (
@@ -214,52 +221,51 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                 )}
             </div>
 
-            <PostTitle postContent={postContent} from="student" />
-            {currentUser?.user?.fullName !== discussionData?.ownerFullName && (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex gap-4 items-center">
-                        <div className="h-[100px] w-[160px] rounded-lg border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
-                            <div {...getRootProps()}>
-                                <input {...getInputProps()} name="avatar" />
-                                {uploadedFiles.length ? (
-                                    <div className="group relative">
-                                        <Image
-                                            className="object-cover w-full h-[100px]"
-                                            key={uploadedFiles[0].path}
-                                            src={URL.createObjectURL(uploadedFiles[0])}
-                                            alt={uploadedFiles[0].path as string}
-                                            width={160}
-                                            height={100}
-                                        />
-                                        <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
-                                            <RiImageEditLine size={28} />
-                                            <span className="text-sm">Cập nhật ảnh</span>
-                                        </div>
+            <PostTitle postContent={postContent} refetch={refetchDiscussion} from="student" />
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex gap-4 items-center">
+                    <div className="h-[100px] w-[160px] rounded-lg border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer mt-4">
+                        <div {...getRootProps()}>
+                            <input {...getInputProps()} name="avatar" />
+                            {uploadedFiles.length ? (
+                                <div className="group relative">
+                                    <Image
+                                        className="object-cover w-full h-[100px]"
+                                        key={uploadedFiles[0].path}
+                                        src={URL.createObjectURL(uploadedFiles[0])}
+                                        alt={uploadedFiles[0].path as string}
+                                        width={160}
+                                        height={100}
+                                    />
+                                    <div className="absolute top-0 right-0 bottom-0 left-0 hidden text-white group-hover:flex flex-col justify-center items-center bg-[rgba(0,0,0,0.4)]">
+                                        <RiImageEditLine size={28} />
+                                        <span className="text-sm">Cập nhật ảnh</span>
                                     </div>
-                                ) : (
-                                    <div className="flex flex-col justify-center items-center">
-                                        <RiImageAddLine size={28} />
-                                        <span className="text-sm">Thêm ảnh</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex-[1] relative">
-                            <InputFormula name="response" placeholder="Viết suy nghĩ của bạn" control={control} />
-                            <Button
-                                className="absolute right-2 bottom-[-40px] !min-w-[40px] w-[40px] h-[40px] rounded-full mb-2 cursor-pointer"
-                                color="primary"
-                                type="submit"
-                                variant="light"
-                                size="sm"
-                                isLoading={isSubmitting}
-                            >
-                                <IoMdSend size={20} />
-                            </Button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col justify-center items-center">
+                                    <RiImageAddLine size={28} />
+                                    <span className="text-sm">Thêm ảnh</span>
+                                </div>
+                            )}
                         </div>
                     </div>
-                </form>
-            )}
+                    <div className="flex-[1] relative">
+                        <InputFormula name="response" placeholder="Viết suy nghĩ của bạn" control={control} />
+                        <Button
+                            className="absolute right-2 bottom-[-40px] !min-w-[40px] w-[40px] h-[40px] rounded-full mb-2 cursor-pointer"
+                            color="primary"
+                            type="submit"
+                            variant="light"
+                            size="sm"
+                            isLoading={isSubmitting}
+                        >
+                            <IoMdSend size={20} />
+                        </Button>
+                    </div>
+                </div>
+            </form>
 
             <div className="w-full mt-20">
                 <div className="flex items-baseline justify-between">
@@ -300,6 +306,16 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                             ) : (
                                 <div>Chưa có phản hồi</div>
                             )}
+                            {totalPage && totalPage > 1 ? (
+                                <div className="flex justify-center mb-16">
+                                    <Pagination
+                                        page={page}
+                                        total={totalPage}
+                                        onChange={value => scrollToTop(value)}
+                                        showControls
+                                    />
+                                </div>
+                            ) : null}
                         </ul>
                     )}
 

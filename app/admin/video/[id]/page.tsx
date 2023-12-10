@@ -72,7 +72,7 @@ const AdminViewVideo: React.FC<AdminViewVideoProps> = ({ params }) => {
                         </div>
                         <div className="mt-8 px-0 sm:px-4">
                             <h3 className="mt-8 mb-4 font-semibold text-lg text-slate-800">Mô tả video</h3>
-                            <p className="">{HTMLReactParser(data?.description)}</p>
+                            <span className="">{HTMLReactParser(data?.description)}</span>
                             {data?.material ? (
                                 <p className="mt-16 mb-8 font-semibold text-lg text-slate-800">
                                     Tài liệu đính kèm:

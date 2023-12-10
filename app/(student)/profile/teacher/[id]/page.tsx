@@ -25,6 +25,13 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     if (!data) return <Loader />;
 
     const teacherData = data?.data;
+    const dateValue = teacherData?.createDate ? new Date(teacherData?.createDate) : new Date();
+
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    })?.format(dateValue);
 
     return (
         <div className="w-[94%] xl:w-[90%] my-4 mx-auto ">
@@ -67,11 +74,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
                             <div className="xl:flex items-center mt-4">
                                 <p className="text-sm text-[#444] sm:text-base">
                                     <span className="mr-2">Ngày tham gia:</span>
-                                    {new Intl.DateTimeFormat('en-GB', {
-                                        year: 'numeric',
-                                        month: 'numeric',
-                                        day: 'numeric'
-                                    })?.format(teacherData?.createDate || new Date())}
+                                    {formattedDate}
                                 </p>
                             </div>
                         </div>

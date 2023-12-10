@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
+import { PuffLoader } from 'react-spinners';
 
 interface PostDetailProps {
     params: { id: number };
@@ -25,13 +26,17 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [filter, setFilter] = useState<number>(0);
-    const { data: discussionData } = useQuery({
+    const { data: discussionData, refetch: refetchDiscussion } = useQuery({
         queryKey: ['discussionDetail', { params: params?.id }],
         queryFn: () => discussionApi.getDiscussionById(params?.id)
     });
 
-    const { data: commentsData } = useQuery({
-        queryKey: ['adminCommentsByDiscussion', { page, filter }],
+    const {
+        data: commentsData,
+        refetch,
+        isLoading
+    } = useQuery({
+        queryKey: ['adminCommentsByDiscussion', { params: params?.id, page, filter }],
         queryFn: () =>
             discussionApi.getCommentsByDiscussionId(
                 params?.id,
@@ -52,7 +57,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         id: discussionData?.id,
         title: discussionData?.title,
         content: discussionData?.content,
-        image: discussionData?.imageUrl,
+        imageUrl: discussionData?.imageUrl,
         owner: discussionData?.owner,
         auth: discussionData?.ownerFullName,
         like: discussionData?.reactCount,
@@ -112,7 +117,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     Cấm bài đăng
                 </Button>
             </div>
-            <PostTitle postContent={postContent} from="admin" />
+            <PostTitle postContent={postContent} from="admin" refetch={refetchDiscussion} />
             <div className="w-full mt-12">
                 <Select
                     size="sm"
@@ -131,28 +136,32 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     </SelectItem>
                 </Select>
                 <Card className="mt-8 p-8">
-                    <ul>
-                        {commentsData?.data?.length ? (
-                            commentsData?.data?.map((commentInfo: CommentCardType) => (
-                                <CommentItem key={commentInfo?.id} commentInfo={commentInfo} />
-                            ))
-                        ) : (
-                            <>
-                                {/* <CommentItem commentInfo={commonInfo} /> */}
-                                Chưa có bình luận
-                            </>
-                        )}
-                        {totalPage && totalPage > 1 ? (
-                            <div className="flex justify-center mb-16">
-                                <Pagination
-                                    page={page}
-                                    total={totalPage}
-                                    onChange={value => scrollToTop(value)}
-                                    showControls
-                                />
-                            </div>
-                        ) : null}
-                    </ul>
+                    {isLoading ? (
+                        <div className="flex justify-center">
+                            <PuffLoader color="blue" size={50} />
+                        </div>
+                    ) : (
+                        <ul>
+                            {comments?.length ? (
+                                comments?.map((commentInfo: any) => (
+                                    <CommentItem refetch={refetch} key={commentInfo?.id} commentInfo={commentInfo} />
+                                ))
+                            ) : (
+                                <div>Chưa có phản hồi</div>
+                            )}
+                            {totalPage && totalPage > 1 ? (
+                                <div className="flex justify-center mb-16">
+                                    <Pagination
+                                        page={page}
+                                        total={totalPage}
+                                        onChange={value => scrollToTop(value)}
+                                        showControls
+                                    />
+                                </div>
+                            ) : null}
+                        </ul>
+                    )}
+
                     {/* <Button className="w-full">Xem thêm</Button> */}
                 </Card>
             </div>

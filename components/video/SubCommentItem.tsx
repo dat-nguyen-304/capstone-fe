@@ -5,20 +5,38 @@ import { Avatar, Tooltip } from '@nextui-org/react';
 import { AiOutlineLike } from 'react-icons/ai';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { CiFlag1 } from 'react-icons/ci';
+import { toast } from 'react-toastify';
 
 interface SubCommentItemProps {
     subCommentInfo: any;
+    refetch?: any;
 }
 
-const SubCommentItem: React.FC<SubCommentItemProps> = ({ subCommentInfo }) => {
+const SubCommentItem: React.FC<SubCommentItemProps> = ({ subCommentInfo, refetch }) => {
     const handleLikeClick = async () => {
+        let toastLoading;
         try {
+            toastLoading = toast.loading('Đang xử lí yêu cầu');
             // Assuming postContent.id is the discussionId
-            const response = await discussionApi.commentReact(subCommentInfo?.id);
-            // Handle the response as needed
-            console.log('API response:', response);
+            if (subCommentInfo?.reacted) {
+                const response = await discussionApi.commentRemoveReact(subCommentInfo?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
+            } else {
+                const response = await discussionApi.commentReact(subCommentInfo?.id);
+                refetch();
+                if (response) {
+                    toast.success('Tương tác thành công');
+                }
+                toast.dismiss(toastLoading);
+            }
         } catch (error) {
             // Handle errors
+            toast.dismiss(toastLoading);
+            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error reacting to discussion:', error);
         }
     };
@@ -38,7 +56,11 @@ const SubCommentItem: React.FC<SubCommentItemProps> = ({ subCommentInfo }) => {
                     <span className="flex items-center gap-2">
                         <AiOutlineLike
                             className={`${
-                                !subCommentInfo?.reacted && !subCommentInfo?.owner ? 'cursor-pointer text-blue-500' : ''
+                                !subCommentInfo?.reacted
+                                    ? 'cursor-pointer hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : subCommentInfo?.reacted
+                                    ? 'cursor-pointer text-blue-500 hover:scale-110 transition-transform duration-200 ease-in-out'
+                                    : ''
                             }`}
                             onClick={handleLikeClick}
                         />
