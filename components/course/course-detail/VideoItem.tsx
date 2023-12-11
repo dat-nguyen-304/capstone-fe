@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 import { BiSolidLike } from 'react-icons/bi';
 import { FaComments } from 'react-icons/fa';
-import { RxVideo } from 'react-icons/rx';
+import { MdVerified } from 'react-icons/md';
+import { RxQuestionMark, RxQuestionMarkCircled, RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
     type?: 'my-video' | 'teacher-video' | 'teacher-video-draft' | 'admin-review-video' | 'admin-view-video';
@@ -102,7 +103,6 @@ const VideoItem: React.FC<VideoItemProps> = ({
     // else detailPage = `/video/${videoItem?.id}`;
 
     const goToVideo = () => {
-        console.log({ videoItem: videoItem.url });
         if (!type) {
             if (videoItem.videoStatus === 'PRIVATE') return;
             else {
@@ -127,9 +127,7 @@ const VideoItem: React.FC<VideoItemProps> = ({
                 <div className="absolute top-1/2 translate-y-[-50%] translate-x-[-50%]">
                     <Image
                         src={
-                            videoItem?.examType && videoItem?.attempted
-                                ? '/video-number/green.svg'
-                                : videoItem?.examType && !videoItem?.attempted
+                            videoItem?.examType
                                 ? '/video-number/red.svg'
                                 : videoItem?.isWatched
                                 ? '/video-number/green.svg'
@@ -145,8 +143,18 @@ const VideoItem: React.FC<VideoItemProps> = ({
                 </div>
                 <div className="flex justify-between px-6 sm:px-8">
                     <div className="flex items-center w-4/5">
-                        <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        <p className="truncate text-xs sm:text-sm text-black">{videoItem?.name}</p>
+                        {videoItem?.examType ? (
+                            <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                        ) : (
+                            <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                        )}
+
+                        <p className="truncate text-xs sm:text-sm text-black">
+                            {videoItem?.name}{' '}
+                            {videoItem?.attempted ? (
+                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />
+                            ) : null}
+                        </p>
                     </div>
                     {!videoItem?.examType ? (
                         <p className="text-xs sm:text-sm text-black">{floatToTime(videoItem?.duration)}</p>

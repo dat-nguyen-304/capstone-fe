@@ -30,8 +30,6 @@ const CourseTab: React.FC<CourseTabProps> = ({ teacher }) => {
 
     if (!data && courses.length === 0) return <Loader />;
 
-    console.log({ courses });
-
     return (
         <div>
             <Spin spinning={isLoading ? true : false} size="large" tip="Đang tải">

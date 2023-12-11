@@ -47,9 +47,9 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'NGÀY TẠO', uid: 'createTime', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: false },
+    { name: 'NGÀY TẠO', uid: 'createTime', sortable: false },
     { name: 'KIỂU BÀI THI', uid: 'examType' },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }

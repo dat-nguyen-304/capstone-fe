@@ -29,13 +29,13 @@ interface CoursesProps {}
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
+    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
     { name: 'GIÁO VIÊN', uid: 'teacherName' },
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'MỨC ĐỘ', uid: 'level' },
     { name: 'ĐÁNH GIÁ', uid: 'rating' },
-    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: false },
+    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];

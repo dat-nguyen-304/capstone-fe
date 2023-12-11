@@ -72,8 +72,6 @@ interface BarChartProps {
 }
 
 const RevenueChart: React.FC<BarChartProps> = ({ chartData }) => {
-    console.log(chartData);
-
     const [userData, setUserData] = useState({
         labels: chartData?.map((data: any) => data.monthOfYear),
         datasets: [

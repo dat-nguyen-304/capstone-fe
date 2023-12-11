@@ -35,7 +35,6 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         }
     }, [quizCourse, quizCourseRealId]);
 
-    console.log(data);
     const commonInfo = {
         id: data?.id,
         name: data?.name,

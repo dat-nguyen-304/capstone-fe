@@ -34,21 +34,25 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse, refetc
     else status = 'Vô hiệu';
 
     const submitVerifyCourse = async () => {
-        onClose();
-        const toastLoading = toast.loading('Đang xử lí yêu cầu');
-        try {
-            const courseId = editCourse.id;
-            const response = await courseApi.TeacherSendVerifyCourse([courseId]);
-            if (response) {
-                refetch();
-                toast.success('Khóa học của đã được gửi duyệt thành công');
+        if (editCourse?.totalVideo < 1) {
+            toast.error('Bạn cần có ít nhất 1 bài giảng để gửi yêu cầu phê duyệt');
+            onClose();
+        } else {
+            onClose();
+            const toastLoading = toast.loading('Đang xử lí yêu cầu');
+            try {
+                const courseId = editCourse.id;
+                const response = await courseApi.TeacherSendVerifyCourse([courseId]);
+                if (response) {
+                    refetch();
+                    toast.success('Khóa học của đã được gửi duyệt thành công');
+                }
+                toast.dismiss(toastLoading);
+            } catch (error) {
+                toast.dismiss(toastLoading);
+                toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
+                console.error('Error verifying course:', error);
             }
-            toast.dismiss(toastLoading);
-            console.log(response);
-        } catch (error) {
-            toast.dismiss(toastLoading);
-            toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
-            console.error('Error verifying course:', error);
         }
     };
 
@@ -63,7 +67,6 @@ const EditCourse: React.FC<EditCourseProps> = ({ onOpenPopup, editCourse, refetc
 
     const handleDeleteCourse = async (courseId: number) => {
         try {
-            console.log(editCourse?.status);
             if (editCourse.status === 'AVAILABLE') {
                 const res = await courseApi.deleteCourse(courseId);
                 if (!res.data.code) {

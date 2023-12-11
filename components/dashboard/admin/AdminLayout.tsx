@@ -70,17 +70,17 @@ const items: MenuItem[] = [
         getItem(<Link href="/admin/discussion">Tất cả bài đăng</Link>, '18'),
         getItem(<Link href="/admin/topic">Tất cả chủ đề</Link>, '19'),
         getItem(<Link href="/admin/topic/create">Tạo chủ đề</Link>, '20')
-    ]),
-    getItem(
-        <div className="relative">
-            <Link href="/admin/notification">Thông báo</Link>
-            <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
-                10
-            </Chip>
-        </div>,
-        '23',
-        <BellOutlined />
-    )
+    ])
+    // getItem(
+    //     <div className="relative">
+    //         <Link href="/admin/notification">Thông báo</Link>
+    //         <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
+    //             10
+    //         </Chip>
+    //     </div>,
+    //     '23',
+    //     <BellOutlined />
+    // )
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {

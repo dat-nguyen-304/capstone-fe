@@ -53,12 +53,7 @@ const TargetTab: React.FC<TargetTabProps> = ({ target, refetch }) => {
                     subjectId: subject.subjectId,
                     grade: subject.grade
                 }));
-                console.log({
-                    hello: {
-                        targetId: target.id,
-                        studentSubjectTargetRequests: subjectTargetBody
-                    }
-                });
+
                 await studentApi.updateTarget({
                     targetId: target.id,
                     studentSubjectTargetRequests: subjectTarget
@@ -81,7 +76,7 @@ const TargetTab: React.FC<TargetTabProps> = ({ target, refetch }) => {
             setIsSubmitting(true);
             toastLoading = toast.loading('Đang cập nhật');
             const res = await studentApi.removeTarget(target.id);
-            console.log({ res });
+
             setIsSubmitting(false);
             refetch();
             toast.dismiss(toastLoading);

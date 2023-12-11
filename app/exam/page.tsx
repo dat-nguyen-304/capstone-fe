@@ -57,7 +57,6 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                 selectedFilterSort == 1 ? 'DESC' : 'ASC'
             )
     });
-    console.log(search);
 
     useEffect(() => {
         if (data?.data) {
@@ -72,7 +71,6 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
             top: 0
         });
     };
-    console.log(data);
 
     if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
 

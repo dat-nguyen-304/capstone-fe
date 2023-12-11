@@ -29,14 +29,13 @@ import { courseStatusColorMap } from '@/utils';
 interface CoursesProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
+    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
     { name: 'GIÁO VIÊN', uid: 'teacherName' },
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'MỨC ĐỘ', uid: 'level' },
-    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: false },
+    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: false },
+    { name: 'TRẠNG THÁI', uid: 'status', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -54,23 +53,12 @@ type Course = {
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set([
-            'id',
-            'courseName',
-            'teacherName',
-            'subject',
-            'level',
-            'createdDate',
-            'updateDate',
-            'status',
-            'action'
-        ])
+        new Set(['courseName', 'teacherName', 'subject', 'level', 'createdDate', 'updateDate', 'status', 'action'])
     );
     const [courses, setCourses] = useState<CourseCardType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
@@ -78,9 +66,10 @@ const Courses: React.FC<CoursesProps> = () => {
         status,
         error,
         data: coursesData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: ['coursesApproveAdmin', { page, rowsPerPage, updateState }],
+        queryKey: ['coursesApproveAdmin', { page, rowsPerPage }],
         queryFn: () => courseApi.getCoursesVerifyListAdmin(page - 1, rowsPerPage)
     });
 
@@ -113,6 +102,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     const updateRes = await examApi.updateQuizDraftToQuiz(res?.data, id);
                     if (!updateRes) {
                         toast.success('Khóa học đã được duyệt thành công');
+                        refetch();
                     } else {
                         toast.error('Khóa học duyệt thất bại');
                     }
@@ -120,7 +110,6 @@ const Courses: React.FC<CoursesProps> = () => {
                     toast.success('Đã từ chối khóa học thành công');
                 }
                 toast.dismiss(toastLoading);
-                setUpdateState(prev => !prev);
             }
         } catch (error) {
             toast.dismiss(toastLoading);

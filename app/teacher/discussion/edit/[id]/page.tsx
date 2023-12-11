@@ -97,7 +97,6 @@ const PostList: React.FC<PostsProps> = ({ params }) => {
             }
         }
     };
-    console.log(editDiscussion);
 
     if (user?.role !== 'TEACHER') return <NotFound />;
 

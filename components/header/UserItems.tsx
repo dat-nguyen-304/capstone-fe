@@ -13,7 +13,7 @@ interface UserItemsProps {
 const UserItems: React.FC<UserItemsProps> = ({ currentUser }) => {
     return (
         <NavbarContent as="div" justify="center" className="flex gap-[48px] items-center">
-            {currentUser.role === 'STUDENT' && <Notification />}
+            {currentUser.role === 'STUDENT'}
             <UserMenu currentUser={currentUser} />
         </NavbarContent>
     );

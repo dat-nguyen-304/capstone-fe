@@ -66,7 +66,7 @@ const UpdataVideoDraft: React.FC<UpdateVideoDraftProps> = ({ params }) => {
             description: data?.description
         }
     });
-    console.log(data);
+
     const onVideoDrop = useCallback((acceptedFile: FileWithPath[]) => {
         const file = acceptedFile[0];
         setUploadedVideoFile(file);

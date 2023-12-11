@@ -35,10 +35,10 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
-    { name: 'Email', uid: 'email', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: false },
+    { name: 'Email', uid: 'email', sortable: false },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: true },
+    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -87,7 +87,6 @@ const Teachers: React.FC<TeachersProps> = () => {
             setTotalRow(teachersData.totalRow);
         }
     }, [teachersData]);
-    console.log(teachersData);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -114,7 +113,7 @@ const Teachers: React.FC<TeachersProps> = () => {
 
     const handleBanUser = async (id: number) => {
         let toastLoading;
-        console.log({ description, id });
+
         try {
             onClose();
             onInputClose();

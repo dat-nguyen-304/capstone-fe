@@ -21,7 +21,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ params }) => {
     });
 
     if (!data) return <Loader />;
-    console.log({ data });
+
     const targets = data?.data.targets;
     const studentData = data?.data.userResponse;
     if (!studentData) return <Loader />;

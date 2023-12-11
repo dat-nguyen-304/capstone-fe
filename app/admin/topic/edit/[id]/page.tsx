@@ -31,7 +31,6 @@ const EditTopic: React.FC<EditTopicProps> = ({ params }) => {
         queryKey: ['topicDetail', { params: params?.id }],
         queryFn: () => discussionApi.getTopicById(params?.id)
     });
-    console.log(discussionTopic);
 
     const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {

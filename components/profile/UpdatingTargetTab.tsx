@@ -33,7 +33,7 @@ const UpdatingTargetTab: React.FC<UpdatingTargetTabProps> = ({ target, refetch }
 
     const setTargetObject = (index: number, subjectId: number, value: string) => {
         const grade = Number(value);
-        console.log({ index, subjectId, grade });
+
         let isSubjectValid = true;
         const newSubjectTarget = [...subjectTarget];
         if (subjectId === 1) {

@@ -30,8 +30,6 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher, type }) => {
 
     if (!data && videos.length === 0) return <Loader />;
 
-    console.log({ data });
-
     return (
         <div>
             <Spin spinning={isLoading ? true : false} size="large" tip="Đang tải">

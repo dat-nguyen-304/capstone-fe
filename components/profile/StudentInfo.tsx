@@ -28,7 +28,6 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData, refetch, getUplo
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const onSubmit = async (values: any) => {
-        console.log({ values });
         const loading = toast.loading('Đang cập nhật');
         setIsSubmitting(true);
         try {
@@ -43,7 +42,6 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ studentData, refetch, getUplo
             toast.success('Cập nhật thành công');
             refetch();
             setIsSubmitting(false);
-            console.log({ res });
         } catch (error) {
             console.log({ error });
             toast.dismiss(loading);

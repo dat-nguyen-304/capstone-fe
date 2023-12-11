@@ -16,8 +16,6 @@ const formatCurrency = (value: number) => {
     return formattedValue.replace('₫', ' VND');
 };
 const TopCourseContributorItem: React.FC<BarChartProps> = ({ topIncome, index }) => {
-    console.log(topIncome);
-
     return (
         <li className="flex items-center w-full justify-between mt-4">
             <div className="flex items-center">

@@ -27,9 +27,9 @@ import { Spin } from 'antd';
 interface ExamTopicListProps {}
 
 const columns = [
-    { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'Môn Học', uid: 'subject', sortable: true },
-    { name: 'Trạng Thái', uid: 'status', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
+    { name: 'Môn Học', uid: 'subject', sortable: false },
+    { name: 'Trạng Thái', uid: 'status', sortable: false },
     { name: 'THAO TÁC', uid: 'action' }
 ];
 

@@ -21,7 +21,6 @@ const DoTestItem = forwardRef(function MyComponent(
     const handleAnswer = (selection: string) => {
         onAnswer(index, selection);
     };
-    console.log(questions);
 
     return (
         <li className="mt-8" ref={ref}>

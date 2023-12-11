@@ -147,7 +147,7 @@ const CreateCourse: React.FC = () => {
                     if (response) {
                         setIsSubmitting(false);
                         toast.success('Khóa học đã được tạo thành công');
-                        console.log('Course created successfully:', response);
+
                         router.push('/teacher/course/my-course-draft');
                     }
                     toast.dismiss(toastLoading);

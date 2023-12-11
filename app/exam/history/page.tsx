@@ -28,11 +28,11 @@ import { Progress, Spin } from 'antd';
 interface ExamHistoryProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN BÀI THI', uid: 'examName', sortable: true },
-    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'ĐIỂM SỐ', uid: 'grade', sortable: true },
-    { name: 'NGÀY', uid: 'finishTime', sortable: true }
+    { name: 'ID', uid: 'id', sortable: false },
+    { name: 'TÊN BÀI THI', uid: 'examName', sortable: false },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: false },
+    { name: 'ĐIỂM SỐ', uid: 'grade', sortable: false },
+    { name: 'NGÀY', uid: 'finishTime', sortable: false }
 ];
 
 const getSubjectNameById = (id: number): string => {

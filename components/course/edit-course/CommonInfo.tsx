@@ -55,8 +55,6 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     const [isCheckedPolicy, setIsCheckPolicy] = useState(false);
     useEffect(() => {
         if (commonInfo) {
-            console.log(getSubjectIdByName(commonInfo?.subject));
-
             setValue('name', commonInfo?.name);
             setValue('description', commonInfo?.description);
             setValue('price', commonInfo?.price);
@@ -97,7 +95,6 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         maxFiles: 1,
         multiple: false
     });
-    console.log(videoOrders);
 
     const onSubmit = async (formData: any) => {
         let toastLoading;
@@ -130,7 +127,6 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         subject: getObjectSubjectById(selectedSubject),
                         videoOrders: filteredVideoOrders?.length > 0 ? filteredVideoOrders : null
                     };
-                    console.log({ courseTemporaryUpdateRequest });
 
                     formDataPayload.append(
                         'courseTemporaryUpdateRequest',
@@ -162,7 +158,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         levelId: levelId,
                         videoOrders: filteredVideoOrders?.length > 0 ? filteredVideoOrders : null
                     };
-                    console.log({ courseRequest });
+
                     formDataPayload.append(
                         'courseRequest',
                         new Blob([JSON.stringify(courseRequest)], { type: 'application/json' })

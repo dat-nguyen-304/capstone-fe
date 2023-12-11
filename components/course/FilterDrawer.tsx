@@ -51,20 +51,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
             maxRate: 5,
             levelList: filterLevel
         });
-        // if (filterChange == 'RATE') {
-        //     console.log(filterRating);
-        //     setFilter({ type: filterChange, value: [filterRating] });
-        // } else if (filterChange == 'SUBJECT') {
-        //     console.log(filterSubject);
-        //     setFilter({ type: filterChange, value: filterSubject });
-        // } else if (filterChange == 'LEVEL') {
-        //     console.log(filterLevel);
-        //     setFilter({ type: filterChange, value: filterLevel });
-        // } else if (filterChange == 'PRICE') {
-        //     setFilter({ type: filterChange, value: [filterPriceStart, filterPriceEnd] });
-        // } else {
-        //     setFilter({ type: '', value: [] });
-        // }
+
         onClose();
     };
     const onClear = () => {
@@ -84,7 +71,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ onClose, open, setFilter, o
         });
         onClose();
     };
-    console.log({ filterPriceStart });
 
     return (
         <Drawer title="Bộ lọc" placement="right" onClose={onClose} open={open} className="relative">

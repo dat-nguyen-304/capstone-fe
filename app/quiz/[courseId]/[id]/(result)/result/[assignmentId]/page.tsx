@@ -35,7 +35,7 @@ const ResultQuiz: React.FC<ResultExamProps> = ({ params }) => {
         queryKey: ['quiz-submission-statistic', { params: params.id }],
         queryFn: () => examApi.getSubmissionStatisticBySubId(params?.assignmentId)
     });
-    console.log(examSubmissionData);
+
     useEffect(() => {
         if (examSubmissionData) {
             setQuestions(examSubmissionData?.selectionList);

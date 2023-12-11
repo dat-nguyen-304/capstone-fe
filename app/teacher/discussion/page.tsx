@@ -25,9 +25,9 @@ interface PostListProps {}
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: true },
-    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
+    { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: false },
+    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: false },
+    { name: 'TIÊU ĐỀ', uid: 'title', sortable: false },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
@@ -79,6 +79,7 @@ const PostList: React.FC<PostListProps> = ({}) => {
             );
         }
     });
+
     const { data: topicsData } = useQuery({
         queryKey: ['topics'],
         queryFn: () => discussionApi.getAll(0, 100)

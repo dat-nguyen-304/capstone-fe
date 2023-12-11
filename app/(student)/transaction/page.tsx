@@ -29,13 +29,13 @@ import { InputModal } from '@/components/modal/InputModal';
 interface TransactionsProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
-    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
+    { name: 'ID', uid: 'id', sortable: false },
+    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: false },
+    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: false },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
-    { name: 'NGÀY', uid: 'paymentDate', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
+    { name: 'NGÀY', uid: 'paymentDate', sortable: false },
+    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 const isPaymentDateRefundable = (paymentDate: Date) => {

@@ -33,14 +33,14 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     UNAVAILABLE: 'warning'
 };
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN VIDEO', uid: 'name', sortable: true },
+    { name: 'ID', uid: 'id', sortable: false },
+    { name: 'TÊN VIDEO', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'courseName' },
     // { name: 'MÔN HỌC', uid: 'subject' },
     // { name: 'GIÁO VIÊN', uid: 'teacher' },
     { name: 'LIKE', uid: 'like' },
-    { name: 'NGÀY TẠO', uid: 'createDate', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createDate', sortable: false },
+    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -168,7 +168,6 @@ const Videos: React.FC<VideosProps> = () => {
                 id,
                 verifyStatus
             });
-            console.log(res);
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {

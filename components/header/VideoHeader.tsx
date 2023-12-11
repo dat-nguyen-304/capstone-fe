@@ -166,7 +166,7 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({ children, id, type, course })
                             <span className="inline-flex items-center text-xs">
                                 <span className="mr-1">Đã học</span>
                                 <span className="font-bold">
-                                    {`${course?.totalCompleted || 5} / ${course?.totalVideo || 10}`}
+                                    {`${course?.totalCompleted || 0} / ${course?.totalVideo || 10}`}
                                 </span>
                                 <Image src="/video-number/green.svg" width={30} height={30} alt="" />
                             </span>

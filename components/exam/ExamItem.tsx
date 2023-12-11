@@ -55,8 +55,6 @@ const ExamItem: React.FC<ExamItemProps> = ({ exam }) => {
         }
     };
 
-    console.log({ exam });
-
     return (
         <li>
             <Card className="relative border-1 border-gray-200 rounded-xl p-2 sm:p-4 shadow-lg">

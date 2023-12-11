@@ -35,10 +35,10 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
-    { name: 'Email', uid: 'email', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: false },
+    { name: 'Email', uid: 'email', sortable: false },
     { name: 'MÔN HỌC', uid: 'subject' },
-    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: true },
+    { name: 'ĐÃ THAM GIA', uid: 'createDate', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -73,21 +73,17 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: [
-            'admin-teachers',
-            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
-        ],
-        queryFn: () => teacherApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
+        queryKey: ['admin-verify-teachers', { page, rowsPerPage }],
+        queryFn: () => teacherApi.getTeachersVerificationList(page - 1, rowsPerPage, 'id', 'ASC')
     });
 
     useEffect(() => {
         if (teachersData?.data) {
             setTeachers(teachersData.data);
             setTotalPage(teachersData.totalPage);
-            setTotalRow(teachersData.totalRow);
+            setTotalRow(teachersData?.data?.length);
         }
     }, [teachersData]);
-    console.log(teachersData);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -112,33 +108,49 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
-    const handleBanUser = async (id: number) => {
+    const handleStatusChange = async (id: number, verifyStatus: boolean) => {
         let toastLoading;
-        console.log({ description, id });
+
         try {
             onClose();
             onInputClose();
             toastLoading = toast.loading('Đang xử lí yêu cầu');
-            const res = await userApi.banUser({
-                accountId: id,
+            const res = await teacherApi.verifyTeacherByAdmin({
+                teacherId: id,
+                verify: verifyStatus,
                 reason: description
             });
-            if (!res?.data?.code) {
-                toast.success('Tài khoản đã được thành công');
-                refetch();
+
+            if (!res.data.code) {
+                if (verifyStatus === true) {
+                    toast.success('Giáo viên đã được xác nhận thành công');
+                    refetch();
+                } else if (verifyStatus === false) {
+                    toast.success('Xác nhận giáo viên đã từ chối thành công');
+                    refetch();
+                }
+                toast.dismiss(toastLoading);
+                setUpdateState(prev => !prev);
             }
-            toast.dismiss(toastLoading);
         } catch (error) {
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error changing user status', error);
         }
     };
+    const onApproveOpen = (id: number) => {
+        onWarning({
+            title: 'Xác nhận duyệt',
+            content: 'Danh tính của giáo viên sẽ được duyệt sau khi được duyệt. Bạn chắc chứ?',
+            activeFn: () => handleStatusChange(id, true)
+        });
+        onOpen();
+    };
 
     const onDeclineOpen = (id: number) => {
         onDanger({
-            title: 'Xác nhận cấm tài khoản',
-            content: 'Tài khoản sẽ bị cấm và người dùng không thể đăng nhập sau khi bạn xác nhận. Bạn chắc chứ?',
+            title: 'Xác nhận từ chối',
+            content: 'Danh tính của giáo viên sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
             activeFn: () => {
                 onClose();
                 onInputOpen();
@@ -170,9 +182,9 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
                 );
             case 'subject':
                 return (
-                    <div>
+                    <div className="gap-2">
                         {(cellValue as string[]).map(sub => (
-                            <Chip size="sm" color="primary" variant="flat" key={sub}>
+                            <Chip size="sm" color="primary" variant="flat" className="mr-1" key={sub}>
                                 {sub}
                             </Chip>
                         ))}
@@ -215,21 +227,22 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem
-                                    color="primary"
-                                    as={Link}
-                                    href={`/admin/profile/teacher/${teacher.email}`}
-                                >
+                                <DropdownItem color="primary" as={Link} href={`/admin/verify-teacher/${teacher.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-
-                                <DropdownItem
+                                <DropdownItem color="success" onClick={() => onApproveOpen(teacher?.id)}>
+                                    Duyệt
+                                </DropdownItem>
+                                <DropdownItem color="danger" onClick={() => onDeclineOpen(teacher?.id)}>
+                                    Từ chối
+                                </DropdownItem>
+                                {/* <DropdownItem
                                     color="danger"
                                     key={teacher.status === 'BANNED' ? 'bannedDis' : 'banned'}
                                     onClick={() => onDeclineOpen(teacher.id)}
                                 >
                                     Cấm Người dùng
-                                </DropdownItem>
+                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -241,60 +254,9 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
 
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách giáo viên</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Danh sách xác nhận giáo viên</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
-                    <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
-                                <DropdownTrigger className="hidden sm:flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Trạng Thái
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={statusFilter}
-                                    selectionMode="single"
-                                    onSelectionChange={setStatusFilter}
-                                >
-                                    <DropdownItem key="ALL" className="capitalize">
-                                        {capitalize('Tất Cả')}
-                                    </DropdownItem>
-                                    <DropdownItem key="ENABLE" className="capitalize">
-                                        {capitalize('Hoạt Động')}
-                                    </DropdownItem>
-                                    <DropdownItem key="WAITTING" className="capitalize">
-                                        {capitalize('Đợi Xác Thực')}
-                                    </DropdownItem>
-                                    <DropdownItem key="DISABLE" className="capitalize">
-                                        {capitalize('Vô Hiệu')}
-                                    </DropdownItem>
-                                    <DropdownItem key="BANNED" className="capitalize">
-                                        {capitalize('Tài Khoản Bị Cấm')}
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
-                    </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
                         <label className="flex items-center text-default-400 text-xs sm:text-sm">
@@ -321,7 +283,7 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
                     totalPage={totalPage || 1}
                 />
             </Spin>
-            <InputModal activeFn={() => handleBanUser(declineId as number)} />
+            <InputModal activeFn={() => handleStatusChange(declineId as number, false)} />
         </div>
     );
 };

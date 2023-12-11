@@ -33,7 +33,7 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         let toastLoading;
-        console.log({ description, id, verifyStatus });
+
         try {
             onClose();
             onInputClose();
@@ -43,7 +43,6 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                 reason: description,
                 verifyStatus
             });
-            console.log(res);
 
             if (!res.data.code) {
                 if (verifyStatus == 'ACCEPTED') {

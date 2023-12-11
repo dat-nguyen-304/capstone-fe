@@ -48,9 +48,9 @@ function getTypeName(type: string) {
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'NGƯỜI BÁO CÁO', uid: 'userName', sortable: true },
-    { name: 'LOẠI BÁO CÁO', uid: 'reportType', sortable: true },
-    { name: 'NỘI DUNG VI PHẠM', uid: 'objectName', sortable: true },
+    { name: 'NGƯỜI BÁO CÁO', uid: 'userName', sortable: false },
+    { name: 'LOẠI BÁO CÁO', uid: 'reportType', sortable: false },
+    { name: 'NỘI DUNG VI PHẠM', uid: 'objectName', sortable: false },
     { name: 'MÔ TẢ', uid: 'reportContent' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -111,7 +111,7 @@ const Reports: React.FC<ReportsProps> = () => {
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         let toastLoading;
-        console.log({ description, id, verifyStatus });
+
         try {
             onClose();
             onInputClose();

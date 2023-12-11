@@ -57,9 +57,6 @@ const UploadVideo: React.FC = () => {
         queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
     });
 
-    console.log({ updatingCoursesData, activatedCoursesData });
-    console.log({ courses });
-
     useEffect(() => {
         let arr: string[] = [];
         if (activatedCoursesData?.data?.length) {
@@ -131,8 +128,8 @@ const UploadVideo: React.FC = () => {
         {
             onDrop: onAttachedDrop,
             accept: {
-                'application/pdf': ['.pdf'],
-                'application/msword': ['.doc', '.docx']
+                'application/pdf': ['.pdf']
+                // 'application/msword': ['.doc', '.docx']
             },
             multiple: true
         }
@@ -157,6 +154,7 @@ const UploadVideo: React.FC = () => {
                     videoStatus: selectedStatusVideo,
                     order: 0
                 };
+
                 const formDataPayload = new FormData();
                 formDataPayload.append(
                     'videoRequest',

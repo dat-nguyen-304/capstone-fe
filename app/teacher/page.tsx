@@ -28,7 +28,6 @@ const TeacherDashboard: React.FC = () => {
         queryKey: ['teacherDashboard'],
         queryFn: dashboardApi.getAllTeacher
     });
-    console.log(dashboardData);
 
     if (!dashboardData) return <Loader />;
     return (

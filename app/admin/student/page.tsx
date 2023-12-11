@@ -35,8 +35,8 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 
 const columns = [
     // { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: true },
-    { name: 'Email', uid: 'email', sortable: true },
+    { name: 'TIÊU ĐỀ', uid: 'fullName', sortable: false },
+    { name: 'Email', uid: 'email', sortable: false },
     // { name: 'TỔ HỢP MÔN', uid: 'targets?.[0]?.name' },
     // { name: 'ĐÃ THAM GIA', uid: 'createdAt', sortable: true },
     { name: 'TRẠNG THÁI', uid: 'userStatus' },

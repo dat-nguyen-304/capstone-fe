@@ -2,8 +2,9 @@
 
 import { VideoCardType } from '@/types';
 import Image from 'next/image';
-import { RxVideo } from 'react-icons/rx';
+import { RxQuestionMark, RxQuestionMarkCircled, RxVideo } from 'react-icons/rx';
 import Link from 'next/link';
+import { MdVerified } from 'react-icons/md';
 interface VideoItemProps {
     videoItem: any;
     index: number;
@@ -48,9 +49,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, courseId }) => 
                 <div className="absolute top-1/2 translate-y-[-50%] translate-x-[-50%]">
                     <Image
                         src={
-                            videoItem?.examType && videoItem?.attempted
-                                ? '/video-number/green.svg'
-                                : videoItem?.examType && !videoItem?.attempted
+                            videoItem?.examType
                                 ? '/video-number/red.svg'
                                 : videoItem?.isWatched
                                 ? '/video-number/green.svg'
@@ -66,8 +65,17 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, courseId }) => 
                 </div>
                 <div className="px-4 sm:px-6">
                     <div className="flex items-center w-full">
-                        <RxVideo size={20} className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        <p className="text-xs">{videoItem?.name}</p>
+                        {videoItem?.examType ? (
+                            <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                        ) : (
+                            <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                        )}
+                        <p className="text-xs">
+                            {videoItem?.name}{' '}
+                            {videoItem?.attempted ? (
+                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />
+                            ) : null}
+                        </p>
                     </div>
                 </div>
                 <div className="px-8 mt-2">

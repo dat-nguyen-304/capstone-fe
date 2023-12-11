@@ -31,9 +31,9 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const columns = [
-    { name: 'Chủ Đề', uid: 'topicName', sortable: true },
-    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'title', sortable: true },
+    { name: 'Chủ Đề', uid: 'topicName', sortable: false },
+    { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: false },
+    { name: 'TIÊU ĐỀ', uid: 'title', sortable: false },
     { name: 'TƯƠNG TÁC', uid: 'reactCount' },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'TRẠNG THÁI', uid: 'status' },
@@ -105,7 +105,6 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
-    console.log(discussionsData);
 
     const onSearchChange = useCallback((value?: string) => {
         if (value) {

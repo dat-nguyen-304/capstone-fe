@@ -122,46 +122,48 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                     )}
                     <div className="text-xs sm:text-sm"> {HTMLReactParser(String(commentInfo?.content))}</div>
                 </div>
-                <div className="mt-1 flex gap-4 items-center">
-                    <span className="flex items-center gap-2">
-                        <AiOutlineLike
-                            className={`${
-                                !commentInfo?.reacted
-                                    ? 'cursor-pointer hover:scale-110 transition-transform duration-200 ease-in-out'
-                                    : commentInfo?.reacted
-                                    ? 'cursor-pointer text-blue-500 hover:scale-110 transition-transform duration-200 ease-in-out'
-                                    : ''
-                            }`}
-                            onClick={handleLikeClick}
-                        />
-                        <span className="text-xs sm:text-sm">{commentInfo?.reactCount || 0}</span>
-                    </span>
+                {commentInfo?.commentVideo ? null : (
+                    <div className="mt-1 flex gap-4 items-center">
+                        <span className="flex items-center gap-2">
+                            <AiOutlineLike
+                                className={`${
+                                    !commentInfo?.reacted
+                                        ? 'cursor-pointer hover:scale-110 transition-transform duration-200 ease-in-out'
+                                        : commentInfo?.reacted
+                                        ? 'cursor-pointer text-blue-500 hover:scale-110 transition-transform duration-200 ease-in-out'
+                                        : ''
+                                }`}
+                                onClick={handleLikeClick}
+                            />
+                            <span className="text-xs sm:text-sm">{commentInfo?.reactCount || 0}</span>
+                        </span>
 
-                    <>
-                        <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
-                            Phản hồi
-                        </Button>
-                        {commentInfo?.owner !== true ? (
-                            <>
-                                <Tooltip
-                                    onClick={openReportModal}
-                                    placement="right"
-                                    content={
-                                        <div className="p-1 cursor-pointer">
-                                            <span className="flex items-center gap-2">
-                                                <CiFlag1 /> Báo cáo vi phạm
-                                            </span>
-                                        </div>
-                                    }
-                                >
-                                    <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
-                                        <BiDotsHorizontalRounded />
-                                    </button>
-                                </Tooltip>
-                            </>
-                        ) : null}
-                    </>
-                </div>
+                        <>
+                            <Button variant="light" onClick={() => setShowWriteResponse(!showWriteResponse)}>
+                                Phản hồi
+                            </Button>
+                            {commentInfo?.owner !== true ? (
+                                <>
+                                    <Tooltip
+                                        onClick={openReportModal}
+                                        placement="right"
+                                        content={
+                                            <div className="p-1 cursor-pointer">
+                                                <span className="flex items-center gap-2">
+                                                    <CiFlag1 /> Báo cáo vi phạm
+                                                </span>
+                                            </div>
+                                        }
+                                    >
+                                        <button type="button" className="group-hover:flex hidden h-[12px] !w-[20px]">
+                                            <BiDotsHorizontalRounded />
+                                        </button>
+                                    </Tooltip>
+                                </>
+                            ) : null}
+                        </>
+                    </div>
+                )}
                 <div className="">
                     {commentInfo?.subComments?.length ? (
                         <Button variant="light" onClick={() => setShowSubComment(!showSubComment)}>

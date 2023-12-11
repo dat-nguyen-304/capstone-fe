@@ -25,7 +25,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         router.push('/');
     };
 
-    console.log('currentUser.role', currentUser.role);
     return (
         <Dropdown placement="bottom-end">
             <DropdownTrigger>

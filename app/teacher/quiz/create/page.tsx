@@ -227,7 +227,6 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                     examType: selectedOptionCourse == 'NEW' ? 'QUIZ_DRAFT' : 'QUIZ',
                     questionList: questions
                 };
-                console.log(payload);
 
                 // Call the API to create the exam
                 const response = await examApi.createExam(payload);

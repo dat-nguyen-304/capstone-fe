@@ -58,11 +58,11 @@ function getSubjectName(subjectCode: string) {
     return subjectNames[subjectCode] || null;
 }
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TIÊU ĐỀ', uid: 'name', sortable: true },
-    { name: 'KHÓA HỌC', uid: 'course', sortable: true },
+    { name: 'ID', uid: 'id', sortable: false },
+    { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
+    { name: 'KHÓA HỌC', uid: 'course', sortable: false },
     { name: 'KIỂU BÀI THI', uid: 'examType' },
-    { name: 'ĐÃ TẠO', uid: 'createTime', sortable: true },
+    { name: 'ĐÃ TẠO', uid: 'createTime', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
@@ -142,8 +142,6 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             setTotalRow(data.totalRow);
         }
     }, [data, coursesData]);
-
-    console.log(quizzes);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;

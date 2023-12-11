@@ -19,7 +19,6 @@ const QuizDetail: React.FC<ExamDetailProps> = ({ params }) => {
         queryKey: ['exam-detail', { params: params?.id }],
         queryFn: () => examApi.getExamById(params?.id)
     });
-    console.log(data);
 
     return (
         <>

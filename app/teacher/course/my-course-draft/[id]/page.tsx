@@ -36,7 +36,6 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
             setQuizzes([...(quizCourse?.data || []), ...(quizCourseRealId?.data || [])]);
         }
     }, [quizCourse, quizCourseRealId]);
-    console.log(quizzes);
 
     const courseInfo = {
         courseName: data?.name as string,

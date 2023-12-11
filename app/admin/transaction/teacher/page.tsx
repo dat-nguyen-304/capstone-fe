@@ -30,13 +30,13 @@ import { InputModalNumber } from '@/components/modal/InputModalNumber';
 interface TeacherTransactionsProps {}
 
 const columns = [
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
+    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
     // { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
+    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: false },
     { name: 'DOANH THU', uid: 'revenue' },
     { name: 'TIỀN NHẬN', uid: 'receivedMoney' },
-    { name: 'TRẠNG THÁI', uid: 'teacherIncomeStatus', sortable: true },
-    { name: 'NGÀY', uid: 'paymentDate', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'teacherIncomeStatus', sortable: false },
+    { name: 'NGÀY', uid: 'paymentDate', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -113,7 +113,7 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
 
     const handlePaymentTeacher = async (id: number) => {
         let toastLoading;
-        console.log({ money, transactionCode, id });
+
         const paymentDate = new Date();
         paymentDate.setHours(paymentDate.getHours() + 7);
         try {

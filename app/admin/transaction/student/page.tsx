@@ -31,20 +31,19 @@ import { InputModalRefund } from '@/components/modal/InputModalRefund';
 interface StudentTransactionsProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: true },
-    { name: 'MÔN HỌC', uid: 'subject', sortable: true },
-    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: true },
+    { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
+    { name: 'MÔN HỌC', uid: 'subject', sortable: false },
+    { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: false },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
-    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: true },
-    { name: 'NGÀY', uid: 'paymentDate', sortable: true },
+    { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: false },
+    { name: 'NGÀY', uid: 'paymentDate', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
 const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
     );
     const [adminTransactions, setAdminTransactions] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -107,7 +106,6 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
 
     const handlePaymentTeacher = async (id: number, verifyStatus: string) => {
         let toastLoading;
-        console.log({ reason, transactionCode, id });
 
         try {
             onClose();

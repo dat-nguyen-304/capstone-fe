@@ -114,12 +114,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-                    <div className="flex sm:hidden items-center justify-end">
+                    {/* <div className="flex sm:hidden items-center justify-end">
                         <Notification />
                         <Button size="sm" variant="light" color="danger">
                             <TbLogout size={20} />
                         </Button>
-                    </div>
+                    </div> */}
                 </Header>
                 <Content className={collapsed ? 'sm:ml-[80px] transition-all' : 'sm:ml-[200px] transition-all '}>
                     <div className="p-1 sm:p-[24px] min-h-[84vh] mt-[60px] bg-white">{children}</div>

@@ -26,13 +26,12 @@ import { Spin } from 'antd';
 interface VideosProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: true },
-    { name: 'TÊN VIDEO', uid: 'name', sortable: true },
+    { name: 'TÊN VIDEO', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'courseName' },
     { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'GIÁO VIÊN', uid: 'teacher' },
-    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: true },
-    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: true },
+    { name: 'NGÀY TẠO', uid: 'createdDate', sortable: false },
+    { name: 'CẬP NHẬT', uid: 'updateDate', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -98,7 +97,7 @@ type Video = (typeof videos)[0];
 const Videos: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'courseName', 'teacher', 'subject', 'createdDate', 'updateDate', 'action'])
+        new Set(['name', 'courseName', 'teacher', 'subject', 'createdDate', 'updateDate', 'action'])
     );
     const [videos, setVideos] = useState<VideoCardType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);

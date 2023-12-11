@@ -57,11 +57,11 @@ const reports = [
 
 const columns = [
     { name: 'TIÊU ĐỀ', uid: 'examName' },
-    { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: true },
-    { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: true },
-    { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: true },
-    { name: 'TRẠNG THÁI', uid: 'status', sortable: true },
-    { name: 'NGÀY', uid: 'createTime', sortable: true },
+    { name: 'LOẠI BÁO CÁO', uid: 'type', sortable: false },
+    { name: 'NỘI DUNG VI PHẠM', uid: 'reportMsg', sortable: false },
+    { name: 'NGƯỜI BÁO CÁO', uid: 'ownerFullName', sortable: false },
+    { name: 'TRẠNG THÁI', uid: 'status', sortable: false },
+    { name: 'NGÀY', uid: 'createTime', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 

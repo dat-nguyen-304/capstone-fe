@@ -54,17 +54,17 @@ const items: MenuItem[] = [
         getItem(<Link href="/teacher/discussion/create">Tạo bài đăng</Link>, '12'),
         getItem(<Link href="/teacher/discussion/my-post">Bài đăng của tôi</Link>, '13')
     ]),
-    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '14', <LineChartOutlined />),
-    getItem(
-        <div className="relative">
-            <Link href="/teacher/notification">Thông báo</Link>
-            <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
-                10
-            </Chip>
-        </div>,
-        '15',
-        <BellOutlined />
-    )
+    getItem(<Link href="/teacher/transaction">Giao dịch</Link>, '14', <LineChartOutlined />)
+    // getItem(
+    //     <div className="relative">
+    //         <Link href="/teacher/notification">Thông báo</Link>
+    //         <Chip color="primary" size="sm" className="absolute top-0 translate-y-[50%] right-0">
+    //             10
+    //         </Chip>
+    //     </div>,
+    //     '15',
+    //     <BellOutlined />
+    // )
 ];
 
 const TeacherLayout = ({ children }: { children: React.ReactNode }) => {

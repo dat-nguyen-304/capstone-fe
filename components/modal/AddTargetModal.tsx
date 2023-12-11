@@ -81,7 +81,6 @@ export const AddTargetModal: React.FC<AddTargetModalProps> = ({
                     studentTargetRequest: subjectTarget
                 });
                 if (res) {
-                    console.log({ res });
                     refetch();
                     setIsSubmitting(false);
                     toast.success('Thêm tổ hợp môn thành công');
