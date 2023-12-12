@@ -39,16 +39,16 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
         status,
         error,
         data: topicsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: ['topics', { page, rowsPerPage, updateState }],
+        queryKey: ['topics', { page, rowsPerPage }],
         queryFn: () => discussionApi.getAll(page - 1, rowsPerPage)
     });
     useEffect(() => {
@@ -68,7 +68,7 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
                     title: 'Đã xóa chủ đề thành công',
                     content: 'Khóa học đã được duyệt thành công'
                 });
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error

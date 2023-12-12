@@ -72,19 +72,16 @@ const Courses: React.FC<CoursesProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
         status,
         error,
         data: coursesData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: [
-            'coursesAdmin',
-            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
-        ],
+        queryKey: ['coursesAdmin', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () => courseApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
     });
 
@@ -117,7 +114,7 @@ const Courses: React.FC<CoursesProps> = () => {
                     });
                 }
 
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error

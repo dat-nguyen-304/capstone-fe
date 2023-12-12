@@ -62,7 +62,6 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
@@ -130,7 +129,6 @@ const VerifyTeachers: React.FC<TeachersVerifyProps> = () => {
                     refetch();
                 }
                 toast.dismiss(toastLoading);
-                setUpdateState(prev => !prev);
             }
         } catch (error) {
             toast.dismiss(toastLoading);

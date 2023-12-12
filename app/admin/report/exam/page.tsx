@@ -218,6 +218,8 @@ const Reports: React.FC<ReportsProps> = () => {
                             ? 'Phản hồi thành công'
                             : cellValue === 'NEW'
                             ? 'Chưa phản hồi'
+                            : cellValue === 'DISABLED'
+                            ? 'Bài kiểm tra không còn hiển thị'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -244,14 +246,31 @@ const Reports: React.FC<ReportsProps> = () => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options" disabledKeys={['enableDis', 'disableDis', 'bannedDis']}>
-                                <DropdownItem color="primary" as={Link} href={`/admin/exam/${student?.examId}`}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'responseDis', 'banDis']}>
+                                <DropdownItem
+                                    color="primary"
+                                    as={Link}
+                                    href={`/admin/exam/${student?.examId}`}
+                                    key={student.status === 'DISABLED' ? 'viewDis' : 'view'}
+                                >
                                     Xem chi tiết
                                 </DropdownItem>
-                                <DropdownItem color="warning" onClick={() => onDeclineOpen(student?.id)}>
+                                <DropdownItem
+                                    color="warning"
+                                    onClick={() => onDeclineOpen(student?.id)}
+                                    key={
+                                        student.status === 'DISABLED' || student.status === 'DONE'
+                                            ? 'responseDis'
+                                            : 'response'
+                                    }
+                                >
                                     Phản hồi
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onBanExamOpen(student?.examId, 'BANNED')}>
+                                <DropdownItem
+                                    color="danger"
+                                    onClick={() => onBanExamOpen(student?.examId, 'BANNED')}
+                                    key={student.status === 'DISABLED' ? 'banDis' : 'ban'}
+                                >
                                     Cấm bài kiểm tra
                                 </DropdownItem>
                             </DropdownMenu>
@@ -268,7 +287,7 @@ const Reports: React.FC<ReportsProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -278,7 +297,7 @@ const Reports: React.FC<ReportsProps> = () => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
+                        /> */}
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">

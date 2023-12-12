@@ -23,5 +23,6 @@ export const transactionStatusColorMap: Record<string, ChipProps['color']> = {
 };
 export const reportColorMap: Record<string, ChipProps['color']> = {
     NEW: 'warning',
-    DONE: 'success'
+    DONE: 'success',
+    DISABLED: 'danger'
 };

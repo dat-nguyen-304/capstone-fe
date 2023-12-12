@@ -188,14 +188,14 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Options">
+                                <DropdownItem color="primary" as={Link} href={`/admin/approve/course/${course.id}`}>
+                                    Xem chi tiết
+                                </DropdownItem>
                                 <DropdownItem color="success" onClick={() => onApproveOpen(course?.id)}>
                                     Duyệt
                                 </DropdownItem>
                                 <DropdownItem color="danger" onClick={() => onDeclineOpen(course?.id)}>
                                     Từ chối
-                                </DropdownItem>
-                                <DropdownItem color="primary" as={Link} href={`/admin/approve/course/${course.id}`}>
-                                    Xem chi tiết
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

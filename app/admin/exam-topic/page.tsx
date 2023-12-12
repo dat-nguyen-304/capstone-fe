@@ -62,7 +62,6 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
 
@@ -70,12 +69,10 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
         status,
         error,
         data: topicsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: [
-            'exam-topics',
-            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }
-        ],
+        queryKey: ['exam-topics', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () =>
             examApi.getAllTopicAdmin(
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
@@ -103,7 +100,7 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
                     title: 'Đã xóa chủ đề thành công',
                     content: 'Khóa học đã được duyệt thành công'
                 });
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error

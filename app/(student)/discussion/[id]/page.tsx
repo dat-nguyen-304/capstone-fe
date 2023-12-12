@@ -159,7 +159,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
                     if (response) {
                         toast.dismiss(toastLoading);
                         onSubmitting(false);
-                        toast.success('Đã gửi thành công');
                         onDescription('');
                         onReportType('integrity');
                         onFile(null);

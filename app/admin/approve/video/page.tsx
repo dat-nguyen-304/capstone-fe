@@ -103,16 +103,16 @@ const Videos: React.FC<VideosProps> = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
         status,
         error,
         data: videosData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: ['videosApproveAdmin', { page, rowsPerPage, updateState }],
+        queryKey: ['videosApproveAdmin', { page, rowsPerPage }],
         queryFn: () => videoApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
     });
 
@@ -146,7 +146,7 @@ const Videos: React.FC<VideosProps> = () => {
                         content: 'Đã từ chối video thành công'
                     });
                 }
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error

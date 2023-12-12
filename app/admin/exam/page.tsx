@@ -66,7 +66,8 @@ const Exams: React.FC<ExamsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [statusFilterExamType, setStatusFilterExamType] = useState<Selection>(new Set(['ALL']));
     const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
-
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const [exams, setExams] = useState<any[]>([]);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
@@ -78,14 +79,18 @@ const Exams: React.FC<ExamsProps> = () => {
                 rowsPerPage,
                 statusFilter: Array.from(statusFilter)[0] as string,
                 statusFilterExamType: Array.from(statusFilterExamType)[0] as string,
-                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string,
+                search
             }
         ],
         // keepPreviousData: true,
         queryFn: () =>
-            examApi.getAllByAdmin(
+            examApi.getAllByAdminUpdate(
+                search,
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
-                Array.from(statusFilterExamType)[0] === 'ALL' ? '' : (Array.from(statusFilterExamType)[0] as string),
+                Array.from(statusFilterExamType)[0] === 'ALL'
+                    ? ['ENTRANCE_EXAM', 'PUBLIC_EXAM']
+                    : [Array.from(statusFilterExamType)[0] as string],
                 Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
                 page - 1,
                 rowsPerPage,
@@ -163,7 +168,10 @@ const Exams: React.FC<ExamsProps> = () => {
             console.error('Error changing user status', error);
         }
     };
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const onActivateOpen = (id: number, status: string) => {
         onWarning({
             title: `Xác nhận kích hoạt`,
@@ -248,8 +256,8 @@ const Exams: React.FC<ExamsProps> = () => {
                                 <DropdownItem
                                     key={
                                         exam?.status === 'DISABLE' ||
-                                        exam?.examType === 'QUIZ' ||
-                                        exam?.examType === 'QUIZ_DRAFT'
+                                        exam?.status === 'DELETED' ||
+                                        exam?.status === 'BANNED'
                                             ? 'editDis'
                                             : 'edit'
                                     }
@@ -260,9 +268,7 @@ const Exams: React.FC<ExamsProps> = () => {
                                     Chỉnh sửa
                                 </DropdownItem>
                                 <DropdownItem
-                                    key={
-                                        exam?.status === 'ENABLE' || exam?.status === 'DELETED' ? 'enableDis' : 'enable'
-                                    }
+                                    key={exam?.status === 'ENABLE' ? 'enableDis' : 'enable'}
                                     color="success"
                                     onClick={() => onActivateOpen(exam?.id, 'ENABLE')}
                                 >
@@ -277,14 +283,7 @@ const Exams: React.FC<ExamsProps> = () => {
                                             : 'ban'
                                     }
                                     color="danger"
-                                    onClick={() =>
-                                        onDeactivateOpen(
-                                            exam?.id,
-                                            exam?.examType === 'QUIZ' || exam?.examType === 'QUIZ_DRAFT'
-                                                ? 'BANNED'
-                                                : 'DELETED'
-                                        )
-                                    }
+                                    onClick={() => onDeactivateOpen(exam?.id, 'BANNED')}
                                 >
                                     {exam?.examType === 'QUIZ' || exam?.examType === 'QUIZ_DRAFT'
                                         ? 'Cấm'
@@ -316,17 +315,25 @@ const Exams: React.FC<ExamsProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
@@ -436,12 +443,6 @@ const Exams: React.FC<ExamsProps> = () => {
                                     </DropdownItem>
                                     <DropdownItem key="PUBLIC_EXAM" className="capitalize">
                                         {capitalize('Bài thi')}
-                                    </DropdownItem>
-                                    <DropdownItem key="QUIZ" className="capitalize">
-                                        {capitalize('Bài tập')}
-                                    </DropdownItem>
-                                    <DropdownItem key="QUIZ_DRAFT" className="capitalize">
-                                        {capitalize('Bài tập chờ duyệt')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

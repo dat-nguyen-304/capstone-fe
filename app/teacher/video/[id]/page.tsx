@@ -83,8 +83,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                 </div>
                 <div className="flex justify-center items-center text-black">
                     <div className="hidden lg:block">
-                        <span className="inline-flex items-center text-sm">2 tháng trước</span>
-                        <span className="before:content-['•'] before:inline-block before:text-black before:mx-2">
+                        <span className="before:inline-block before:text-black before:mx-2">
                             <span className="inline-flex items-center text-sm">
                                 <span className="text-black">{data?.like}</span>
                                 <BiSolidLike className="text-sm text-blue-500 ml-2" />

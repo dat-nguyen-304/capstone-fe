@@ -86,6 +86,43 @@ export const examApi = {
         );
         return res.data;
     },
+    getAllByAdminUpdate: async (
+        pattern: string,
+        subject: string,
+        examTypeList: any[],
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const examTypeString =
+            examTypeList.length && (pattern !== '' || subject !== '')
+                ? `&examTypeList=${examTypeList.join('&examTypeList=')}`
+                : examTypeList.length && pattern == '' && subject == ''
+                ? `examTypeList=${examTypeList.join('&examTypeList=')}`
+                : '';
+        const res = await axiosClient.get(
+            `/examination/exams/admin?${pattern !== '' ? `pattern=${pattern}` : ''}${
+                pattern !== '' && subject !== ''
+                    ? `&subject=${subject}`
+                    : pattern == '' && subject !== ''
+                    ? `subject=${subject}`
+                    : ''
+            }${examTypeString}${
+                (pattern !== '' || subject !== '' || examTypeList?.length) && status !== ''
+                    ? `&statusList=${status}`
+                    : subject == '' && !examTypeList?.length && status !== ''
+                    ? `statusList=${status}`
+                    : ``
+            }${
+                pattern !== '' || subject !== '' || examTypeList?.length || status !== ''
+                    ? `&page=${page}`
+                    : `page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
     getAllByAdminBySubject: async (subject: string, page: number, size: number) => {
         const res = await axiosClient.get(
             `/examination/exams/admin?subject=${subject}&page=${page}&size=${size}&sortType=ASC`

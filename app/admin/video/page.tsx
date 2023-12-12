@@ -33,11 +33,10 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     UNAVAILABLE: 'warning'
 };
 const columns = [
-    { name: 'ID', uid: 'id', sortable: false },
     { name: 'TÊN VIDEO', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'courseName' },
-    // { name: 'MÔN HỌC', uid: 'subject' },
-    // { name: 'GIÁO VIÊN', uid: 'teacher' },
+    { name: 'GIÁO VIÊN', uid: 'teacherName' },
+    { name: 'MÔN HỌC', uid: 'subject' },
     { name: 'LIKE', uid: 'like' },
     { name: 'NGÀY TẠO', uid: 'createDate', sortable: false },
     { name: 'CẬP NHẬT', uid: 'updateDate', sortable: false },
@@ -45,86 +44,14 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const videos = [
-    {
-        id: 1,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 2,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 3,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 4,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 5,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 6,
-        videoName: 'Làm quen với abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        like: '40',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    }
-];
-
-type Video = (typeof videos)[0];
-
 const Videos: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set([
-            'id',
             'name',
             'courseName',
-            // 'teacher',
-            // 'subject',
+            'teacherName',
+            'subject',
             'like',
             'createDate',
             'updateDate',
@@ -137,19 +64,16 @@ const Videos: React.FC<VideosProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
         status,
         error,
         data: videosData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: [
-            'videosAdmin',
-            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
-        ],
+        queryKey: ['videosAdmin', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () => videoApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
     });
 
@@ -182,7 +106,7 @@ const Videos: React.FC<VideosProps> = () => {
                     });
                 }
 
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error
@@ -234,20 +158,20 @@ const Videos: React.FC<VideosProps> = () => {
         onOpen();
     };
 
-    const renderCell = useCallback((video: Video, columnKey: Key) => {
-        const cellValue = video[columnKey as keyof Video];
+    const renderCell = useCallback((video: any, columnKey: Key) => {
+        const cellValue = video[columnKey as keyof any];
 
         switch (columnKey) {
-            case 'teacher':
-                return (
-                    <User
-                        avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-                        classNames={{
-                            description: 'text-default-500'
-                        }}
-                        name={cellValue}
-                    />
-                );
+            // case 'teacherName':
+            //     return (
+            //         <User
+            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
+            //             classNames={{
+            //                 description: 'text-default-500'
+            //             }}
+            //             name={cellValue}
+            //         />
+            //     );
             case 'status':
                 return (
                     <Chip
@@ -358,7 +282,7 @@ const Videos: React.FC<VideosProps> = () => {
                                     <DropdownItem key="AVAILABLE" className="capitalize">
                                         {capitalize('Hoạt Động')}
                                     </DropdownItem>
-                                    <DropdownItem key="WAITING" className="capitalize">
+                                    {/* <DropdownItem key="WAITING" className="capitalize">
                                         {capitalize('Chờ Xác Thực')}
                                     </DropdownItem>
                                     <DropdownItem key="UPDATING" className="capitalize">
@@ -369,7 +293,7 @@ const Videos: React.FC<VideosProps> = () => {
                                     </DropdownItem>
                                     <DropdownItem key="REJECT" className="capitalize">
                                         {capitalize('Bị Từ Chối')}
-                                    </DropdownItem>
+                                    </DropdownItem> */}
                                     <DropdownItem key="BANNED" className="capitalize">
                                         {capitalize('Bị Xóa')}
                                     </DropdownItem>

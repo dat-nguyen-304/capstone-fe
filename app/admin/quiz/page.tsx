@@ -56,77 +56,6 @@ const columns = [
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
-const quizzes = [
-    {
-        id: 1,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 2,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 3,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 4,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 5,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    },
-    {
-        id: 6,
-        quizName: 'Luyện tập abcxyz',
-        courseName: 'Lấy gốc thần tốc',
-        subject: 'Toán học',
-        teacher: 'Nguyễn Văn A',
-        numberOfQuestion: '10',
-        createdAt: '02/11/2023',
-        updatedAt: '02/11/2023',
-        status: 'active'
-    }
-];
-
-type Quiz = (typeof quizzes)[0];
-
 const Quizzes: React.FC<VideosProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -151,6 +80,8 @@ const Quizzes: React.FC<VideosProps> = () => {
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const { status, error, data, isPreviousData, refetch } = useQuery({
         queryKey: [
             'exams',
@@ -158,14 +89,16 @@ const Quizzes: React.FC<VideosProps> = () => {
                 page,
                 rowsPerPage,
                 statusFilter: Array.from(statusFilter)[0] as string,
-                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string,
+                search
             }
         ],
         // keepPreviousData: true,
         queryFn: () =>
-            examApi.getAllByAdmin(
+            examApi.getAllByAdminUpdate(
+                search,
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
-                'QUIZ',
+                ['QUIZ'],
                 Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
                 page - 1,
                 rowsPerPage,
@@ -245,11 +178,14 @@ const Quizzes: React.FC<VideosProps> = () => {
             console.error('Error changing user status', error);
         }
     };
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const onActivateOpen = (id: number, status: string) => {
         onWarning({
             title: `Xác nhận kích hoạt`,
-            content: `Bài thi này sẽ được hiện thị sau khi kích hoạt. Bạn chắc chứ?`,
+            content: `Bài tập này sẽ được hiện thị sau khi kích hoạt. Bạn chắc chứ?`,
             activeFn: () => handleStatusChange(id, status)
         });
         onOpen();
@@ -257,7 +193,7 @@ const Quizzes: React.FC<VideosProps> = () => {
     const onDeactivateOpen = (id: number, status: string) => {
         onDanger({
             title: `Xác nhận ${status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'}`,
-            content: `Bài thi này sẽ không được hiện thị sau khi  ${
+            content: `Bài tập này sẽ không được hiện thị sau khi  ${
                 status === 'BANNED' ? 'cấm' : 'vô hiệu hóa'
             }. Bạn chắc chứ?`,
             activeFn: () => handleStatusChange(id, status)
@@ -268,16 +204,6 @@ const Quizzes: React.FC<VideosProps> = () => {
         const cellValue = quiz[columnKey as keyof any];
 
         switch (columnKey) {
-            // case 'teacher':
-            //     return (
-            //         <User
-            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-            //             classNames={{
-            //                 description: 'text-default-500'
-            //             }}
-            //             name={cellValue}
-            //         />
-            //     );
             case 'subject':
                 return getSubjectName(cellValue);
             case 'status':
@@ -354,26 +280,10 @@ const Quizzes: React.FC<VideosProps> = () => {
                                             : 'ban'
                                     }
                                     color="danger"
-                                    onClick={() =>
-                                        onDeactivateOpen(
-                                            quiz?.id,
-                                            quiz?.examType === 'QUIZ' || quiz?.examType === 'QUIZ_DRAFT'
-                                                ? 'BANNED'
-                                                : 'DELETED'
-                                        )
-                                    }
+                                    onClick={() => onDeactivateOpen(quiz?.id, 'BANNED')}
                                 >
-                                    {quiz?.examType === 'QUIZ' || quiz?.examType === 'QUIZ_DRAFT'
-                                        ? 'Cấm'
-                                        : 'Vô hiệu hóa'}
+                                    Cấm
                                 </DropdownItem>
-                                {/* <DropdownItem
-                                    key={quiz?.status === 'DISABLE' ? 'bannedDis' : 'ban'}
-                                    color="danger"
-                                    onClick={() => onDeactivateOpen(quiz?.id)}
-                                >
-                                    Vô hiệu hóa
-                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -388,17 +298,25 @@ const Quizzes: React.FC<VideosProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">

@@ -31,9 +31,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const [openVideoList, setOpenVideoList] = useState(false);
     const [comment, setComment] = useState<string>('');
     const [currentTime, setCurrentTime] = useState('');
-    const [isLike, setIsLike] = useState(false);
     const [isWatched, setIsWatched] = useState(false);
-    const [numberLike, setNumberLike] = useState<number>(0);
     const [reportCommentId, setReportCommentId] = useState<number | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [hasCalledProgressApi, setHasCalledProgressApi] = useState(false);
@@ -42,7 +40,11 @@ const Video: React.FC<VideoProps> = ({ params }) => {
         setOpenVideoList(true);
     };
 
-    const { data, isLoading } = useQuery<any>({
+    const {
+        data,
+        isLoading,
+        refetch: refetchVideoDetail
+    } = useQuery<any>({
         queryKey: ['video-detail', { params: params?.id[1] }],
         queryFn: () => videoApi.getVideoDetailById(params?.id[1])
     });
@@ -111,8 +113,6 @@ const Video: React.FC<VideoProps> = ({ params }) => {
 
     useEffect(() => {
         if (data) {
-            setIsLike(data?.reactStatus ? true : false);
-            setNumberLike(data?.like);
             setIsWatched(data?.isWatched);
         }
     }, [data]);
@@ -146,12 +146,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
 
             const res = await reactVideoApi.reactVideo(reactVideo);
             if (res) {
-                setIsLike(!isLike);
-                if (!isLike) {
-                    setNumberLike(prev => prev + 1);
-                } else {
-                    setNumberLike(prev => prev - 1);
-                }
+                refetchVideoDetail();
             }
         } catch (error) {
             console.error('Error submitting feedback:', error);
@@ -203,10 +198,10 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                                     <BiSolidLike
                                         onClick={() => onSubmitLike()}
                                         className={`text-xl cursor-pointer ${
-                                            isLike ? 'text-blue-500' : 'text-gray-500'
+                                            data?.reactStatus == 'LIKE' ? 'text-blue-500' : 'text-gray-500'
                                         } `}
                                     />
-                                    <span>{numberLike}</span>
+                                    <span>{data?.like}</span>
                                 </div>
                             </div>
                             <Button className="block md:hidden mt-4" size="sm" onClick={showDrawerVideoList}>

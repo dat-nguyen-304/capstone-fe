@@ -53,16 +53,16 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
         status,
         error,
         data: discussionsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: ['my-student-discussions', { page, rowsPerPage, updateState }],
+        queryKey: ['my-student-discussions', { page, rowsPerPage }],
         queryFn: () => discussionApi.getAllMyDiscussion(page - 1, rowsPerPage, 'createTime', 'DESC')
     });
     useEffect(() => {
@@ -83,7 +83,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
             if (!res?.data?.code) {
                 toast.success('Xóa thành công');
                 toast.dismiss(toastLoading);
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             // Handle error

@@ -63,7 +63,6 @@ const Reports: React.FC<ReportsProps> = () => {
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const visibleColumns = new Set(['userName', 'reportType', 'objectName', 'reportContent', 'action']);
     const headerColumns = columns.filter(column => Array.from(visibleColumns).includes(column.uid));
     const [declineId, setDeclineId] = useState<number>();
@@ -85,12 +84,10 @@ const Reports: React.FC<ReportsProps> = () => {
         status,
         error,
         data: reportVideosData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
-        queryKey: [
-            'reportVideos',
-            { page, rowsPerPage, updateState, statusFilter: Array.from(statusFilter)[0] as string }
-        ],
+        queryKey: ['reportVideos', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () =>
             reportVideoApi.reportsVideoByType(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage, 'id', 'ASC')
     });
@@ -129,7 +126,7 @@ const Reports: React.FC<ReportsProps> = () => {
                     toast.success('Nội dung báo cáo đã từ chối thành công');
                 }
                 toast.dismiss(toastLoading);
-                setUpdateState(prev => !prev);
+                refetch();
             }
         } catch (error) {
             toast.dismiss(toastLoading);
@@ -216,7 +213,7 @@ const Reports: React.FC<ReportsProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -226,7 +223,7 @@ const Reports: React.FC<ReportsProps> = () => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
+                        /> */}
                         <div className="flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">

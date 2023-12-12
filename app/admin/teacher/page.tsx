@@ -62,7 +62,6 @@ const Teachers: React.FC<TeachersProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
@@ -73,10 +72,7 @@ const Teachers: React.FC<TeachersProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: [
-            'admin-teachers',
-            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }
-        ],
+        queryKey: ['admin-teachers', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () => teacherApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
     });
 
@@ -123,7 +119,7 @@ const Teachers: React.FC<TeachersProps> = () => {
                 reason: description
             });
             if (!res?.data?.code) {
-                toast.success('Tài khoản đã được thành công');
+                toast.success('Tài khoản đã được cấm thành công');
                 refetch();
             }
             toast.dismiss(toastLoading);

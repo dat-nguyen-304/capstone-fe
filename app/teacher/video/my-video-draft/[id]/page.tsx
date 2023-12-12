@@ -17,7 +17,32 @@ import HTMLReactParser from 'html-react-parser';
 interface VideoDraftProps {
     params: { id: number };
 }
+const calculateTimeDifference = (postTime: any) => {
+    const currentTime = new Date();
+    const postDateTime = postTime === null ? new Date() : new Date(postTime);
+    const timeDifference = currentTime.getTime() - postDateTime.getTime();
 
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30); // Approximate months
+    const years = Math.floor(days / 365); // Approximate years
+
+    if (years > 0) {
+        return `${years} năm trước`;
+    } else if (months > 0) {
+        return `${months} tháng trước`;
+    } else if (days > 0) {
+        return `${days} ngày trước`;
+    } else if (hours > 0) {
+        return `${hours} giờ trước`;
+    } else if (minutes > 0) {
+        return `${minutes} phút trước`;
+    } else {
+        return 'Vừa xong';
+    }
+};
 const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
     const { data, isLoading } = useQuery<any>({
         queryKey: ['video-teacher-detail-draft', { params }],
@@ -68,7 +93,9 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                 </div>
                 <div className="flex justify-center items-center text-black">
                     <div className="hidden lg:block">
-                        <span className="inline-flex items-center text-sm">2 tháng trước</span>
+                        <span className="inline-flex items-center text-sm">
+                            {calculateTimeDifference(data?.createdDate)}
+                        </span>
                         <span className="before:content-['•'] before:inline-block before:text-black before:mx-2">
                             <span className="inline-flex items-center text-sm">
                                 <span className="text-black">{data?.like}</span>

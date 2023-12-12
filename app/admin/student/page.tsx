@@ -54,7 +54,6 @@ const Students: React.FC<StudentsProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
@@ -65,7 +64,7 @@ const Students: React.FC<StudentsProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['students', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string, updateState }],
+        queryKey: ['students', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
         queryFn: () => studentApi.getAll(page - 1, rowsPerPage, Array.from(statusFilter)[0] as string)
     });
 

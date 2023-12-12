@@ -19,10 +19,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     const queryClient = useQueryClient();
 
     const handleLogout = async () => {
-        await authApi.logout();
-        queryClient.clear();
-        onChangeUser(null);
-        router.push('/');
+        try {
+            await authApi.logout();
+            queryClient.clear();
+            onChangeUser(null);
+            router.push('/');
+        } catch (error) {
+            queryClient.clear();
+            onChangeUser(null);
+            router.push('/');
+        }
     };
 
     return (

@@ -3,6 +3,8 @@
 import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
+    Chip,
+    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -20,13 +22,21 @@ import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { DiscussionType } from '@/types/discussion';
 import { Spin } from 'antd';
+import { useCustomModal } from '@/hooks';
 
 interface PostListProps {}
 
+const statusColorMap: Record<string, ChipProps['color']> = {
+    ENABLE: 'success',
+    DISABLE: 'danger',
+    DELETED: 'danger',
+    BANNED: 'danger'
+};
 const columns = [
     { name: 'CHỦ ĐỀ', uid: 'topicName', sortable: false },
     { name: 'TÁC GIẢ', uid: 'ownerFullName', sortable: false },
     { name: 'TIÊU ĐỀ', uid: 'title', sortable: false },
+    { name: 'TRẠNG THÁI', uid: 'status', sortable: false },
     { name: 'NGÀY TẠO', uid: 'createTime' },
     { name: 'THAO TÁC', uid: 'action' }
 ];
@@ -43,16 +53,16 @@ function getRole(role: string) {
 const PostList: React.FC<PostListProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['topicName', 'ownerFullName', 'title', 'createTime', 'action'])
+        new Set(['topicName', 'ownerFullName', 'title', 'status', 'createTime', 'action'])
     );
     const [discussions, setDiscussions] = useState<DiscussionType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
-    const [updateState, setUpdateState] = useState<Boolean>(false);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
-    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['-1']));
+    const [topicFilter, setTopicFilter] = useState<Selection>(new Set(['-1']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [search, setSearch] = useState<string>('');
     const [searchInput, setSearchInput] = useState('');
     const { data: topicsData } = useQuery({
@@ -63,17 +73,25 @@ const PostList: React.FC<PostListProps> = ({}) => {
         status,
         error,
         data: discussionsData,
-        isPreviousData
+        isPreviousData,
+        refetch
     } = useQuery({
         queryKey: [
             'admin-discussions',
-            { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as number, search }
+            {
+                page,
+                rowsPerPage,
+                topicFilter: Array.from(topicFilter)[0] as number,
+                statusFilter: Array.from(statusFilter)[0] as number,
+                search
+            }
         ],
         queryFn: () => {
             // Check if statusFilter is -1
-            return discussionApi.getAllOfConversation(
+            return discussionApi.getAllOfConversationByAmin(
                 search,
-                Array.from(statusFilter)[0] === '-1' ? '' : (Array.from(statusFilter)[0] as string),
+                Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
+                Array.from(topicFilter)[0] === '-1' ? '' : (Array.from(topicFilter)[0] as string),
                 page - 1,
                 rowsPerPage,
                 'createTime',
@@ -106,24 +124,86 @@ const PostList: React.FC<PostListProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);
     };
+
+    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
+
+    const handleStatusChange = async (id: number, status: string) => {
+        try {
+            onLoading();
+            const res = await discussionApi.updateStatusDiscussion(id, status);
+            if (!res.data.code) {
+                onSuccess({
+                    title: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Đã cấm bài đăng thành công'
+                            : 'Đã vô hiệu hóa bài đăng thành công'
+                    } `,
+                    content: `${
+                        status === 'ENABLE'
+                            ? 'Đã kích hoạt thành công'
+                            : status === 'BANNED'
+                            ? 'Bài đăng đã bị cấm thành công'
+                            : 'Bài đăng đã bị vô hiệu hóa thành công'
+                    } `
+                });
+                refetch();
+            }
+        } catch (error) {
+            // Handle error
+            onDanger({
+                title: 'Có lỗi xảy ra',
+                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
+            });
+            console.error('Error changing user status', error);
+        }
+    };
+
+    const onActivateOpen = (id: number, status: string) => {
+        onWarning({
+            title: `Xác nhận kích hoạt`,
+            content: `Bài đăng này sẽ được hiện thị sau khi kích hoạt. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
+    };
+    const onDeactivateOpen = (id: number, status: string) => {
+        onDanger({
+            title: `Xác nhận cấm`,
+            content: `Bài đăng này sẽ không được hiện thị sau khi  cấm. Bạn chắc chứ?`,
+            activeFn: () => handleStatusChange(id, status)
+        });
+        onOpen();
+    };
+
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];
 
         switch (columnKey) {
             case 'title':
                 return <Link href={`/admin/discussion/${post?.id}`}>{cellValue}</Link>;
+            case 'status':
+                return (
+                    <Chip
+                        className="capitalize border-none gap-1 text-default-600"
+                        color={statusColorMap[post.status]}
+                        size="sm"
+                        variant="dot"
+                    >
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'DELETED'
+                            ? 'Đã xóa'
+                            : cellValue === 'BANNED'
+                            ? 'Bị cấm'
+                            : 'Vô Hiệu'}
+                    </Chip>
+                );
             case 'ownerFullName':
                 return (
                     <User
@@ -150,9 +230,41 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                     <BsThreeDotsVertical className="text-default-400" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Options">
-                                <DropdownItem as={Link} href={`/admin/discussion/${post?.id}`}>
+                            <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'enableDis', 'bannedDis']}>
+                                <DropdownItem
+                                    as={Link}
+                                    href={`/admin/discussion/${post?.id}`}
+                                    key={
+                                        post?.status === 'DISABLE' ||
+                                        post?.status === 'BANNED' ||
+                                        post?.status === 'DELETED'
+                                            ? 'viewDis'
+                                            : 'view'
+                                    }
+                                >
                                     Xem chi tiết
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={
+                                        post?.status === 'ENABLE' || post?.status === 'DELETED' ? 'enableDis' : 'enable'
+                                    }
+                                    color="success"
+                                    onClick={() => onActivateOpen(post?.id, 'ENABLE')}
+                                >
+                                    Kích hoạt
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={
+                                        post?.status === 'DISABLE' ||
+                                        post?.status === 'BANNED' ||
+                                        post?.status === 'DELETED'
+                                            ? 'bannedDis'
+                                            : 'ban'
+                                    }
+                                    color="danger"
+                                    onClick={() => onDeactivateOpen(post?.id, 'BANNED')}
+                                >
+                                    Cấm
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -219,15 +331,51 @@ const PostList: React.FC<PostListProps> = ({}) => {
                                     disallowEmptySelection
                                     aria-label="Table Columns"
                                     closeOnSelect={true}
-                                    selectedKeys={statusFilter}
+                                    selectedKeys={topicFilter}
                                     selectionMode="single"
-                                    onSelectionChange={setStatusFilter}
+                                    onSelectionChange={setTopicFilter}
                                 >
                                     {topicsOptions?.map((column: any, index: number) => (
                                         <DropdownItem key={column?.id} className="capitalize">
                                             {capitalize(column.name)}
                                         </DropdownItem>
                                     ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt động')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô hiệu')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã xóa')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Cấm')}
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

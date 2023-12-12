@@ -42,6 +42,34 @@ export const discussionApi = {
         );
         return res.data;
     },
+    getAllOfConversationByAmin: async (
+        pattern: string,
+        statusList: string,
+        topicId: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/discussion/conversations/admin${pattern !== '' ? `?pattern=${pattern}` : ''}${
+                pattern !== '' && statusList !== ''
+                    ? `&statusList=${statusList}`
+                    : pattern == '' && statusList !== ''
+                    ? `?statusList=${statusList}`
+                    : ''
+            }${
+                pattern !== '' || (statusList !== '' && topicId !== '')
+                    ? `&topicId=${topicId}`
+                    : pattern == '' && statusList == '' && topicId !== ''
+                    ? `?topicId=${topicId}`
+                    : ''
+            }${
+                pattern !== '' || statusList !== '' || topicId !== '' ? `&page=${page}` : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
     getConversationsByTopicId: async (topicId: number, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
             `/discussion/topics/${topicId}/conversations?&page=${page}&size=${size}&field=${field}&sortType=${sort}`
