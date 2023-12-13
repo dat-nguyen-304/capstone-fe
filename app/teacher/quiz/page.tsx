@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import { courseApi, examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
@@ -77,11 +77,13 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [statusFilterExamType, setStatusFilterExamType] = useState<Selection>(new Set(['ALL']));
+    const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
     const [selectedSubject, setSelectedSubject] = useState(0);
     const [selectedFilterSort, setSelectedFilterSort] = useState(0);
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const [quizzes, setQuizzes] = useState<any[]>([]);
     const { status, error, data, isPreviousData, refetch } = useQuery({
         queryKey: [
@@ -92,14 +94,17 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                 selectedFilterSort,
                 search,
                 statusFilter: Array.from(statusFilter)[0] as string,
-                statusFilterExamType: Array.from(statusFilterExamType)[0] as string
+                statusFilterExamType: Array.from(statusFilterExamType)[0] as string,
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
             }
         ],
         // keepPreviousData: true,
         queryFn: () =>
             examApi.getQuizByOwnerId(
+                search,
                 Array.from(statusFilter)[0] === 'ALL' ? '' : (Array.from(statusFilter)[0] as string),
                 Array.from(statusFilterExamType)[0] === 'ALL' ? '' : (Array.from(statusFilterExamType)[0] as string),
+                Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
                 page - 1,
                 rowsPerPage,
                 'createTime',
@@ -108,7 +113,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     });
     const { data: coursesData } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacher('', 'AVAILABLE', 0, 100, 'createdDate', 'DESC')
     });
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
@@ -143,6 +148,10 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, [data, coursesData]);
 
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -152,15 +161,6 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
-    }, []);
-
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
     }, []);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
@@ -195,6 +195,11 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         onOpen();
     };
 
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['10']);
+    }, []);
     const renderCell = useCallback((quiz: any, columnKey: Key) => {
         const cellValue = quiz[columnKey as keyof any];
 
@@ -212,7 +217,13 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô Hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'DELETED'
+                            ? 'Đã xóa'
+                            : cellValue === 'BANNED'
+                            ? 'Bị cấm'
+                            : 'Vô Hiệu'}
                     </Chip>
                 );
             case 'createTime':
@@ -236,7 +247,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                             </DropdownTrigger>
                             <DropdownMenu
                                 aria-label="Options"
-                                disabledKeys={['viewDis', 'editDis', 'enableDis', 'bannedDis']}
+                                disabledKeys={['viewDis', 'editDis', 'enableDis', 'delDis']}
                             >
                                 <DropdownItem
                                     key={
@@ -266,7 +277,17 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                 >
                                     Chỉnh sửa
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => onDeactivateOpen(quiz?.id)}>
+                                <DropdownItem
+                                    color="danger"
+                                    key={
+                                        quiz?.status === 'DISABLE' ||
+                                        quiz?.status === 'BANNED' ||
+                                        quiz?.status === 'DELETED'
+                                            ? 'delDis'
+                                            : 'del'
+                                    }
+                                    onClick={() => onDeactivateOpen(quiz?.id)}
+                                >
                                     Vô hiệu hóa
                                 </DropdownItem>
                             </DropdownMenu>
@@ -283,17 +304,25 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        {/* <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        startContent={<BsSearch className="text-default-300" />}
-                        value={filterValue}
-                        color="primary"
-                        variant="bordered"
-                        onClear={() => setFilterValue('')}
-                        onValueChange={onSearchChange}
-                    /> */}
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
@@ -337,6 +366,42 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                     </DropdownItem>
                                     <DropdownItem key="GEOGRAPHY" className="capitalize">
                                         {capitalize('Địa lý')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterStatus}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterStatus}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt động')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô hiệu')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã xóa')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Cấm')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

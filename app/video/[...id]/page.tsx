@@ -159,7 +159,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             content: commentData.comment || 'Nội dung rất hay',
             ownerAvatar: commentData?.avatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c',
             commentVideo: true,
-            createdDate: commentData.createdDate
+            createTime: commentData.createdDate
         };
     };
 

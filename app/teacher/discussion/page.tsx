@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { DiscussionType } from '@/types';
 import { Spin } from 'antd';
+import { useSelectedSidebar } from '@/hooks';
 
 interface PostListProps {}
 
@@ -108,18 +109,15 @@ const PostList: React.FC<PostListProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);
     };
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['11']);
+    }, []);
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];
 

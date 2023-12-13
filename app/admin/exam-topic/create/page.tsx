@@ -5,8 +5,8 @@ import { examApi } from '@/api-client';
 import { CreateTopicObject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
-import { useState } from 'react';
-import { useUser } from '@/hooks';
+import { useEffect, useState } from 'react';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -51,7 +51,11 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
             console.error('Error creating course:', error);
         }
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['10']);
+    }, []);
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (

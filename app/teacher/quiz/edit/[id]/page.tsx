@@ -96,7 +96,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
     });
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacher('', 'AVAILABLE', 0, 100, 'createdDate', 'DESC')
     });
     const getCourseById = (courseId: number, selectedOptionCourse: string) => {
         let getCourseDetail: any;

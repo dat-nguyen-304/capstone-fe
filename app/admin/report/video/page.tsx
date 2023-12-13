@@ -20,7 +20,7 @@ import TableContent from '@/components/table';
 import { reportVideoApi, studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { useCustomModal, useInputModal } from '@/hooks';
+import { useCustomModal, useInputModal, useSelectedSidebar } from '@/hooks';
 import { StudentType } from '@/types';
 import { toast } from 'react-toastify';
 import { InputModal } from '@/components/modal/InputModal';
@@ -71,14 +71,6 @@ const Reports: React.FC<ReportsProps> = () => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
     const [reportVideo, setReportVideo] = useState<any[]>([]);
     const {
         status,
@@ -156,7 +148,11 @@ const Reports: React.FC<ReportsProps> = () => {
         setDeclineId(id);
         onOpen();
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['17']);
+    }, []);
     const renderCell = useCallback((student: any, columnKey: Key) => {
         const cellValue = student[columnKey as keyof any];
 
@@ -196,9 +192,6 @@ const Reports: React.FC<ReportsProps> = () => {
                                 <DropdownItem color="danger" onClick={() => onDeclineOpen(student?.id)}>
                                     Từ chối
                                 </DropdownItem>
-                                <DropdownItem color="danger" onClick={() => {}}>
-                                    Ban Người Dùng
-                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -224,7 +217,7 @@ const Reports: React.FC<ReportsProps> = () => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         /> */}
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useCustomModal, useInputModal } from '@/hooks';
+import { useCustomModal, useInputModal, useSelectedSidebar } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { courseApi, examApi } from '@/api-client';
 import { CourseCardType } from '@/types';
@@ -62,6 +62,7 @@ const Courses: React.FC<CoursesProps> = () => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
+    const [sort, setSort] = useState<Selection>(new Set(['ALL']));
     const {
         status,
         error,
@@ -69,8 +70,16 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['coursesApproveAdmin', { page, rowsPerPage }],
-        queryFn: () => courseApi.getCoursesVerifyListAdmin(page - 1, rowsPerPage)
+        queryKey: ['coursesApproveAdmin', { page, rowsPerPage, sort: Array.from(sort)[0] as string }],
+        queryFn: () =>
+            courseApi.getCoursesVerifyListAdmin(
+                page - 1,
+                rowsPerPage,
+                (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateASC'
+                    ? 'createdDate'
+                    : 'id',
+                (Array.from(sort)[0] as string) == 'DateDesc' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -159,7 +168,11 @@ const Courses: React.FC<CoursesProps> = () => {
         setDeclineId(id);
         onOpen();
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['11']);
+    }, []);
     const renderCell = useCallback((course: any, columnKey: Key) => {
         const cellValue = course[columnKey as keyof any];
 
@@ -234,7 +247,7 @@ const Courses: React.FC<CoursesProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -244,9 +257,9 @@ const Courses: React.FC<CoursesProps> = () => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
+                            {/* <Dropdown>
                                 <DropdownTrigger className="flex">
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
@@ -261,31 +274,35 @@ const Courses: React.FC<CoursesProps> = () => {
                                     <DropdownItem className="capitalize">Chờ xác thực</DropdownItem>
                                     <DropdownItem className="capitalize">Chờ cập nhật</DropdownItem>
                                 </DropdownMenu>
-                            </Dropdown>
+                            </Dropdown> */}
                             <Dropdown>
-                                <DropdownTrigger className="flex">
+                                <DropdownTrigger className="hidden sm:flex">
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Cột
+                                        Sắp xếp
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
                                     closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
+                                    selectedKeys={sort}
+                                    selectionMode="single"
+                                    onSelectionChange={setSort}
                                 >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateDesc" className="capitalize">
+                                        {capitalize('Mới nhất')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateAsc" className="capitalize">
+                                        {capitalize('Cũ nhất')}
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

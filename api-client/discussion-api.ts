@@ -104,9 +104,31 @@ export const discussionApi = {
     updateDiscussion: async (payload: UpdateDiscussion, conversationId: number) => {
         return await axiosClient.put(`/discussion/conversations/${conversationId}`, payload);
     },
-    getAllMyDiscussion: async (page: number, size: number, field: string, sort: string) => {
+    getAllMyDiscussion: async (
+        pattern: string,
+        topicId: string,
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
-            `/discussion/conversations/my?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/discussion/conversations/my${pattern !== '' ? `?pattern=${pattern}` : ''}${
+                pattern !== '' && topicId !== ''
+                    ? `&topicId=${topicId}`
+                    : pattern == '' && topicId !== ''
+                    ? `?topicId=${topicId}`
+                    : ''
+            }${
+                (pattern !== '' || topicId !== '') && status !== ''
+                    ? `&statusList=${status}`
+                    : pattern == '' && topicId == '' && status !== ''
+                    ? `?statusList=${status}`
+                    : ''
+            }${
+                pattern !== '' || topicId !== '' || status !== '' ? `&page=${page}` : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

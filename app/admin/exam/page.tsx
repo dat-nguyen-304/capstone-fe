@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import { examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { ExamCardType } from '@/types';
@@ -98,7 +98,11 @@ const Exams: React.FC<ExamsProps> = () => {
                 'DESC'
             )
     });
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['7']);
+    }, []);
     useEffect(() => {
         if (data?.data) {
             setExams(data.data);
@@ -123,15 +127,6 @@ const Exams: React.FC<ExamsProps> = () => {
     const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
-    }, []);
-
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
     }, []);
 
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
@@ -442,7 +437,7 @@ const Exams: React.FC<ExamsProps> = () => {
                                         {capitalize('Bài thi đầu vào')}
                                     </DropdownItem>
                                     <DropdownItem key="PUBLIC_EXAM" className="capitalize">
-                                        {capitalize('Bài thi')}
+                                        {capitalize('Bài thi thường')}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

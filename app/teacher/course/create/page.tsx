@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { createSkeletonArray } from '@/utils';
 import { toast } from 'react-toastify';
 import CourseRuleModal from '@/components/rule/CourseRuleModal';
+import { useSelectedSidebar } from '@/hooks';
 
 const CreateCourse: React.FC = () => {
     const [selectedSubject, setSelectedSubject] = useState<number>(1);
@@ -105,6 +106,11 @@ const CreateCourse: React.FC = () => {
             })
         );
     };
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['6']);
+    }, []);
 
     const skeletonArray = createSkeletonArray(20);
 

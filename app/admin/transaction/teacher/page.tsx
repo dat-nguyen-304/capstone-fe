@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { teacherIncomeApi, transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
-import { useCustomModal, useInputModalNumber } from '@/hooks';
+import { useCustomModal, useInputModalNumber, useSelectedSidebar } from '@/hooks';
 import { toast } from 'react-toastify';
 import { InputModalNumber } from '@/components/modal/InputModalNumber';
 
@@ -110,7 +110,11 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['13']);
+    }, []);
     const handlePaymentTeacher = async (id: number) => {
         let toastLoading;
 
@@ -178,6 +182,22 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
         const cellValue = transaction[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'teacherName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction?.teacherAvatar
+                                ? transaction?.teacherAvatar
+                                : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    />
+                );
             case 'revenue':
                 const changePrice = Number(cellValue) / 100;
 
@@ -249,7 +269,7 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -259,8 +279,8 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

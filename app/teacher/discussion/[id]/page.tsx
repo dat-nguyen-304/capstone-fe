@@ -183,11 +183,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         content: discussionData?.content,
         imageUrl: discussionData?.imageUrl,
         owner: discussionData?.owner,
+        reacted: discussionData?.reacted,
         auth: discussionData?.ownerFullName,
         like: discussionData?.reactCount,
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
+    console.log(postContent);
+
     if (!discussionData) return <Loader />;
     const scrollToTop = (value: number) => {
         setPage(value);

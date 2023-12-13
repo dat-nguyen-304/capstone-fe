@@ -77,8 +77,19 @@ export const courseApi = {
         const res = await axiosClient.get(`/courses/detail?id=${courseId}`);
         return res.data;
     },
-    getAllOfTeacher: async (page: number, size: number, field: string, sort: string) => {
-        const res = await axiosClient.get(`/courses/teacher?page=${page}&size=${size}&field=${field}&sortType=${sort}`);
+    getAllOfTeacher: async (
+        search: string,
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/courses/teacher${
+                search !== '' ? `?searchTerm=${search}&status=${status}` : `?status=${status}`
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getAllOfTeacherDraft: async (page: number, size: number, field: string, sort: string) => {
@@ -87,9 +98,26 @@ export const courseApi = {
         );
         return res.data;
     },
-    getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
+    getAllOfTeacherDraftSearch: async (search: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/courses/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`
+            `/courses/teacher/search/temporary-course${
+                search !== '' ? `?searchTerm=${search}&page=${page}` : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
+        );
+        return res.data;
+    },
+    getAllOfAdmin: async (
+        search: string,
+        commonStatus: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
+        const res = await axiosClient.get(
+            `/courses/admin${
+                search !== '' ? `?searchTerm=${search}&commonStatus=${commonStatus}` : `?commonStatus=${commonStatus}`
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -120,8 +148,10 @@ export const courseApi = {
     TeacherSendVerifyCourse: async (payload: any) => {
         return await axiosClient.put('/courses/teacher/send-verify-request', payload);
     },
-    getCoursesVerifyListAdmin: async (page: number, size: number) => {
-        const res = await axiosClient.get(`/courses/admin/verify-list?page=${page}&size=${size}&sortType=ASC`);
+    getCoursesVerifyListAdmin: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(
+            `/courses/admin/verify-list?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+        );
         return res.data;
     },
     getCourseForPublicProfile: async (email: string, page: number, size: number) => {

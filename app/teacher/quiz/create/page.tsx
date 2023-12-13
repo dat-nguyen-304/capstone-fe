@@ -17,7 +17,7 @@ import { FaPlus } from 'react-icons/fa6';
 import { BiUpArrowAlt } from 'react-icons/bi';
 import * as XLSX from 'xlsx';
 import { FiDelete } from 'react-icons/fi';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import QuizRuleModal from '@/components/rule/QuizRuleModal';
 interface CreateQuizProps {}
 
@@ -86,7 +86,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacher('', 'AVAILABLE', 0, 100, 'createdDate', 'DESC')
     });
 
     const getCourseById = (courseId: number, selectedOptionCourse: string) => {
@@ -103,6 +103,12 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         // Return the found course or null if not found
         return getCourseDetail || null;
     };
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['9']);
+    }, []);
+
     useEffect(() => {
         // Example: Fetch details of the selected course when selectedCourse changes
         if (selectedOptionCourse == 'OLD') {

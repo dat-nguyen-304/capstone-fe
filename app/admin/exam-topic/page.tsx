@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import {
     Button,
     Chip,
@@ -90,7 +90,11 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
             setTotalRow(topicsData.totalRow);
         }
     }, [topicsData]);
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['9']);
+    }, []);
     const handleStatusChange = async (id: number) => {
         try {
             onLoading();
@@ -206,51 +210,53 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         /> */}
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<BsChevronDown className="text-small" />}
-                                    size="sm"
-                                    variant="bordered"
-                                    color="primary"
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Môn học
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
                                 >
-                                    Môn học
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="single"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                <DropdownItem key="ALL" className="capitalize">
-                                    {capitalize('Tất cả')}
-                                </DropdownItem>
-                                <DropdownItem key="MATHEMATICS" className="capitalize">
-                                    {capitalize('Toán học')}
-                                </DropdownItem>
-                                <DropdownItem key="ENGLISH" className="capitalize">
-                                    {capitalize('Tiếng anh')}
-                                </DropdownItem>
-                                <DropdownItem key="PHYSICS" className="capitalize">
-                                    {capitalize('Vật lí')}
-                                </DropdownItem>
-                                <DropdownItem key="CHEMISTRY" className="capitalize">
-                                    {capitalize('Hóa học')}
-                                </DropdownItem>
-                                <DropdownItem key="BIOLOGY" className="capitalize">
-                                    {capitalize('Sinh học')}
-                                </DropdownItem>
-                                <DropdownItem key="HISTORY" className="capitalize">
-                                    {capitalize('Lịch sử')}
-                                </DropdownItem>
-                                <DropdownItem key="GEOGRAPHY" className="capitalize">
-                                    {capitalize('Địa lý')}
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="MATHEMATICS" className="capitalize">
+                                        {capitalize('Toán học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENGLISH" className="capitalize">
+                                        {capitalize('Tiếng anh')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PHYSICS" className="capitalize">
+                                        {capitalize('Vật lí')}
+                                    </DropdownItem>
+                                    <DropdownItem key="CHEMISTRY" className="capitalize">
+                                        {capitalize('Hóa học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BIOLOGY" className="capitalize">
+                                        {capitalize('Sinh học')}
+                                    </DropdownItem>
+                                    <DropdownItem key="HISTORY" className="capitalize">
+                                        {capitalize('Lịch sử')}
+                                    </DropdownItem>
+                                    <DropdownItem key="GEOGRAPHY" className="capitalize">
+                                        {capitalize('Địa lý')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
                     </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>

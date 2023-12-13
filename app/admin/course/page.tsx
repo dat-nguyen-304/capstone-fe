@@ -22,7 +22,7 @@ import { courseApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { CourseCardType } from '@/types';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import { courseStatusColorMap } from '@/utils';
 
 interface CoursesProps {}
@@ -39,18 +39,6 @@ const columns = [
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
-
-type Course = {
-    id: number;
-    courseName: string;
-    teacherName: string;
-    subject: string;
-    level: string;
-    rating: string;
-    createdAt: string;
-    updatedAt: string;
-    status: string;
-};
 
 const Courses: React.FC<CoursesProps> = () => {
     const [filterValue, setFilterValue] = useState('');
@@ -72,8 +60,11 @@ const Courses: React.FC<CoursesProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [sort, setSort] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const {
         status,
         error,
@@ -81,8 +72,27 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['coursesAdmin', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
-        queryFn: () => courseApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
+        queryKey: [
+            'coursesAdmin',
+            {
+                page,
+                rowsPerPage,
+                statusFilter: Array.from(statusFilter)[0] as string,
+                search,
+                sort: Array.from(sort)[0] as string
+            }
+        ],
+        queryFn: () =>
+            courseApi.getAllOfAdmin(
+                search,
+                Array.from(statusFilter)[0] as string,
+                page - 1,
+                rowsPerPage,
+                (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateASC'
+                    ? 'createdDate'
+                    : 'id',
+                (Array.from(sort)[0] as string) == 'DateDesc' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -92,7 +102,11 @@ const Courses: React.FC<CoursesProps> = () => {
             setTotalRow(coursesData.totalRow);
         }
     }, [coursesData]);
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['4']);
+    }, []);
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
             onLoading();
@@ -125,7 +139,10 @@ const Courses: React.FC<CoursesProps> = () => {
             console.error('Error changing user status', error);
         }
     };
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
 
@@ -260,17 +277,25 @@ const Courses: React.FC<CoursesProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        />
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="mt-4 sm:mt-0 flex gap-3">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
@@ -303,29 +328,33 @@ const Courses: React.FC<CoursesProps> = () => {
                                 </DropdownMenu>
                             </Dropdown>
                             <Dropdown>
-                                <DropdownTrigger className="flex">
+                                <DropdownTrigger className="hidden sm:flex">
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Cột
+                                        Sắp xếp
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
                                     closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
+                                    selectedKeys={sort}
+                                    selectionMode="single"
+                                    onSelectionChange={setSort}
                                 >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateDesc" className="capitalize">
+                                        {capitalize('Mới nhất')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateAsc" className="capitalize">
+                                        {capitalize('Cũ nhất')}
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

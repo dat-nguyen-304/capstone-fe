@@ -17,7 +17,7 @@ import {
     Pagination,
     Selection
 } from '@nextui-org/react';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 
@@ -29,12 +29,25 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const currentUser = useUser();
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['courses', { page, sortFilter: Array.from(sortFilter)[0] as string }],
+        queryKey: [
+            'courses',
+            {
+                page,
+                sortFilter: Array.from(sortFilter)[0] as string,
+                search,
+                statusFilter: Array.from(statusFilter)[0] as string
+            }
+        ],
         // keepPreviousData: true,
         queryFn: () =>
             courseApi.getAllOfTeacher(
+                search,
+                Array.from(statusFilter)[0] as string,
                 page - 1,
                 20,
                 Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
@@ -51,6 +64,12 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             setTotalRow(data.totalRow);
         }
     }, [data]);
+
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['7']);
+    }, []);
 
     const statusArr = [
         {
@@ -82,7 +101,10 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             name: 'Vô hiệu'
         }
     ];
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -95,44 +117,56 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 sm:flex justify-between gap-3 items-end">
-                    {/* <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        color="primary"
-                        startContent={<BsSearch className="text-default-300" />}
-                        // value={filterValue}
-                        variant="bordered"
-                        onClear={() => {}}
-                        // onValueChange={onSearchChange}
-                    /> */}
+                    <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1"
+                            placeholder="Tìm kiếm..."
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={searchInput}
+                            variant="bordered"
+                            color="primary"
+                            onClear={() => {
+                                setSearchInput('');
+                                handleSearch('');
+                            }}
+                            onChange={e => setSearchInput(e.target.value)}
+                        />
+                        <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                            Tìm kiếm
+                        </Button>
+                    </div>
                     <div className="flex ml-auto gap-3 mt-4 sm:mt-0">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="flex">
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
                                 <Button
-                                    color="primary"
-                                    variant="bordered"
                                     endContent={<BsChevronDown className="text-small" />}
                                     size="sm"
+                                    variant="bordered"
+                                    color="primary"
                                 >
-                                    Môn học
+                                    Trạng thái
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
-                                // selectedKeys={() => {}}
+                                selectedKeys={statusFilter}
                                 selectionMode="single"
-                                onSelectionChange={() => {}}
+                                onSelectionChange={setStatusFilter}
                             >
-                                {statusArr.map(statusItem => (
-                                    <DropdownItem key={statusItem.value} className="capitalize">
-                                        {capitalize(statusItem.name)}
-                                    </DropdownItem>
-                                ))}
+                                <DropdownItem key="ALL" className="capitalize">
+                                    {capitalize('Tất Cả')}
+                                </DropdownItem>
+                                <DropdownItem key="AVAILABLE" className="capitalize">
+                                    {capitalize('Hoạt Động')}
+                                </DropdownItem>
+                                <DropdownItem key="DELETED" className="capitalize">
+                                    {capitalize('Đã Xóa')}
+                                </DropdownItem>
                             </DropdownMenu>
-                        </Dropdown> */}
+                        </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button

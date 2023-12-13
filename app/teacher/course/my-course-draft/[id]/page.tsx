@@ -46,6 +46,7 @@ const CourseDraftDetail: React.FC<CourseDraftDetailProps> = ({ params }) => {
         teacherEmail: data?.teacherEmail,
         numberOfRate: data?.numberOfRate,
         rating: data?.rating,
+        topics: data?.topics,
         totalStudent: data?.totalStudent,
         description: data?.description,
         updateDate: data?.updateDate

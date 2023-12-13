@@ -8,10 +8,10 @@ import TestReviewItem from '@/components/test/TestReviewItem';
 import { Subject } from '@/types';
 import { Button, Checkbox, Chip, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import { toast } from 'react-toastify';
 import { BsArrowLeft } from 'react-icons/bs';
 import { FaPlus } from 'react-icons/fa6';
@@ -65,7 +65,11 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
         queryKey: ['topicsAddQuestionExam', { selectedSubject }],
         queryFn: () => examApi.getAllTopicBySubject(getSubjectNameById(selectedSubject), 0, 100)
     });
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['8']);
+    }, []);
     const { onOpen: onConfirmOpen, onDanger, onWarning, onClose: onConfirmClose } = useCustomModal();
 
     const handlePopUpAddQuestion = () => {

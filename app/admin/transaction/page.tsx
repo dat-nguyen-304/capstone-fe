@@ -23,6 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
+import { useSelectedSidebar } from '@/hooks';
 
 interface TransactionsProps {}
 
@@ -78,10 +79,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     ? 'paymentDate'
                     : (Array.from(sort)[0] as string) == 'PriceDesc' || (Array.from(sort)[0] as string) == 'PriceAsc'
                     ? 'amount'
-                    : 'id',
-                (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'PriceDesc'
-                    ? 'DESC'
-                    : 'ASC'
+                    : 'paymentDate',
+                (Array.from(sort)[0] as string) == 'DateAsc' || (Array.from(sort)[0] as string) == 'PriceAsc'
+                    ? 'ASC'
+                    : 'DESC'
             )
     });
 
@@ -92,6 +93,12 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
+
+    const { onAdminKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onAdminKeys(['12']);
+    }, []);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -223,7 +230,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -233,8 +240,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -260,9 +267,6 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     <DropdownItem key="SUCCESS" className="capitalize">
                                         {capitalize('Thành Công')}
                                     </DropdownItem>
-                                    <DropdownItem key="RECEIVED" className="capitalize">
-                                        {capitalize('Chuyển tiền thành Công')}
-                                    </DropdownItem>
                                     <DropdownItem key="REFUND_SUCCES" className="capitalize">
                                         {capitalize('Hoàn tiền thành Công')}
                                     </DropdownItem>
@@ -274,9 +278,6 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                     </DropdownItem>
                                     <DropdownItem key="REJECT_REFUND" className="capitalize">
                                         {capitalize('Từ chối hoàn tiền')}
-                                    </DropdownItem>
-                                    <DropdownItem key="NOTYET" className="capitalize">
-                                        {capitalize('Chưa được')}
                                     </DropdownItem>
                                     <DropdownItem key="FAIL" className="capitalize">
                                         {capitalize('Thất Bại')}

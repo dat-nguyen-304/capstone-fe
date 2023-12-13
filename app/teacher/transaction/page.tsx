@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
+import { useSelectedSidebar } from '@/hooks';
 
 interface TransactionsProps {}
 
@@ -104,6 +105,11 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         }
     }, []);
 
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['14']);
+    }, []);
     const renderCell = useCallback((transaction: any, columnKey: Key) => {
         const cellValue = transaction[columnKey as keyof any];
 
@@ -156,7 +162,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -166,8 +172,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

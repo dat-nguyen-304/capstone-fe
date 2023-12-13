@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import VideoCard from '@/components/video/VideoCard';
 import { courseApi, videoApi } from '@/api-client';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import { Course, VideoCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
@@ -17,7 +17,8 @@ import {
     Input,
     Pagination,
     Select,
-    SelectItem
+    SelectItem,
+    Selection
 } from '@nextui-org/react';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
@@ -29,16 +30,17 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const [selectedCourse, setSelectedCourse] = useState<number>(0);
-
+    const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['my-videos-draft', { page }],
+        queryKey: ['my-videos-draft', { page, sortFilter: Array.from(sortFilter)[0] as string }],
         // keepPreviousData: true,
-        queryFn: () => videoApi.getAllOfTeacherDraft(page - 1, 20, 'createdDate', 'DESC')
-    });
-
-    const { data: coursesData, isLoading } = useQuery({
-        queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () =>
+            videoApi.getAllOfTeacherDraft(
+                page - 1,
+                20,
+                'createdDate',
+                Array.from(sortFilter)[0] === 'DEFAULT' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -48,7 +50,11 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             setTotalRow(data.totalRow);
         }
     }, [data]);
+    const { onTeacherKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onTeacherKeys(['5']);
+    }, []);
     const statusArr = [
         {
             value: 'AVAILABLE',
@@ -90,7 +96,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             name: videos?.name,
             duration: videos?.duration,
             like: 0,
-            createDate: String(new Date()),
+            createdDate: String(videos?.createdDate) || String(new Date()),
             status: '',
             videoStatus: videos?.videoStatus ? videos?.videoStatus : 'PUBLIC',
             isAccess: videos?.isAccess
@@ -100,8 +106,8 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video nháp</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
-                {/* <div className="mt-8 sm:flex items-center justify-between gap-3 ">
-                    <Input
+                <div className="mt-8 sm:flex items-center justify-between gap-3 ">
+                    {/* <Input
                         isClearable
                         className="w-full sm:max-w-[50%] border-1"
                         placeholder="Tìm kiếm..."
@@ -128,36 +134,37 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
                                 </SelectItem>
                             ))}
                         </Select>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="flex flex-row-reverse mt-4">
                     <Dropdown>
                         <DropdownTrigger className="flex">
                             <Button
-                                size="sm"
                                 endContent={<BsChevronDown className="text-small" />}
+                                size="md"
                                 color="primary"
                                 variant="bordered"
                             >
-                                Trạng thái
+                                Sắp Xếp Theo
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu
                             disallowEmptySelection
                             aria-label="Table Columns"
                             closeOnSelect={false}
-                            // selectedKeys={() => {}}
+                            selectedKeys={sortFilter}
                             selectionMode="single"
-                            onSelectionChange={() => {}}
+                            onSelectionChange={setSortFilter}
                         >
-                            {statusArr.map(statusItem => (
-                                <DropdownItem key={statusItem.value} className="capitalize">
-                                    {capitalize(statusItem.name)}
-                                </DropdownItem>
-                            ))}
+                            <DropdownItem key="DEFAULT" className="capitalize">
+                                {capitalize('Video mới nhất')}
+                            </DropdownItem>
+                            <DropdownItem key="CREATEDDATE" className="capitalize">
+                                {capitalize('Video cũ nhất')}
+                            </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                </div> */}
+                </div>
                 <p className="mt-4 text-default-400 text-xs sm:text-sm">
                     {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
                 </p>

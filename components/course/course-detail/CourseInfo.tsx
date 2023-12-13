@@ -1,24 +1,11 @@
 'use client';
-import { User } from '@nextui-org/react';
+import { Chip, User } from '@nextui-org/react';
 import { Rate } from 'antd';
 import HTMLReactParser from 'html-react-parser';
 import Link from 'next/link';
 
 interface CourseInfoProps {
-    courseInfo: {
-        courseName: string;
-        subject: string;
-        level: string;
-        teacherName: string;
-        teacherEmail?: string;
-        teacherId?: string;
-        teacherAvatar?: string;
-        numberOfRate: number;
-        rating: number;
-        totalStudent: number;
-        description: string;
-        updateDate: string;
-    };
+    courseInfo: any;
     type?: 'draft';
 }
 
@@ -65,6 +52,13 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo, type }) => {
                 />
             </div>
             <p className="my-2 text-sm">Cập nhật gần đây nhất {formattedDate}</p>
+            {courseInfo?.topics && courseInfo?.topics?.length > 0
+                ? courseInfo?.topics?.map((sub: any) => (
+                      <Chip size="sm" color="primary" className="mr-2" variant="flat" key={sub}>
+                          {sub}
+                      </Chip>
+                  ))
+                : null}
             <div className="mt-8 text-sm">{HTMLReactParser(courseInfo?.description)}</div>
         </>
     );

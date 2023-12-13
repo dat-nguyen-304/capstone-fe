@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { transactionApi } from '@/api-client';
 import { transactionStatusColorMap } from '@/utils';
 import { Spin } from 'antd';
-import { useCustomModal, useInputModal, useInputModalRefund } from '@/hooks';
+import { useCustomModal, useInputModal, useInputModalRefund, useSelectedSidebar } from '@/hooks';
 import { toast } from 'react-toastify';
 import { InputModal } from '@/components/modal/InputModal';
 import { InputModalRefund } from '@/components/modal/InputModalRefund';
@@ -34,6 +34,7 @@ const columns = [
     { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
     { name: 'MÔN HỌC', uid: 'subject', sortable: false },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: false },
+    { name: 'HỌC SINH', uid: 'userName', sortable: false },
     { name: 'GIÁ KHÓA HỌC', uid: 'amount' },
     { name: 'TRẠNG THÁI', uid: 'transactionStatus', sortable: false },
     { name: 'NGÀY', uid: 'paymentDate', sortable: false },
@@ -43,7 +44,16 @@ const columns = [
 const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set([
+            'courseName',
+            'subject',
+            'teacherName',
+            'userName',
+            'amount',
+            'paymentDate',
+            'transactionStatus',
+            'action'
+        ])
     );
     const [adminTransactions, setAdminTransactions] = useState<[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -93,6 +103,11 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
             setTotalRow(transactionsData.totalRow);
         }
     }, [transactionsData]);
+    const { onAdminKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onAdminKeys(['14']);
+    }, []);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const {
         onOpen: onInputOpen,
@@ -197,6 +212,38 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
         const cellValue = transaction[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'teacherName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction?.teacherAvatar
+                                ? transaction?.teacherAvatar
+                                : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    />
+                );
+            case 'userName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction.userAvatar ? transaction.userAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {transaction.userAvatar}
+                    </User>
+                );
             case 'amount':
                 const changePrice = Number(cellValue) / 100;
 
@@ -265,7 +312,7 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -275,8 +322,8 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

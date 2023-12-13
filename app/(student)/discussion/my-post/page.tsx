@@ -9,13 +9,14 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Input,
     Selection,
     SortDescriptor,
     User
 } from '@nextui-org/react';
 import TableContent from '@/components/table';
 import Link from 'next/link';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { useUser, useCustomModal } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { DiscussionType } from '@/types';
@@ -23,13 +24,15 @@ import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { Spin } from 'antd';
 import { toast } from 'react-toastify';
+import { capitalize } from '@/components/table/utils';
 
 interface MyPostListProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
     ENABLE: 'success',
     DISABLE: 'danger',
-    DELETED: 'danger'
+    DELETED: 'danger',
+    BANNED: 'danger'
 };
 
 const columns = [
@@ -55,6 +58,10 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['-1']));
+    const [statusFilterStatus, setStatusFilterStatus] = useState<Selection>(new Set(['ALL']));
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const {
         status,
         error,
@@ -62,8 +69,30 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['my-student-discussions', { page, rowsPerPage }],
-        queryFn: () => discussionApi.getAllMyDiscussion(page - 1, rowsPerPage, 'createTime', 'DESC')
+        queryKey: [
+            'my-student-discussions',
+            {
+                page,
+                rowsPerPage,
+                statusFilter: Array.from(statusFilter)[0] as number,
+                search,
+                statusFilterStatus: Array.from(statusFilterStatus)[0] as string
+            }
+        ],
+        queryFn: () =>
+            discussionApi.getAllMyDiscussion(
+                search,
+                Array.from(statusFilter)[0] === '-1' ? '' : (Array.from(statusFilter)[0] as string),
+                Array.from(statusFilterStatus)[0] === 'ALL' ? '' : (Array.from(statusFilterStatus)[0] as string),
+                page - 1,
+                rowsPerPage,
+                'createTime',
+                'DESC'
+            )
+    });
+    const { data: topicsData } = useQuery({
+        queryKey: ['topics'],
+        queryFn: () => discussionApi.getAll(0, 100)
     });
     useEffect(() => {
         if (discussionsData?.data) {
@@ -72,7 +101,12 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
             setTotalRow(discussionsData.totalRow);
         }
     }, [discussionsData]);
-
+    const topicsOptions = useMemo(() => {
+        if (!topicsData) return [];
+        const allOption = { id: -1, name: 'Tất cả', status: 'ENABLE' };
+        const topicOptions = Array.isArray(topicsData?.data) ? [allOption, ...topicsData?.data] : [allOption];
+        return topicOptions;
+    }, [topicsData]);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const handleStatusChange = async (id: number) => {
         onClose();
@@ -126,7 +160,11 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
 
         switch (columnKey) {
             case 'title':
-                return <Link href={`/discussion/${post?.id}`}>{cellValue}</Link>;
+                if (post.status === 'DELETED' || post.status === 'BANNED') {
+                    return <Link href={'#'}>{cellValue}</Link>;
+                } else {
+                    return <Link href={`/discussion/${post?.id}`}>{cellValue}</Link>;
+                }
             case 'ownerFullName':
                 return (
                     <User
@@ -151,7 +189,13 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                         size="sm"
                         variant="dot"
                     >
-                        {cellValue === 'ENABLE' ? 'Hoạt động' : cellValue === 'DELETED' ? 'Đã xóa' : 'Vô hiệu'}
+                        {cellValue === 'ENABLE'
+                            ? 'Hoạt động'
+                            : cellValue === 'DELETED'
+                            ? 'Đã xóa'
+                            : cellValue === 'BANNED'
+                            ? 'Bị cấm'
+                            : 'Vô hiệu'}
                     </Chip>
                 );
             case 'action':
@@ -166,7 +210,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                             <DropdownMenu aria-label="Options" disabledKeys={['viewDis', 'editDis', 'delDis']}>
                                 <DropdownItem
                                     color="primary"
-                                    key={post.status === 'DELETED' ? 'viewDis' : 'view'}
+                                    key={post.status === 'DELETED' || post.status === 'BANNED' ? 'viewDis' : 'view'}
                                     as={Link}
                                     href={`/discussion/${post.id}`}
                                 >
@@ -174,7 +218,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                                 </DropdownItem>
                                 <DropdownItem
                                     color="warning"
-                                    key={post.status === 'DELETED' ? 'editDis' : 'edit'}
+                                    key={post.status === 'DELETED' || post.status === 'BANNED' ? 'editDis' : 'edit'}
                                     as={Link}
                                     href={`/discussion/edit/${post?.id}`}
                                 >
@@ -182,7 +226,7 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                                 </DropdownItem>
                                 <DropdownItem
                                     color="danger"
-                                    key={post.status === 'DELETED' ? 'delDis' : 'delete'}
+                                    key={post.status === 'DELETED' || post.status === 'BANNED' ? 'delDis' : 'delete'}
                                     onClick={() => onDeactivateOpen(post?.id)}
                                 >
                                     Xóa bài đăng
@@ -209,7 +253,10 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
                 return cellValue;
         }
     }, []);
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     if (user?.role !== 'STUDENT') return <NotFound />;
 
     return (
@@ -217,6 +264,91 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Bài đăng của tôi</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
+                    <div className="sm:flex justify-between gap-3 items-end">
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Chủ đề
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={true}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    {topicsOptions.map((column: any, index: number) => (
+                                        <DropdownItem key={column?.id} className="capitalize">
+                                            {capitalize(column.name)}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilterStatus}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilterStatus}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="ENABLE" className="capitalize">
+                                        {capitalize('Hoạt động')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DISABLE" className="capitalize">
+                                        {capitalize('Vô hiệu')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DELETED" className="capitalize">
+                                        {capitalize('Đã xóa')}
+                                    </DropdownItem>
+                                    <DropdownItem key="BANNED" className="capitalize">
+                                        {capitalize('Bị Cấm')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
                         <label className="flex items-center text-default-400 text-xs sm:text-sm">

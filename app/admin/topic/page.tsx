@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, Key, useCallback, useEffect, useMemo, useState } from 'react';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import {
     Button,
     Dropdown,
@@ -57,7 +57,11 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
             setTotalRow(topicsData.totalRow);
         }
     }, [topicsData]);
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['19']);
+    }, []);
     const handleStatusChange = async (id: number) => {
         try {
             onLoading();
@@ -144,7 +148,7 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Chủ đề thảo luận</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
-                    <div className="sm:flex justify-between gap-3 items-end">
+                    {/* <div className="sm:flex justify-between gap-3 items-end">
                         <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
@@ -156,7 +160,7 @@ const TopicList: React.FC<TopicListProps> = ({}) => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         />
-                    </div>
+                    </div> */}
                     <div className="sm:flex justify-between items-center">
                         <span className="text-default-400 text-xs sm:text-sm">Tìm thấy {totalRow} kết quả</span>
                         <label className="flex items-center text-default-400 text-xs sm:text-sm">

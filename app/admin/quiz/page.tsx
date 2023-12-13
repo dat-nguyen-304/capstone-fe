@@ -19,7 +19,7 @@ import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { useQuery } from '@tanstack/react-query';
 import { courseApi, examApi } from '@/api-client';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import { Spin } from 'antd';
 
 interface VideosProps {}
@@ -108,7 +108,7 @@ const Quizzes: React.FC<VideosProps> = () => {
     });
     const { data: coursesData } = useQuery({
         queryKey: ['quizzescoursesAdmin'],
-        queryFn: () => courseApi.getAllOfAdmin('ALL', 0, 100)
+        queryFn: () => courseApi.getAllOfAdmin('', 'ALL', 0, 100, 'id', 'ASC')
     });
     useEffect(() => {
         if (data?.data) {
@@ -200,6 +200,11 @@ const Quizzes: React.FC<VideosProps> = () => {
         });
         onOpen();
     };
+    const { onAdminKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onAdminKeys(['6']);
+    }, []);
     const renderCell = useCallback((quiz: any, columnKey: Key) => {
         const cellValue = quiz[columnKey as keyof any];
 

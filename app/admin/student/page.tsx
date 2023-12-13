@@ -20,7 +20,7 @@ import TableContent from '@/components/table';
 import { studentApi, userApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { useCustomModal, useInputModal } from '@/hooks';
+import { useCustomModal, useInputModal, useSelectedSidebar } from '@/hooks';
 import { StudentType } from '@/types';
 import { toast } from 'react-toastify';
 import { InputModal } from '@/components/modal/InputModal';
@@ -75,7 +75,11 @@ const Students: React.FC<StudentsProps> = () => {
             setTotalRow(studentsData.totalRow);
         }
     }, [studentsData]);
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['3']);
+    }, []);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
@@ -137,6 +141,8 @@ const Students: React.FC<StudentsProps> = () => {
         const cellValue = student[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'email':
+                return <Link href={`/admin/profile/student/${cellValue}`}>{cellValue}</Link>;
             case 'fullName':
                 return (
                     <User
@@ -210,7 +216,7 @@ const Students: React.FC<StudentsProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -220,8 +226,8 @@ const Students: React.FC<StudentsProps> = () => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

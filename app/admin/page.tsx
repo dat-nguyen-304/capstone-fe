@@ -5,8 +5,10 @@ import Loader from '@/components/Loader';
 import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
 import TeacherStudentChart from '@/components/chart/teacher-dashboard/TeacherStudentChart';
 import TopContributorItem from '@/components/dashboard/teacher/TopContributorItem';
+import { useSelectedSidebar } from '@/hooks';
 import { Card, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 const formatCurrency = (value: number) => {
     const formattedValue = new Intl.NumberFormat('vi-VN', {
@@ -23,7 +25,11 @@ const AdminDashboard: React.FC = () => {
         queryKey: ['adminDashboard'],
         queryFn: dashboardApi.getAll
     });
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['1']);
+    }, []);
     if (!dashboardData) return <Loader />;
     return (
         <div>
@@ -85,7 +91,7 @@ const AdminDashboard: React.FC = () => {
                         <Tab key="revenue" title="Doanh thu">
                             <RevenueChart chartData={dashboardData?.transactionByMonths} />
                         </Tab>
-                        <Tab key="course" title="Khóa học">
+                        {/* <Tab key="course" title="Khóa học">
                             <RevenueChart />
                         </Tab>
                         <Tab key="video" title="Video">
@@ -93,7 +99,7 @@ const AdminDashboard: React.FC = () => {
                         </Tab>
                         <Tab key="student" title="Người dùng">
                             <TeacherStudentChart />
-                        </Tab>
+                        </Tab> */}
                     </Tabs>
                 </Card>
                 {/* <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0">

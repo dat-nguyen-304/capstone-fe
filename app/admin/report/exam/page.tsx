@@ -18,7 +18,7 @@ import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import TableContent from '@/components/table';
 import { Spin } from 'antd';
-import { useCustomModal, useInputModal } from '@/hooks';
+import { useCustomModal, useInputModal, useSelectedSidebar } from '@/hooks';
 import { StudentType } from '@/types';
 import { examApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
@@ -200,6 +200,11 @@ const Reports: React.FC<ReportsProps> = () => {
         });
         onOpen();
     };
+    const { onAdminKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onAdminKeys(['16']);
+    }, []);
     const renderCell = useCallback((student: any, columnKey: Key) => {
         const cellValue = student[columnKey as keyof any];
 
@@ -298,7 +303,7 @@ const Reports: React.FC<ReportsProps> = () => {
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
                         /> */}
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

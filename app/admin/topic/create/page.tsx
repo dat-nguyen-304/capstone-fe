@@ -5,12 +5,12 @@ import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { InputFormula } from '@/components/form-input/InputFormula';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { discussionApi } from '@/api-client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 interface CreateTopicProps {}
 
 const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
@@ -46,7 +46,11 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
             console.error('Error creating course:', error);
         }
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['20']);
+    }, []);
     if (user?.role !== 'ADMIN') return <NotFound />;
 
     return (

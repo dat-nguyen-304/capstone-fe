@@ -90,7 +90,13 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
         onContentType('comment');
         onOpen();
     };
+    const dateValue = commentInfo?.createTime ? new Date(commentInfo?.createTime) : new Date();
 
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    })?.format(dateValue);
     return (
         <li className="flex gap-4 group mb-6">
             <div>
@@ -100,7 +106,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
                 <div className="bg-gray-100 pt-2 pb-4 px-4 rounded-xl">
                     <div className="flex items-center justify-between">
                         <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerFullName}</h4>
-                        <p className="text-xs sm:text-sm">{commentInfo.createdDate}</p>
+                        <p className="text-xs sm:text-sm">{formattedDate}</p>
                     </div>
                     {commentInfo.imageUrl && (
                         <div className="my-2">

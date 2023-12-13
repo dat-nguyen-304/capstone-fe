@@ -40,6 +40,13 @@ const SubCommentItem: React.FC<SubCommentItemProps> = ({ subCommentInfo, refetch
             console.error('Error reacting to discussion:', error);
         }
     };
+    const dateValue = subCommentInfo?.createTime ? new Date(subCommentInfo?.createTime) : new Date();
+
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    })?.format(dateValue);
     const defaultContent =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
     return (
@@ -49,7 +56,11 @@ const SubCommentItem: React.FC<SubCommentItemProps> = ({ subCommentInfo, refetch
             </div>
             <div className="w-full">
                 <div className="bg-gray-50 pt-2 pb-4 px-4 rounded-xl">
-                    <h4 className="font-semibold">{subCommentInfo?.ownerFullName || 'Nguyễn Văn An'}</h4>
+                    {/* <h4 className="font-semibold">{subCommentInfo?.ownerFullName || 'Nguyễn Văn An'}</h4> */}
+                    <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-sm sm:text-base">{subCommentInfo?.ownerFullName}</h4>
+                        <p className="text-xs sm:text-sm">{formattedDate}</p>
+                    </div>
                     <p className="text-sm"> {subCommentInfo?.content || defaultContent}</p>
                 </div>
                 <div className="mt-1 flex gap-4 items-center">

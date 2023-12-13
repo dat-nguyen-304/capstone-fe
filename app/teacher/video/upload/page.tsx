@@ -30,6 +30,7 @@ import Loader from '@/components/Loader';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import VideoRuleModal from '@/components/rule/VideoRuleModal';
+import { useSelectedSidebar } from '@/hooks';
 
 const UploadVideo: React.FC = () => {
     const router = useRouter();
@@ -54,8 +55,14 @@ const UploadVideo: React.FC = () => {
 
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacher('', 'AVAILABLE', 0, 100, 'createdDate', 'DESC')
     });
+
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['3']);
+    }, []);
 
     useEffect(() => {
         let arr: string[] = [];

@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { discussionApi } from '@/api-client';
 import { DiscussionType } from '@/types/discussion';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 
 interface PostListProps {}
 
@@ -128,7 +128,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
         // Set the search state
         setSearch(searchInput);
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['18']);
+    }, []);
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
 
     const handleStatusChange = async (id: number, status: string) => {
@@ -186,7 +190,11 @@ const PostList: React.FC<PostListProps> = ({}) => {
 
         switch (columnKey) {
             case 'title':
-                return <Link href={`/admin/discussion/${post?.id}`}>{cellValue}</Link>;
+                if (post.status === 'DELETED' || post.status === 'BANNED') {
+                    return <Link href={'#'}>{cellValue}</Link>;
+                } else {
+                    return <Link href={`/admin/discussion/${post?.id}`}>{cellValue}</Link>;
+                }
             case 'status':
                 return (
                     <Chip

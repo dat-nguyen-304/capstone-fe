@@ -34,17 +34,39 @@ export const examApi = {
         return res.data;
     },
     getQuizByOwnerId: async (
+        pattern: string,
         subject: string,
         examType: string,
+        statusList: string,
         page: number,
         size: number,
         field: string,
         sort: string
     ) => {
         const res = await axiosClient.get(
-            `/examination/exams/my${subject !== '' ? `?subject=${subject}` : ''}${
-                subject !== '' ? `&examType=${examType}` : subject == '' ? `?examType=${examType}` : ''
-            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/examination/exams/my${pattern !== '' ? `?pattern=${pattern}` : ''}${
+                pattern !== '' && subject !== ''
+                    ? `subject=${subject}`
+                    : pattern == '' && subject !== ''
+                    ? `?subject=${subject}`
+                    : ''
+            }${
+                (pattern !== '' || subject !== '') && examType !== ''
+                    ? `&examTypeList=${examType}`
+                    : pattern == '' && subject == '' && examType !== ''
+                    ? `?examTypeList=${examType}`
+                    : ''
+            }${
+                (pattern !== '' || subject !== '' || examType !== '') && statusList !== ''
+                    ? `&statusList=${statusList}`
+                    : pattern == '' && subject == '' && examType == '' && statusList !== ''
+                    ? `?statusList=${statusList}`
+                    : ''
+            }${
+                pattern !== '' || subject !== '' || examType !== '' || statusList !== ''
+                    ? `&page=${page}`
+                    : `?page=${page}`
+            }&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

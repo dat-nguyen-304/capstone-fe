@@ -46,7 +46,7 @@ const CourseTab: React.FC<CourseTabProps> = ({ teacher }) => {
                     )}
                 </div>
                 <div className="flex justify-center">
-                    {courses.length && data?.totalPage > 1 && (
+                    {courses.length && data?.totalPage > 1 ? (
                         <Pagination
                             showControls
                             color="primary"
@@ -55,7 +55,7 @@ const CourseTab: React.FC<CourseTabProps> = ({ teacher }) => {
                             variant="light"
                             onChange={setPage}
                         />
-                    )}
+                    ) : null}
                 </div>
             </Spin>
         </div>

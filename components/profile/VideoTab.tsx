@@ -33,9 +33,9 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher, type }) => {
     return (
         <div>
             <Spin spinning={isLoading ? true : false} size="large" tip="Đang tải">
-                {data?.totalRow && (
+                {data?.totalRow ? (
                     <p className="mt-4 text-default-400 text-xs sm:text-sm">Tìm thấy {data.totalRow} kết quả</p>
-                )}
+                ) : null}
                 <div className="mt-2 py-2 px-2">
                     <div className="min-h-[300px] mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {videos.length ? (
@@ -47,7 +47,7 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher, type }) => {
                         )}
                     </div>
                     <div className="flex justify-center">
-                        {videos.length && data?.totalPage > 1 && (
+                        {videos.length && data?.totalPage > 1 ? (
                             <Pagination
                                 showControls
                                 color="primary"
@@ -56,7 +56,7 @@ const VideoTab: React.FC<VideoTabProps> = ({ teacher, type }) => {
                                 variant="light"
                                 onChange={setPage}
                             />
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </Spin>

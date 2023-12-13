@@ -60,6 +60,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         imageUrl: discussionData?.imageUrl,
         owner: discussionData?.owner,
         auth: discussionData?.ownerFullName,
+        reacted: discussionData?.reacted,
         like: discussionData?.reactCount,
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime

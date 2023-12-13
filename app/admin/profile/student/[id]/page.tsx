@@ -3,12 +3,12 @@
 import { studentApi, userApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { InputModal } from '@/components/modal/InputModal';
-import { useCustomModal, useInputModal } from '@/hooks';
+import { useCustomModal, useInputModal, useSelectedSidebar } from '@/hooks';
 import { Button, Card, Chip } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsArrowLeft } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 

@@ -17,7 +17,7 @@ import {
     Pagination,
     Selection
 } from '@nextui-org/react';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 
@@ -29,12 +29,15 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['coursesDraft', { page, sortFilter: Array.from(sortFilter)[0] as string }],
+        queryKey: ['coursesDraft', { page, sortFilter: Array.from(sortFilter)[0] as string, search }],
         // keepPreviousData: true,
         queryFn: () =>
-            courseApi.getAllOfTeacherDraft(
+            courseApi.getAllOfTeacherDraftSearch(
+                search,
                 page - 1,
                 20,
                 Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
@@ -70,7 +73,14 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             name: 'Chờ cập nhật'
         }
     ];
-
+    const { onTeacherKeys } = useSelectedSidebar();
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
+    useEffect(() => {
+        onTeacherKeys(['8']);
+    }, []);
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -83,17 +93,25 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học vừa tạo</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 sm:flex justify-between gap-3 items-end">
-                    {/* <Input
-                        isClearable
-                        className="w-full sm:max-w-[50%] border-1"
-                        placeholder="Tìm kiếm..."
-                        color="primary"
-                        startContent={<BsSearch className="text-default-300" />}
-                        // value={filterValue}
-                        variant="bordered"
-                        onClear={() => {}}
-                        // onValueChange={onSearchChange}
-                    /> */}
+                    <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[50%] border-1"
+                            placeholder="Tìm kiếm..."
+                            startContent={<BsSearch className="text-default-300" />}
+                            value={searchInput}
+                            variant="bordered"
+                            color="primary"
+                            onClear={() => {
+                                setSearchInput('');
+                                handleSearch('');
+                            }}
+                            onChange={e => setSearchInput(e.target.value)}
+                        />
+                        <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                            Tìm kiếm
+                        </Button>
+                    </div>
                     <div className="flex ml-auto gap-3 mt-4 sm:mt-0">
                         {/* <Dropdown>
                             <DropdownTrigger className="flex">

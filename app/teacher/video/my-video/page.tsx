@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import VideoCard from '@/components/video/VideoCard';
 import { courseApi, videoApi } from '@/api-client';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import { Course, VideoCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
@@ -61,7 +61,7 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
 
     const { data: coursesData, isLoading } = useQuery({
         queryKey: ['coursesList'],
-        queryFn: () => courseApi.getAllOfTeacher(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacher('', 'AVAILABLE', 0, 100, 'createdDate', 'DESC')
     });
 
     useEffect(() => {
@@ -71,7 +71,11 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
             setTotalRow(data.totalRow);
         }
     }, [data]);
+    const { onTeacherKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onTeacherKeys(['4']);
+    }, []);
     const statusArr = [
         {
             value: 'AVAILABLE',

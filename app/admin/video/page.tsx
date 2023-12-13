@@ -21,7 +21,7 @@ import { videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { VideoCardType } from '@/types';
 import { Spin } from 'antd';
-import { useCustomModal } from '@/hooks';
+import { useCustomModal, useSelectedSidebar } from '@/hooks';
 interface VideosProps {}
 
 const statusColorMap: Record<string, ChipProps['color']> = {
@@ -157,7 +157,11 @@ const Videos: React.FC<VideosProps> = () => {
         });
         onOpen();
     };
+    const { onAdminKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onAdminKeys(['5']);
+    }, []);
     const renderCell = useCallback((video: any, columnKey: Key) => {
         const cellValue = video[columnKey as keyof any];
 

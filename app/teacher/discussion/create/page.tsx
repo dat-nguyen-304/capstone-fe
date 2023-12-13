@@ -10,11 +10,12 @@ import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
 import { RiImageAddLine, RiImageEditLine } from 'react-icons/ri';
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import DiscussionRuleModal from '@/components/rule/DiscussionRuleModal';
+import { useSelectedSidebar } from '@/hooks';
 interface PostsProps {}
 
 const PostList: React.FC<PostsProps> = ({}) => {
@@ -80,7 +81,11 @@ const PostList: React.FC<PostsProps> = ({}) => {
             }
         }
     };
+    const { onTeacherKeys } = useSelectedSidebar();
 
+    useEffect(() => {
+        onTeacherKeys(['12']);
+    }, []);
     if (!data) return <Loader />;
 
     return (
