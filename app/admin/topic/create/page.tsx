@@ -1,7 +1,6 @@
 'use client';
 
-import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
-import Loader from '@/components/Loader';
+import { Button } from '@nextui-org/react';
 import { CreateTopicObject, Subject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
@@ -68,21 +67,10 @@ const CreateTopic: React.FC<CreateTopicProps> = ({}) => {
                 </div>
                 <div className="mt-6">
                     <label className="text-sm font-semibold text-blue-500">Mô tả</label>
-
                     <InputFormula name="description" placeholder="Mô tả chủ đề" control={control} />
                 </div>
-                <div className="flex items-start mt-16 mb-6">
-                    <div className="flex items-center h-5">
-                        <Checkbox />
-                    </div>
-                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Tôi đồng ý{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                            với chính sách và điều khoản của CEPA.
-                        </a>
-                    </label>
-                </div>
-                <Button color="primary" type="submit" isLoading={isSubmitting}>
+
+                <Button color="primary" className="mt-20 sm:mt-16 mb-6" type="submit" isLoading={isSubmitting}>
                     Tạo chủ đề
                 </Button>
             </form>

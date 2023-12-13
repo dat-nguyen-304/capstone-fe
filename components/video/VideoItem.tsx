@@ -64,16 +64,18 @@ const VideoItem: React.FC<VideoItemProps> = ({ videoItem, index, courseId }) => 
                     </p>
                 </div>
                 <div className="px-4 sm:px-6">
-                    <div className="flex items-center w-full">
-                        {videoItem?.examType ? (
-                            <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        ) : (
-                            <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        )}
-                        <p className="text-xs">
-                            {videoItem?.name}{' '}
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center w-4/5">
+                            {videoItem?.examType ? (
+                                <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                            ) : (
+                                <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                            )}
+                            <p className="text-xs truncate">{videoItem?.name} </p>
+                        </div>
+                        <p>
                             {videoItem?.attempted ? (
-                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />
+                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={24} />
                             ) : null}
                         </p>
                     </div>

@@ -38,8 +38,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                     isBordered
                     as="button"
                     className="transition-transform"
-                    color="secondary"
-                    name="Jason Hughes"
+                    color="primary"
                     size="sm"
                     src={currentUser.avatar}
                 />

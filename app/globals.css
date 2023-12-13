@@ -126,6 +126,34 @@ nav header {
     text-align: center;
 }
 
+.coin-bg {
+    background: linear-gradient(rgba(227, 131, 56, 0.4), rgba(227, 131, 56, 0.4)), url('/coin.webp');
+    background-size: contain;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+}
+
+.student-bg {
+    background: linear-gradient(rgba(243, 163, 222, 0.4), rgba(243, 163, 222, 0.4)), url('/student.webp');
+    background-size: contain;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+}
+
+.course-bg {
+    background: linear-gradient(rgba(0, 198, 255, 0.3), rgba(0, 198, 255, 0.3)), url('/course.webp');
+    background-size: contain;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+}
+
+.video-bg {
+    background: linear-gradient(rgba(198, 255, 222, 0.6), rgba(198, 255,222, 0.6)), url('/video.webp');
+    background-size: contain;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+}
+
 .Toastify__toast-body {
     font-size: 14px;
 }

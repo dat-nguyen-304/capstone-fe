@@ -1,13 +1,13 @@
 'use client';
 
-import { Button, Card, Chip } from '@nextui-org/react';
+import { Chip } from '@nextui-org/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 import { BiSolidLike } from 'react-icons/bi';
 import { FaComments } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
-import { RxQuestionMark, RxQuestionMarkCircled, RxVideo } from 'react-icons/rx';
+import { RxQuestionMarkCircled, RxVideo } from 'react-icons/rx';
 
 interface VideoItemProps {
     type?: 'my-video' | 'teacher-video' | 'teacher-video-draft' | 'admin-review-video' | 'admin-view-video';
@@ -142,17 +142,18 @@ const VideoItem: React.FC<VideoItemProps> = ({
                     </p>
                 </div>
                 <div className="flex justify-between px-6 sm:px-8">
-                    <div className="flex items-center w-4/5">
-                        {videoItem?.examType ? (
-                            <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        ) : (
-                            <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
-                        )}
-
-                        <p className="truncate text-xs sm:text-sm text-black">
-                            {videoItem?.name}{' '}
+                    <div className="flex items-center w-full justify-between">
+                        <div className="flex items-center w-4/5">
+                            {videoItem?.examType ? (
+                                <RxQuestionMarkCircled className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                            ) : (
+                                <RxVideo className="text-blue-300 mr-2 text-xl hidden sm:block" />
+                            )}
+                            <p className="truncate text-xs sm:text-sm text-black">{videoItem?.name}</p>
+                        </div>
+                        <p>
                             {videoItem?.attempted ? (
-                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={20} />
+                                <MdVerified color="rgb(13, 226, 152)" className="inline mr-1 mb-1" size={32} />
                             ) : null}
                         </p>
                     </div>

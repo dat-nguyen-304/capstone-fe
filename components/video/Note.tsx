@@ -132,13 +132,6 @@ const Note: React.FC<NoteProps> = ({ currentTime, videoId, setIsPlaying, handleB
                           />
                       ))
                     : null}
-
-                {/* <NoteItem time={currentTime} />
-                <NoteItem time={currentTime} />
-                <NoteItem time={currentTime} />
-                <NoteItem time={currentTime} />
-                <NoteItem time={currentTime} />
-                <NoteItem time={currentTime} /> */}
             </ul>
         </div>
     );

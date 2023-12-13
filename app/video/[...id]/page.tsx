@@ -87,7 +87,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
     const handleProgress = (progress: OnProgressProps) => {
         const timeString = convertSeconds(progress.playedSeconds);
         const videoDuration = data?.duration || 0;
-        const threshold = 5;
+        const threshold = videoDuration * 0.05;
         setCurrentTime(timeString);
 
         if (videoDuration - progress.playedSeconds <= threshold && !isWatched && !hasCalledProgressApi) {
@@ -158,7 +158,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
             ownerFullName: commentData.useName || 'Nguyễn Văn A',
             content: commentData.comment || 'Nội dung rất hay',
             ownerAvatar: commentData?.avatar || 'https://i.pravatar.cc/150?u=a04258114e29026708c',
-            commentVideo: true
+            commentVideo: true,
+            createdDate: commentData.createdDate
         };
     };
 
@@ -177,8 +178,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     {isLoading ? (
                         <div className="col-span-7">
-                            <div className="flex justify-center items-center">
-                                <PuffLoader color="blue" size={50} />
+                            <div className="flex h-[60vh] justify-center items-center">
+                                <PuffLoader color="blue" size={200} />
                             </div>
                         </div>
                     ) : (
@@ -270,8 +271,8 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                     )}
                     {loadingListVideo && loadingQuizzes ? (
                         <div className="hidden md:block h-full col-span-3">
-                            <div className="flex justify-center items-center">
-                                <PuffLoader color="blue" size={50} />
+                            <div className="flex justify-center items-center h-[60vh]">
+                                <PuffLoader color="blue" size={100} />
                             </div>
                         </div>
                     ) : (

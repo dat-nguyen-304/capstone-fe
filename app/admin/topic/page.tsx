@@ -14,8 +14,7 @@ import {
     User
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
-import { capitalize } from '@/components/table/utils';
+import { BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
 import TableContent from '@/components/table';
 import { discussionApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';

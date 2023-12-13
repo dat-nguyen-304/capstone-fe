@@ -106,8 +106,8 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                 <div className="relative md:grid grid-cols-10 gap-2 mt-4 mb-16">
                     {isLoading ? (
                         <div className="col-span-7">
-                            <div className="flex justify-center items-center">
-                                <PuffLoader color="blue" size={50} />
+                            <div className="flex justify-center h-[60vh] items-center">
+                                <PuffLoader color="blue" size={200} />
                             </div>
                         </div>
                     ) : (
@@ -193,8 +193,8 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
                     )}
                     {loadingListVideo && loadingQuizzes ? (
                         <div className="hidden md:block h-full col-span-3">
-                            <div className="flex justify-center items-center">
-                                <PuffLoader color="blue" size={50} />
+                            <div className="flex justify-center items-center h-[60vh]">
+                                <PuffLoader color="blue" size={100} />
                             </div>
                         </div>
                     ) : (

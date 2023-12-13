@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
     return (
         <div>
             <div className="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
-                <Card className="p-4 mt-4 sm:mt-0">
+                <Card className="p-4 mt-4 sm:mt-0 coin-bg">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Doanh thu tháng</h1>
                     </div>
@@ -42,7 +42,7 @@ const AdminDashboard: React.FC = () => {
                         <span className="ml-2">120.000</span>
                     </div> */}
                 </Card>
-                <Card className="p-4 mt-4 sm:mt-0">
+                <Card className="p-4 mt-4 sm:mt-0 course-bg">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Khóa học</h1>
                     </div>
@@ -54,7 +54,7 @@ const AdminDashboard: React.FC = () => {
                         <span className="ml-2">4</span>
                     </div> */}
                 </Card>
-                <Card className="p-4 mt-4 sm:mt-0">
+                <Card className="p-4 mt-4 sm:mt-0 video-bg">
                     <div>
                         <h1 className="text-[14px] text-gray-500">Video</h1>
                     </div>
@@ -79,8 +79,8 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </Card> */}
             </div>
-            <div className="lg:grid lg:grid-cols-10 gap-4 mt-8 px-0">
-                <Card className="lg:col-span-7 p-4">
+            <div className="gap-4 mt-8 px-0 w-3/4 mx-auto">
+                <Card className="p-4">
                     <Tabs color="primary" variant="underlined" aria-label="Tabs variants">
                         <Tab key="revenue" title="Doanh thu">
                             <RevenueChart chartData={dashboardData?.transactionByMonths} />

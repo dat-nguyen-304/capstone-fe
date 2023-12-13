@@ -294,7 +294,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                         onClear={() => setFilterValue('')}
                         onValueChange={onSearchChange}
                     /> */}
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

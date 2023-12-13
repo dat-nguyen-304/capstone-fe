@@ -5,7 +5,6 @@ import CourseInfo from '@/components/course/course-detail/CourseInfo';
 import Feedback from '@/components/course/course-detail/Feedback';
 import WriteFeedback from '@/components/course/course-detail/WriteFeedback';
 import CourseImage from '@/components/course/course-detail/CourseImage';
-import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';

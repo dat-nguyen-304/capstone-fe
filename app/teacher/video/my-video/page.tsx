@@ -122,27 +122,12 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
                     /> */}
-                    <div className="flex-[1] flex flex-row">
-                        <Select
-                            size="sm"
-                            labelPlacement="inside"
-                            label="Khóa học"
-                            color="primary"
-                            variant="bordered"
-                            className="w-4/5 mx-6"
-                            onChange={event => setSelectedCourse(Number(event.target.value))}
-                        >
-                            {coursesData?.data?.map((course: Course) => (
-                                <SelectItem key={course?.id} value={course?.id}>
-                                    {course?.courseName}
-                                </SelectItem>
-                            ))}
-                        </Select>
+                    <div className="flex-[1] flex items-center flex-row-reverse">
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button
                                     endContent={<BsChevronDown className="text-small" />}
-                                    size="lg"
+                                    size="md"
                                     color="primary"
                                     variant="bordered"
                                 >
@@ -165,6 +150,21 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
+                        <Select
+                            size="sm"
+                            labelPlacement="inside"
+                            label="Khóa học"
+                            color="primary"
+                            variant="bordered"
+                            className="w-2/5 mx-6"
+                            onChange={event => setSelectedCourse(Number(event.target.value))}
+                        >
+                            {coursesData?.data?.map((course: Course) => (
+                                <SelectItem key={course?.id} value={course?.id}>
+                                    {course?.courseName}
+                                </SelectItem>
+                            ))}
+                        </Select>
                     </div>
                 </div>
 

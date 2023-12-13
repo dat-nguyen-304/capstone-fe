@@ -98,7 +98,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ commentInfo, onCommentId, ref
             </div>
             <div className="w-full">
                 <div className="bg-gray-100 pt-2 pb-4 px-4 rounded-xl">
-                    <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerFullName}</h4>
+                    <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-sm sm:text-base">{commentInfo?.ownerFullName}</h4>
+                        <p className="text-xs sm:text-sm">{commentInfo.createdDate}</p>
+                    </div>
                     {commentInfo.imageUrl && (
                         <div className="my-2">
                             <Gallery>

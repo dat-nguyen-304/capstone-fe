@@ -1,9 +1,8 @@
-import { VideoCardType } from '@/types';
-import { Card, CardBody, CardHeader, Chip, ChipProps } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip, ChipProps, useDisclosure } from '@nextui-org/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BiSolidLike } from 'react-icons/bi';
+import { PreviewVideoModal } from '../modal/PreviewVideoModal';
 
 interface VideoCardProps {
     type?: 'teacher' | 'teacher-draft' | 'admin' | 'all';
@@ -75,6 +74,7 @@ const floatToTime = (durationFloat: number): string => {
 
 const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     const router = useRouter();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
     let detailPage = '',
         teacherStatus = '',
@@ -105,8 +105,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
     }
 
     const viewDetailVideo = () => {
-        if (type === 'all' && video.videoStatus === 'PUBLIC') router.push(detailPage);
-        else if (type === 'teacher') router.push(detailPage);
+        if (type === 'all' && video.videoStatus === 'PUBLIC') {
+            onOpen();
+        } else if (type === 'teacher') router.push(detailPage);
         else if (type === 'teacher-draft') router.push(detailPage);
     };
 
@@ -162,6 +163,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                     </CardBody>
                 </div>
             </Card>
+            <PreviewVideoModal
+                name={video.name}
+                url={video.videoUrl}
+                onOpen={onOpen}
+                isOpen={isOpen}
+                onClose={onClose}
+                onOpenChange={onOpenChange}
+            />
         </div>
     );
 };

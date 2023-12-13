@@ -12,12 +12,11 @@ import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
 import { ReportModal } from '../modal';
 import { toast } from 'react-toastify';
-import { courseApi, examApi, reportVideoApi } from '@/api-client';
+import { examApi, reportVideoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 interface VideoHeaderProps {
     children: React.ReactNode;
     id: number;
-
     course: any;
     type: 'video' | 'quiz';
 }

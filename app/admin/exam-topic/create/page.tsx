@@ -1,21 +1,23 @@
 'use client';
 
-import { Button, Checkbox, Select, SelectItem } from '@nextui-org/react';
-import { examApi, subjectApi } from '@/api-client';
-import { CreateTopicObject, Subject } from '@/types';
+import { Button, Select, SelectItem } from '@nextui-org/react';
+import { examApi } from '@/api-client';
+import { CreateTopicObject } from '@/types';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useUser } from '@/hooks';
 import NotFound from '@/app/not-found';
 import { useRouter } from 'next/navigation';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { toast } from 'react-toastify';
+
 interface CreateExamTopicProps {}
 
 const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
     const [level, setLevel] = useState<string>('EASY');
     const [subject, setSubject] = useState<string>('MATHEMATICS');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { user } = useUser();
     const router = useRouter();
     const { control, handleSubmit, setError } = useForm({
@@ -28,6 +30,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
     const onSubmit = async (formData: CreateTopicObject) => {
         let toastLoading;
         try {
+            setIsSubmitting(true);
             toastLoading = toast.loading('Đang xử lí yêu cầu');
             const response = await examApi.createTopicExam({
                 name: formData.name,
@@ -39,8 +42,10 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                 toast.success('Chủ đề thi đã được tạo thành công');
                 router.push('/admin/exam-topic');
             }
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
         } catch (error) {
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
             toast.error('Hệ thống gặp trục trặc, thử lại sau ít phút');
             console.error('Error creating course:', error);
@@ -68,6 +73,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                         label="Môn học"
                         color="primary"
                         variant="bordered"
+                        isRequired
                         labelPlacement="inside"
                         defaultSelectedKeys={['MATHEMATICS']}
                         onChange={event => setSubject(String(event.target.value))}
@@ -95,6 +101,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                         </SelectItem>
                     </Select>
                     <Select
+                        isRequired
                         label="Mức độ"
                         color="primary"
                         variant="bordered"
@@ -117,18 +124,7 @@ const CreateExamTopic: React.FC<CreateExamTopicProps> = ({}) => {
                     <label className="text-sm font-semibold text-[#0070f0]">Mô tả chủ đề</label>
                     <InputDescription name="description" placeholder="Nội dung" control={control} />
                 </div>
-                <div className="flex items-start mt-16 mb-6">
-                    <div className="flex items-center h-5">
-                        <Checkbox />
-                    </div>
-                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Tôi đồng ý{' '}
-                        <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-                            với chính sách và điều khoản của CEPA.
-                        </a>
-                    </label>
-                </div>
-                <Button color="primary" type="submit">
+                <Button color="primary" type="submit" className="mt-20 sm:mt-16" isLoading={isSubmitting}>
                     Tạo bài chủ đề thi
                 </Button>
             </form>

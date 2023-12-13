@@ -8,7 +8,7 @@ import Notification from '../notification/HeaderNotification';
 import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from '@nextui-org/react';
 import { TbLogout, TbMenu2 } from 'react-icons/tb';
 import { SafeUser } from '@/types';
-import { useUser } from '@/hooks';
+import { useSelectedSidebar, useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/api-client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,6 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
     const queryClient = useQueryClient();
     const currentUser = useUser();
     const router = useRouter();
+    const { teacherKeys, adminKeys } = useSelectedSidebar();
     const {
         token: { colorBgContainer }
     } = theme.useToken();
@@ -61,7 +62,14 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                     bottom: 0
                 }}
             >
-                <Menu className="mt-14" theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                <Menu
+                    className="mt-14"
+                    theme="dark"
+                    defaultSelectedKeys={['1']}
+                    selectedKeys={user.role === 'ADMIN' ? adminKeys : teacherKeys}
+                    mode="inline"
+                    items={items}
+                />
             </Sider>
             <Drawer
                 placement={'left'}

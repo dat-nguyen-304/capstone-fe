@@ -251,6 +251,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                                 label="Tên khóa học"
                                 control={control}
                                 color="primary"
+                                isRequired
                             />
                         </div>
                         <div className="col-span-2">
@@ -289,6 +290,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                             <div className="col-span-1 mt-12 md:mt-8">
                                 <Select
                                     label="Mức độ"
+                                    isRequired
                                     color="primary"
                                     variant="bordered"
                                     labelPlacement="outside"

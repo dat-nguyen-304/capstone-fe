@@ -106,7 +106,7 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
                         onClear={() => {}}
                         // onValueChange={onSearchChange}
                     /> */}
-                    <div className="flex gap-3 mt-4 sm:mt-0">
+                    <div className="flex ml-auto gap-3 mt-4 sm:mt-0">
                         {/* <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button

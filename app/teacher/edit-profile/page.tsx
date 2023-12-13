@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { InputDescription } from '@/components/form-input/InputDescription';
 import { InputText } from '@/components/form-input';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
+import { useSelectedSidebar } from '@/hooks';
 
 const Profile: React.FC = () => {
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
@@ -52,6 +53,12 @@ const Profile: React.FC = () => {
             desciption: ''
         }
     });
+    const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        onTeacherKeys(['2']);
+    }, []);
+
     useEffect(() => {
         if (teacherData) {
             setValue('fullName', teacherData?.fullName);
