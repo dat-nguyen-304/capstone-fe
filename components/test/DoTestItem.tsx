@@ -39,7 +39,7 @@ const DoTestItem = forwardRef(function MyComponent(
                                             <Image
                                                 onClick={open}
                                                 src={questions?.question?.imageUrl}
-                                                className="object-cover rounded-md h-[150px] cursor-pointer"
+                                                className="object-cover rounded-md h-[150px] w-auto cursor-pointer"
                                                 width={140}
                                                 height={140}
                                                 alt="question image"

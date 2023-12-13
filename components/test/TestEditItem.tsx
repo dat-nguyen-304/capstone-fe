@@ -75,7 +75,7 @@ const TestEditItem: React.FC<TestEditItemProps> = ({ questions, subjectId, index
                                     <Image
                                         onClick={open}
                                         src={questions?.imageUrl}
-                                        className="object-cover rounded-md h-[150px] cursor-pointer"
+                                        className="object-cover rounded-md h-[150px] w-auto cursor-pointer"
                                         width={140}
                                         height={140}
                                         alt="question image"

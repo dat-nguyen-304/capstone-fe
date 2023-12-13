@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
                                     isBordered
                                     as="button"
                                     className="transition-transform"
-                                    color="secondary"
+                                    color="primary"
                                     name="Jason Hughes"
                                     size="sm"
                                     src={user.avatar as string}

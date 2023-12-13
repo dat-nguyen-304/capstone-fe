@@ -284,7 +284,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="lg:flex justify-between items-center">
                     <div className="">
                         <Button onClick={handlePopUpAddQuestion} color="success" variant="flat" className="mt-8">
                             Thêm câu hỏi <FaPlus />
@@ -301,18 +301,18 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                         )}
                     </div>
 
-                    <div className="flex justify-center items-center">
+                    <div className="md:flex justify-center items-center mt-8 md:mt-0">
                         <a
                             href={'/file/sample.xlsx'}
                             download={'sample.xlsx'}
                             className="mt-8 bg-green-100 hover:bg-green-300 py-3 px-4 rounded-md decoration-black text-green-500"
                             style={{ textDecoration: 'none', color: 'inherit' }}
                         >
-                            Tải file mẫu
+                            Tải xuông file mẫu
                         </a>
                         <div className="mt-8 mx-2">
                             <label htmlFor="file-input" className="sr-only">
-                                Choose file
+                                Chọn file
                             </label>
                             <input
                                 ref={fileInputRef}

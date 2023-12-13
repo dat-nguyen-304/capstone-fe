@@ -217,7 +217,7 @@ const Exams: React.FC<ExamsProps> = () => {
                     cellValue === 'ENTRANCE_EXAM'
                         ? 'Bài thi đầu vào'
                         : cellValue === 'PUBLIC_EXAM'
-                        ? 'Bài thi'
+                        ? 'Bài thi thường'
                         : cellValue === 'QUIZ'
                         ? 'Bài tập'
                         : cellValue === 'QUIZ_DRAFT'

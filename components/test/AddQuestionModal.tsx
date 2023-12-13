@@ -209,7 +209,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             color="primary"
                                             isRequired
                                             variant="bordered"
-                                            labelPlacement="outside"
+                                            labelPlacement="inside"
                                             defaultSelectedKeys={
                                                 editQuestion
                                                     ? [`${editQuestion?.topicId}`]
@@ -228,9 +228,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                         <Select
                                             label="Mức độ"
                                             isRequired
+                                            className="mt-4 sm:mt-0"
                                             color="primary"
                                             variant="bordered"
-                                            labelPlacement="outside"
+                                            labelPlacement="inside"
                                             defaultSelectedKeys={editQuestion ? [`${editQuestion?.level}`] : ['EASY']}
                                             onChange={event => setLevel(String(event.target.value))}
                                         >
@@ -245,47 +246,33 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             </SelectItem>
                                         </Select>
                                     </div>
-                                    <div className="col-span-5 sm:grid grid-cols-3 gap-4 my-5">
-                                        <div className="flex col-span-1 items-center">
-                                            <div className="flex mt-4 mb-2 mx-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
-                                                {imageUrl ? (
-                                                    // Display the image from the web link
-                                                    <Image
-                                                        className="object-cover w-full h-[120px]"
-                                                        src={imageUrl}
-                                                        alt="Image Preview"
-                                                        width={240}
-                                                        height={240}
-                                                    />
-                                                ) : (
-                                                    // Default message when no image is present
-                                                    <div className="flex flex-col justify-center items-center">
-                                                        <RiImageAddLine size={40} />
-                                                        <span className="text-sm">Tải lên ảnh câu hỏi</span>
-                                                    </div>
-                                                )}
-                                            </div>
+                                    <div className="mt-4">
+                                        <div className="md:flex mt-4 items-center">
+                                            <label className="text-xs sm:text-sm w-[200px]">
+                                                Đường link ảnh (nếu có):
+                                            </label>
+                                            <InputText
+                                                name="imageUrl"
+                                                control={control}
+                                                placeholder="Nhập đường link ảnh"
+                                                className="w-full"
+                                                value={imageUrl}
+                                            />
                                         </div>
-                                        <div
-                                            className="col-span-2 my-4 items-center justify-center"
-                                            suppressContentEditableWarning={true}
-                                        >
-                                            <div className="w-full my-4">
-                                                <label>Đường link ảnh (nếu có)</label>
-                                                <InputText
-                                                    name="imageUrl"
-                                                    control={control}
-                                                    placeholder="Nhập đường link ảnh"
-                                                    className="w-full"
-                                                    value={imageUrl}
-                                                />
-                                            </div>
-                                            <div>
-                                                <div className=""> </div>
-                                                <Button onClick={handleShowImage} className="mr-4" color="success">
-                                                    Hiển thị ảnh
-                                                </Button>
-                                                {imageUrl !== '' ? (
+                                        <div>
+                                            {imageUrl !== '' ? (
+                                                <div className="flex mt-4 items-center justify-center">
+                                                    <div className="flex col-span-1 items-center rounded-lg">
+                                                        <div className="flex rounded-lg mb-2 mx-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex-col justify-center items-center cursor-pointer">
+                                                            <Image
+                                                                className="object-cover w-full w-auto h-[120px] rounded-lg"
+                                                                src={imageUrl}
+                                                                alt="Image Preview"
+                                                                width={240}
+                                                                height={240}
+                                                            />
+                                                        </div>
+                                                    </div>
                                                     <Button
                                                         onClick={() => {
                                                             setImageUrl('');
@@ -295,11 +282,18 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                                     >
                                                         Xóa ảnh
                                                     </Button>
-                                                ) : null}
-                                            </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex mt-4 items-center justify-center">
+                                                    <Button onClick={handleShowImage} className="mr-4" color="success">
+                                                        Hiển thị ảnh
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                    <div>
+
+                                    <div className="mt-4">
                                         <label>Nội dung câu hỏi</label>
                                         <div>
                                             {/* <div className="mt-4 mb-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex flex-col justify-center items-center cursor-pointer">
