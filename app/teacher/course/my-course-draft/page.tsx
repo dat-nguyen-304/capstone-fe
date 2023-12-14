@@ -36,8 +36,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
         queryKey: ['coursesDraft', { page, sortFilter: Array.from(sortFilter)[0] as string, search }],
         // keepPreviousData: true,
         queryFn: () =>
-            courseApi.getAllOfTeacherDraftSearch(
-                search,
+            courseApi.getAllOfTeacherDraft(
                 page - 1,
                 20,
                 Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
