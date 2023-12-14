@@ -302,11 +302,14 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                         // Add logic to navigate to the create target page
                                         setShowCombination(true), setShowEntranceExam(false);
                                     }}
-                                    className="mt-4  items-center justify-center"
+                                    className="mt-4 mr-3  items-center justify-center"
                                     variant="bordered"
                                     color="primary"
                                 >
                                     Chọn tổ hợp khác
+                                </Button>
+                                <Button as={Link} href="/edit-profile" variant="bordered" color="success">
+                                    Tạo mục tiêu mới
                                 </Button>
                             </div>
                         </Card>

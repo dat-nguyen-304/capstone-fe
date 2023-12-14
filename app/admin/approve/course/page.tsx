@@ -63,6 +63,9 @@ const Courses: React.FC<CoursesProps> = () => {
     const [totalRow, setTotalRow] = useState<number>();
     const [declineId, setDeclineId] = useState<number>();
     const [sort, setSort] = useState<Selection>(new Set(['ALL']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [search, setSearch] = useState<string>('');
+    const [searchInput, setSearchInput] = useState('');
     const {
         status,
         error,
@@ -70,9 +73,20 @@ const Courses: React.FC<CoursesProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['coursesApproveAdmin', { page, rowsPerPage, sort: Array.from(sort)[0] as string }],
+        queryKey: [
+            'coursesApproveAdmin',
+            {
+                page,
+                rowsPerPage,
+                sort: Array.from(sort)[0] as string,
+                search,
+                statusFilter: Array.from(statusFilter)[0] as string
+            }
+        ],
         queryFn: () =>
             courseApi.getCoursesVerifyListAdmin(
+                search,
+                Array.from(statusFilter)[0] as string,
                 page - 1,
                 rowsPerPage,
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateASC'
@@ -146,7 +160,10 @@ const Courses: React.FC<CoursesProps> = () => {
             setFilterValue('');
         }
     }, []);
-
+    const handleSearch = (searchInput: string) => {
+        // Set the search state
+        setSearch(searchInput);
+    };
     const onApproveOpen = (id: number) => {
         onWarning({
             title: 'Xác nhận duyệt',
@@ -247,20 +264,28 @@ const Courses: React.FC<CoursesProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        {/* <Input
-                            isClearable
-                            className="w-full sm:max-w-[50%] border-1"
-                            placeholder="Tìm kiếm..."
-                            startContent={<BsSearch className="text-default-300" />}
-                            value={filterValue}
-                            color="primary"
-                            variant="bordered"
-                            onClear={() => setFilterValue('')}
-                            onValueChange={onSearchChange}
-                        /> */}
+                        <div className="flex flex-[1] gap-2 md:mt-0 mt-4">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[50%] border-1"
+                                placeholder="Tìm kiếm..."
+                                startContent={<BsSearch className="text-default-300" />}
+                                value={searchInput}
+                                variant="bordered"
+                                color="primary"
+                                onClear={() => {
+                                    setSearchInput('');
+                                    handleSearch('');
+                                }}
+                                onChange={e => setSearchInput(e.target.value)}
+                            />
+                            <Button color="primary" className="" onClick={() => handleSearch(searchInput)}>
+                                Tìm kiếm
+                            </Button>
+                        </div>
                         <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
-                            {/* <Dropdown>
-                                <DropdownTrigger className="flex">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
@@ -270,11 +295,26 @@ const Courses: React.FC<CoursesProps> = () => {
                                         Trạng thái
                                     </Button>
                                 </DropdownTrigger>
-                                <DropdownMenu disallowEmptySelection closeOnSelect={false} selectionMode="single">
-                                    <DropdownItem className="capitalize">Chờ xác thực</DropdownItem>
-                                    <DropdownItem className="capitalize">Chờ cập nhật</DropdownItem>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+
+                                    <DropdownItem key="WAITING" className="capitalize">
+                                        {capitalize('Khóa học chờ xác thực')}
+                                    </DropdownItem>
+                                    <DropdownItem key="UPDATING" className="capitalize">
+                                        {capitalize('Khóa học chờ cập nhật')}
+                                    </DropdownItem>
                                 </DropdownMenu>
-                            </Dropdown> */}
+                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

@@ -59,11 +59,13 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             {
                 page,
                 rowsPerPage,
-                sort: Array.from(sort)[0] as string
+                sort: Array.from(sort)[0] as string,
+                statusFilter: Array.from(statusFilter)[0] as string
             }
         ],
         queryFn: () =>
             transactionApi.getListTeacherTransaction(
+                Array.from(statusFilter)[0] as string,
                 page - 1,
                 rowsPerPage,
                 (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateAsc'
@@ -114,6 +116,22 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         const cellValue = transaction[columnKey as keyof any];
 
         switch (columnKey) {
+            case 'userName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: transaction.userAvatar ? transaction.userAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    >
+                        {transaction.userAvatar}
+                    </User>
+                );
             case 'amount':
                 const changePrice = Number(cellValue) / 100;
 
@@ -127,7 +145,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         variant="dot"
                     >
                         {cellValue === 'SUCCESS'
-                            ? 'Thành công'
+                            ? 'Đã mua thành công'
                             : cellValue === 'REFUND_SUCCES'
                             ? 'Hoàn tiền thành công'
                             : cellValue === 'PENDING'
@@ -174,6 +192,39 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             onValueChange={onSearchChange}
                         /> */}
                         <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={<BsChevronDown className="text-small" />}
+                                        size="sm"
+                                        variant="bordered"
+                                        color="primary"
+                                    >
+                                        Trạng thái
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={statusFilter}
+                                    selectionMode="single"
+                                    onSelectionChange={setStatusFilter}
+                                >
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="SUCCESS" className="capitalize">
+                                        {capitalize('Đã mua thành Công')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REFUND_SUCCES" className="capitalize">
+                                        {capitalize('Hoàn tiền thành Công')}
+                                    </DropdownItem>
+                                    <DropdownItem key="PENDING" className="capitalize">
+                                        {capitalize('Đang chờ')}
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

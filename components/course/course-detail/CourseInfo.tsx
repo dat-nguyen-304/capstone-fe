@@ -54,7 +54,7 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ courseInfo, type }) => {
             <p className="my-2 text-sm">Cập nhật gần đây nhất {formattedDate}</p>
             {courseInfo?.topics && courseInfo?.topics?.length > 0
                 ? courseInfo?.topics?.map((sub: any) => (
-                      <Chip size="sm" color="primary" className="mr-2" variant="flat" key={sub}>
+                      <Chip size="sm" color="primary" className="mr-2 mt-2" variant="flat" key={sub}>
                           {sub}
                       </Chip>
                   ))

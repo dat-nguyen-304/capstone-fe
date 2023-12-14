@@ -20,9 +20,9 @@ export const transactionApi = {
         );
         return res.data;
     },
-    getListTeacherTransaction: async (page: number, size: number, field: string, sort: string) => {
+    getListTeacherTransaction: async (status: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/transaction/teacher?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/transaction/teacher?status=${status}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

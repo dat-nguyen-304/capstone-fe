@@ -23,7 +23,7 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['my-courses', { page }],
         // keepPreviousData: true,
-        queryFn: () => courseApi.getEnrollCourse(page - 1)
+        queryFn: () => courseApi.getEnrollCourse(page - 1, 20, 'createdDate', 'DESC')
     });
 
     useEffect(() => {

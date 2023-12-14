@@ -60,7 +60,9 @@ const VideoItem: React.FC<VideoItemProps> = ({
             detailPage = `/teacher/video/${videoItem?.id}`;
         }
     } else if (type == 'teacher-video-draft') {
-        if (videoItem?.isDraft) {
+        if (videoItem?.examType) {
+            detailPage = `/teacher/quiz/${videoItem?.id}`;
+        } else if (videoItem?.isDraft) {
             detailPage = `/teacher/video/my-video-draft/${videoItem?.id}`;
         } else {
             detailPage = `/teacher/video/${videoItem?.id}`;
@@ -77,11 +79,11 @@ const VideoItem: React.FC<VideoItemProps> = ({
         }
     } else if (type == 'admin-review-video') {
         if (videoItem?.examType) {
-            detailPage = `/teacher/exam/${videoItem?.id}`;
+            detailPage = `/admin/exam/${videoItem?.id}`;
         } else if (videoItem?.isDraft) {
-            detailPage = `/admin/video/${videoItem?.id}`;
-        } else {
             detailPage = `/admin/approve/video/${videoItem?.id}`;
+        } else {
+            detailPage = `/admin/video/${videoItem?.id}`;
         }
     } else if (type == 'admin-view-video') {
         if (videoItem?.examType) {

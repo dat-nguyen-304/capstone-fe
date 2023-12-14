@@ -29,7 +29,6 @@ import { InputModal } from '@/components/modal/InputModal';
 interface TransactionsProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: false },
     { name: 'TÊN KHÓA HỌC', uid: 'courseName', sortable: false },
     { name: 'MÔN HỌC', uid: 'subject', sortable: false },
     { name: 'GIÁO VIÊN', uid: 'teacherName', sortable: false },
@@ -56,7 +55,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     const { user } = useUser();
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
+        new Set(['courseName', 'subject', 'teacherName', 'amount', 'paymentDate', 'transactionStatus', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);
@@ -92,10 +91,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                     ? 'paymentDate'
                     : (Array.from(sort)[0] as string) == 'PriceDesc' || (Array.from(sort)[0] as string) == 'PriceAsc'
                     ? 'amount'
-                    : 'id',
-                (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'PriceDesc'
-                    ? 'DESC'
-                    : 'ASC'
+                    : 'paymentDate',
+                (Array.from(sort)[0] as string) == 'DateAsc' || (Array.from(sort)[0] as string) == 'PriceAsc'
+                    ? 'ASC'
+                    : 'DESC'
             )
     });
 
@@ -275,7 +274,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -285,8 +284,8 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

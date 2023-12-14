@@ -166,16 +166,20 @@ const Videos: React.FC<VideosProps> = () => {
         const cellValue = video[columnKey as keyof any];
 
         switch (columnKey) {
-            // case 'teacherName':
-            //     return (
-            //         <User
-            //             avatarProps={{ radius: 'full', size: 'sm', src: 'https://i.pravatar.cc/150?img=4' }}
-            //             classNames={{
-            //                 description: 'text-default-500'
-            //             }}
-            //             name={cellValue}
-            //         />
-            //     );
+            case 'teacherName':
+                return (
+                    <User
+                        avatarProps={{
+                            radius: 'full',
+                            size: 'sm',
+                            src: video?.teacherAvatar ? video?.teacherAvatar : 'https://i.pravatar.cc/150?img=4'
+                        }}
+                        classNames={{
+                            description: 'text-default-500'
+                        }}
+                        name={cellValue}
+                    />
+                );
             case 'status':
                 return (
                     <Chip
@@ -249,7 +253,7 @@ const Videos: React.FC<VideosProps> = () => {
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="flex flex-col gap-4 mt-8">
                     <div className="sm:flex justify-between gap-3 items-end">
-                        <Input
+                        {/* <Input
                             isClearable
                             className="w-full sm:max-w-[50%] border-1"
                             placeholder="Tìm kiếm..."
@@ -259,8 +263,8 @@ const Videos: React.FC<VideosProps> = () => {
                             variant="bordered"
                             onClear={() => setFilterValue('')}
                             onValueChange={onSearchChange}
-                        />
-                        <div className="flex gap-3 mt-4 sm:mt-0">
+                        /> */}
+                        <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

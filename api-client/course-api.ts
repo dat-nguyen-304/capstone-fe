@@ -92,9 +92,18 @@ export const courseApi = {
         );
         return res.data;
     },
-    getAllOfTeacherDraft: async (page: number, size: number, field: string, sort: string) => {
+    getAllOfTeacherDraft: async (
+        search: string,
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
-            `/courses/teacher/waiting-list?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/courses/teacher/waiting-list${
+                search !== '' ? `?searchTerm=${search}&status=${status}` : `?status=${status}`
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },
@@ -141,16 +150,25 @@ export const courseApi = {
     updateDraftCourse: async (payload: any) => {
         return await axiosFormData.put('/courses/teacher/edit-waiting-course', payload);
     },
-    getEnrollCourse: async (page: number) => {
-        const res = await axiosClient.get(`/enroll-course?page=${page}&size=20&sortType=ASC`);
+    getEnrollCourse: async (page: number, size: number, field: string, sort: string) => {
+        const res = await axiosClient.get(`/enroll-course?page=${page}&size=${size}&field=${field}&sortType=${sort}`);
         return res.data;
     },
     TeacherSendVerifyCourse: async (payload: any) => {
         return await axiosClient.put('/courses/teacher/send-verify-request', payload);
     },
-    getCoursesVerifyListAdmin: async (page: number, size: number, field: string, sort: string) => {
+    getCoursesVerifyListAdmin: async (
+        search: string,
+        status: string,
+        page: number,
+        size: number,
+        field: string,
+        sort: string
+    ) => {
         const res = await axiosClient.get(
-            `/courses/admin/verify-list?page=${page}&size=${size}&field=${field}&sortType=${sort}`
+            `/courses/admin/verify-list${
+                search !== '' ? `?searchTerm=${search}&status=${status}` : `?status=${status}`
+            }&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

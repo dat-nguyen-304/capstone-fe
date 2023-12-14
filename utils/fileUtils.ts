@@ -51,12 +51,12 @@ export const handleFileSubmitSelection = (
             const imageUrlIndex = headers.indexOf('imageUrl');
 
             const questions = data.slice(1).map((row: any) => {
-                const statement = row[statementIndex];
-                const explanation = row[explanationIndex];
+                const statement = String(row[statementIndex]);
+                const explanation = String(row[explanationIndex]);
                 const answerList = answerIndices.map(answer => String(row[headers.indexOf(answer)]));
-                const topicName = row[topicIndex];
-                const correctAnswer = row[correctAnswerIndex];
-                const level = row[levelIndex];
+                const topicName = String(row[topicIndex]);
+                const correctAnswer = String(row[correctAnswerIndex]);
+                const level = String(row[levelIndex]);
                 const imageUrl =
                     imageUrlIndex !== -1
                         ? row[imageUrlIndex] !== undefined

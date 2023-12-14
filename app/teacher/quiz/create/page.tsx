@@ -81,7 +81,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
 
     const { data: updatingCoursesData, isLoading: isUpdatingCourseLoading } = useQuery({
         queryKey: ['draftCoursesList'],
-        queryFn: () => courseApi.getAllOfTeacherDraft(0, 100, 'createdDate', 'DESC')
+        queryFn: () => courseApi.getAllOfTeacherDraft('', 'ALL', 0, 100, 'createdDate', 'DESC')
     });
 
     const { data: activatedCoursesData, isLoading: isActivatedCourseLoading } = useQuery({

@@ -20,6 +20,9 @@ interface VideoDraftProps {
 const calculateTimeDifference = (postTime: any) => {
     const currentTime = new Date();
     const postDateTime = postTime === null ? new Date() : new Date(postTime);
+    if (postTime !== null) {
+        postDateTime.setHours(postDateTime.getHours() + 7);
+    }
     const timeDifference = currentTime.getTime() - postDateTime.getTime();
 
     const seconds = Math.floor(timeDifference / 1000);

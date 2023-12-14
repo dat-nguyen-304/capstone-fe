@@ -29,14 +29,25 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
+    const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
     const [search, setSearch] = useState<string>('');
     const [searchInput, setSearchInput] = useState('');
     const currentUser = useUser();
     const { status, error, data, isPreviousData } = useQuery({
-        queryKey: ['coursesDraft', { page, sortFilter: Array.from(sortFilter)[0] as string, search }],
+        queryKey: [
+            'coursesDraft',
+            {
+                page,
+                sortFilter: Array.from(sortFilter)[0] as string,
+                search,
+                statusFilter: Array.from(statusFilter)[0] as string
+            }
+        ],
         // keepPreviousData: true,
         queryFn: () =>
             courseApi.getAllOfTeacherDraft(
+                search,
+                Array.from(statusFilter)[0] as string,
                 page - 1,
                 20,
                 Array.from(sortFilter)[0] === 'DEFAULT' || Array.from(sortFilter)[0] === 'CREATEDDATE'
@@ -112,32 +123,42 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
                         </Button>
                     </div>
                     <div className="flex ml-auto gap-3 mt-4 sm:mt-0">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="flex">
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
                                 <Button
-                                    color="primary"
-                                    variant="bordered"
                                     endContent={<BsChevronDown className="text-small" />}
                                     size="sm"
+                                    variant="bordered"
+                                    color="primary"
                                 >
-                                    Môn học
+                                    Trạng thái
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
-                                // selectedKeys={() => {}}
+                                selectedKeys={statusFilter}
                                 selectionMode="single"
-                                onSelectionChange={() => {}}
+                                onSelectionChange={setStatusFilter}
                             >
-                                {statusArr.map(statusItem => (
-                                    <DropdownItem key={statusItem.value} className="capitalize">
-                                        {capitalize(statusItem.name)}
-                                    </DropdownItem>
-                                ))}
+                                <DropdownItem key="ALL" className="capitalize">
+                                    {capitalize('Tất Cả')}
+                                </DropdownItem>
+                                <DropdownItem key="DRAFT" className="capitalize">
+                                    {capitalize('Khóa học nháp')}
+                                </DropdownItem>
+                                <DropdownItem key="WAITING" className="capitalize">
+                                    {capitalize('Khóa học chờ xác thực')}
+                                </DropdownItem>
+                                <DropdownItem key="UPDATING" className="capitalize">
+                                    {capitalize('Khóa học chờ cập nhật')}
+                                </DropdownItem>
+                                <DropdownItem key="REJECT" className="capitalize">
+                                    {capitalize('Khóa học bị từ chối')}
+                                </DropdownItem>
                             </DropdownMenu>
-                        </Dropdown> */}
+                        </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="flex">
                                 <Button

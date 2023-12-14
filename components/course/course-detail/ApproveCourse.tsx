@@ -110,13 +110,15 @@ const ApproveCourse: React.FC<ApproveCourseProps> = ({ approveCourse }) => {
                         Phê duyệt
                     </Button>
                 )}
-                <Button
-                    color="danger"
-                    className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
-                    onClick={() => onDeclineOpen(approveCourse?.id)}
-                >
-                    Từ chối
-                </Button>
+                {(approveCourse?.status === 'WAITING' || approveCourse?.status === 'UPDATING') && (
+                    <Button
+                        color="danger"
+                        className="w-1/2 md:w-4/5 !mt-4 rounded-full text-base hover:text-white"
+                        onClick={() => onDeclineOpen(approveCourse?.id)}
+                    >
+                        Từ chối
+                    </Button>
+                )}
                 <div className="hidden md:block">
                     <div className="flex items-center my-4">
                         <SiLevelsdotfyi className="mr-8" />
