@@ -44,8 +44,6 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from, refetch }) => 
             toastLoading = toast.loading('Đang xử lí yêu cầu');
             // Assuming postContent.id is the discussionId
             if (!postContent?.reacted) {
-                console.log('go here');
-
                 const response = await discussionApi.discussionReact(postContent?.id);
                 refetch();
                 if (response) {
@@ -53,7 +51,6 @@ const PostTitle: React.FC<PostTitleProps> = ({ postContent, from, refetch }) => 
                 }
                 toast.dismiss(toastLoading);
             } else {
-                console.log('go ');
                 const response = await discussionApi.discussionRemoveReact(postContent?.id);
                 refetch();
                 if (response) {

@@ -27,6 +27,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ params }) => {
 
     const commonInfo = {
         id: data?.id,
+        courseRealId: data?.courseRealId,
         name: data?.name,
         thumbnail: data?.thumbnail,
         level: data?.level,

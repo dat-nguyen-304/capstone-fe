@@ -1,6 +1,6 @@
 'use client';
 
-import { examApi, subjectApi } from '@/api-client';
+import { examApi, subjectApi, teacherApi } from '@/api-client';
 import Loader from '@/components/Loader';
 import { InputText } from '@/components/form-input';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -42,8 +42,10 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
         queryFn: subjectApi.getAll,
         staleTime: Infinity
     });
-
-    const [levelId, setLevelId] = useState(1);
+    const { data: teacherData } = useQuery({
+        queryKey: ['teacher-detail-edit-course'],
+        queryFn: () => teacherApi.getTeacherDetail()
+    });
     const { control, handleSubmit, setError, setValue } = useForm({
         defaultValues: {
             name: commonInfo?.name,
@@ -62,6 +64,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
             setSelectedLevel(commonInfo?.level == 'Cơ bản' ? 1 : commonInfo?.level == 'Trung bình' ? 2 : 3);
         }
     }, [commonInfo]);
+
     const getSubjectIdByName = (subjectName: string) => {
         const foundedSubject = data?.find(subject => subject.name === subjectName);
 
@@ -155,7 +158,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         description: formData.description,
                         name: formData.name,
                         price: Number(formData.price),
-                        levelId: levelId,
+                        levelId: selectedLevel,
                         videoOrders: filteredVideoOrders?.length > 0 ? filteredVideoOrders : null
                     };
 
@@ -193,6 +196,7 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
     };
 
     if (!data) return <Loader />;
+    if (!teacherData) return <Loader />;
 
     return (
         <>
@@ -259,7 +263,8 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                         </div>
                         <div className="col-span-2 sm:grid grid-cols-2 gap-4">
                             <div className="col-span-1 mt-12 md:mt-8">
-                                {commonInfo?.status == 'DRAFT' || commonInfo?.status == 'REJECT' ? (
+                                {(commonInfo?.status == 'DRAFT' || commonInfo?.status == 'REJECT') &&
+                                !commonInfo?.courseRealId ? (
                                     <Select
                                         label="Chọn môn học"
                                         isRequired
@@ -270,11 +275,13 @@ const CommonInfo: React.FC<CommonInfoProps> = ({ commonInfo, videoOrders }) => {
                                         name="subject"
                                         onChange={event => setSelectedSubject(Number(event.target.value))}
                                     >
-                                        {data.map((subject: Subject) => (
-                                            <SelectItem key={subject.id} value={subject.id}>
-                                                {subject.name}
-                                            </SelectItem>
-                                        ))}
+                                        {data
+                                            ?.filter(subject => teacherData?.subject?.includes(subject.name))
+                                            .map((subject: Subject) => (
+                                                <SelectItem key={subject.id} value={subject.id}>
+                                                    {subject.name}
+                                                </SelectItem>
+                                            ))}
                                     </Select>
                                 ) : (
                                     <Input

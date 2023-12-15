@@ -39,6 +39,7 @@ const EditDraftCourse: React.FC<EditDraftCourseProps> = ({ params }) => {
         id: data?.id,
         name: data?.name,
         thumbnail: data?.thumbnail,
+        courseRealId: data?.courseRealId,
         level: data?.level,
         description: data?.description,
         price: data?.price,

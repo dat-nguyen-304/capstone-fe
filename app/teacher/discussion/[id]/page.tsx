@@ -189,7 +189,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ params }) => {
         avatar: discussionData?.ownerAvatar,
         createTime: discussionData?.createTime
     };
-    console.log(postContent);
 
     if (!discussionData) return <Loader />;
     const scrollToTop = (value: number) => {
