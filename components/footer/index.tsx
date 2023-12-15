@@ -10,13 +10,7 @@ const Footer: React.FC<FooterProps> = () => {
                 <div className="grid gap-10 row-gap-6 mb-8 grid-cols-1 md:grid-cols-3">
                     <div className="space-y-1 md:space-y-2">
                         <Link href="/" aria-label="Go home" title="Company" className="inline-flex items-center">
-                            <Image
-                                src="https://intaadvising.gatech.edu/wp-content/uploads/2020/11/cepa.png"
-                                className="w-16 h-9"
-                                width={200}
-                                height={100}
-                                alt=""
-                            />
+                            <Image src="/logo.png" className="w-5 h-10" width={96} height={183} alt="" />
                             <span className="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">CEPA</span>
                         </Link>
                         <div className="mt-6">

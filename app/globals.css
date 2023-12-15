@@ -124,6 +124,7 @@ nav header {
     background-position: bottom;
     background-color: #fff;
     text-align: center;
+    background-repeat: no-repeat;
 }
 
 .coin-bg {
@@ -148,7 +149,7 @@ nav header {
 }
 
 .video-bg {
-    background: linear-gradient(rgba(198, 255, 222, 0.6), rgba(198, 255,222, 0.6)), url('/video.webp');
+    background: linear-gradient(rgba(198, 255, 222, 0.6), rgba(198, 255, 222, 0.6)), url('/video.webp');
     background-size: contain;
     background-position: right bottom;
     background-repeat: no-repeat;

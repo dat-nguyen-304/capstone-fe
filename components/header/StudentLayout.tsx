@@ -40,7 +40,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <>
             <UserHeader user={user} />
-            <div className="min-h-[40vh]">{children}</div>
+            <div className="min-h-[50vh]">{children}</div>
             <Footer />
         </>
     );

@@ -2,6 +2,7 @@
 
 import { NavbarBrand, NavbarContent, NavbarMenuToggle } from '@nextui-org/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface LogoProps {
@@ -15,14 +16,17 @@ const Logo: React.FC<LogoProps> = ({ isMenuOpen }) => {
         <NavbarContent justify="center">
             <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="md:hidden" />
             <NavbarBrand>
-                <Image
-                    onClick={() => router.push('/')}
-                    src="https://intaadvising.gatech.edu/wp-content/uploads/2020/11/cepa.png"
-                    width={80}
-                    height={80}
-                    alt=""
-                    className="cursor-pointer"
-                />
+                <Link href="/" aria-label="Go home" title="Company" className="inline-flex items-center">
+                    <Image
+                        onClick={() => router.push('/')}
+                        src="/logo.png"
+                        width={96}
+                        height={183}
+                        alt=""
+                        className="cursor-pointer w-5 h-10"
+                    />
+                    <span className="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">CEPA</span>
+                </Link>
             </NavbarBrand>
         </NavbarContent>
     );

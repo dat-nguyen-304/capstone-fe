@@ -13,8 +13,6 @@ import { Drawer } from 'antd';
 import VideoList from '@/components/video/VideoList';
 import { commentsVideoApi, courseApi, examApi, progressVideoApi, reactVideoApi, videoApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
-import Loader from '@/components/Loader';
-import { ReportModal } from '@/components/modal';
 import { BiSolidLike } from 'react-icons/bi';
 import HTMLReactParser from 'html-react-parser';
 import Link from 'next/link';
@@ -179,7 +177,7 @@ const Video: React.FC<VideoProps> = ({ params }) => {
                     {isLoading ? (
                         <div className="col-span-7">
                             <div className="flex h-[60vh] justify-center items-center">
-                                <PuffLoader color="blue" size={200} />
+                                <PuffLoader color="blue" size={120} />
                             </div>
                         </div>
                     ) : (

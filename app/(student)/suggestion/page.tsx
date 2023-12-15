@@ -234,7 +234,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                 ) : (
                     <>
                         {skeletonArray.map((i: number) => (
-                            <Skeleton key={i} isLoaded={false} className="rounded-xl">
+                            <Skeleton key={i} isLoaded={false} className="rounded-xl mt-6">
                                 <li className="w-[80px] sm:w-[120px] h-[52px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
                             </Skeleton>
                         ))}

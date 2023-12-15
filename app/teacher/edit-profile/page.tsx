@@ -131,7 +131,7 @@ const Profile: React.FC = () => {
                             <p className="mt-4 text-sm">
                                 Giáo viên môn:{' '}
                                 {teacherData?.subject?.map((subject: any, index: number) => (
-                                    <li className="inline-block" key={index}>
+                                    <li className="inline-block mx-[2px]" key={index}>
                                         <Chip color="primary" variant="flat">
                                             {subject}
                                         </Chip>

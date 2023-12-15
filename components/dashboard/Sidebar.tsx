@@ -85,13 +85,17 @@ const Sidebar: React.FC<SidebarProps> = ({ user, items, children }) => {
             <Layout>
                 <Header className="!bg-[#001529] flex h-[60px] justify-between items-center !px-[20px] lg:!px-[80px] fixed top-0 left-0 right-0 z-[999]">
                     <div className="flex gap-4 items-center">
-                        <Image
-                            src="https://intaadvising.gatech.edu/wp-content/uploads/2020/11/cepa.png"
-                            width={45}
-                            height={30}
-                            alt=""
-                            className="cursor-pointer"
-                        />
+                        <div className="inline-flex items-center">
+                            <Image
+                                onClick={() => router.push('/')}
+                                src="/logo.png"
+                                width={96}
+                                height={183}
+                                alt=""
+                                className="cursor-pointer w-5 h-10"
+                            />
+                            <span className="ml-2 text-xl font-semibold tracking-wide text-white uppercase">CEPA</span>
+                        </div>
                         <div onClick={() => setOpenDrawer(true)} className="block sm:hidden">
                             <TbMenu2 size={20} className="text-white" />
                         </div>
