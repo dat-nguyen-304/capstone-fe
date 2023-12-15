@@ -106,6 +106,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         }
     }, [transactionsData]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
+
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
     const handleRequestRefund = async (id: number) => {

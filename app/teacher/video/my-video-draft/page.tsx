@@ -22,6 +22,7 @@ import {
 } from '@nextui-org/react';
 import { BsChevronDown, BsSearch } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
+import Loader from '@/components/Loader';
 interface MyVideoDraftProps {}
 
 const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
@@ -51,6 +52,10 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
         }
     }, [data]);
     const { onTeacherKeys } = useSelectedSidebar();
+
+    useEffect(() => {
+        setPage(1);
+    }, [sortFilter]);
 
     useEffect(() => {
         onTeacherKeys(['5']);
@@ -102,6 +107,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             isAccess: videos?.isAccess
         };
     };
+    if (!data) return <Loader />;
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video nháp</h3>

@@ -72,7 +72,7 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
         refetch
     } = useQuery({
         queryKey: [
-            'adminTransaction',
+            'adminStudentTransaction',
             {
                 page,
                 rowsPerPage,
@@ -199,14 +199,9 @@ const StudentTransaction: React.FC<StudentTransactionsProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
 
     const renderCell = useCallback((transaction: any, columnKey: Key) => {
         const cellValue = transaction[columnKey as keyof any];

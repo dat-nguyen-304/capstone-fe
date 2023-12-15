@@ -124,6 +124,10 @@ const PostList: React.FC<PostListProps> = ({}) => {
         setPage(1);
     }, []);
 
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, topicFilter, search]);
+
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);

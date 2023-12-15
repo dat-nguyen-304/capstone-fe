@@ -203,6 +203,10 @@ const Reports: React.FC<ReportsProps> = () => {
     const { onAdminKeys } = useSelectedSidebar();
 
     useEffect(() => {
+        setPage(1);
+    }, [statusFilter]);
+
+    useEffect(() => {
         onAdminKeys(['16']);
     }, []);
     const renderCell = useCallback((student: any, columnKey: Key) => {
@@ -338,7 +342,7 @@ const Reports: React.FC<ReportsProps> = () => {
                                     <DropdownItem key="OPINION" className="capitalize">
                                         {capitalize('Góp ý')}
                                     </DropdownItem>
-                                    <DropdownItem key="OTHERS" className="capitalize">
+                                    <DropdownItem key="OTHER" className="capitalize">
                                         {capitalize('Khác')}
                                     </DropdownItem>
                                 </DropdownMenu>

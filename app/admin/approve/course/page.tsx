@@ -104,6 +104,10 @@ const Courses: React.FC<CoursesProps> = () => {
         }
     }, [coursesData]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
+
     const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
     const { onOpen: onInputOpen, onClose: onInputClose, onDescription, description } = useInputModal();
 
@@ -152,17 +156,10 @@ const Courses: React.FC<CoursesProps> = () => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);
+        setPage(1);
     };
     const onApproveOpen = (id: number) => {
         onWarning({
@@ -284,37 +281,6 @@ const Courses: React.FC<CoursesProps> = () => {
                             </Button>
                         </div>
                         <div className="ml-auto flex gap-3 mt-4 sm:mt-0">
-                            <Dropdown>
-                                <DropdownTrigger className="hidden sm:flex">
-                                    <Button
-                                        endContent={<BsChevronDown className="text-small" />}
-                                        size="sm"
-                                        variant="bordered"
-                                        color="primary"
-                                    >
-                                        Trạng thái
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    disallowEmptySelection
-                                    aria-label="Table Columns"
-                                    closeOnSelect={false}
-                                    selectedKeys={statusFilter}
-                                    selectionMode="single"
-                                    onSelectionChange={setStatusFilter}
-                                >
-                                    <DropdownItem key="ALL" className="capitalize">
-                                        {capitalize('Tất Cả')}
-                                    </DropdownItem>
-
-                                    <DropdownItem key="WAITING" className="capitalize">
-                                        {capitalize('Khóa học chờ xác thực')}
-                                    </DropdownItem>
-                                    <DropdownItem key="UPDATING" className="capitalize">
-                                        {capitalize('Khóa học chờ cập nhật')}
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button

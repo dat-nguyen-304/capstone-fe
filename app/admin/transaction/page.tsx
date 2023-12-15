@@ -111,14 +111,9 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
 
     const renderCell = useCallback((transaction: any, columnKey: Key) => {
         const cellValue = transaction[columnKey as keyof any];
@@ -187,7 +182,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         variant="dot"
                     >
                         {cellValue === 'SUCCESS'
-                            ? 'Thành công'
+                            ? 'Giao dịch thành công'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
                             : cellValue === 'FAIL'
@@ -265,7 +260,7 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                         {capitalize('Tất Cả')}
                                     </DropdownItem>
                                     <DropdownItem key="SUCCESS" className="capitalize">
-                                        {capitalize('Thành Công')}
+                                        {capitalize('Giao dịch Thành Công')}
                                     </DropdownItem>
                                     <DropdownItem key="REFUND_SUCCES" className="capitalize">
                                         {capitalize('Hoàn tiền thành Công')}

@@ -146,14 +146,9 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, statusFilterStatus, search]);
 
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];

@@ -101,7 +101,7 @@ const VideoDraft: React.FC<VideoDraftProps> = ({ params }) => {
                         </span>
                         <span className="before:content-['•'] before:inline-block before:text-black before:mx-2">
                             <span className="inline-flex items-center text-sm">
-                                <span className="text-black">{data?.like}</span>
+                                <span className="text-black">{data?.like || 0}</span>
                                 <BiSolidLike className="text-sm text-blue-500 ml-2" />
                             </span>
                         </span>

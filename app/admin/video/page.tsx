@@ -64,6 +64,7 @@ const Videos: React.FC<VideosProps> = () => {
     const [page, setPage] = useState(1);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
     const [statusFilter, setStatusFilter] = useState<Selection>(new Set(['ALL']));
+    const [sort, setSort] = useState<Selection>(new Set(['ALL']));
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const {
@@ -73,8 +74,25 @@ const Videos: React.FC<VideosProps> = () => {
         isPreviousData,
         refetch
     } = useQuery({
-        queryKey: ['videosAdmin', { page, rowsPerPage, statusFilter: Array.from(statusFilter)[0] as string }],
-        queryFn: () => videoApi.getAllOfAdmin(Array.from(statusFilter)[0] as string, page - 1, rowsPerPage)
+        queryKey: [
+            'videosAdmin',
+            {
+                page,
+                rowsPerPage,
+                statusFilter: Array.from(statusFilter)[0] as string,
+                sort: Array.from(sort)[0] as string
+            }
+        ],
+        queryFn: () =>
+            videoApi.getAllOfAdmin(
+                Array.from(statusFilter)[0] as string,
+                page - 1,
+                rowsPerPage,
+                (Array.from(sort)[0] as string) == 'DateDesc' || (Array.from(sort)[0] as string) == 'DateASC'
+                    ? 'createdDate'
+                    : 'id',
+                (Array.from(sort)[0] as string) == 'DateDesc' ? 'DESC' : 'ASC'
+            )
     });
 
     useEffect(() => {
@@ -84,6 +102,10 @@ const Videos: React.FC<VideosProps> = () => {
             setTotalRow(videosData.totalRow);
         }
     }, [videosData]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
 
     const handleStatusChange = async (id: number, verifyStatus: string) => {
         try {
@@ -308,29 +330,33 @@ const Videos: React.FC<VideosProps> = () => {
                                 </DropdownMenu>
                             </Dropdown>
                             <Dropdown>
-                                <DropdownTrigger className="flex">
+                                <DropdownTrigger className="hidden sm:flex">
                                     <Button
                                         endContent={<BsChevronDown className="text-small" />}
                                         size="sm"
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Cột
+                                        Sắp xếp
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
                                     closeOnSelect={false}
-                                    selectedKeys={visibleColumns}
-                                    selectionMode="multiple"
-                                    onSelectionChange={setVisibleColumns}
+                                    selectedKeys={sort}
+                                    selectionMode="single"
+                                    onSelectionChange={setSort}
                                 >
-                                    {columns.map(column => (
-                                        <DropdownItem key={column.uid} className="capitalize">
-                                            {capitalize(column.name)}
-                                        </DropdownItem>
-                                    ))}
+                                    <DropdownItem key="ALL" className="capitalize">
+                                        {capitalize('Tất Cả')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateDesc" className="capitalize">
+                                        {capitalize('Mới nhất')}
+                                    </DropdownItem>
+                                    <DropdownItem key="DateAsc" className="capitalize">
+                                        {capitalize('Cũ nhất')}
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

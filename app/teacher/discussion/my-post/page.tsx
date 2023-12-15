@@ -148,6 +148,10 @@ const MyPostList: React.FC<MyPostListProps> = ({}) => {
     const { onTeacherKeys } = useSelectedSidebar();
 
     useEffect(() => {
+        setPage(1);
+    }, [statusFilter, statusFilterStatus, search]);
+
+    useEffect(() => {
         onTeacherKeys(['13']);
     }, []);
 

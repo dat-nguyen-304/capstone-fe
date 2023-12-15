@@ -101,6 +101,9 @@ const MyCourse: React.FC<MyCourseProps> = ({}) => {
             name: 'Vô hiệu'
         }
     ];
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sortFilter, search]);
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);

@@ -88,6 +88,11 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
         // Set the search state
         setSearch(searchInput);
     };
+
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sortFilter, search]);
+
     useEffect(() => {
         onTeacherKeys(['8']);
     }, []);

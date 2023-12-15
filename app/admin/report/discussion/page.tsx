@@ -192,14 +192,10 @@ const Reports: React.FC<ReportsProps> = () => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter]);
+
     const { onAdminKeys } = useSelectedSidebar();
 
     useEffect(() => {
@@ -338,7 +334,7 @@ const Reports: React.FC<ReportsProps> = () => {
                                     <DropdownItem key="OPINION" className="capitalize">
                                         {capitalize('Góp ý')}
                                     </DropdownItem>
-                                    <DropdownItem key="OTHERS" className="capitalize">
+                                    <DropdownItem key="OTHER" className="capitalize">
                                         {capitalize('Khác')}
                                     </DropdownItem>
                                 </DropdownMenu>

@@ -80,6 +80,10 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
     });
 
     useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
+
+    useEffect(() => {
         if (transactionsData?.data) {
             setTeacherTransactions(transactionsData.data);
             setTotalPage(transactionsData.totalPage);

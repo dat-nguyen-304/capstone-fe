@@ -12,13 +12,15 @@ interface ExamFilterProps {
     setSelectedSubject: Dispatch<SetStateAction<number>>;
     setSelectedFilterSort: Dispatch<SetStateAction<number>>;
     setSearch: Dispatch<SetStateAction<string>>;
+    onClear: any;
 }
 
 const ExamFilter: React.FC<ExamFilterProps> = ({
     selectedSubject,
     setSelectedSubject,
     setSelectedFilterSort,
-    setSearch
+    setSearch,
+    onClear
 }) => {
     const { data } = useQuery({
         queryKey: ['subjects'],
@@ -71,6 +73,7 @@ const ExamFilter: React.FC<ExamFilterProps> = ({
                         variant="bordered"
                         placeholder="Nhập từ khóa"
                         className="flex-[1]"
+                        onClear={onClear}
                         onChange={e => setSearchInput(e.target.value)}
                     />
                     <Button color="primary" className="" onClick={handleSearch}>

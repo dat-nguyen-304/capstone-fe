@@ -134,14 +134,9 @@ const ExamTopicList: React.FC<ExamTopicListProps> = ({}) => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter]);
 
     const renderCell = useCallback((post: any, columnKey: Key) => {
         const cellValue = post[columnKey as keyof any];

@@ -25,9 +25,9 @@ export const videoApi = {
         );
         return res.data;
     },
-    getAllOfAdmin: async (commonStatus: string, page: number, size: number) => {
+    getAllOfAdmin: async (commonStatus: string, page: number, size: number, field: string, sort: string) => {
         const res = await axiosClient.get(
-            `/videos/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&sortType=ASC`
+            `/videos/admin?commonStatus=${commonStatus}&page=${page}&size=${size}&field=${field}&sortType=${sort}`
         );
         return res.data;
     },

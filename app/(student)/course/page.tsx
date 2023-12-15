@@ -85,6 +85,10 @@ const CourseList: React.FC<CourseListProps> = ({}) => {
         }
     }, [data]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm, type, selectedFilterALL]);
+
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({

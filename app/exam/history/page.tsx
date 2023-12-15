@@ -28,7 +28,6 @@ import { Progress, Spin } from 'antd';
 interface ExamHistoryProps {}
 
 const columns = [
-    { name: 'ID', uid: 'id', sortable: false },
     { name: 'TÊN BÀI THI', uid: 'examName', sortable: false },
     { name: 'MÔN HỌC', uid: 'subject', sortable: false },
     { name: 'ĐIỂM SỐ', uid: 'grade', sortable: false },
@@ -76,7 +75,7 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
     const [filterValue, setFilterValue] = useState('');
     const [searchInput, setSearchInput] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'examName', 'subject', 'grade', 'finishTime'])
+        new Set(['examName', 'subject', 'grade', 'finishTime'])
     );
 
     const { user } = useUser();
@@ -147,6 +146,10 @@ const ExamHistory: React.FC<ExamHistoryProps> = ({}) => {
             setTotalRow(examSubmissionData?.totalRow);
         }
     }, [examSubmissionData]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [filterValue, selectedSubject]);
 
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;

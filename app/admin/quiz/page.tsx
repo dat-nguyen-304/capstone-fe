@@ -110,6 +110,11 @@ const Quizzes: React.FC<VideosProps> = () => {
         queryKey: ['quizzescoursesAdmin'],
         queryFn: () => courseApi.getAllOfAdmin('', 'ALL', 0, 100, 'id', 'ASC')
     });
+
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, statusFilterStatus, search]);
+
     useEffect(() => {
         if (data?.data) {
             const quizzesWithCourses = data?.data?.map((quiz: any) => {

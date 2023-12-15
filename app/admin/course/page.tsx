@@ -107,41 +107,15 @@ const Courses: React.FC<CoursesProps> = () => {
     useEffect(() => {
         onAdminKeys(['4']);
     }, []);
-    const handleStatusChange = async (id: number, verifyStatus: string) => {
-        try {
-            onLoading();
-            const res = await courseApi.changeCourseStatus({
-                id,
-                verifyStatus
-            });
 
-            if (!res.data.code) {
-                if (verifyStatus == 'ACCEPTED') {
-                    onSuccess({
-                        title: 'Duyệt thành công',
-                        content: 'Khóa học đã được duyệt thành công'
-                    });
-                } else if (verifyStatus == 'REJECT') {
-                    onSuccess({
-                        title: 'Đã từ chối',
-                        content: 'Đã từ chối khóa học thành công'
-                    });
-                }
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, sort]);
 
-                refetch();
-            }
-        } catch (error) {
-            // Handle error
-            onDanger({
-                title: 'Có lỗi xảy ra',
-                content: 'Hệ thống gặp trục trặc, thử lại sau ít phút'
-            });
-            console.error('Error changing user status', error);
-        }
-    };
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);
+        setPage(1);
     };
     const headerColumns = useMemo(() => {
         if (visibleColumns === 'all') return columns;
@@ -153,35 +127,6 @@ const Courses: React.FC<CoursesProps> = () => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
-
-    const onSearchChange = useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
-    }, []);
-
-    const { onOpen, onWarning, onDanger, onClose, onLoading, onSuccess } = useCustomModal();
-
-    const onApproveOpen = (id: number, action: string) => {
-        onWarning({
-            title: 'Xác nhận duyệt',
-            content: 'Khóa học sẽ được hiện thị sau khi được duyệt. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, action)
-        });
-        onOpen();
-    };
-
-    const onDeclineOpen = (id: number, action: string) => {
-        onDanger({
-            title: 'Xác nhận từ chối',
-            content: 'Khóa học sẽ không được hiển thị sau khi đã từ chối. Bạn chắc chứ?',
-            activeFn: () => handleStatusChange(id, action)
-        });
-        onOpen();
-    };
 
     const renderCell = useCallback((course: any, columnKey: Key) => {
         const cellValue = course[columnKey as keyof any];
@@ -238,20 +183,6 @@ const Courses: React.FC<CoursesProps> = () => {
                                 <DropdownItem color="primary" as={Link} href={`/admin/course/${course.id}`}>
                                     Xem chi tiết
                                 </DropdownItem>
-                                {/* <DropdownItem
-                                    color="success"
-                                    key={course.status === 'AVAILABLE' ? 'enableDis' : 'enable'}
-                                    onClick={() => onApproveOpen(course?.id, 'ACCEPTED')}
-                                >
-                                    Duyệt
-                                </DropdownItem>
-                                <DropdownItem
-                                    color="danger"
-                                    key={course.status === 'REJECT' ? 'bannedDis' : 'banned'}
-                                    onClick={() => onDeclineOpen(course?.id, 'REJECT')}
-                                >
-                                    Từ chối
-                                </DropdownItem> */}
                             </DropdownMenu>
                         </Dropdown>
                     </div>

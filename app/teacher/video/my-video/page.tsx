@@ -74,6 +74,10 @@ const MyVideo: React.FC<MyVideoProps> = ({}) => {
     const { onTeacherKeys } = useSelectedSidebar();
 
     useEffect(() => {
+        setPage(1);
+    }, [selectedCourse, sortFilter]);
+
+    useEffect(() => {
         onTeacherKeys(['4']);
     }, []);
     const statusArr = [

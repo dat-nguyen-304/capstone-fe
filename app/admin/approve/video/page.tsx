@@ -113,7 +113,7 @@ const Videos: React.FC<VideosProps> = () => {
         refetch
     } = useQuery({
         queryKey: ['videosApproveAdmin', { page, rowsPerPage }],
-        queryFn: () => videoApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage)
+        queryFn: () => videoApi.getAllOfAdmin('WAITING', page - 1, rowsPerPage, 'id', 'ASC')
     });
 
     useEffect(() => {

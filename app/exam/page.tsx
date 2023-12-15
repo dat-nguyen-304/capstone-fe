@@ -11,6 +11,7 @@ import { ExamCardType } from '@/types';
 import { Spin } from 'antd';
 import NotFound from '@/app/not-found';
 import StudentLayout from '@/components/header/StudentLayout';
+import { Pagination } from '@nextui-org/react';
 
 interface ExamListProps {}
 const getSubjectNameById = (id: number): string => {
@@ -52,7 +53,7 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                 getSubjectNameById(selectedSubject),
                 'PUBLIC_EXAM',
                 page - 1,
-                20,
+                10,
                 selectedFilterSort == 1 ? 'createTime' : 'id',
                 selectedFilterSort == 1 ? 'DESC' : 'ASC'
             )
@@ -71,6 +72,12 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
             top: 0
         });
     };
+    const handleClear = () => {
+        setSearch('');
+    };
+    useEffect(() => {
+        setPage(1);
+    }, [selectedFilterSort, search, selectedSubject]);
 
     if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <NotFound />;
 
@@ -86,7 +93,11 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                                 setSelectedSubject={setSelectedSubject}
                                 setSelectedFilterSort={setSelectedFilterSort}
                                 setSearch={setSearch}
+                                onClear={handleClear}
                             />
+                            <p className="mt-4 text-default-400 text-xs sm:text-sm">
+                                {totalRow ? `Tìm thấy ${totalRow} kết quả` : 'Không tìm thấy kết quả'}
+                            </p>
                             <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 mt-8 gap-2 sm:gap-4">
                                 {exams?.length ? (
                                     exams?.map((examItem: ExamCardType) => (
@@ -96,6 +107,16 @@ const ExamList: React.FC<ExamListProps> = ({}) => {
                                     <div>Chưa có bài thi</div>
                                 )}
                             </ul>
+                            {totalPage && totalPage > 1 ? (
+                                <div className="flex justify-center items-center my-4">
+                                    <Pagination
+                                        page={page}
+                                        total={totalPage}
+                                        onChange={value => scrollToTop(value)}
+                                        showControls
+                                    />
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </Spin>

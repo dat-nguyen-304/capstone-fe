@@ -151,6 +151,10 @@ const Reports: React.FC<ReportsProps> = () => {
     const { onAdminKeys } = useSelectedSidebar();
 
     useEffect(() => {
+        setPage(1);
+    }, [statusFilter]);
+
+    useEffect(() => {
         onAdminKeys(['17']);
     }, []);
     const renderCell = useCallback((student: any, columnKey: Key) => {

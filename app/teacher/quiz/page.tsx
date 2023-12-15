@@ -148,6 +148,10 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
         }
     }, [data, coursesData]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, statusFilterStatus, statusFilterExamType, search]);
+
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);

@@ -111,6 +111,10 @@ const Exams: React.FC<ExamsProps> = () => {
         }
     }, [data]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, statusFilterExamType, statusFilterStatus]);
+
     const scrollToTop = (value: number) => {
         setPage(value);
         window.scrollTo({
@@ -163,10 +167,13 @@ const Exams: React.FC<ExamsProps> = () => {
             console.error('Error changing user status', error);
         }
     };
+
     const handleSearch = (searchInput: string) => {
         // Set the search state
         setSearch(searchInput);
+        setPage(1);
     };
+
     const onActivateOpen = (id: number, status: string) => {
         onWarning({
             title: `Xác nhận kích hoạt`,
