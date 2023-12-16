@@ -83,7 +83,7 @@ const TeacherDashboard: React.FC = () => {
                     </Tabs>
                 </Card>
                 <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0">
-                    <h3 className="text-lg font-semibold">Khóa học mua nhiều nhất</h3>
+                    <h3 className="text-lg font-semibold">Khóa học đã thanh toán</h3>
                     <ul>
                         {topIncomeData?.data?.map((topIncome: any, index: number) => (
                             <TopCourseContributorItem key={topIncome?.id} topIncome={topIncome} index={index} />

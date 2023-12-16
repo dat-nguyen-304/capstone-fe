@@ -20,7 +20,9 @@ const TopCourseContributorItem: React.FC<BarChartProps> = ({ topIncome, index })
         <li className="flex items-center w-full justify-between mt-4">
             <div className="flex items-center">
                 <span className={`font-semibold mr-4`}>{index + 1}</span>
-                <p>{topIncome?.courseName}</p>
+                <p className="w-[300px] truncate" title={topIncome?.courseName}>
+                    {topIncome?.courseName}
+                </p>
                 {/* <User
                     name="Jane Doe"
                     description="Đã mua 5 khóa học"
