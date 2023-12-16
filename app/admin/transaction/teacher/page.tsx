@@ -306,9 +306,6 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
                                     <DropdownItem key="PENDING" className="capitalize">
                                         {capitalize('Đang chờ')}
                                     </DropdownItem>
-                                    <DropdownItem key="NOTYET" className="capitalize">
-                                        {capitalize('Chưa chuyển')}
-                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                             <Dropdown>
