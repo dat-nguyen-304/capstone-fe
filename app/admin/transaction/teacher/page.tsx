@@ -36,7 +36,8 @@ const columns = [
     { name: 'DOANH THU', uid: 'revenue' },
     { name: 'TIỀN NHẬN', uid: 'receivedMoney' },
     { name: 'TRẠNG THÁI', uid: 'teacherIncomeStatus', sortable: false },
-    { name: 'NGÀY', uid: 'paymentDate', sortable: false },
+    { name: 'NGÀY TẠO', uid: 'monthOfYear', sortable: false },
+    { name: 'NGÀY THANH TOÁN', uid: 'paymentDate', sortable: false },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
 ];
 
@@ -49,6 +50,7 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
             'revenue',
             'receivedMoney',
             'teacherIncomeStatus',
+            'monthOfYear',
             'paymentDate',
             'action'
         ])
@@ -252,7 +254,7 @@ const TeacherTransaction: React.FC<TeacherTransactionsProps> = ({}) => {
                     hour12: false
                 })?.format(dateValue);
 
-                return formattedDate;
+                return cellValue ? formattedDate : '';
             default:
                 return cellValue;
         }

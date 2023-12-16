@@ -20,7 +20,7 @@ const TopCourseContributorItem: React.FC<BarChartProps> = ({ topIncome, index })
         <li className="flex items-center w-full justify-between mt-4">
             <div className="flex items-center">
                 <span className={`font-semibold mr-4`}>{index + 1}</span>
-                <p className="w-[300px] truncate" title={topIncome?.courseName}>
+                <p className="w-[250px] truncate2line" title={topIncome?.courseName}>
                     {topIncome?.courseName}
                 </p>
                 {/* <User
@@ -31,7 +31,7 @@ const TopCourseContributorItem: React.FC<BarChartProps> = ({ topIncome, index })
                     }}
                 /> */}
             </div>
-            <p>{formatCurrency(Number(topIncome?.revenue) / 100)}</p>
+            <p className="w-[100px] truncate">{formatCurrency(Number(topIncome?.receivedMoney) / 100)}</p>
         </li>
     );
 };

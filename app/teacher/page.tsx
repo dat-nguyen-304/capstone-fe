@@ -5,9 +5,9 @@ import Loader from '@/components/Loader';
 import RevenueChartMonth from '@/components/chart/teacher-dashboard/RevenueChartMonth';
 import TopCourseContributorItem from '@/components/dashboard/teacher/TopCourseContributorItem';
 import { useSelectedSidebar } from '@/hooks';
-import { Card, Tab, Tabs } from '@nextui-org/react';
+import { Card, Pagination, Tab, Tabs } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const formatCurrency = (value: number) => {
     const formattedValue = new Intl.NumberFormat('vi-VN', {
@@ -20,9 +20,14 @@ const formatCurrency = (value: number) => {
 };
 
 const TeacherDashboard: React.FC = () => {
+    const [totalPage, setTotalPage] = useState<number>();
+    const [totalRow, setTotalRow] = useState<number>();
+    const [page, setPage] = useState(1);
+    const [paymentCourse, setPaymentCourse] = useState<[]>([]);
+
     const { data: topIncomeData } = useQuery<any>({
-        queryKey: ['teacher-top-income'],
-        queryFn: () => teacherIncomeApi.getTeacherTopIncome('RECEIVED', 0, 5, 'revenue', 'DESC')
+        queryKey: ['teacher-top-income', { page }],
+        queryFn: () => teacherIncomeApi.getTeacherTopIncome('ALL', page - 1, 10, 'revenue', 'DESC')
     });
     const { data: dashboardData } = useQuery({
         queryKey: ['teacherDashboard'],
@@ -31,8 +36,23 @@ const TeacherDashboard: React.FC = () => {
     const { onTeacherKeys } = useSelectedSidebar();
 
     useEffect(() => {
+        if (topIncomeData?.data) {
+            setPaymentCourse(topIncomeData.data);
+            setTotalPage(topIncomeData.totalPage);
+            setTotalRow(topIncomeData.totalRow);
+        }
+    }, [topIncomeData]);
+
+    useEffect(() => {
         onTeacherKeys(['1']);
     }, []);
+
+    const scrollToTop = (value: number) => {
+        setPage(value);
+        window.scrollTo({
+            top: 0
+        });
+    };
 
     if (!dashboardData) return <Loader />;
 
@@ -82,12 +102,24 @@ const TeacherDashboard: React.FC = () => {
                         </Tab>
                     </Tabs>
                 </Card>
-                <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0">
+                <Card className="lg:col-span-3 p-4 mt-8 lg:mt-0  ">
                     <h3 className="text-lg font-semibold">Khóa học đã thanh toán</h3>
                     <ul>
-                        {topIncomeData?.data?.map((topIncome: any, index: number) => (
+                        {paymentCourse?.map((topIncome: any, index: number) => (
                             <TopCourseContributorItem key={topIncome?.id} topIncome={topIncome} index={index} />
                         ))}
+                        {totalPage && totalPage > 1 ? (
+                            <div className="flex justify-center my-8">
+                                <Pagination
+                                    page={page}
+                                    total={totalPage}
+                                    onChange={value => scrollToTop(value)}
+                                    showControls
+                                />
+                            </div>
+                        ) : (
+                            <></>
+                        )}
                     </ul>
                 </Card>
             </div>

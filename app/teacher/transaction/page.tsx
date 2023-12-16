@@ -151,11 +151,13 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                         {cellValue === 'SUCCESS'
                             ? 'Đã mua thành công'
                             : cellValue === 'REFUND_SUCCES'
-                            ? 'Hoàn tiền thành công'
+                            ? 'Đã hoàn tiền'
                             : cellValue === 'PENDING'
                             ? 'Đang chờ'
                             : cellValue === 'FAIL'
                             ? 'Thất bại'
+                            : cellValue === 'REJECT_REFUND'
+                            ? 'Đã từ chối hoàn tiền'
                             : 'Vô hiệu'}
                     </Chip>
                 );
@@ -219,10 +221,13 @@ const Transaction: React.FC<TransactionsProps> = ({}) => {
                                         {capitalize('Tất Cả')}
                                     </DropdownItem>
                                     <DropdownItem key="SUCCESS" className="capitalize">
-                                        {capitalize('Đã mua thành Công')}
+                                        {capitalize('Đã mua thành công')}
                                     </DropdownItem>
                                     <DropdownItem key="REFUND_SUCCES" className="capitalize">
-                                        {capitalize('Hoàn tiền thành Công')}
+                                        {capitalize('Đã Hoàn tiền')}
+                                    </DropdownItem>
+                                    <DropdownItem key="REJECT_REFUND" className="capitalize">
+                                        {capitalize('Đã từ chối hoàn tiền')}
                                     </DropdownItem>
                                     <DropdownItem key="PENDING" className="capitalize">
                                         {capitalize('Đang chờ')}
