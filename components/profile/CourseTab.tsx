@@ -5,7 +5,6 @@ import { CourseCardType } from '@/types';
 import { Pagination } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import VideoCard from '../video/VideoCard';
 import { Spin } from 'antd';
 import CourseCard from '../course/CourseCard';
 import Loader from '../Loader';

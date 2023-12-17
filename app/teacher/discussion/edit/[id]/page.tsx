@@ -2,9 +2,9 @@
 
 import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { discussionApi, subjectApi } from '@/api-client';
+import { discussionApi } from '@/api-client';
 import Loader from '@/components/Loader';
-import { Subject, TopicType } from '@/types';
+import { TopicType } from '@/types';
 import { InputFormula } from '@/components/form-input/InputFormula';
 import { useForm } from 'react-hook-form';
 import { InputText } from '@/components/form-input';

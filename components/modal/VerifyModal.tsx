@@ -1,19 +1,7 @@
 'use client';
 
-import { useReportModal } from '@/hooks';
 import { useVerifyModal } from '@/hooks/useVerifyModal';
-import {
-    Button,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Select,
-    SelectItem,
-    Textarea
-} from '@nextui-org/react';
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import Image from 'next/image';
 import { useCallback } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {
     PlaySquareOutlined,
     LineChartOutlined,
-    BellOutlined,
     CalculatorOutlined,
     IdcardOutlined,
     CommentOutlined,
@@ -19,7 +18,6 @@ import { SafeUser } from '@/types';
 import NotFound from '@/app/not-found';
 import { handleUserReload } from '@/utils/handleUserReload';
 import Loader from '@/components/Loader';
-import { Chip } from '@nextui-org/react';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -38,12 +36,12 @@ const items: MenuItem[] = [
     getItem('Khóa học', 'sub2', <AuditOutlined />, [
         getItem(<Link href="/teacher/course/create">Tạo khóa học</Link>, '6'),
         getItem(<Link href="/teacher/course/my-course">Khóa học của tôi</Link>, '7'),
-        getItem(<Link href="/teacher/course/my-course-draft">Khóa học vừa tạo</Link>, '8')
+        getItem(<Link href="/teacher/course/my-course-draft">Khóa học nháp</Link>, '8')
     ]),
     getItem('Video', 'sub1', <PlaySquareOutlined />, [
         getItem(<Link href="/teacher/video/upload">Đăng tải video mới</Link>, '3'),
         getItem(<Link href="/teacher/video/my-video">Video của tôi</Link>, '4'),
-        getItem(<Link href="/teacher/video/my-video-draft">Video vừa tạo</Link>, '5')
+        getItem(<Link href="/teacher/video/my-video-draft">Video nháp</Link>, '5')
     ]),
     getItem('Bài tập', 'sub3', <CalculatorOutlined />, [
         getItem(<Link href="/teacher/quiz/create">Tạo bài tập</Link>, '9'),

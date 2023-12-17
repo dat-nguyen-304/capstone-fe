@@ -1,7 +1,5 @@
 'use client';
 
-import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
-import RevenueChartCourseDetail from '@/components/chart/teacher-dashboard/RevenueChartCourseDetail';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { Progress } from 'antd';
 

@@ -1,7 +1,5 @@
 'use client';
 
-import { User } from '@nextui-org/react';
-
 interface BarChartProps {
     topIncome: any;
     index: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';

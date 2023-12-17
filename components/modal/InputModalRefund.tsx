@@ -1,8 +1,6 @@
 'use client';
-import { useInputModal, useInputModalNumber, useInputModalRefund } from '@/hooks';
+import { useInputModalRefund } from '@/hooks';
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import { InputNumber } from '../form-input/InputNumber';
-import { NumberFormatBase } from 'react-number-format';
 import { toast } from 'react-toastify';
 
 interface InputModalRefundProps {

@@ -10,7 +10,6 @@ import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { BsArrowLeft } from 'react-icons/bs';
-import { MdVerified } from 'react-icons/md';
 
 interface TeacherProfileProps {
     params: { id: string };

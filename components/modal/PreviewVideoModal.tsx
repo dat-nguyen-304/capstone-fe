@@ -12,14 +12,7 @@ interface PreviewVideoModalProps {
     name: string;
 }
 
-export const PreviewVideoModal: React.FC<PreviewVideoModalProps> = ({
-    isOpen,
-    onOpen,
-    onClose,
-    onOpenChange,
-    url,
-    name
-}) => {
+export const PreviewVideoModal: React.FC<PreviewVideoModalProps> = ({ isOpen, onOpenChange, url, name }) => {
     return (
         <Modal isOpen={isOpen} size="4xl" onOpenChange={onOpenChange}>
             <ModalContent>

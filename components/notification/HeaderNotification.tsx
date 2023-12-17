@@ -12,7 +12,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { BsBell, BsBook, BsCashCoin } from 'react-icons/bs';
+import { BsBell, BsCashCoin } from 'react-icons/bs';
 import { GoCommentDiscussion } from 'react-icons/go';
 
 interface NotificationProps {}

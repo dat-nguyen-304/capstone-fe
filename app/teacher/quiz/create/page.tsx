@@ -1,21 +1,19 @@
 'use client';
 
-import { courseApi, examApi, subjectApi, topicApi } from '@/api-client';
-import Loader from '@/components/Loader';
+import { courseApi, examApi } from '@/api-client';
 import { InputText } from '@/components/form-input';
 import AddQuestionModal from '@/components/test/AddQuestionModal';
-import { Course, Subject, Topic } from '@/types';
-import { Button, Checkbox, Chip, Select, SelectItem, useDisclosure, Skeleton } from '@nextui-org/react';
+import { Course } from '@/types';
+import { Button, Checkbox, Select, SelectItem, useDisclosure } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { createSkeletonArray, handleFileSelection, handleFileSubmitSelection } from '@/utils';
+import { handleFileSelection, handleFileSubmitSelection } from '@/utils';
 import TestReviewItem from '@/components/test/TestReviewItem';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { FaPlus } from 'react-icons/fa6';
 import { BiUpArrowAlt } from 'react-icons/bi';
-import * as XLSX from 'xlsx';
 import { FiDelete } from 'react-icons/fi';
 import { useCustomModal, useSelectedSidebar } from '@/hooks';
 import QuizRuleModal from '@/components/rule/QuizRuleModal';

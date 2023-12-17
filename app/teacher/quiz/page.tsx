@@ -10,8 +10,7 @@ import {
     DropdownTrigger,
     Input,
     Selection,
-    SortDescriptor,
-    User
+    SortDescriptor
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { BsChevronDown, BsSearch, BsThreeDotsVertical } from 'react-icons/bs';
@@ -31,32 +30,6 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     BANNED: 'danger'
 };
 
-const getSubjectNameById = (id: number): string => {
-    const subjectMap: Record<number, string> = {
-        1: 'MATHEMATICS',
-        2: 'PHYSICS',
-        3: 'CHEMISTRY',
-        4: 'ENGLISH',
-        5: 'BIOLOGY',
-        6: 'HISTORY',
-        7: 'GEOGRAPHY'
-    };
-
-    return subjectMap[id] || '';
-};
-function getSubjectName(subjectCode: string) {
-    const subjectNames: { [key: string]: string | null } = {
-        MATHEMATICS: 'Toán học',
-        ENGLISH: 'Tiếng anh',
-        PHYSICS: 'Vật lí',
-        CHEMISTRY: 'Hóa học',
-        BIOLOGY: 'Sinh học',
-        HISTORY: 'Lịch sử',
-        GEOGRAPHY: 'Địa lý'
-    };
-
-    return subjectNames[subjectCode] || null;
-}
 const columns = [
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'course', sortable: false },

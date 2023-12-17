@@ -4,7 +4,6 @@ import NotFound from '@/app/not-found';
 import { useReportModal, useUser } from '@/hooks';
 import { Button } from '@nextui-org/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import Loader from '../Loader';
 import { SafeUser } from '@/types';
 import { handleUserReload } from '@/utils/handleUserReload';

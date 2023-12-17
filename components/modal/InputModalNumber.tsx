@@ -1,7 +1,7 @@
 'use client';
-import { useInputModal, useInputModalNumber } from '@/hooks';
+
+import { useInputModalNumber } from '@/hooks';
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import { InputNumber } from '../form-input/InputNumber';
 import { NumberFormatBase } from 'react-number-format';
 import { toast } from 'react-toastify';
 
@@ -11,7 +11,6 @@ interface InputModalNumberProps {
 
 export const InputModalNumber: React.FC<InputModalNumberProps> = ({ activeFn }) => {
     const { isOpen, onClose, money, onMoney, onTransactionCode, transactionCode } = useInputModalNumber();
-    const moneyValue = money?.toString() ?? '';
     const formatVnd = (numStr: string) => {
         if (numStr === '') return '';
         return new Intl.NumberFormat('vi-VI', {

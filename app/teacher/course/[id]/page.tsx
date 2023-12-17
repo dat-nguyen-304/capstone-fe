@@ -7,7 +7,6 @@ import CourseRevenueModal from '@/components/course/course-detail/CourseRevenueM
 import EditCourse from '@/components/course/course-detail/EditCouse';
 import Feedback from '@/components/course/course-detail/Feedback';
 import { useDisclosure } from '@nextui-org/react';
-import Link from 'next/link';
 import { BsArrowLeft } from 'react-icons/bs';
 import { courseApi, examApi, ratingCourseApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';

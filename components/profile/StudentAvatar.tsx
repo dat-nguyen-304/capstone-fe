@@ -2,14 +2,9 @@
 
 import Image from 'next/image';
 import { BiSolidPencil } from 'react-icons/bi';
-import { UploadImageModal } from '../modal/UploadImageModal';
 import { Chip, useDisclosure } from '@nextui-org/react';
 import Loader from '../Loader';
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
-import { toast } from 'react-toastify';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { userApi } from '@/api-client';
 import { DropzoneRootProps, FileWithPath, useDropzone } from 'react-dropzone';
 interface StudentAvatarProps {
     studentData: any;
@@ -17,8 +12,6 @@ interface StudentAvatarProps {
 }
 
 const StudentAvatar: React.FC<StudentAvatarProps> = ({ studentData, setGetUploadedFiles }) => {
-    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-
     const [uploadedFiles, setUploadedFiles] = useState<FileWithPath[]>([]);
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {

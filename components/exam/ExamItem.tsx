@@ -3,7 +3,6 @@
 import { Button, Card } from '@nextui-org/react';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
-import { GoCommentDiscussion } from 'react-icons/go';
 import { useCustomModal, useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { ExamCardType } from '@/types';

@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BiSolidPencil } from 'react-icons/bi';
 import { useForm } from 'react-hook-form';
-import { Button, Chip, Input, Select, SelectItem, SelectedItems, Selection } from '@nextui-org/react';
+import { Button, Chip, Select, SelectItem, SelectedItems, Selection } from '@nextui-org/react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });

@@ -1,7 +1,5 @@
 'use client';
-import dynamic from 'next/dynamic';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import { Button, Card, Input, useDisclosure } from '@nextui-org/react';
+import { Button, Card } from '@nextui-org/react';
 import Loader from '../Loader';
 import { userApi } from '@/api-client';
 import { useForm } from 'react-hook-form';
@@ -9,8 +7,6 @@ import { InputText } from '../form-input';
 import { InputDescription } from '../form-input/InputDescription';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 
 interface StudentInfoProps {
     studentData: any;
