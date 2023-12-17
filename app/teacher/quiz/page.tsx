@@ -58,7 +58,6 @@ function getSubjectName(subjectCode: string) {
     return subjectNames[subjectCode] || null;
 }
 const columns = [
-    { name: 'ID', uid: 'id', sortable: false },
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'course', sortable: false },
     { name: 'KIỂU BÀI THI', uid: 'examType' },
@@ -70,7 +69,7 @@ const columns = [
 const MyQuiz: React.FC<MyQuizProps> = () => {
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
-        new Set(['id', 'name', 'course', 'examType', 'createTime', 'status', 'action'])
+        new Set(['name', 'course', 'examType', 'createTime', 'status', 'action'])
     );
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(1);

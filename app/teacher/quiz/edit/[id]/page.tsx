@@ -39,6 +39,19 @@ const getSubjectIdByName = (subject: string): number => {
 
     return subjectMap[subject] || 0;
 };
+const getSubjectIdByNameSubject = (subject: string): number => {
+    const subjectMap: Record<string, number> = {
+        'Toán học': 1,
+        'Vật lí': 2,
+        'Hóa học': 3,
+        'Tiếng anh': 4,
+        'Sinh học': 5,
+        'Lịch sử': 6,
+        'Địa lý': 7
+    };
+
+    return subjectMap[subject] || 0;
+};
 function getSubjectName(subjectCode: string) {
     const subjectNames: { [key: string]: string | null } = {
         'Toán học': 'MATHEMATICS',
@@ -303,23 +316,6 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                             control={control}
                         />
                     </div>
-                    {/* <div className="my-4 col-span-3 lg:col-span-3">
-                        <Select
-                            isRequired
-                            isDisabled={questions?.length > 0}
-                            size="sm"
-                            label="Môn học"
-                            color="primary"
-                            variant="bordered"
-                            defaultSelectedKeys={[`${getSubjectIdByName(examDetail?.subject)}`]}
-                        >
-                            {subjectsData.map((subject: Subject) => (
-                                <SelectItem key={subject.id} value={subject.id}>
-                                    {subject.name}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </div> */}
                     <div className="col-span-6 sm:grid grid-cols-2 gap-4">
                         <div className="col-span-1 mt-1">
                             <Select
@@ -426,7 +422,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                     isOpen={isOpen}
                     onClose={onClose}
                     onAddQuestion={handleAddQuestion}
-                    subject={getSubjectNameById(selectedSubject)}
+                    subject={String(getSubjectName(courseDetail?.subject || 'Toán học'))}
                     editIndex={editIndex}
                     editQuestion={editQuestion}
                     onEditQuestion={handleEditQuestion}
@@ -439,7 +435,7 @@ const EditQuiz: React.FC<EditQuizProps> = ({ params }) => {
                                     questions={question}
                                     index={index}
                                     onEdit={handleEditQuestion}
-                                    subjectId={selectedSubject}
+                                    subjectId={Number(getSubjectIdByNameSubject(courseDetail?.subject || 1))}
                                     handleDeleteQuestion={handleDeleteQuestion}
                                 />
                                 {/* Add a delete button for each question */}

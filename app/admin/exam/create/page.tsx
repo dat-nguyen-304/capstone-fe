@@ -239,7 +239,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                             onChange={event => setExamType(String(event.target.value))}
                         >
                             <SelectItem key={'PUBLIC_EXAM'} value={'PUBLIC_EXAM'}>
-                                Bài Kiểm Tra
+                                Bài Luyện Thi
                             </SelectItem>
                             <SelectItem key={'ENTRANCE_EXAM'} value={'ENTRANCE_EXAM'}>
                                 Bài Thi Đầu Vào

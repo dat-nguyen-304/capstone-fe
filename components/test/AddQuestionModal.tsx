@@ -260,7 +260,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                                             />
                                         </div>
                                         <div>
-                                            {imageUrl !== '' ? (
+                                            {imageUrl !== '' && imageUrl !== null ? (
                                                 <div className="flex mt-4 items-center justify-center">
                                                     <div className="flex col-span-1 items-center rounded-lg">
                                                         <div className="flex rounded-lg mb-2 mx-2 h-[120px] w-[200px] border-2 border-neutral-300 border-dashed flex-col justify-center items-center cursor-pointer">

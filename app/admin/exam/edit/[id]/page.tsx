@@ -243,6 +243,7 @@ const EditExam: React.FC<EditExamProps> = ({ params }) => {
                             color="primary"
                             isDisabled={questions?.length > 0}
                             variant="bordered"
+                            onChange={event => setSelectedSubject(Number(event.target.value))}
                             defaultSelectedKeys={[`${getSubjectIdByName(examDetail?.subject)}`]}
                         >
                             {subjectsData.map((subject: Subject) => (
