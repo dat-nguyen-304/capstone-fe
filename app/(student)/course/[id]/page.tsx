@@ -18,7 +18,11 @@ interface CourseDetailProps {
 
 const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
     const router = useRouter();
-    const { data, isLoading } = useQuery<any>({
+    const {
+        data,
+        isLoading,
+        refetch: refetchCourse
+    } = useQuery<any>({
         queryKey: ['course', { params: params?.id }],
         queryFn: () => courseApi.getCourseById(params?.id)
     });
@@ -81,6 +85,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ params }) => {
             if (res) {
                 toast.success('Bình luận khóa học thành công');
                 refetch();
+                refetchCourse();
             }
             toast.dismiss(toastLoading);
         } catch (error) {

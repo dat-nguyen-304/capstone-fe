@@ -103,12 +103,14 @@ const VideoSortItem: React.FC<VideoSortItemProps> = ({ videoItem, index }) => {
                 className="w-[24px] h-[24px] sm:w-[40px] sm:h-[40px]"
             />
             <div className="h-[50px] w-[100px] ml-0 sm:ml-4 relative">
-                <Image src={videoItem?.thumbnail || '/banner/slide-1.png'} alt="" width={300} height={240} />
-                {videoItem?.examType ? null : (
-                    <span className="absolute bottom-0 text-white bg-gray-700 px-1 rounded-md right-0 text-xs">
-                        {floatToTime(videoItem?.duration)}
-                    </span>
-                )}
+                <div className="justify-center items-center">
+                    <Image src={videoItem?.thumbnail || '/banner/slide-1.png'} alt="" width={65} height={50} />
+                    {videoItem?.examType ? null : (
+                        <span className="absolute bottom-0 text-white bg-gray-700 px-1 rounded-md right-0 text-xs">
+                            {floatToTime(videoItem?.duration)}
+                        </span>
+                    )}
+                </div>
             </div>
             <div className="max-w-[50%] flex flex-col justify-between ml-1 sm:ml-4">
                 <h3 className="font-semibold truncate text-xs sm:text-sm">{videoItem?.name}</h3>

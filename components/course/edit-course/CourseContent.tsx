@@ -155,24 +155,26 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                 </Button>
             </div>
             <div className="xl:grid grid-cols-10 mt-6">
-                <div className="hidden xl:block col-span-3 p-4 border-2 border-gray-200 rounded-xl sticky top-[70px] h-[420px]">
-                    <Image
-                        src={courseContent?.thumbnail ? courseContent?.thumbnail : '/banner/slide-1.png'}
-                        alt=""
-                        width={300}
-                        height={240}
-                    />
+                <div className="hidden xl:block col-span-3 p-4 border-2 border-gray-200 rounded-xl sticky top-[70px] h-[520px]">
+                    <div>
+                        <Image
+                            src={courseContent?.thumbnail ? courseContent?.thumbnail : '/banner/slide-1.png'}
+                            alt=""
+                            width={250}
+                            height={240}
+                        />
+                    </div>
                     <h2 className="truncate2line font-bold text-lg mt-4">{courseContent?.courseName}</h2>
                     <h3 className="mt-1 font-semibold">{courseContent?.teacherName}</h3>
                     <div className="mt-4">
                         <span className="inline-flex items-center">
-                            <span className="text-sm font-bold mr-1">{courseContent?.totalVideo}</span>
+                            <span className="text-sm font-bold mr-1">{courseContent?.totalVideo || 0}</span>
                             <span className="text-sm mr-1">Bài giảng</span>
                             <Image src="/video-number/blue.svg" width={25} height={25} alt="" />
                         </span>
                         <span className="before:content-['•'] before:inline-block before:text-gray-500 before:mx-2">
                             <span className="inline-flex items-center">
-                                <span className="text-sm font-bold mr-1">{courseContent?.totalQuiz}</span>
+                                <span className="text-sm font-bold mr-1">{courseContent?.totalQuiz || 0}</span>
                                 <span className="text-sm mr-1">Bài tập</span>
                                 <Image src="/video-number/red.svg" width={25} height={25} alt="" />
                             </span>
