@@ -28,7 +28,12 @@ export function InputFormula({ name, control, placeholder }: InputFormulaProps) 
         window.katex = katex;
     }, []);
 
-    const toolbarOptions = [['bold', 'italic'], [{ script: 'sub' }, { script: 'super' }], [{ formula: 'katex' }]];
+    const toolbarOptions = [
+        ['bold', 'italic'],
+        [{ script: 'sub' }, { script: 'super' }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ formula: 'katex' }]
+    ];
 
     const _module = {
         toolbar: toolbarOptions

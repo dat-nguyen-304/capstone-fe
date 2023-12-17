@@ -124,7 +124,6 @@ nav header {
     background-position: bottom;
     background-color: #fff;
     text-align: center;
-    background-repeat: no-repeat;
 }
 
 .coin-bg {
@@ -157,4 +156,9 @@ nav header {
 
 .Toastify__toast-body {
     font-size: 14px;
+}
+
+.ql-tooltip.ql-editing {
+    top: 0 !important;
+    left: 0 !important;
 }
