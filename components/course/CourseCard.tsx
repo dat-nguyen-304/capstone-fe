@@ -10,7 +10,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
     BANNED: 'danger',
     DELETED: 'danger',
     WAITING: 'primary',
-    DRAFT: 'primary',
+    DRAFT: 'default',
     UPDATING: 'primary',
     UNAVAILABLE: 'warning'
 };

@@ -154,11 +154,14 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
     };
     return (
         <>
-            <div className="flex flex-row-reverse">
-                <Button color="primary" onClick={handleButtonClick} isLoading={isSubmitting}>
-                    Lưu thay đổi
-                </Button>
-            </div>
+            {items && items.length > 0 ? (
+                <div className="flex flex-row-reverse">
+                    <Button color="primary" onClick={handleButtonClick} isLoading={isSubmitting}>
+                        Lưu thay đổi
+                    </Button>
+                </div>
+            ) : null}
+
             <div className="xl:grid grid-cols-10 mt-6">
                 <div className="hidden xl:block col-span-3 p-4 border-2 border-gray-200 rounded-xl sticky top-[70px] h-[520px]">
                     <div>
@@ -187,10 +190,10 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                     </div>
                     <div className="mt-1 text-xs">Cập nhật {calculateTimeDifference(courseContent?.updateDate)}</div>
                     <div className="mt-6 flex justify-evenly">
-                        <Button as={Link} href="/teacher/video/upload" color="primary" size="sm">
+                        <Button as={Link} href="/teacher/video/upload" color="primary">
                             Thêm video
                         </Button>
-                        <Button as={Link} href="/teacher/quiz/create" color="primary" size="sm">
+                        <Button as={Link} href="/teacher/quiz/create" color="primary">
                             Thêm bài tập
                         </Button>
                     </div>
