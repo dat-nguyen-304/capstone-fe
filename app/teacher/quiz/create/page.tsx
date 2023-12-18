@@ -378,7 +378,7 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                         </div>
 
                         <Button
-                            onClick={handleFileUpload}
+                            onClick={handleSubmitQuestions}
                             color="success"
                             variant="flat"
                             className="mt-8"

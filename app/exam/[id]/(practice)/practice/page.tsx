@@ -47,7 +47,9 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
             setQuestions(data?.data?.selectionList);
             setTotalQuestion(data?.data?.selectionList?.length);
             const durationInSeconds = (data?.data?.duration || 60) * 60;
-            setRemainingTime(durationInSeconds);
+            if (remainingTime === null) {
+                setRemainingTime(durationInSeconds);
+            }
         }
     }, [data]);
 

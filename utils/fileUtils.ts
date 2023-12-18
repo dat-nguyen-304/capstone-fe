@@ -93,7 +93,7 @@ export const handleFileSubmitSelection = (
                 }
                 setExcelFile(null);
             } else {
-                toast.error('File bài tập của bạn không phù hợp với môn hiện tại vui lòng chọn file khác');
+                toast.error('File bài tập của bạn có chủ đề không tồn tại trên hệ thống. Vui lòng kiểm tra lại');
             }
         }
     } else {
