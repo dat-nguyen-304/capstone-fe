@@ -12,7 +12,7 @@ interface SubmissionStatisticProps {
 
 const SubmissionStatisticModal: React.FC<SubmissionStatisticProps> = ({ isOpen, onOpen, onClose, submission }) => {
     return (
-        <Modal size="5xl" isOpen={isOpen} onClose={onClose} className="!sm:mt-6 sm:mb-4">
+        <Modal scrollBehavior="inside" size="5xl" isOpen={isOpen} onClose={onClose} className="!sm:mt-6 sm:mb-4">
             <ModalContent>
                 {onClose => (
                     <>

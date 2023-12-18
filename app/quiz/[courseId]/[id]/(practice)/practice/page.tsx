@@ -7,6 +7,7 @@ import { RefObject, createRef, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { useCustomModal } from '@/hooks';
+import { useQuery } from '@tanstack/react-query';
 interface DoExamProps {
     params: { courseId: number; id: number };
 }
@@ -37,28 +38,42 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
     const [selectedAnswers, setSelectedAnswers] = useState<{ questionId: number; selection: string }[]>([]);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+    const { data, isLoading, status } = useQuery<any>({
+        queryKey: ['do-quiz', { params: params.id }],
+        queryFn: () => examApi.createAttempt(params?.id)
+    });
+
     useEffect(() => {
-        const createAttempt = async () => {
-            try {
-                const res = await examApi.createAttempt(params?.id);
-
-                const data = res.data;
-                if (data) {
-                    setQuestions(data?.selectionList);
-                    setTotalQuestion(data?.selectionList?.length);
-                    const durationInSeconds = (data?.duration || 60) * 60;
-                    setRemainingTime(durationInSeconds);
-                }
-                // Handle the response if needed
-            } catch (error) {
-                // Handle error
-            }
-        };
-
-        if (params?.id) {
-            createAttempt();
+        if (data) {
+            setQuestions(data?.data?.selectionList);
+            setTotalQuestion(data?.data?.selectionList?.length);
+            const durationInSeconds = (data?.data?.duration || 60) * 60;
+            setRemainingTime(durationInSeconds);
         }
-    }, [params?.id]);
+    }, [data]);
+
+    // useEffect(() => {
+    //     const createAttempt = async () => {
+    //         try {
+    //             const res = await examApi.createAttempt(params?.id);
+
+    //             const data = res.data;
+    //             if (data) {
+    //                 setQuestions(data?.selectionList);
+    //                 setTotalQuestion(data?.selectionList?.length);
+    //                 const durationInSeconds = (data?.duration || 60) * 60;
+    //                 setRemainingTime(durationInSeconds);
+    //             }
+    //             // Handle the response if needed
+    //         } catch (error) {
+    //             // Handle error
+    //         }
+    //     };
+
+    //     if (params?.id) {
+    //         createAttempt();
+    //     }
+    // }, [params?.id, totalQuestion]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -121,7 +136,7 @@ const DoQuiz: React.FC<DoExamProps> = ({ params }) => {
         });
     };
 
-    const questionRefs: RefObject<HTMLLIElement>[] = questions.map(() => createRef());
+    const questionRefs: RefObject<HTMLLIElement>[] = questions?.map(() => createRef());
     const scrollToQuestion = (questionId: number) => {
         const element = questionRefs[questionId - 1]?.current;
 
