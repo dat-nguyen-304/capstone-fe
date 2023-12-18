@@ -292,10 +292,10 @@ const CreateQuiz: React.FC<CreateQuizProps> = () => {
                                     variant="bordered"
                                     defaultSelectedKeys={[selectedOptionCourse]}
                                     onChange={event => setSelectedOptionCourse(event?.target?.value)}
-                                    description="Khóa học đang cập nhật là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
+                                    description="Khóa học nháp là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
                                 >
                                     <SelectItem key={'NEW'} value={'NEW'}>
-                                        Khóa học đang cập nhật
+                                        Khóa học nháp
                                     </SelectItem>
                                     <SelectItem key={'OLD'} value={'OLD'}>
                                         Khóa học đang hoạt động

@@ -32,7 +32,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedbackInfo }) => {
                         <Rate
                             className="!text-xs sm:text-base"
                             disabled
-                            defaultValue={feedbackInfo?.rate ? feedbackInfo?.rate : 5}
+                            value={feedbackInfo?.rate ? feedbackInfo?.rate : 5}
                         />
                     </div>
                 </div>

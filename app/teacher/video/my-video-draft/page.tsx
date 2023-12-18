@@ -28,9 +28,8 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
     const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
-    const { status, error, data, isPreviousData } = useQuery({
+    const { status, data } = useQuery({
         queryKey: ['my-videos-draft', { page, sortFilter: Array.from(sortFilter)[0] as string }],
-        // keepPreviousData: true,
         queryFn: () =>
             videoApi.getAllOfTeacherDraft(
                 page - 1,
@@ -46,7 +45,8 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             setTotalPage(data.totalPage);
             setTotalRow(data.totalRow);
         }
-    }, [data]);
+    }, [data?.data]);
+
     const { onTeacherKeys } = useSelectedSidebar();
 
     useEffect(() => {
@@ -77,6 +77,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
             isAccess: videos?.isAccess
         };
     };
+
     if (!data) return <Loader />;
 
     return (

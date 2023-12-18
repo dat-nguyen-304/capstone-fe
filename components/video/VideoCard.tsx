@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Chip, ChipProps, useDisclosure } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip, ChipProps, Skeleton, useDisclosure } from '@nextui-org/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { BiSolidLike } from 'react-icons/bi';
@@ -114,7 +114,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         else if (type === 'teacher-draft') router.push(detailPage);
     };
 
-    if (!video || !video?.thumbnail) return null;
+    if (!video) return null;
 
     return (
         <div className="w-full">
@@ -125,13 +125,20 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
             >
                 <div onClick={viewDetailVideo}>
                     <CardHeader className="relative overflow-visible p-0">
-                        <Image
-                            height={120}
-                            width={216}
-                            alt=""
-                            className="rounded-xl object-cover object-center h-[120px]"
-                            src={video?.thumbnail}
-                        />
+                        {!video?.thumbnail ? (
+                            <Skeleton isLoaded={false} className="rounded-xl">
+                                <li className="!w-[216px] h-[120px] rounded-xl px-2 py-2 sm:py-4 sm:px-4"></li>
+                            </Skeleton>
+                        ) : (
+                            <Image
+                                height={120}
+                                width={216}
+                                alt=""
+                                className="rounded-xl object-cover object-center h-[120px]"
+                                src={video.thumbnail}
+                            />
+                        )}
+
                         <div className="absolute bottom-0 right-1 text-xs text-white bg-gray-600 rounded-md p-1">
                             {floatToTime(video?.duration)}
                         </div>

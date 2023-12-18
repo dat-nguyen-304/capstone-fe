@@ -193,6 +193,7 @@ const UploadVideo: React.FC = () => {
                         router.push('/teacher/video/my-video-draft');
                     }
                 } else {
+                    setIsSubmitting(false);
                     toast.error('Cần phải chọn khóa học để tạo video');
                 }
                 toast.dismiss(toastLoading);
@@ -307,7 +308,7 @@ const UploadVideo: React.FC = () => {
                             <Select
                                 isRequired
                                 size="sm"
-                                label="Loại video mới"
+                                label="Loại video"
                                 description="Học sinh có thể xem video xem trước trước khi thanh toán."
                                 color="primary"
                                 variant="bordered"
@@ -333,10 +334,10 @@ const UploadVideo: React.FC = () => {
                                         variant="bordered"
                                         defaultSelectedKeys={[selectedOptionCourse]}
                                         onChange={event => setSelectedOptionCourse(event?.target?.value)}
-                                        description="Khóa học đang cập nhật là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
+                                        description="Khóa học nháp là những khóa học đang cập nhật thông tin và chưa được phê duyệt từ hệ thống. Khóa học đang hoạt động là những khóa học hiện đang được đăng bán"
                                     >
                                         <SelectItem key={'NEW'} value={'NEW'}>
-                                            Khóa học đang cập nhật
+                                            Khóa học nháp
                                         </SelectItem>
                                         <SelectItem key={'OLD'} value={'OLD'}>
                                             Khóa học đang hoạt động

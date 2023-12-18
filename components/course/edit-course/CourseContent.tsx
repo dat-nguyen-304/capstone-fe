@@ -76,6 +76,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
     const [sortOrders, setSortOrders] = useState<any[]>([]);
     const [activeItem, setActiveItem] = useState<VideoSortItemType | null>(null);
     const [items, setItems] = useState<VideoSortItemType[]>(arrays || []);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     // DND Handlers
     const sensors = useSensors(
@@ -114,6 +115,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
             .filter(video => video.isDraft === undefined)
             .map(video => ({ quizId: video.videoId, order: video.videoOrder }));
         const toastLoading = toast.loading('Đang gửi yêu cầu');
+        setIsSubmitting(true);
         try {
             if (
                 courseContent?.status == 'DRAFT' ||
@@ -128,6 +130,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
 
                 const res = await examApi.sortQuiz(case2);
                 if (res) {
+                    setIsSubmitting(false);
                     toast.success('Cập nhật vị trí thành công');
                     refetch();
                 }
@@ -135,12 +138,14 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
                 await videoApi.sortVideoOrder(courseContent?.id, -1, case1);
                 const res = await examApi.sortQuiz(case2);
                 if (res) {
+                    setIsSubmitting(false);
                     toast.success('Cập nhật vị trí thành công');
                     refetch();
                 }
             }
             toast.dismiss(toastLoading);
         } catch (error) {
+            setIsSubmitting(false);
             toast.dismiss(toastLoading);
             console.log(error);
 
@@ -150,7 +155,7 @@ const CourseContent: React.FC<CourseContentProps> = ({ courseContent, setVideoOr
     return (
         <>
             <div className="flex flex-row-reverse">
-                <Button color="primary" onClick={handleButtonClick}>
+                <Button color="primary" onClick={handleButtonClick} isLoading={isSubmitting}>
                     Lưu thay đổi
                 </Button>
             </div>

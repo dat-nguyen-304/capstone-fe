@@ -33,7 +33,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 const columns = [
     { name: 'TIÊU ĐỀ', uid: 'name', sortable: false },
     { name: 'KHÓA HỌC', uid: 'course', sortable: false },
-    { name: 'KIỂU BÀI THI', uid: 'examType' },
+    { name: 'KIỂU BÀI TẬP', uid: 'examType' },
     { name: 'ĐÃ TẠO', uid: 'createTime', sortable: false },
     { name: 'TRẠNG THÁI', uid: 'status' },
     { name: 'THAO TÁC', uid: 'action', sortable: false }
@@ -389,7 +389,7 @@ const MyQuiz: React.FC<MyQuizProps> = () => {
                                         variant="bordered"
                                         color="primary"
                                     >
-                                        Loại bài thi
+                                        Loại bài tập
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
