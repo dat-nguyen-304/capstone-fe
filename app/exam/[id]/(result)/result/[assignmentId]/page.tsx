@@ -89,6 +89,12 @@ const ResultExam: React.FC<ResultExamProps> = ({ params }) => {
                                     <div className="w-[20px] h-[20px] rounded-full bg-red-400" />
                                 </span>
                             </span>
+                            <span className="sm:before:content-['•'] sm:before:inline-block sm:before:text-gray-500 sm:before:mx-2">
+                                <span className="inline-flex items-center text-xs">
+                                    <span className="mr-2">Bỏ qua</span>
+                                    <div className="w-[20px] h-[20px] rounded-full bg-gray-500" />
+                                </span>
+                            </span>
                         </div>
                         <ul className="flex gap-2 flex-wrap mt-2">
                             {totalQuestion &&

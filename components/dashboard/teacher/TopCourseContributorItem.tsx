@@ -11,25 +11,20 @@ const formatCurrency = (value: number) => {
         minimumFractionDigits: 0
     }).format(value);
 
-    return formattedValue.replace('₫', ' VND');
+    return formattedValue;
 };
 const TopCourseContributorItem: React.FC<BarChartProps> = ({ topIncome, index }) => {
     return (
         <li className="flex items-center w-full justify-between mt-4">
             <div className="flex items-center">
                 <span className={`font-semibold mr-4`}>{index + 1}</span>
-                <p className="w-[250px] truncate2line" title={topIncome?.courseName}>
+                <p className="flex-[1] max-w-[250px] text-xs sm:text-sm truncate" title={topIncome?.courseName}>
                     {topIncome?.courseName}
                 </p>
-                {/* <User
-                    name="Jane Doe"
-                    description="Đã mua 5 khóa học"
-                    avatarProps={{
-                        src: 'https://i.pravatar.cc/150?u=a04258114e29026702d'
-                    }}
-                /> */}
             </div>
-            <p className="w-[100px] truncate">{formatCurrency(Number(topIncome?.receivedMoney) / 100)}</p>
+            <p className="text-end font-semibold text-orange-500">
+                {formatCurrency(Number(topIncome?.receivedMoney) / 100)}
+            </p>
         </li>
     );
 };

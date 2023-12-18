@@ -1,14 +1,12 @@
 'use client';
 
-import { Button, Card, Link, Pagination, Select, SelectItem, Skeleton, Tooltip, User } from '@nextui-org/react';
-import StudentLayout from '@/components/header/StudentLayout';
-import { combinationApi, examApi, studentApi, subjectApi, suggestApi } from '@/api-client';
+import { Button, Card, Link, Skeleton, Tooltip } from '@nextui-org/react';
+import { examApi, studentApi, subjectApi, suggestApi } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Combination, Subject } from '@/types';
-import TestResultLine from '@/components/test/TestResultLine';
+import { Subject } from '@/types';
 import { BsBookFill, BsClockFill } from 'react-icons/bs';
 import { FaUserEdit } from 'react-icons/fa';
 import CourseCard from '@/components/course/CourseCard';
@@ -363,7 +361,7 @@ const ExamDetail: React.FC<ExamDetailProps> = ({ params }) => {
                                                               isDisabled={
                                                                   examCombination?.grade !== null ? true : false
                                                               }
-                                                              href={`/exam/${examCombination?.examId}/practice`}
+                                                              href={`/exam/${examCombination?.examId}/practice?type=entrance`}
                                                           >
                                                               {examCombination?.grade !== null
                                                                   ? examCombination?.grade?.toFixed(1)

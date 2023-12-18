@@ -105,7 +105,7 @@ const MyCourseDraft: React.FC<MyCourseDraftProps> = ({}) => {
 
     return (
         <div className="w-[98%] xl:w-[90%] mx-auto">
-            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học vừa tạo</h3>
+            <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Khóa học nháp</h3>
             <Spin spinning={status === 'loading' ? true : false} size="large" tip="Đang tải">
                 <div className="mt-8 sm:flex justify-between gap-3 items-end">
                     <div className="flex flex-[1] gap-2 md:mt-0 mt-4">

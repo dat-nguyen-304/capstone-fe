@@ -3,13 +3,14 @@
 import { examApi } from '@/api-client';
 import DoTestItem from '@/components/test/DoTestItem';
 import { Button } from '@nextui-org/react';
-import { RefObject, createRef, useEffect, useRef, useState } from 'react';
+import { RefObject, createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { useCustomModal } from '@/hooks';
 import { useQuery } from '@tanstack/react-query';
 interface DoExamProps {
     params: { id: number };
+    searchParams?: { type: string };
 }
 
 const formatTime = (seconds: number | null): string => {
@@ -28,7 +29,10 @@ const formatTime = (seconds: number | null): string => {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
-const DoExam: React.FC<DoExamProps> = ({ params }) => {
+const DoExam: React.FC<DoExamProps> = ({ params, searchParams }) => {
+    console.log({ searchParams });
+    console.log({ params });
+
     const router = useRouter();
     const [questions, setQuestions] = useState<any[]>([]);
     const [totalQuestion, setTotalQuestion] = useState<number>(0);
@@ -50,38 +54,6 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
             setRemainingTime(durationInSeconds);
         }
     }, [data]);
-
-    // useEffect(() => {
-    //     const createAttempt = async () => {
-    //         try {
-    //             const res = await examApi.createAttempt(params?.id);
-
-    //             const data = res.data;
-    //             if (data) {
-    //                 setQuestions(data?.selectionList);
-    //                 setTotalQuestion(data?.selectionList?.length);
-    //                 const durationInSeconds = (data?.duration || 60) * 60;
-    //                 setRemainingTime(durationInSeconds);
-    //             }
-    //             // Handle the response if needed
-    //         } catch (error) {
-    //             // Handle error
-    //         }
-    //     };
-
-    //     if (params?.id) {
-    //         createAttempt();
-    //     }
-    // }, [params?.id, totalQuestion]);
-
-    // useEffect(() => {
-    //     if (data) {
-    //         setQuestions(data?.questionList);
-    //         setTotalQuestion(data?.questionList?.length);
-    //         const durationInSeconds = (data?.duration || 0) * 60;
-    //         setRemainingTime(durationInSeconds);
-    //     }
-    // }, [data]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -128,7 +100,8 @@ const DoExam: React.FC<DoExamProps> = ({ params }) => {
 
             if (res) {
                 setIsSubmitting(false);
-                router?.push(`/exam/${params?.id}`);
+                if (searchParams?.type === 'entrance') router.push(`/suggestion`);
+                else router.push(`/exam/${params?.id}`);
             }
         } catch (error) {
             setIsSubmitting(false);

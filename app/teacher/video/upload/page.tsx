@@ -12,11 +12,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    Radio,
-    RadioGroup,
     Select,
     SelectItem,
-    Tooltip,
     useDisclosure
 } from '@nextui-org/react';
 import { InputDescription } from '@/components/form-input/InputDescription';
@@ -178,7 +175,6 @@ const UploadVideo: React.FC = () => {
                 if (uploadedAttachedFiles !== undefined) {
                     formDataPayload.append('material', uploadedAttachedFiles[0]);
                 }
-                let apiUrl = '';
 
                 if (selectedOptionCourse == 'NEW') {
                     const response = await videoApi.createVideoForNewCourse(formDataPayload);
@@ -189,7 +185,6 @@ const UploadVideo: React.FC = () => {
                         router.push('/teacher/video/my-video-draft');
                     }
                 } else if (selectedOptionCourse == 'OLD') {
-                    apiUrl = 'https://course-service-cepa.azurewebsites.net/api/videos/teacher/upload';
                     const response = await videoApi.createVideo(formDataPayload);
 
                     if (response) {

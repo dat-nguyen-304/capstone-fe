@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 
 import VideoCard from '@/components/video/VideoCard';
-import { courseApi, videoApi } from '@/api-client';
-import { useSelectedSidebar, useUser } from '@/hooks';
-import { Course, VideoCardType } from '@/types';
+import { videoApi } from '@/api-client';
+import { useSelectedSidebar } from '@/hooks';
+import { VideoCardType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
 import {
@@ -14,13 +14,10 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
-    Input,
     Pagination,
-    Select,
-    SelectItem,
     Selection
 } from '@nextui-org/react';
-import { BsChevronDown, BsSearch } from 'react-icons/bs';
+import { BsChevronDown } from 'react-icons/bs';
 import { capitalize } from '@/components/table/utils';
 import Loader from '@/components/Loader';
 interface MyVideoDraftProps {}
@@ -30,7 +27,6 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     const [totalPage, setTotalPage] = useState<number>();
     const [totalRow, setTotalRow] = useState<number>();
     const [page, setPage] = useState(1);
-    const [selectedCourse, setSelectedCourse] = useState<number>(0);
     const [sortFilter, setSortFilter] = useState<Selection>(new Set(['DEFAULT']));
     const { status, error, data, isPreviousData } = useQuery({
         queryKey: ['my-videos-draft', { page, sortFilter: Array.from(sortFilter)[0] as string }],
@@ -60,32 +56,6 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
     useEffect(() => {
         onTeacherKeys(['5']);
     }, []);
-    const statusArr = [
-        {
-            value: 'AVAILABLE',
-            name: 'Hoạt động'
-        },
-        {
-            value: 'REJECT',
-            name: 'Đã từ chối'
-        },
-        {
-            value: 'BANNED',
-            name: 'Đã cấm'
-        },
-        {
-            value: 'WAITING',
-            name: 'Chờ phê duyệt'
-        },
-        {
-            value: 'UPDATING',
-            name: 'Chờ cập nhật'
-        },
-        {
-            value: 'UNAVAILABLE',
-            name: 'Vô hiệu'
-        }
-    ];
 
     const scrollToTop = (value: number) => {
         setPage(value);
@@ -108,6 +78,7 @@ const MyVideoDraft: React.FC<MyVideoDraftProps> = ({}) => {
         };
     };
     if (!data) return <Loader />;
+
     return (
         <div className="w-[98%] lg:w-[90%] mx-auto">
             <h3 className="text-xl text-blue-500 font-semibold mt-4 sm:mt-0">Video nháp</h3>

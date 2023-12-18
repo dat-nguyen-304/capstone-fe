@@ -114,6 +114,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
         else if (type === 'teacher-draft') router.push(detailPage);
     };
 
+    if (!video || !video?.thumbnail) return null;
+
     return (
         <div className="w-full">
             <Card
@@ -124,11 +126,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ type, video }) => {
                 <div onClick={viewDetailVideo}>
                     <CardHeader className="relative overflow-visible p-0">
                         <Image
-                            height={216}
-                            width={384}
+                            height={120}
+                            width={216}
                             alt=""
                             className="rounded-xl object-cover object-center h-[120px]"
-                            src={video?.thumbnail || '/banner/slide-1.png'}
+                            src={video?.thumbnail}
                         />
                         <div className="absolute bottom-0 right-1 text-xs text-white bg-gray-600 rounded-md p-1">
                             {floatToTime(video?.duration)}

@@ -1,10 +1,6 @@
 'use client';
 
-import RevenueChart from '@/components/chart/teacher-dashboard/RevenueChart';
-import RevenueChartCourseDetail from '@/components/chart/teacher-dashboard/RevenueChartCourseDetail';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import { Progress } from 'antd';
-import { useState } from 'react';
 
 interface VideoRuleProps {
     isOpen: boolean;
@@ -23,8 +19,8 @@ const VideoRuleModal: React.FC<VideoRuleProps> = ({ isOpen, onOpen, onClose }) =
                             <h3 className="font-bold">1. Điều khoản sử dụng</h3>
                             <h4 className="font-semibold">1.1 Quy tắc chung:</h4>
                             <p className="text-sm">
-                                1.1.1. Việc sử dụng và đăng video trên nền tảng của chúng tôi đồng nghĩa với việc bạn
-                                đồng ý và tuân thủ theo tất cả các điều khoản và điều kiện dưới đây.
+                                Việc sử dụng và đăng video trên nền tảng của chúng tôi đồng nghĩa với việc bạn đồng ý và
+                                tuân thủ theo tất cả các điều khoản và điều kiện dưới đây.
                             </p>
                             <h4 className="font-semibold">1.2 Quy tắc đạo đức:</h4>
                             <p className="text-sm">
@@ -42,25 +38,25 @@ const VideoRuleModal: React.FC<VideoRuleProps> = ({ isOpen, onOpen, onClose }) =
                                 <br />
                                 2.1.2 Tài liệu đăng tải yêu cầu là file .pdf
                                 <br />
-                                2.1.3 Video đăng tải không được vượt quá 30 phút
+                                2.1.3 Video đăng tải không được vượt quá 500MB
                             </p>
                             <h4 className="font-semibold">2.2. Tuân thủ quy định:</h4>
                             <p className="text-sm">
-                                2.2.1. Bạn đồng ý không đăng tải hoặc chia sẻ bất kỳ nội dung vi phạm pháp luật hoặc
-                                chính sách của chúng tôi.
+                                Bạn đồng ý không đăng tải hoặc chia sẻ bất kỳ nội dung vi phạm pháp luật hoặc chính sách
+                                của chúng tôi.
                             </p>
 
                             <h3 className="font-bold">3. Bảo mật và Quyền riêng tư:</h3>
                             <h4 className="font-semibold">3.1. Bảo mật thông tin:</h4>
                             <p className="text-sm">
-                                3.1.1. Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn và không chia sẻ nó với bất kỳ
-                                bên thứ ba nào mà không có sự đồng ý của bạn.
+                                Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn và không chia sẻ nó với bất kỳ bên
+                                thứ ba nào mà không có sự đồng ý của bạn.
                             </p>
                             <h3 className="font-bold">4. Sửa đổi điều khoản:</h3>
                             <h4 className="font-semibold">4.1 Điều khoản:</h4>
                             <p className="text-sm">
-                                4.1.1. Chúng tôi có quyền điều chỉnh và sửa đổi các điều khoản này mà không cần thông
-                                báo trước. Bạn nên kiểm tra định kỳ để cập nhật với những thay đổi mới.
+                                Chúng tôi có quyền điều chỉnh và sửa đổi các điều khoản này mà không cần thông báo
+                                trước. Bạn nên kiểm tra định kỳ để cập nhật với những thay đổi mới.
                             </p>
                         </ModalBody>
                         <ModalFooter>
