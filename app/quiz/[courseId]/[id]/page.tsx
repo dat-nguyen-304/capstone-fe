@@ -52,13 +52,11 @@ const Quiz: React.FC<QuizProps> = ({ params }) => {
     });
     const { data: quizzesData, isLoading: loadingQuizzes } = useQuery<any>({
         queryKey: ['quiz-by-course', { params: params?.courseId }],
-        queryFn: () => examApi.getQuizCourseById(params?.courseId),
-        staleTime: 300000
+        queryFn: () => examApi.getQuizCourseById(params?.courseId)
     });
     const { data: videosCourse, isLoading: loadingListVideo } = useQuery<any>({
         queryKey: ['my-course-videos', { params: params?.courseId }],
-        queryFn: () => videoApi.getByCourseId(params?.courseId, 0, 100, 'id', 'ASC'),
-        staleTime: 300000
+        queryFn: () => videoApi.getByCourseId(params?.courseId, 0, 100, 'id', 'ASC')
     });
     const { data: courseData, refetch: courseRefetch } = useQuery<any>({
         queryKey: ['my-course-quiz-detail', { params: params?.courseId }],
